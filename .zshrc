@@ -1,5 +1,8 @@
+# vim:set ft=sh sw=2 sts=2:
+
 path=(
   "$HOME/bin"
+  "$HOME/local/bin"
   /usr/local/bin
   /usr/local/sbin
   /opt/local/bin
