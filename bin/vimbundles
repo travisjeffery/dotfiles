@@ -24,7 +24,7 @@ bundle/vim-colors-solarized
 bundle/vim-endwise
 bundle/vim-fugitive
 bundle/vim-help
-bundle/vim-markdown-preview
+bundle/hammer
 bundle/vim-pastie
 bundle/vim-quickrun
 bundle/vim-racket
