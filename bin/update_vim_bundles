@@ -1,0 +1,10 @@
+cd ~/.vim
+
+
+for bundle in $(git submodule | cut -d' ' -f3); do
+    cd ~/.vim/$bundle && git pull
+done
+
+cd ~/.vim
+
+git submodule update
