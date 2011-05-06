@@ -26,3 +26,6 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
+
+alias la="ls -a"
+function cd() {builtin cd "$@" && ls -la}
