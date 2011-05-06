@@ -1,10 +1,17 @@
+# vim:set ft=sh sw=2 sts=2:
+
 cd ~/.vim
 
 
-for bundle in $(git submodule | cut -d' ' -f3); do
-    cd ~/.vim/$bundle && git pull
+#for bundle in $(git submodule | cut -d' ' -f3); do
+    #cd ~/.vim/$bundle && git pull
+#done
+
+for bundle in $(cat ~/bin/vimbundles); do
+    cd ~/.vim/$bundle
+    git pull --rebase
 done
 
-cd ~/.vim
+#cd ~/.vim
 
-git submodule update
+#git submodule update
