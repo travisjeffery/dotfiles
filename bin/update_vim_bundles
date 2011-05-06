@@ -8,8 +8,10 @@ cd ~/.vim
 #done
 
 for bundle in $(cat ~/bin/vimbundles); do
-    cd ~/.vim/$bundle
-    git pull --rebase
+  if [ -d ~/.vim/$bundle ]; then
+    cd ~/.vim/$bundle && git pull --rebase
+    #TODO: clone plugin in they haven't been
+  fi
 done
 
 #cd ~/.vim
