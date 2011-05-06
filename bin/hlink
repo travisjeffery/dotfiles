@@ -53,7 +53,7 @@ if ARGV.include?('-h')
 end
 
 FileUtils.mkdir_p(File.join(home,'bin'))
-(Dir.entries(root) - %w(bin . .. .git) + ['bin/hr']).each do |file|
+(Dir.entries(root) - %w(bin . .. .git) + ['bin/hr'] + ['bin/git_submodule_rm'] + ['bin/update_vim_bundles']).each do |file|
   next if file =~ /~$/
   uninstall? ? uninstall(file) : install(file)
 end
