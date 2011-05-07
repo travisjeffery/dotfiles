@@ -2,8 +2,8 @@
 
 path=(
   "$HOME/bin"
-  /usr/local/share/python
   "$HOME/local/bin"
+  /usr/local/share/python
   /usr/local/bin
   /usr/local/sbin
   /opt/local/bin
