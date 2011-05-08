@@ -39,7 +39,7 @@ get_bundle vim-pathogen https://github.com/tpope/vim-pathogen.git
 get_bundle bundle/taglist git@github.com:travisjeffery/taglist.vim.git
 get_bundle bundle/gundo https://github.com/sjl/gundo.vim.git
 get_bundle bundle/vim-racket https://github.com/wlangstroth/vim-racket.git
-get_bundle bundle/command-t git://git.wincent.com/command-t.git
+get_bundle bundle/command-t git://git.wincent.com/command-t.git && cd ~/.vim/bundle/command-t && rake make
 get_bundle bundle/vim-help https://github.com/travisjeffery/vim-help
 get_bundle bundle/zencoding-vim http://github.com/mattn/zencoding-vim/
 get_bundle bundle/vim-colors-solarized https://github.com/altercation/vim-colors-solarized.git
