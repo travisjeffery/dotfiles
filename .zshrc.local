@@ -21,7 +21,7 @@ export ZSH_THEME="robbyrussell"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git manage.py)
+plugins=(git ruby rails rail3 manage.py)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -29,3 +29,7 @@ source $ZSH/oh-my-zsh.sh
 
 alias la="ls -a"
 function cd() {builtin cd "$@" && ls -la}
+function macirb() {/usr/local/bin/macirb -f "$@"}
+
+export EDITOR="mvim"
+
