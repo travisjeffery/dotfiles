@@ -3,6 +3,7 @@
 path=(
   "$HOME/bin"
   "$HOME/local/bin"
+  "$HOME/node_modules/.bin"
   /usr/local/share/python
   /usr/local/bin
   /usr/local/sbin
@@ -81,6 +82,7 @@ alias mkdir='nocorrect mkdir'
 alias spec='nocorrect spec'
 alias rspec='nocorrect rspec'
 alias ll="ls -l"
+alias la="ls -a"
 alias l.='ls -ld .[^.]*'
 alias lsd='ls -ld *(-/DN)'
 alias md='mkdir -p'

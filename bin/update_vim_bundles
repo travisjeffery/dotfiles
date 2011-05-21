@@ -51,6 +51,12 @@ get_bundle bundle/vim-colors git@github.com:travisjeffery/vim-colors.git
 get_bundle bundle/vim-autoclose https://github.com/Townk/vim-autoclose.git
 get_bundle bundle/hammer git://github.com/robgleeson/hammer.vim.git
 get_bundle bundle/vim-coffee-script https://github.com/kchmck/vim-coffee-script.git
+get_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
+get_bundle bundle/vim-markdown https://github.com/tpope/vim-markdown.git
+get_bundle bundle/vim-ruby https://github.com/vim-ruby/vim-ruby.git
+get_bundle bundle/vim-repeat https://github.com/tpope/vim-repeat.git
+get_bundle bundle/vim-git https://github.com/tpope/vim-git.git
+get_bundle bundle/vim-jade https://github.com/digitaltoad/vim-jade.git
 
 cd ~/.vim
 
