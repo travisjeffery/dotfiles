@@ -13,6 +13,51 @@ get_bundle() {
   )
 }
 
+#get_bundle bundle/nerdtree https://github.com/scrooloose/nerdtree.git
+#get_bundle bundle/vim-quickrun https://github.com/thinca/vim-quickrun.git
+#get_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
+#get_bundle bundle/ack https://github.com/mileszs/ack.vim.git
+#get_bundle bundle/bufexplorer https://github.com/vim-scripts/bufexplorer.zip.git
+#get_bundle bundle/camelcasemotion https://github.com/vim-scripts/camelcasemotion.git
+#get_bundle bundle/cheat https://github.com/vim-scripts/cheat.vim.git
+#get_bundle bundle/nerdcommenter https://github.com/scrooloose/nerdcommenter.git
+#get_bundle bundle/vim-fugitive git://github.com/tpope/vim-fugitive.git
+#get_bundle bundle/vim-endwise https://github.com/tpope/vim-endwise.git
+#get_bundle bundle/gist-vim https://github.com/mattn/gist-vim.git
+#get_bundle bundle/grep https://github.com/vim-scripts/grep.vim.git
+#get_bundle bundle/IndexedSearch https://github.com/vim-scripts/IndexedSearch.git
+#get_bundle bundle/matchit https://github.com/vim-scripts/matchit.zip.git
+#get_bundle bundle/minibufexpl https://github.com/fholgado/minibufexpl.vim.git
+#get_bundle bundle/vim-pastie https://github.com/tpope/vim-pastie.git
+#get_bundle bundle/vim-ragtag https://github.com/tpope/vim-ragtag.git
+#get_bundle bundle/vim-rails https://github.com/tpope/vim-rails.git
+#get_bundle bundle/snipmate https://github.com/msanders/snipmate.vim.git
+#get_bundle bundle/vim-surround https://github.com/tpope/vim-surround.git
+#get_bundle bundle/syntastic https://github.com/scrooloose/syntastic.git
+#get_bundle bundle/tabular https://github.com/godlygeek/tabular.git
+#get_bundle bundle/ZoomWin https://github.com/vim-scripts/ZoomWin.git
+#get_bundle bundle/snipmate-snippets git://github.com/scrooloose/snipmate-snippets.git
+#get_bundle vim-pathogen https://github.com/tpope/vim-pathogen.git
+#get_bundle bundle/taglist git@github.com:travisjeffery/taglist.vim.git
+#get_bundle bundle/gundo https://github.com/sjl/gundo.vim.git
+#get_bundle bundle/vim-racket https://github.com/wlangstroth/vim-racket.git
+#get_bundle bundle/command-t git://git.wincent.com/command-t.git && cd ~/.vim/bundle/command-t && rake make
+#get_bundle bundle/vim-help https://github.com/travisjeffery/vim-help
+#get_bundle bundle/zencoding-vim http://github.com/mattn/zencoding-vim/
+#get_bundle bundle/vim-colors-solarized https://github.com/altercation/vim-colors-solarized.git
+#get_bundle bundle/netrw-vim https://github.com/vim-scripts/netrw.vim.git
+#get_bundle bundle/tagbar https://github.com/majutsushi/tagbar.git
+#get_bundle bundle/vim-colors git@github.com:travisjeffery/vim-colors.git
+#get_bundle bundle/vim-autoclose https://github.com/Townk/vim-autoclose.git
+#get_bundle bundle/hammer git://github.com/robgleeson/hammer.vim.git
+#get_bundle bundle/vim-coffee-script https://github.com/kchmck/vim-coffee-script.git
+#get_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
+#get_bundle bundle/vim-markdown https://github.com/tpope/vim-markdown.git
+#get_bundle bundle/vim-ruby https://github.com/vim-ruby/vim-ruby.git
+#get_bundle bundle/vim-repeat https://github.com/tpope/vim-repeat.git
+#get_bundle bundle/vim-git https://github.com/tpope/vim-git.git
+#get_bundle bundle/vim-jade https://github.com/digitaltoad/vim-jade.git
+
 get_bundle bundle/nerdtree https://github.com/scrooloose/nerdtree.git
 get_bundle bundle/vim-quickrun https://github.com/thinca/vim-quickrun.git
 get_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
@@ -20,6 +65,7 @@ get_bundle bundle/ack https://github.com/mileszs/ack.vim.git
 get_bundle bundle/bufexplorer https://github.com/vim-scripts/bufexplorer.zip.git
 get_bundle bundle/camelcasemotion https://github.com/vim-scripts/camelcasemotion.git
 get_bundle bundle/cheat https://github.com/vim-scripts/cheat.vim.git
+#get_bundle bundle/csapprox https://github.com/godlygeek/csapprox.git
 get_bundle bundle/nerdcommenter https://github.com/scrooloose/nerdcommenter.git
 get_bundle bundle/vim-fugitive git://github.com/tpope/vim-fugitive.git
 get_bundle bundle/vim-endwise https://github.com/tpope/vim-endwise.git
@@ -27,36 +73,41 @@ get_bundle bundle/gist-vim https://github.com/mattn/gist-vim.git
 get_bundle bundle/grep https://github.com/vim-scripts/grep.vim.git
 get_bundle bundle/IndexedSearch https://github.com/vim-scripts/IndexedSearch.git
 get_bundle bundle/matchit https://github.com/vim-scripts/matchit.zip.git
-#get_bundle bundle/minibufexpl https://github.com/fholgado/minibufexpl.vim.git
 get_bundle bundle/vim-pastie https://github.com/tpope/vim-pastie.git
 get_bundle bundle/vim-ragtag https://github.com/tpope/vim-ragtag.git
 get_bundle bundle/vim-rails https://github.com/tpope/vim-rails.git
-get_bundle bundle/snipmate https://github.com/msanders/snipmate.vim.git
 get_bundle bundle/vim-surround https://github.com/tpope/vim-surround.git
 get_bundle bundle/syntastic https://github.com/scrooloose/syntastic.git
 get_bundle bundle/tabular https://github.com/godlygeek/tabular.git
 get_bundle bundle/ZoomWin https://github.com/vim-scripts/ZoomWin.git
-get_bundle bundle/snipmate-snippets git://github.com/scrooloose/snipmate-snippets.git
 get_bundle vim-pathogen https://github.com/tpope/vim-pathogen.git
 get_bundle bundle/taglist git@github.com:travisjeffery/taglist.vim.git
 get_bundle bundle/gundo https://github.com/sjl/gundo.vim.git
 get_bundle bundle/vim-racket https://github.com/wlangstroth/vim-racket.git
-get_bundle bundle/command-t git://git.wincent.com/command-t.git && cd ~/.vim/bundle/command-t && rake make
+get_bundle bundle/command-t git://git.wincent.com/command-t.git
 get_bundle bundle/vim-help https://github.com/travisjeffery/vim-help
 get_bundle bundle/zencoding-vim http://github.com/mattn/zencoding-vim/
 get_bundle bundle/vim-colors-solarized https://github.com/altercation/vim-colors-solarized.git
 get_bundle bundle/netrw-vim https://github.com/vim-scripts/netrw.vim.git
 get_bundle bundle/tagbar https://github.com/majutsushi/tagbar.git
 get_bundle bundle/vim-colors git@github.com:travisjeffery/vim-colors.git
-get_bundle bundle/vim-autoclose https://github.com/Townk/vim-autoclose.git
-get_bundle bundle/hammer git://github.com/robgleeson/hammer.vim.git
 get_bundle bundle/vim-coffee-script https://github.com/kchmck/vim-coffee-script.git
+get_bundle bundle/hammer git://github.com/robgleeson/hammer.vim.git
+get_bundle bundle/delimiteMate https://github.com/Raimondi/delimitMate.git
 get_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
 get_bundle bundle/vim-markdown https://github.com/tpope/vim-markdown.git
-get_bundle bundle/vim-ruby https://github.com/vim-ruby/vim-ruby.git
 get_bundle bundle/vim-repeat https://github.com/tpope/vim-repeat.git
 get_bundle bundle/vim-git https://github.com/tpope/vim-git.git
+get_bundle bundle/vim-ruby https://github.com/vim-ruby/vim-ruby.git
 get_bundle bundle/vim-jade https://github.com/digitaltoad/vim-jade.git
+#get_bundle snipmate-snippets https://github.com/scrooloose/snipmate-snippets.git
+get_bundle bundle/vim-slim https://github.com/bbommarito/vim-slim.git
+get_bundle bundle/scss-syntax https://github.com/cakebaker/scss-syntax.vim.git
+get_bundle bundle/vim-tlib https://github.com/tomtom/tlib_vim.git
+get_bundle bundle/vim-addon-mw-utils https://github.com/MarcWeber/vim-addon-mw-utils.git
+get_bundle snippets https://github.com/akitaonrails/snipmate-snippets.git
+get_bundle bundle/vim-snipmate https://github.com/MarcWeber/snipmate.vim.git
+get_bundle bundle/vim-unimpaired https://github.com/tpope/vim-unimpaired.git
 
 cd ~/.vim
 
