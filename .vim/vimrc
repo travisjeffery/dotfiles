@@ -1,0 +1,701 @@
+"Use Vim settings, rather then Vi settings (much better!).
+"This must be first, because it changes other options as a side effect.
+set nocompatible
+
+call pathogen#runtime_append_all_bundles() 
+call pathogen#helptags() 
+
+"allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+"store lots of :cmdline history
+set history=1000
+
+set showcmd     "show incomplete cmds down the bottom
+set showmode    "show current mode down the bottom
+
+set incsearch   "find the next match as we type the search
+set hlsearch    "hilight searches by default
+
+set nowrap      "dont wrap lines
+set linebreak   "wrap lines at convenient points
+
+"statusline setup
+set statusline=%f       "tail of the filename
+
+"display a warning if fileformat isnt unix
+set statusline+=%#warningmsg#
+set statusline+=%{&ff!='unix'?'['.&ff.']':''}
+set statusline+=%*
+
+"display a warning if file encoding isnt utf-8
+set statusline+=%#warningmsg#
+set statusline+=%{(&fenc!='utf-8'&&&fenc!='')?'['.&fenc.']':''}
+set statusline+=%*
+
+set statusline+=%h      "help file flag
+set statusline+=%y      "filetype
+set statusline+=%r      "read only flag
+set statusline+=%m      "modified flag
+
+"display a warning if &et is wrong, or we have mixed-indenting
+set statusline+=%#error#
+set statusline+=%{StatuslineTabWarning()}
+set statusline+=%*
+
+set statusline+=%{StatuslineTrailingSpaceWarning()}
+
+set statusline+=%{StatuslineLongLineWarning()}
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+"display a warning if &paste is set
+set statusline+=%#error#
+set statusline+=%{&paste?'[paste]':''}
+set statusline+=%*
+
+set statusline+=%=      "left/right separator
+set statusline+=%{StatuslineCurrentHighlight()}\ \ "current highlight
+set statusline+=%c,     "cursor column
+set statusline+=%l/%L   "cursor line/total lines
+set statusline+=\ %P    "percent through file
+set laststatus=2
+
+"recalculate the trailing whitespace warning when idle, and after saving
+autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
+
+"return '[\s]' if trailing white space is detected
+"return '' otherwise
+function! StatuslineTrailingSpaceWarning()
+  if !exists("b:statusline_trailing_space_warning")
+
+    if !&modifiable
+      let b:statusline_trailing_space_warning = ''
+      return b:statusline_trailing_space_warning
+    endif
+
+    if search('\s\+$', 'nw') != 0
+      let b:statusline_trailing_space_warning = '[\s]'
+    else
+      let b:statusline_trailing_space_warning = ''
+    endif
+  endif
+  return b:statusline_trailing_space_warning
+endfunction
+
+
+"return the syntax highlight group under the cursor ''
+function! StatuslineCurrentHighlight()
+  let name = synIDattr(synID(line('.'),col('.'),1),'name')
+  if name == ''
+    return ''
+  else
+    return '[' . name . ']'
+  endif
+endfunction
+
+"recalculate the tab warning flag when idle and after writing
+autocmd cursorhold,bufwritepost * unlet! b:statusline_tab_warning
+
+"return '[&et]' if &et is set wrong
+"return '[mixed-indenting]' if spaces and tabs are used to indent
+"return an empty string if everything is fine
+function! StatuslineTabWarning()
+  if !exists("b:statusline_tab_warning")
+    let b:statusline_tab_warning = ''
+
+    if !&modifiable
+      return b:statusline_tab_warning
+    endif
+
+    let tabs = search('^\t', 'nw') != 0
+
+    "find spaces that arent used as alignment in the first indent column
+    let spaces = search('^ \{' . &ts . ',}[^\t]', 'nw') != 0
+
+    if tabs && spaces
+      let b:statusline_tab_warning =  '[mixed-indenting]'
+    elseif (spaces && !&et) || (tabs && &et)
+      let b:statusline_tab_warning = '[&et]'
+    endif
+  endif
+  return b:statusline_tab_warning
+endfunction
+
+"recalculate the long line warning when idle and after saving
+autocmd cursorhold,bufwritepost * unlet! b:statusline_long_line_warning
+
+"return a warning for "long lines" where "long" is either &textwidth or 80 (if
+"no &textwidth is set)
+"
+"return '' if no long lines
+"return '[#x,my,$z] if long lines are found, were x is the number of long
+"lines, y is the median length of the long lines and z is the length of the
+"longest line
+function! StatuslineLongLineWarning()
+  if !exists("b:statusline_long_line_warning")
+
+    if !&modifiable
+      let b:statusline_long_line_warning = ''
+      return b:statusline_long_line_warning
+    endif
+
+    let long_line_lens = s:LongLines()
+
+    if len(long_line_lens) > 0
+      let b:statusline_long_line_warning = "[" .
+            \ '#' . len(long_line_lens) . "," .
+            \ 'm' . s:Median(long_line_lens) . "," .
+            \ '$' . max(long_line_lens) . "]"
+    else
+      let b:statusline_long_line_warning = ""
+    endif
+  endif
+  return b:statusline_long_line_warning
+endfunction
+
+"return a list containing the lengths of the long lines in this buffer
+function! s:LongLines()
+  let threshold = (&tw ? &tw : 80)
+  let spaces = repeat(" ", &ts)
+
+  let long_line_lens = []
+
+  let i = 1
+  while i <= line("$")
+    let len = strlen(substitute(getline(i), '\t', spaces, 'g'))
+    if len > threshold
+      call add(long_line_lens, len)
+    endif
+    let i += 1
+  endwhile
+
+  return long_line_lens
+endfunction
+
+"find the median of the given array of numbers
+function! s:Median(nums)
+  let nums = sort(a:nums)
+  let l = len(nums)
+
+  if l % 2 == 1
+    let i = (l-1) / 2
+    return nums[i]
+  else
+    return (nums[l/2] + nums[(l/2)-1]) / 2
+  endif
+endfunction
+
+if v:version >= 703
+  "undo settings
+  set undodir=~/.vim/undofiles
+  set undofile
+
+  "set colorcolumn=+1
+endif
+
+"indent settings
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+set autoindent
+
+"folding settings
+set foldmethod=indent   "fold based on indent
+set foldnestmax=3       "deepest fold is 3 levels
+set nofoldenable        "dont fold by default
+
+set wildmode=list:longest   "make cmdline tab completion similar to bash
+set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
+set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc "stuff to ignore when tab completing
+
+"display tabs and trailing spaces
+"set list
+set nolist
+set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
+
+set formatoptions-=o "dont continue comments when pushing o/O
+
+"vertical/horizontal scroll off settings
+set scrolloff=3
+set sidescrolloff=7
+set sidescroll=1
+
+"load ftplugins and indent files
+filetype on
+filetype plugin on
+filetype indent on
+
+"turn on syntax highlighting
+syntax on
+
+"some stuff to get the mouse going in term
+set mouse=a
+set ttymouse=xterm2
+
+"tell the term has 256 colors
+set t_Co=256
+
+"hide buffers when not displayed
+set hidden
+
+"dont load csapprox if we no gui support - silences an annoying warning
+if !has("gui")
+  let g:CSApprox_loaded = 1
+endif
+
+"make <c-l> clear the highlight as well as redraw
+nnoremap <C-L> :nohls<CR><C-L>
+inoremap <C-L> <C-O>:nohls<CR>
+
+"map to bufexplorer
+nnoremap <C-B> :BufExplorer<cr>
+
+"map to fuzzy finder text mate stylez
+nnoremap <c-f> :FuzzyFinderTextMate<CR>
+
+"map Q to something useful
+noremap Q gq
+
+"make Y consistent with C and D
+nnoremap Y y$
+
+"mark syntax errors with :signs
+let g:syntastic_enable_signs=1
+
+"snipmate settings
+let g:snips_author = "Travis Jeffery"
+
+"visual search mappings
+function! s:VSetSearch()
+  let temp = @@
+  norm! gvy
+  let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
+  let @@ = temp
+endfunction
+vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
+vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
+
+"jump to last cursor position when opening a file
+"dont do it when writing a commit log entry
+autocmd BufReadPost * call SetCursorPosition()
+function! SetCursorPosition()
+  if &filetype !~ 'svn\|commit\c'
+    if line("'\"") > 0 && line("'\"") <= line("$")
+      exe "normal! g`\""
+      normal! zz
+    endif
+  end
+endfunction
+
+"define :HighlightLongLines command to highlight the offending parts of
+"lines that are longer than the specified length (defaulting to 80)
+command! -nargs=? HighlightLongLines call s:HighlightLongLines('<args>')
+function! s:HighlightLongLines(width)
+  let targetWidth = a:width != '' ? a:width : 79
+  if targetWidth > 0
+    exec 'match Todo /\%>' . (targetWidth) . 'v/'
+  else
+    echomsg "Usage: HighlightLongLines [natural number]"
+  endif
+endfunction
+
+""
+"
+" All Travis Jeffery from here on.
+"
+"""
+""
+"
+" Lets and sets
+"
+"""
+compiler ruby
+
+let g:NERDTreeWinPos="right"
+let mapleader=","
+let g:mapleader=","
+let g:quickrun_direction = 'rightbelow vertical'
+let g:user_zen_leader_key = '<c-e>'
+let g:use_zen_complete_tag = 1
+let g:ragtag_global_maps = 1
+let g:user_zen_settings = {
+      \  'indentation' : '  ',
+      \   'markdown' : { 'extends' : 'html' }
+      \}
+let g:delimitMate_expand_cr = 1
+let g:delimitMate_expand_space = 1
+" skip all single-letter deletes (x)
+let g:yankring_min_element_length = 2
+
+" save last 50 items in history, only show last 50 in yankring window
+let g:yankring_max_history = 100
+let g:yankring_max_display = 100
+
+" save yankring entries across vim instances
+let g:yankring_persist = 1
+let g:yankring_share_between_instances = 1
+
+" don't save duplicates
+let g:yankring_ignore_duplicate = 1
+
+" use a separate vertical split window that auto closes and is 30 chars wide on
+" the right side
+let g:yankring_window_use_separate = 1
+let g:yankring_window_use_horiz = 0
+let g:yankring_window_auto_close = 1
+let g:yankring_window_width = 30
+let g:yankring_window_use_right = 1
+
+" pressing <space> will increase the size of the window by 15 columns
+let g:yankring_window_increment = 15
+
+" have yankring manage Vim's numbered registers ("0-"9)
+let g:yankring_manage_numbered_reg = 1
+
+" keep the history file in the $HOME/.vim folder rather than $HOME
+let g:yankring_history_dir = '$HOME/.tmp'
+
+" yankring keeps an eye on the clipboard
+let g:yankring_clipboard_monitor = 1
+
+" if something changes the default register without going through yankring, use
+" the default register value rather than the top item in yankring's history
+let g:yankring_paste_check_default_buffer = 1
+
+
+set swapfile
+if !isdirectory($HOME . "/.tmp")
+  call mkdir($HOME . "/.tmp")
+endif
+set backupdir=~/.tmp
+set directory=~/.tmp
+set backup
+if filereadable($HOME . "/.githubrc")
+  source $HOME/.githubrc
+  let g:gist_clip_command = 'pbcopy'
+endif
+if filereadable($HOME . "/.passwords")
+  source $HOME/.passwords
+endif
+"set nu
+"set nuw=5
+" no toolbar
+set go-=T
+" no left scroll bar
+set guioptions-=L
+" no right scroll bar
+set guioptions-=r
+set textwidth=79
+" no status bar
+set laststatus=0
+set ignorecase
+set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
+set complete-=k complete+=k
+set cursorline
+" no numbers
+"set nonu
+" mac clipboard fix
+set clipboard=unnamed
+" limit time to assume whether to wait on mapping
+set timeoutlen=333
+
+" left margin
+hi! link FoldColumn Normal 
+set foldcolumn=1
+
+colorscheme espresso
+
+if has("gui")
+  set noantialias
+  set columns=111
+  set lines=69
+endif
+
+if has("gui") && has("mac")
+  set transparency=0
+  " full screen fills width of screen
+  set fuopt+=maxhorz
+  set macmeta
+  " best font there is
+  set guifont=Monaco:h10
+endif
+
+if has("gui") && !has("mac")
+    set guifont=Monaco\ 9
+endif
+
+""
+"
+" Autocommands
+"
+"""
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType vim set omnifunc=syntaxcomplete#Complete
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType c set omnifunc=ccomplete#Complete
+autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
+autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
+autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
+autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
+autocmd filetype svn,*commit*,markdown set spell
+" scratch buffers are Markdown filetypes by default
+let g:do_filetype = 0
+au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
+au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
+" set git diffs to git filetype automagically
+au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
+
+""
+"
+" Mappings
+"
+"""
+nmap <leader>a= :Tabularize /=<CR>
+vmap <leader>a= :Tabularize /=<CR>
+nmap <leader>a: :Tabularize /:\zs<CR>
+vmap <leader>a: :Tabularize /:\zs<CR>
+nmap <leader>a :Tabularize /
+vmap <leader>a :Tabularize /
+nmap <leader>m :!mate <c-r>=escape(expand("%:p"), ' \')<cr><cr>
+nmap <leader>= ggVG=<c-o><c-o>
+nmap <leader>h :help <c-r>=expand("<cword>")<cr><cr>
+vmap <leader>h "ry:help<space><c-r>r<cr>
+nmap <C-cr> <esc>yyp
+imap <S-cr> <esc>$o
+nmap <C-S-cr> d$O<esc>p0x
+nmap <c-l> <c-w><c-l>
+nmap <c-h> <c-w><c-h>
+nmap <c-j> <c-w><c-j>
+nmap <c-k> <c-w><c-k>
+nmap <leader>q :bd<cr>
+nmap <leader>R :QuickRun<cr>
+nmap <leader>cb :registers<cr>
+nmap <leader>D :NERDTree<cr>
+if filereadable("/usr/local/bin/ctags")
+    let g:tagbar_ctags_bin="/usr/local/bin/ctags"
+else
+    let g:tagbar_ctags_bin="/usr/bin/ctags"
+endif
+nmap <leader>m :TagbarToggle<cr> 
+nmap <leader>d :TagbarOpenAutoClose<cr>
+nmap <leader>F :Ack<space>
+nmap <leader>c :cnext<cr>
+nmap <leader>p :cprevious<cr>
+nmap <leader>P :Hammer<CR>
+nmap <leader>z :ZoomWin<cr>
+nmap <leader>f :e ~/.vim/vimrc<cr>
+nmap <leader>= miggVG=`i
+nmap <leader>v :vsplit<CR> <C-w><C-w>
+nmap <leader>s :split<CR> <C-w><C-w>
+nmap <leader>w <C-w><C-w>_
+nmap <leader>\ :%! fmt -w 79<CR>
+vmap <leader>\ :!fmt -w 79<CR>
+nmap <leader>` :%s/\s*$//ge<CR>
+nmap <Leader>cd :cd %:p:h<CR>
+"nmap <leader>x :e ~/Dropbox/Text<cr>
+nmap <leader>o :ListMethods<cr>
+"nmap <leader>y :QuickRun zsh -src 'find . -name 
+nnoremap <silent> <Leader>y :YRShow<CR>
+nmap <leader>A :A<cr>
+nmap <leader>E :Errors<cr>
+nmap <leader>, ,c<space>
+vmap <leader>, ,c<space>
+nmap <leader>g :Git<space>
+inoremap <M-o>       <Esc>o
+inoremap <C-j>       <Down>
+nmap <d-[> <<
+nmap <d-]> >>
+imap <d-[> <<
+imap <d-]> >>
+vmap <d-[> <<
+vmap <d-]> >>
+nmap <leader>e :tag<space>
+nmap <leader><space> i<space><esc>
+nmap VV 0v$h
+nmap <left> :bp<cr>
+nmap <right> :bn<cr>
+nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
+nmap gff <C-w>gf
+nmap <leader>ft :set ft=
+nmap <d-/> ,ci
+vmap <d-/> ,ci
+imap (( ()
+imap <d-cr> <esc>$a<cr>
+" next one's too kung fu for any computer to cope...
+"imap <space><space> <right>
+imap <c-space> <right>
+"imap -- <%<space>%><esc>2hi
+nmap <leader>- i<space><esc>vs-2lxi
+nmap <leader>+ :cd %:p:h <bar> new<space>
+" emacs
+imap <C-e> <esc>$a
+imap <C-a> <esc>0i
+imap <C-b> <esc>ha
+imap <C-f> <esc>la
+imap <C-n> <esc>ja
+imap <C-p> <esc>ka
+imap <C-d> <right><bs>
+nmap <leader>T :CommandTFlush<cr>
+nmap <leader>r :R
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+imap <silent> <C-BS> <esc>bvec
+imap <C-]> <space>=><space>
+imap <C-right> <space>=><space>
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+" Visually select the text that was last edited/pasted
+nmap gV `[v`]
+imap <c-]> <space>=><space>
+
+"
+" Functions immediately followed by their mapping
+"
+"""
+
+let g:mapSafeBufList = ["\\[BufExplorer\\]", "__Tagbar__", "Nerd_tree_\d*"]
+function! IsMember(list, element)
+  for listElement in a:list
+    if match(a:element, listElement) != -1
+      return 1
+    endif
+  endfor
+  return 0
+endfunction
+
+" if in bufexplorer buffer up arrow keys goes to previous line, otherwise open
+" bufexplorer
+function! BufExplorerOrPreviousLine()
+  if IsMember(g:mapSafeBufList, bufname("%")) == 1
+    normal k
+  else
+    BufExplorer
+  endif
+endfunction
+nmap <silent> <up> :call BufExplorerOrPreviousLine()<cr>
+nmap <silent> <S-up> :NERDTree<cr>
+
+function! TagbarOrNextLine()
+  if IsMember(g:mapSafeBufList, bufname("%")) == 1
+    normal j
+  else
+    TagbarOpen
+  endif
+endfunction
+nmap <silent> <down> :call TagbarOrNextLine()<cr>
+
+" run given command but preserve position
+function! Preserve(command)
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  execute a:command
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
+nmap _= :call Preserve("normal gg=G")<CR>
+
+" convert visually selected text to proper Titlecase
+function! Titlecase()
+  if !executable("toTitleCase")
+    echo "Missing toTitleCase excutable."
+    return
+  endif
+  normal gv"xy
+  let @x = system('echo "'.@x.'"| toTitleCase | tr -d "\n"')
+  let @x = substitute(@x, '^\s*\(.\{-}\)\s*$', '\1', '')
+  normal gv
+  normal "xp
+endfunction
+vmap <leader>t :call Titlecase()<CR>
+
+" copies filepath to clipboard correctly
+function s:FilepathToClipboard()
+  call system('echo -n '.expand("%").'| pbcopy')
+endfunction
+nmap <leader>% :<C-u>call <SID>FilepathToClipboard()<CR>
+
+" explicitily shows tab indent levels/scopes
+function! ToggleIndentGuidesTabs()
+  if exists('b:iguides_tabs')
+    setlocal nolist
+    let &l:listchars = b:iguides_tabs
+    unlet b:iguides_tabs
+  else
+    let b:iguides_tabs = &l:listchars
+    setlocal listchars=tab:┆\ "protect the space
+    setlocal list
+  endif
+endfunction
+nmap <leader><bslash> :call ToggleIndentGuidesTabs()<cr>
+
+" explicitily shows space indent levels/scopes
+function! ToggleIndentGuidesSpaces()
+  if exists('b:iguides_spaces')
+    call matchdelete(b:iguides_spaces)
+    unlet b:iguides_spaces
+  else
+    let pos = range(1, &l:textwidth, &l:shiftwidth)
+    call map(pos, '"\\%" . v:val . "v"')
+    let pat = '\%(\_^\s*\)\@<=\%(' . join(pos, '\|') . '\)\s'
+    let b:iguides_spaces = matchadd('CursorLine', pat)
+  endif
+endfunction
+nmap <leader><tab> :call ToggleIndentGuidesSpaces()<cr>
+
+" open nerdtree and maximize immediately
+function! NERDTreeToggleMax()
+  :NERDTree
+  normal A
+endfunction
+nmap <leader>DD :call NERDTreeToggleMax()<cr>
+
+function! JSBeautify()
+  silent! exe '%! jsbeautifier --stdin'
+endfunction
+command! -nargs=0 JSBeautify call JSBeautify()<cr>
+
+function! DoccoAndOpenInBrowser()
+  let currentFilePath = expand("%")
+  let currentDir = expand("%:h")
+  let currentDirname = expand("%:h:t")
+  let currentFilename = expand("%:t")
+  let currentFilenameSansSuffix = expand("%:t:r")
+  let docsDirExists = isdirectory(expand("%:h") . "/docs")
+  echo docsDirExists
+  let doccoPath = "/Users/gau5/node_modules/.bin/docco"
+  let newDocsFilePath = currentDir . "/docs/" . currentFilenameSansSuffix . ".html"
+  silent! exe "!cd " . shellescape(currentDir) . " && " . doccoPath . " " . shellescape(currentFilename)
+  if docsDirExists
+    silent! exe "!open " . shellescape(newDocsFilePath)
+  else
+    silent! exe "!cp -Rf " . shellescape(currentDir . "/docs") . " /tmp" 
+    silent! exe "!open " . "/tmp/docs/" . currentFilenameSansSuffix . ".html"
+    silent! exe "!rm -rf " shellescape(currentDir . "/docs")
+  endif
+
+endfunction
+command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
+
+inoremap <C-O> <C-X><C-O> 
+" this one is sooo sweet
+inoremap <expr> <C-l>     pumvisible() ? "\<C-n>" : "\<C-x>\<C-n>"
+
+nmap <Leader>x :sp <c-r>=expand('%:p:h')<CR>/
+
+function! EditSnippetsForFiletype(filetype)
+  silent exe 'e ~/.vim/bundle/snipmate/snippets/' . a:filetype . '.snippets'
+endfunction
+command! -nargs=1 EditSnippetsForFiletype call EditSnippetsForFiletype('<args>')<cr>
+

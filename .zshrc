@@ -41,7 +41,7 @@ zstyle ':completion:*:functions' ignored-patterns '_*'
 autoload colors; colors
 
 # options
-setopt appendhistory autocd extendedglob histignoredups correctall nonomatch prompt_subst
+setopt appendhistory autocd extendedglob histignoredups nonomatch prompt_subst
 
 # Bindings
 # external editor support
@@ -107,4 +107,4 @@ compctl -g '*.feature' -W features cuke
 
 # import local zsh customizations, if present
 zrcl="$HOME/.zshrc.local"
-[[ -a $zrcl ]] && source $zrcl
+[[ ! -a $zrcl ]] || source $zrcl
