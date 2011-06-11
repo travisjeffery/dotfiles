@@ -126,7 +126,7 @@ runtime! plugin/matchit.vim
 runtime! macros/matchit.vim
 
 map Y       y$
-nnoremap <silent> <C-L> :nohls<CR><C-L>
+" nnoremap <silent> <C-L> :nohls<CR><C-L>
 inoremap <C-C> <Esc>`^
 
 cnoremap          <C-O> <Up>

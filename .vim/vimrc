@@ -247,9 +247,8 @@ if !has("gui")
 endif
 
 "make <c-l> clear the highlight as well as redraw
-" nnoremap <C-L> :nohls<CR><C-L>
-" inoremap <C-L> <C-O>:nohls<CR>
-
+"nnoremap <C-L> :nohls<CR><C-L>
+"inoremap <C-L> <C-O>:nohls<CR>
 "map to bufexplorer
 nnoremap <C-B> :BufExplorer<cr>
 
@@ -348,6 +347,9 @@ let g:yankring_window_use_horiz = 0
 let g:yankring_window_auto_close = 1
 let g:yankring_window_width = 30
 let g:yankring_window_use_right = 1
+let g:surround_indent = 1
+let g:rubycomplete_rails = 1
+
 
 " pressing <space> will increase the size of the window by 15 columns
 let g:yankring_window_increment = 15
@@ -402,7 +404,12 @@ set timeoutlen=333
 " hi! link FoldColumn Normal 
 " set foldcolumn=1
 
-colorscheme grb2
+if !has("gui")
+  colorscheme grb2
+else
+  colorscheme grb4
+endif
+
 hi CursorLine cterm=NONE ctermbg=black
 
 if has("gui")
@@ -412,7 +419,7 @@ if has("gui")
 endif
 
 if has("gui") && has("mac")
-  set transparency=0
+  " set transparency=0
   " full screen fills width of screen
   set fuopt+=maxhorz
   set macmeta
@@ -469,11 +476,11 @@ vmap <leader>h "ry:help<space><c-r>r<cr>
 nmap <C-cr> <esc>yyp
 imap <S-cr> <esc>$o
 nmap <C-S-cr> d$O<esc>p0x
-nmap <c-l> <c-w><c-l>
+nmap <leader>q :bd<cr>
 nmap <c-h> <c-w><c-h>
 nmap <c-j> <c-w><c-j>
 nmap <c-k> <c-w><c-k>
-nmap <leader>q :bd<cr>
+nmap <c-l> <c-w><c-l>
 nmap <leader>R :QuickRun<cr>
 nmap <leader>cb :registers<cr>
 nmap <leader>D :NERDTree<cr>
@@ -553,12 +560,13 @@ cnoremap %% <C-R>=expand('%:h').'/'<cr>
 " Visually select the text that was last edited/pasted
 nmap gV `[v`]
 imap <c-]> <space>=><space>
+nmap <S-left> g,
+nmap <S-right> g;
 
 "
 " Functions immediately followed by their mapping
 "
 """
-
 let g:mapSafeBufList = ["\\[BufExplorer\\]", "__Tagbar__", "Nerd_tree_\d*"]
 function! IsMember(list, element)
   for listElement in a:list
