@@ -19,7 +19,6 @@ set hlsearch    "hilight searches by default
 
 set nowrap      "dont wrap lines
 set linebreak   "wrap lines at convenient points
-
 "statusline setup
 set statusline=%f       "tail of the filename
 
@@ -61,7 +60,8 @@ set statusline+=%{StatuslineCurrentHighlight()}\ \ "current highlight
 set statusline+=%c,     "cursor column
 set statusline+=%l/%L   "cursor line/total lines
 set statusline+=\ %P    "percent through file
-set laststatus=2
+" no status bar
+set laststatus=0
 
 "recalculate the trailing whitespace warning when idle, and after saving
 autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
@@ -247,8 +247,8 @@ if !has("gui")
 endif
 
 "make <c-l> clear the highlight as well as redraw
-nnoremap <C-L> :nohls<CR><C-L>
-inoremap <C-L> <C-O>:nohls<CR>
+" nnoremap <C-L> :nohls<CR><C-L>
+" inoremap <C-L> <C-O>:nohls<CR>
 
 "map to bufexplorer
 nnoremap <C-B> :BufExplorer<cr>
@@ -389,24 +389,21 @@ set guioptions-=L
 " no right scroll bar
 set guioptions-=r
 set textwidth=79
-" no status bar
-set laststatus=0
 set ignorecase
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
 set complete-=k complete+=k
 set cursorline
-" no numbers
-"set nonu
-" mac clipboard fix
-set clipboard=unnamed
+" numbers
+set nu
 " limit time to assume whether to wait on mapping
 set timeoutlen=333
 
 " left margin
-hi! link FoldColumn Normal 
-set foldcolumn=1
+" hi! link FoldColumn Normal 
+" set foldcolumn=1
 
-colorscheme espresso
+colorscheme grb2
+hi CursorLine cterm=NONE ctermbg=black
 
 if has("gui")
   set noantialias
@@ -421,10 +418,12 @@ if has("gui") && has("mac")
   set macmeta
   " best font there is
   set guifont=Monaco:h10
+  " mac clipboard fix
+  set clipboard=unnamed
 endif
 
 if has("gui") && !has("mac")
-    set guifont=Monaco\ 9
+  set guifont=Monaco\ 9
 endif
 
 ""
@@ -479,9 +478,9 @@ nmap <leader>R :QuickRun<cr>
 nmap <leader>cb :registers<cr>
 nmap <leader>D :NERDTree<cr>
 if filereadable("/usr/local/bin/ctags")
-    let g:tagbar_ctags_bin="/usr/local/bin/ctags"
+  let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
-    let g:tagbar_ctags_bin="/usr/bin/ctags"
+  let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
 nmap <leader>m :TagbarToggle<cr> 
 nmap <leader>d :TagbarOpenAutoClose<cr>
@@ -692,10 +691,18 @@ inoremap <C-O> <C-X><C-O>
 " this one is sooo sweet
 inoremap <expr> <C-l>     pumvisible() ? "\<C-n>" : "\<C-x>\<C-n>"
 
-nmap <Leader>x :sp <c-r>=expand('%:p:h')<CR>/
+" Map ,x to open files in the same directory as the current file
+map <leader>x :sp <C-R>=expand("%:h")<cr>/
 
 function! EditSnippetsForFiletype(filetype)
   silent exe 'e ~/.vim/bundle/snipmate/snippets/' . a:filetype . '.snippets'
 endfunction
 command! -nargs=1 EditSnippetsForFiletype call EditSnippetsForFiletype('<args>')<cr>
 
+" Seriously, guys. It's not like :W is bound to anything anyway.
+command! W :w
+
+set switchbuf=useopen
+
+" Make <leader>' switch between ' and "
+nnoremap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
