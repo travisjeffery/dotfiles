@@ -197,8 +197,8 @@ endfunction
 augroup hashrocket
   autocmd!
 
-  autocmd CursorHold,BufWritePost,BufReadPost,BufLeave *
-        \ if isdirectory(expand("<amatch>:h")) | let &swapfile = &modified | endif
+  " autocmd CursorHold,BufWritePost,BufReadPost,BufLeave *
+  "       \ if isdirectory(expand("<amatch>:h")) | let &swapfile = &modified | endif
 
   autocmd BufNewFile,BufRead *.haml             set ft=haml
   autocmd BufNewFile,BufRead *.feature,*.story  set ft=cucumber

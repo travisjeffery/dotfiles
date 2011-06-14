@@ -85,7 +85,6 @@ function! StatuslineTrailingSpaceWarning()
   return b:statusline_trailing_space_warning
 endfunction
 
-
 "return the syntax highlight group under the cursor ''
 function! StatuslineCurrentHighlight()
   let name = synIDattr(synID(line('.'),col('.'),1),'name')
@@ -188,14 +187,6 @@ function! s:Median(nums)
   endif
 endfunction
 
-if v:version >= 703
-  "undo settings
-  set undodir=~/.vim/undofiles
-  set undofile
-
-  "set colorcolumn=+1
-endif
-
 "indent settings
 set shiftwidth=4
 set softtabstop=4
@@ -247,8 +238,8 @@ if !has("gui")
 endif
 
 "make <c-l> clear the highlight as well as redraw
-"nnoremap <C-L> :nohls<CR><C-L>
-"inoremap <C-L> <C-O>:nohls<CR>
+nmap <C-L> :noh<cr>
+inoremap <C-L> <C-O>:nohls<CR>
 "map to bufexplorer
 nnoremap <C-B> :BufExplorer<cr>
 
@@ -367,11 +358,19 @@ let g:yankring_clipboard_monitor = 1
 " the default register value rather than the top item in yankring's history
 let g:yankring_paste_check_default_buffer = 1
 
-
 set swapfile
 if !isdirectory($HOME . "/.tmp")
   call mkdir($HOME . "/.tmp")
 endif
+"undo settings
+set undodir=~/.tmp
+set undofile
+"maximum number of changes that can be undone
+set undolevels=1000
+"maximum number lines to save for undo on a buffer reload
+set undoreload=10000
+"set colorcolumn=+1
+
 set backupdir=~/.tmp
 set directory=~/.tmp
 set backup
@@ -382,8 +381,6 @@ endif
 if filereadable($HOME . "/.passwords")
   source $HOME/.passwords
 endif
-"set nu
-"set nuw=5
 " no toolbar
 set go-=T
 " no left scroll bar
@@ -397,6 +394,7 @@ set complete-=k complete+=k
 set cursorline
 " numbers
 set nu
+set nuw=5
 " limit time to assume whether to wait on mapping
 set timeoutlen=333
 
@@ -410,12 +408,17 @@ else
   colorscheme grb4
 endif
 
-hi CursorLine cterm=NONE ctermbg=black
+" hi CursorLine cterm=NONE ctermbg=black
 
 if has("gui")
   set noantialias
   set columns=111
   set lines=69
+  " mac clipboard fix
+endif
+
+if has("mac")
+  set clipboard=unnamed
 endif
 
 if has("gui") && has("mac")
@@ -425,8 +428,6 @@ if has("gui") && has("mac")
   set macmeta
   " best font there is
   set guifont=Monaco:h10
-  " mac clipboard fix
-  set clipboard=unnamed
 endif
 
 if has("gui") && !has("mac")
@@ -668,11 +669,13 @@ function! NERDTreeToggleMax()
 endfunction
 nmap <leader>DD :call NERDTreeToggleMax()<cr>
 
+" replace the current buffer's, hopefully, javascript text beautified
 function! JSBeautify()
   silent! exe '%! jsbeautifier --stdin'
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<cr>
 
+" overly complex fuction to open up docco for the current file
 function! DoccoAndOpenInBrowser()
   let currentFilePath = expand("%")
   let currentDir = expand("%:h")
@@ -695,8 +698,9 @@ function! DoccoAndOpenInBrowser()
 endfunction
 command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
 
+" don't type in the entire omni-completion emacs-like binding
 inoremap <C-O> <C-X><C-O> 
-" this one is sooo sweet
+" use C-l to look for completion and navigate omni-completion menu correctly
 inoremap <expr> <C-l>     pumvisible() ? "\<C-n>" : "\<C-x>\<C-n>"
 
 " Map ,x to open files in the same directory as the current file
@@ -709,8 +713,15 @@ command! -nargs=1 EditSnippetsForFiletype call EditSnippetsForFiletype('<args>')
 
 " Seriously, guys. It's not like :W is bound to anything anyway.
 command! W :w
+" Seriously, guys. It's not like :E is bound to anything anyway.
+command! E :e
 
+" jump to the first open window that contains the specified buffer (if there is one).
+" Otherwise: Do not examine other windows.
 set switchbuf=useopen
 
 " Make <leader>' switch between ' and "
 nnoremap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
+
+nmap \\           <plug>NERDCommenterInvert
+xmap \\           <Plug>NERDCommenterInvert
