@@ -18,3 +18,9 @@ bell_msg "Bell in window %n (%t)^G"
 bind  K kill
 bind  z stuff ^Z
 bind  ` select 0
+
+unbind l
+bind j focus down
+bind k focus up
+bind h focus top
+bind l focus bottom
