@@ -62,6 +62,7 @@ git_bundle bundle/vim-addon-mw-utils git://github.com/MarcWeber/vim-addon-mw-uti
 git_bundle snippets git://github.com/akitaonrails/snipmate-snippets.git
 git_bundle bundle/vim-snipmate git://github.com/MarcWeber/snipmate.vim.git
 git_bundle bundle/vim-unimpaired git://github.com/tpope/vim-unimpaired.git
+git_bundle vim-pathogen git://github.com/tpope/vim-pathogen.git
 
 svn_bundle() {
   (
