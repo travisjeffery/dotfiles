@@ -491,6 +491,7 @@ if filereadable("/usr/local/bin/ctags")
 else
   let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
+" a lot of these are not being overwritten by easymotion
 nmap <leader>m :TagbarToggle<cr> 
 nmap <leader>d :TagbarOpenAutoClose<cr>
 nmap <leader>F :Ack<space>
@@ -503,12 +504,13 @@ nmap <leader>= miggVG=`i
 nmap <leader>v :vsplit<CR> <C-w><C-w>
 nmap <leader>s :split<CR> <C-w><C-w>
 nmap <leader>w <C-w><C-w>_
+nmap ;; :CommandT<cr>
 nmap <leader>\ :%! fmt -w 79<CR>
 vmap <leader>\ :!fmt -w 79<CR>
 nmap <leader>` :%s/\s*$//ge<CR>
 nmap <Leader>cd :cd %:p:h<CR>
 "nmap <leader>x :e ~/Dropbox/Text<cr>
-nmap <leader>o :ListMethods<cr>
+" nmap <leader>o :ListMethods<cr>
 "nmap <leader>y :QuickRun zsh -src 'find . -name 
 nnoremap <silent> <Leader>y :YRShow<CR>
 " nmap <leader>A :A<cr>
@@ -518,12 +520,12 @@ vmap <leader>, ,c<space>
 nmap <leader>g :Git<space>
 inoremap <M-o>       <Esc>o
 inoremap <C-j>       <Down>
-nmap <d-[> <<
-nmap <d-]> >>
-imap <d-[> <<
-imap <d-]> >>
-vmap <d-[> <<
-vmap <d-]> >>
+" nmap <d-[> <<
+" nmap <d-]> >>
+" imap <d-[> <<
+" imap <d-]> >>
+" vmap <d-[> <<
+" vmap <d-]> >>
 nmap <leader>E :tag<space>
 nmap <leader><space> i<space><esc>
 nmap VV 0v$h
