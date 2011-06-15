@@ -471,7 +471,7 @@ nmap <leader>a: :Tabularize /:\zs<CR>
 vmap <leader>a: :Tabularize /:\zs<CR>
 nmap <leader>a :Tabularize /
 vmap <leader>a :Tabularize /
-nmap <leader>m :!mate <c-r>=escape(expand("%:p"), ' \')<cr><cr>
+" nmap <leader>m :!mate <c-r>=escape(expand("%:p"), ' \')<cr><cr>
 nmap <leader>= ggVG=<c-o><c-o>
 nmap <leader>h :help <c-r>=expand("<cword>")<cr><cr>
 vmap <leader>h "ry:help<space><c-r>r<cr>
@@ -511,8 +511,8 @@ nmap <Leader>cd :cd %:p:h<CR>
 nmap <leader>o :ListMethods<cr>
 "nmap <leader>y :QuickRun zsh -src 'find . -name 
 nnoremap <silent> <Leader>y :YRShow<CR>
-nmap <leader>A :A<cr>
-nmap <leader>E :Errors<cr>
+" nmap <leader>A :A<cr>
+" nmap <leader>E :Errors<cr>
 nmap <leader>, ,c<space>
 vmap <leader>, ,c<space>
 nmap <leader>g :Git<space>
@@ -524,7 +524,7 @@ imap <d-[> <<
 imap <d-]> >>
 vmap <d-[> <<
 vmap <d-]> >>
-nmap <leader>e :tag<space>
+nmap <leader>E :tag<space>
 nmap <leader><space> i<space><esc>
 nmap VV 0v$h
 nmap <left> :bp<cr>
