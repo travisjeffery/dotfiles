@@ -238,8 +238,7 @@ if !has("gui")
 endif
 
 "make <c-l> clear the highlight as well as redraw
-nmap <C-L> :noh<cr>
-inoremap <C-L> <C-O>:nohls<CR>
+nnoremap <silent> <C-L> :nohls<CR><C-L>
 "map to bufexplorer
 nnoremap <C-B> :BufExplorer<cr>
 
@@ -704,7 +703,7 @@ command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
 " don't type in the entire omni-completion emacs-like binding
 inoremap <C-O> <C-X><C-O> 
 " use C-l to look for completion and navigate omni-completion menu correctly
-inoremap <expr> <C-l>     pumvisible() ? "\<C-n>" : "\<C-x>\<C-n>"
+inoremap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-x>\<C-p>"
 
 " Map ,x to open files in the same directory as the current file
 map <leader>x :sp <C-R>=expand("%:h")<cr>/
