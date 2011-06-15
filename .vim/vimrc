@@ -513,6 +513,7 @@ nmap <Leader>cd :cd %:p:h<CR>
 " nmap <leader>o :ListMethods<cr>
 "nmap <leader>y :QuickRun zsh -src 'find . -name 
 nnoremap <silent> <Leader>y :YRShow<CR>
+nnoremap <silent> <Leader>Y :GundoToggle<CR>
 " nmap <leader>A :A<cr>
 " nmap <leader>E :Errors<cr>
 nmap <leader>, ,c<space>
@@ -526,7 +527,7 @@ inoremap <C-j>       <Down>
 " imap <d-]> >>
 " vmap <d-[> <<
 " vmap <d-]> >>
-nmap <leader>E :tag<space>
+" nmap <leader>E :tag<space>
 nmap <leader><space> i<space><esc>
 nmap VV 0v$h
 nmap <left> :bp<cr>
@@ -534,10 +535,10 @@ nmap <right> :bn<cr>
 nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
 nmap gff <C-w>gf
 nmap <leader>ft :set ft=
-nmap <d-/> ,ci
-vmap <d-/> ,ci
+" nmap <d-/> ,ci
+" vmap <d-/> ,ci
 imap (( ()
-imap <d-cr> <esc>$a<cr>
+" imap <d-cr> <esc>$a<cr>
 " next one's too kung fu for any computer to cope...
 "imap <space><space> <right>
 imap <c-space> <right>
@@ -558,12 +559,11 @@ map <silent> w <Plug>CamelCaseMotion_w
 map <silent> b <Plug>CamelCaseMotion_b
 map <silent> e <Plug>CamelCaseMotion_e
 imap <silent> <C-BS> <esc>bvec
-imap <C-]> <space>=><space>
 imap <C-right> <space>=><space>
+imap <c-]> <space>=><space>
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
 " Visually select the text that was last edited/pasted
 nmap gV `[v`]
-imap <c-]> <space>=><space>
 nmap <S-left> g,
 nmap <S-right> g;
 
