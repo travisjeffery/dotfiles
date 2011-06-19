@@ -24,3 +24,5 @@ bind j focus down
 bind k focus up
 bind h focus top
 bind l focus bottom
+
+bind ' ' windowlist -b

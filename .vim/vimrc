@@ -293,11 +293,6 @@ endfunction
 
 ""
 "
-" All Travis Jeffery from here on.
-"
-"""
-""
-"
 " Lets and sets
 "
 """
@@ -318,18 +313,14 @@ let g:delimitMate_expand_cr = 1
 let g:delimitMate_expand_space = 1
 " skip all single-letter deletes (x)
 let g:yankring_min_element_length = 2
-
 " save last 50 items in history, only show last 50 in yankring window
 let g:yankring_max_history = 100
 let g:yankring_max_display = 100
-
 " save yankring entries across vim instances
 let g:yankring_persist = 1
 let g:yankring_share_between_instances = 1
-
 " don't save duplicates
 let g:yankring_ignore_duplicate = 1
-
 " use a separate vertical split window that auto closes and is 30 chars wide on
 " the right side
 let g:yankring_window_use_separate = 1
@@ -337,10 +328,11 @@ let g:yankring_window_use_horiz = 0
 let g:yankring_window_auto_close = 1
 let g:yankring_window_width = 30
 let g:yankring_window_use_right = 1
+" stop yankring from monitoring movements, too slow
+let g:yankring_o_keys = ''
 let g:surround_indent = 1
 let g:rubycomplete_rails = 1
 let g:HammerQuiet = 1
-
 
 " pressing <space> will increase the size of the window by 15 columns
 let g:yankring_window_increment = 15
@@ -358,6 +350,7 @@ let g:yankring_clipboard_monitor = 1
 " the default register value rather than the top item in yankring's history
 let g:yankring_paste_check_default_buffer = 1
 
+" swapfile settings and storage directory
 set swapfile
 if !isdirectory($HOME . "/.tmp")
   call mkdir($HOME . "/.tmp")
@@ -370,7 +363,6 @@ set undolevels=1000
 "maximum number lines to save for undo on a buffer reload
 set undoreload=10000
 "set colorcolumn=+1
-
 set backupdir=~/.tmp
 set directory=~/.tmp
 set backup
@@ -389,8 +381,10 @@ set guioptions-=L
 set guioptions-=r
 set textwidth=79
 set ignorecase
+" complete words from system dictionary
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
 set complete-=k complete+=k
+" highlight the line that the cursor is currently on
 set cursorline
 " numbers
 set nu
@@ -398,26 +392,20 @@ set nuw=5
 " limit time to assume whether to wait on mapping
 set timeoutlen=333
 
-" left margin
-" hi! link FoldColumn Normal 
-" set foldcolumn=1
-
 if !has("gui")
   colorscheme grb2
 else
   colorscheme grb4
 endif
 
-" hi CursorLine cterm=NONE ctermbg=black
-
 if has("gui")
   set noantialias
   set columns=111
   set lines=69
-  " mac clipboard fix
 endif
 
 if has("mac")
+  " mac clipboard fix
   set clipboard=unnamed
 endif
 
@@ -464,26 +452,29 @@ au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filet
 " Mappings
 "
 """
+" alignment
 nmap <leader>a= :Tabularize /=<CR>
 vmap <leader>a= :Tabularize /=<CR>
 nmap <leader>a: :Tabularize /:\zs<CR>
 vmap <leader>a: :Tabularize /:\zs<CR>
 nmap <leader>a :Tabularize /
 vmap <leader>a :Tabularize /
-" nmap <leader>m :!mate <c-r>=escape(expand("%:p"), ' \')<cr><cr>
+" indent all lines in current buffer
 nmap <leader>= ggVG=<c-o><c-o>
+" open help on current word
 nmap <leader>h :help <c-r>=expand("<cword>")<cr><cr>
 vmap <leader>h "ry:help<space><c-r>r<cr>
 nmap <C-cr> <esc>yyp
 imap <S-cr> <esc>$o
 nmap <C-S-cr> d$O<esc>p0x
+" close the current buffer
 nmap <leader>q :bd<cr>
+" navigate through buffers
 nmap <c-h> <c-w><c-h>
 nmap <c-j> <c-w><c-j>
 nmap <c-k> <c-w><c-k>
 nmap <c-l> <c-w><c-l>
 nmap <leader>R :QuickRun<cr>
-nmap <leader>cb :registers<cr>
 nmap <leader>D :NERDTree<cr>
 if filereadable("/usr/local/bin/ctags")
   let g:tagbar_ctags_bin="/usr/local/bin/ctags"
@@ -493,30 +484,26 @@ endif
 " a lot of these are not being overwritten by easymotion
 nmap <leader>m :TagbarToggle<cr> 
 nmap <leader>d :TagbarOpenAutoClose<cr>
-nmap <leader>F :Ack<space>
+" navigate through make errors
 nmap <leader>c :cnext<cr>
 nmap <leader>p :cprevious<cr>
-nmap <leader>P :Hammer<CR>
+" go-to-next error
+nmap <leader>, ,c<space>
+" nmap <leader>P :Hammer<CR>
 nmap <leader>z :ZoomWin<cr>
-nmap <leader>f :e ~/.vim/vimrc<cr>
+" nmap <leader>f :e ~/.vim/vimrc<cr>
 nmap <leader>= miggVG=`i
+" open up vertical and horizontal splits
 nmap <leader>v :vsplit<CR> <C-w><C-w>
 nmap <leader>s :split<CR> <C-w><C-w>
-nmap <leader>w <C-w><C-w>_
+" nmap <leader>w <C-w><C-w>_
 nmap ;; :CommandT<cr>
 nmap <leader>\ :%! fmt -w 79<CR>
 vmap <leader>\ :!fmt -w 79<CR>
 nmap <leader>` :%s/\s*$//ge<CR>
 nmap <Leader>cd :cd %:p:h<CR>
-"nmap <leader>x :e ~/Dropbox/Text<cr>
-" nmap <leader>o :ListMethods<cr>
-"nmap <leader>y :QuickRun zsh -src 'find . -name 
 nnoremap <silent> <Leader>y :YRShow<CR>
 nnoremap <silent> <Leader>Y :GundoToggle<CR>
-" nmap <leader>A :A<cr>
-" nmap <leader>E :Errors<cr>
-nmap <leader>, ,c<space>
-vmap <leader>, ,c<space>
 nmap <leader>g :Git<space>
 inoremap <M-o>       <Esc>o
 inoremap <C-j>       <Down>
@@ -527,12 +514,17 @@ inoremap <C-j>       <Down>
 " vmap <d-[> <<
 " vmap <d-]> >>
 " nmap <leader>E :tag<space>
+" insert space without leaving normal mode
 nmap <leader><space> i<space><esc>
+" yank current-line without \n
 nmap VV 0v$h
+" navigate buffers with arrow keys
 nmap <left> :bp<cr>
 nmap <right> :bn<cr>
+" set size of buffer on left and right to preferred sizes
 nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
 nmap gff <C-w>gf
+" quickley set the filetype
 nmap <leader>ft :set ft=
 " nmap <d-/> ,ci
 " vmap <d-/> ,ci
@@ -544,27 +536,41 @@ imap <c-space> <right>
 "imap -- <%<space>%><esc>2hi
 nmap <leader>- i<space><esc>vs-2lxi
 nmap <leader>+ :cd %:p:h <bar> new<space>
-" emacs
+" emacs-like keybindings when editing text in insert mode
+" end of line
 imap <C-e> <esc>$a
+" beginning-of-line
 imap <C-a> <esc>0i
+" back-one-char
 imap <C-b> <esc>ha
+" forward-one-char
 imap <C-f> <esc>la
+" next-line
 imap <C-n> <esc>ja
+" previous-line
 imap <C-p> <esc>ka
+" delete-forward-char
 imap <C-d> <right><bs>
+" delete-previous-word
+imap <silent> <C-BS> <esc>bvec
+" to call after adding file to project so that command-t has it in cache
 nmap <leader>T :CommandTFlush<cr>
+" open up vim-rails
 nmap <leader>r :R
+" better movement when editing languages with camelcase and duck typed code
 map <silent> w <Plug>CamelCaseMotion_w
 map <silent> b <Plug>CamelCaseMotion_b
 map <silent> e <Plug>CamelCaseMotion_e
-imap <silent> <C-BS> <esc>bvec
+" insert hashrockets quickly for ruby
 imap <C-right> <space>=><space>
 imap <c-]> <space>=><space>
+" insert currently opened file's filename in command prompt
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
 " Visually select the text that was last edited/pasted
 nmap gV `[v`]
-nmap <S-left> g,
-nmap <S-right> g;
+" navigate changes in file
+nmap <S-right> g,
+nmap <S-left> g;
 
 "
 " Functions immediately followed by their mapping
@@ -696,7 +702,6 @@ function! DoccoAndOpenInBrowser()
     silent! exe "!open " . "/tmp/docs/" . currentFilenameSansSuffix . ".html"
     silent! exe "!rm -rf " shellescape(currentDir . "/docs")
   endif
-
 endfunction
 command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
 
@@ -725,5 +730,11 @@ set switchbuf=useopen
 " Make <leader>' switch between ' and "
 nnoremap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
 
+" quick comment/uncomment
 nmap \\           <plug>NERDCommenterInvert
 xmap \\           <Plug>NERDCommenterInvert
+
+" open up command history/buffer faster
+nmap q; q:
+
+" nmap <leader>F :Ack<space>
