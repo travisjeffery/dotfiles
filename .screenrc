@@ -5,7 +5,6 @@ hardstatus on
 hardstatus lastline '%H:  %-Lw%34>[%n*%f %t]%+Lw'
 escape ^\\\
 bindkey ^Q command
-bindkey ^Z command
 defnonblock on
 defscrollback 5000
 defflow off
@@ -16,7 +15,6 @@ activity "Activity in window %n (%t)^G^G"
 bell_msg "Bell in window %n (%t)^G"
 
 bind  K kill
-bind  z stuff ^Z
 bind  ` select 0
 
 unbind l
