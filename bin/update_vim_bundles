@@ -64,6 +64,7 @@ git_bundle bundle/vim-snipmate git://github.com/MarcWeber/snipmate.vim.git
 git_bundle bundle/vim-unimpaired git://github.com/tpope/vim-unimpaired.git
 git_bundle vim-pathogen git://github.com/tpope/vim-pathogen.git
 git_bundle vim-easymotion git://github.com/Lokaltog/vim-easymotion.git
+git_bundle vim-makegreen git://github.com/reinh/vim-makegreen.git
 
 svn_bundle() {
   (

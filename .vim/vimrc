@@ -633,6 +633,7 @@ function! Titlecase()
   normal gv
   normal "xp
 endfunction
+vunmap <leader>t
 vmap <leader>t :call Titlecase()<CR>
 
 " copies filepath to clipboard correctly
