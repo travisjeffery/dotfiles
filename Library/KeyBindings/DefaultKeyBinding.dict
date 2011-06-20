@@ -13,7 +13,7 @@
     "~\010"="deleteWordBackward:";
     "~\177"="deleteWordBackward:";
     "~m"="complete:";
-    "^a"="moveToBeginningOfParagraph:":
-    "^e"="moveToEndOfParagraph:":
+    "^a"="moveToBeginningOfParagraph:";
+    "^e"="moveToEndOfParagraph:";
 }
 
