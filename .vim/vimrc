@@ -19,6 +19,12 @@ set hlsearch    "hilight searches by default
 
 set nowrap      "dont wrap lines
 set linebreak   "wrap lines at convenient points
+" We have to have a winheight bigger than we want to set winminheight. But if
+" we set winheight to be huge before winminheight, the winminheight set will
+" fail.
+set winheight=5
+set winminheight=5
+set winheight=999
 "statusline setup
 set statusline=%f       "tail of the filename
 
@@ -422,6 +428,68 @@ if has("gui") && !has("mac")
   set guifont=Monaco\ 9
 endif
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Running tests
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" vim-makegreen binds itself to ,t unless something else is bound to its
+" function.
+" map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
+map <silent> <Leader>tt :call MakeGreen()<cr>
+
+function! RunTests(filename)
+  " Write the file and run tests for the given filename
+  :w
+  :silent !echo;echo;echo;echo;echo
+  if filereadable("script/test")
+    exec ":!script/test " . a:filename
+  else
+    exec ":!bundle exec rspec " . a:filename
+  end
+endfunction
+
+function! SetTestFile()
+  " Set the spec file that tests will be run for.
+  let t:grb_test_file=@%
+endfunction
+
+function! RunTestFile(...)
+  if a:0
+    let command_suffix = a:1
+  else
+    let command_suffix = ""
+  endif
+
+  " Run the tests for the previously-marked file.
+  let in_spec_file = match(expand("%"), '_spec.rb$') != -1
+  if in_spec_file
+    call SetTestFile()
+  elseif !exists("t:grb_test_file")
+    return
+  end
+  call RunTests(t:grb_test_file . command_suffix)
+endfunction
+
+function! RunNearestTest()
+  let spec_line_number = line('.')
+  call RunTestFile(":" . spec_line_number)
+endfunction
+
+map <leader>t :call RunTestFile()<cr>
+map <leader>T :call RunNearestTest()<cr>
+map <leader>a :call RunTests('spec')<cr>
+
+function! OpenChangedFiles()
+  only " Close all windows, unless they're modified
+  let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
+  let filenames = split(status, "\n")
+  exec "edit " . filenames[0]
+  for filename in filenames[1:]
+    exec "sp " . filename
+  endfor
+endfunction
+command! OpenChangedFiles :call OpenChangedFiles()
+
 ""
 "
 " Autocommands
@@ -440,6 +508,8 @@ autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
 autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
 autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
 autocmd filetype svn,*commit*,markdown set spell
+autocmd BufNewFile,BufRead *_spec.rb compiler rspec
+autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
 " scratch buffers are Markdown filetypes by default
 let g:do_filetype = 0
 au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
@@ -633,7 +703,6 @@ function! Titlecase()
   normal gv
   normal "xp
 endfunction
-vunmap <leader>t
 vmap <leader>t :call Titlecase()<CR>
 
 " copies filepath to clipboard correctly
@@ -744,4 +813,13 @@ xmap \\           <Plug>NERDCommenterInvert
 " open up command history/buffer faster
 nmap q; q:
 
-" nmap <leader>F :Ack<space>
+
+
+" if &diff
+" nmap <c-h> :diffget 1<cr>
+" nmap <c-l> :diffget 3<cr>
+" nmap <c-k> [cz.
+" nmap <c-j> ]cz.
+" set nonumber
+" endif
+
