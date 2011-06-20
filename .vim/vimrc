@@ -487,8 +487,7 @@ nmap <leader>d :TagbarOpenAutoClose<cr>
 " navigate through make errors
 nmap <leader>c :cnext<cr>
 nmap <leader>p :cprevious<cr>
-" go-to-next error
-nmap <leader>, ,c<space>
+nmap <leader><leader> <C-^>
 " nmap <leader>P :Hammer<CR>
 nmap <leader>z :ZoomWin<cr>
 " nmap <leader>f :e ~/.vim/vimrc<cr>
@@ -554,7 +553,7 @@ imap <C-d> <right><bs>
 " delete-previous-word
 imap <silent> <C-BS> <esc>bvec
 " to call after adding file to project so that command-t has it in cache
-nmap <leader>T :CommandTFlush<cr>
+" nmap <leader>T :CommandTFlush<cr>
 " open up vim-rails
 nmap <leader>r :R
 " better movement when editing languages with camelcase and duck typed code
