@@ -497,7 +497,7 @@ nmap <leader>= miggVG=`i
 nmap <leader>v :vsplit<CR> <C-w><C-w>
 nmap <leader>s :split<CR> <C-w><C-w>
 " nmap <leader>w <C-w><C-w>_
-nmap ;; :CommandT<cr>
+nmap ;; :CommandTFlush<cr>:CommandT<cr>
 nmap <leader>\ :%! fmt -w 79<CR>
 vmap <leader>\ :!fmt -w 79<CR>
 nmap <leader>` :%s/\s*$//ge<CR>
@@ -525,7 +525,7 @@ nmap <right> :bn<cr>
 nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
 nmap gff <C-w>gf
 " quickley set the filetype
-nmap <leader>ft :set ft=
+" nmap <leader>ft :set ft=
 " nmap <d-/> ,ci
 " vmap <d-/> ,ci
 imap (( ()
@@ -638,7 +638,14 @@ vmap <leader>t :call Titlecase()<CR>
 
 " copies filepath to clipboard correctly
 function s:FilepathToClipboard()
-  call system('echo -n '.expand("%").'| pbcopy')
+  if has("mac")
+    call system('echo -n '.expand("%").'| pbcopy')
+  else
+    if !executable('xclip')
+      echo "xclip exectuable needed to pipe text into clipboard."
+    endif
+    call system('echo -n '.expand("%").'| xclip -selection clipboard')
+  endif
 endfunction
 nmap <leader>% :<C-u>call <SID>FilepathToClipboard()<CR>
 
