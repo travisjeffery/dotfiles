@@ -662,6 +662,9 @@ endfunction
 map <leader>gR :call ShowRoutes()<cr>
 map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
 map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
+map <leader>gu :CommandTFlush<cr>\|:CommandT test/unit<cr>
+map <leader>gF :CommandTFlush<cr>\|:CommandT test/functional<cr>
+map <leader>gt :CommandTFlush<cr>\|:CommandT test<cr>
 map <leader>gm :CommandTFlush<cr>\|:CommandT app/models<cr>
 map <leader>gh :CommandTFlush<cr>\|:CommandT app/helpers<cr>
 map <leader>gl :CommandTFlush<cr>\|:CommandT lib<cr>
