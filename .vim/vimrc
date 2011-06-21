@@ -22,6 +22,7 @@ set linebreak   "wrap lines at convenient points
 " We have to have a winheight bigger than we want to set winminheight. But if
 " we set winheight to be huge before winminheight, the winminheight set will
 " fail.
+set winwidth=84
 set winheight=5
 set winminheight=5
 set winheight=999
@@ -66,8 +67,10 @@ set statusline+=%{StatuslineCurrentHighlight()}\ \ "current highlight
 set statusline+=%c,     "cursor column
 set statusline+=%l/%L   "cursor line/total lines
 set statusline+=\ %P    "percent through file
-" no status bar
-set laststatus=0
+" Always showstatus bar
+set laststatus=2
+" Always show tab bar
+set showtabline=2
 
 "recalculate the trailing whitespace warning when idle, and after saving
 autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
@@ -557,7 +560,6 @@ nmap <leader>d :TagbarOpenAutoClose<cr>
 " navigate through make errors
 nmap <leader>c :cnext<cr>
 nmap <leader>p :cprevious<cr>
-nmap <leader><leader> <C-^>
 " nmap <leader>P :Hammer<CR>
 nmap <leader>z :ZoomWin<cr>
 " nmap <leader>f :e ~/.vim/vimrc<cr>
@@ -566,14 +568,14 @@ nmap <leader>= miggVG=`i
 nmap <leader>v :vsplit<CR> <C-w><C-w>
 nmap <leader>s :split<CR> <C-w><C-w>
 " nmap <leader>w <C-w><C-w>_
-nmap ;; :CommandTFlush<cr>:CommandT<cr>
 nmap <leader>\ :%! fmt -w 79<CR>
 vmap <leader>\ :!fmt -w 79<CR>
 nmap <leader>` :%s/\s*$//ge<CR>
 nmap <Leader>cd :cd %:p:h<CR>
 nnoremap <silent> <Leader>y :YRShow<CR>
 nnoremap <silent> <Leader>Y :GundoToggle<CR>
-nmap <leader>g :Git<space>
+" nmap <leader>g :Git<space>
+map 
 inoremap <M-o>       <Esc>o
 inoremap <C-j>       <Down>
 " nmap <d-[> <<
@@ -640,6 +642,37 @@ nmap gV `[v`]
 " navigate changes in file
 nmap <S-right> g,
 nmap <S-left> g;
+
+" Map keys to go to specific files
+map <leader>gr :topleft :split config/routes.rb<cr>
+function! ShowRoutes()
+  " Requires 'scratch' plugin
+  :topleft 100 :split __Routes__
+  " Make sure Vim doesn't write __Routes__ as a file
+  :set buftype=nofile
+  " Delete everything
+  :normal 1GdG
+  " Put routes output in buffer
+  :0r! rake -s routes
+  " Size window to number of lines (1 plus rake output length)
+  :exec ":normal " . line("$") . "_ "
+  " Move cursor to bottom
+  :normal 1GG
+  " Delete empty trailing line
+  :normal dd
+endfunction
+map <leader>gR :call ShowRoutes()<cr>
+map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
+map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
+map <leader>gm :CommandTFlush<cr>\|:CommandT app/models<cr>
+map <leader>gh :CommandTFlush<cr>\|:CommandT app/helpers<cr>
+map <leader>gl :CommandTFlush<cr>\|:CommandT lib<cr>
+map <leader>gp :CommandTFlush<cr>\|:CommandT public<cr>
+map <leader>gs :CommandTFlush<cr>\|:CommandT public/stylesheets<cr>
+map <leader>gg :topleft 100 :split Gemfile<cr>
+map <leader>gf :CommandT %%/<cr>
+nmap ;; :CommandTFlush<cr>:CommandT<cr>
+nmap <leader><leader> <C-^>
 
 "
 " Functions immediately followed by their mapping
@@ -812,8 +845,6 @@ xmap \\           <Plug>NERDCommenterInvert
 
 " open up command history/buffer faster
 nmap q; q:
-
-
 
 " if &diff
 " nmap <c-h> :diffget 1<cr>
