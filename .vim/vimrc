@@ -574,8 +574,6 @@ nmap <leader>` :%s/\s*$//ge<CR>
 nmap <Leader>cd :cd %:p:h<CR>
 nnoremap <silent> <Leader>y :YRShow<CR>
 nnoremap <silent> <Leader>Y :GundoToggle<CR>
-" nmap <leader>g :Git<space>
-map 
 inoremap <M-o>       <Esc>o
 inoremap <C-j>       <Down>
 " nmap <d-[> <<
