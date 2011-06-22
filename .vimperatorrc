@@ -1,6 +1,8 @@
 nmap ,, <C-^>
 nmap <left> gT
 nmap <right> gt
+nmap ,a :back<cr>
+nmap ,f :forward<cr>
 nmap <c-l> gt
 nmap <c-h> gT
 set complete=slth
