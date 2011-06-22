@@ -1,0 +1,7 @@
+nmap ,, <C-^>
+nmap <left> gT
+nmap <right> gt
+nmap <c-l> gt
+nmap <c-h> gT
+set complete=slth
+set wildmode=list:full
