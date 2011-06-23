@@ -437,7 +437,7 @@ endif
 
 " vim-makegreen binds itself to ,t unless something else is bound to its
 " function.
-" map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
+map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
 " map <silent> <Leader>tt :call MakeGreen()<cr>
 map <silent> <Leader>tt :!~/.rvm/rubies/default/bin/ruby -I test <c-r>=expand("%:p")<cr><cr>
 
