@@ -438,7 +438,8 @@ endif
 " vim-makegreen binds itself to ,t unless something else is bound to its
 " function.
 " map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
-map <silent> <Leader>tt :call MakeGreen()<cr>
+" map <silent> <Leader>tt :call MakeGreen()<cr>
+map <silent> <Leader>tt :!~/.rvm/rubies/default/bin/ruby -I test <c-r>=expand("%:p")<cr><cr>
 
 function! RunTests(filename)
   " Write the file and run tests for the given filename
@@ -635,6 +636,8 @@ imap <C-right> <space>=><space>
 imap <c-]> <space>=><space>
 " insert currently opened file's filename in command prompt
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
+cnoremap %& <C-R>=expand('%:p')<cr>
+" cabbrev rrvm ~/.rvm/rubies/default/ruby
 " Visually select the text that was last edited/pasted
 nmap gV `[v`]
 " navigate changes in file
