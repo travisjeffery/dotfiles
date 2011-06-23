@@ -615,9 +615,9 @@ imap <C-b> <esc>ha
 " forward-one-char
 imap <C-f> <esc>la
 " next-line
-imap <C-n> <esc>ja
+" imap <C-n> <esc>ja
 " previous-line
-imap <C-p> <esc>ka
+" imap <C-p> <esc>ka
 " delete-forward-char
 imap <C-d> <right><bs>
 " delete-previous-word
@@ -818,7 +818,7 @@ command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
 " don't type in the entire omni-completion emacs-like binding
 inoremap <C-O> <C-X><C-O> 
 " use C-l to look for completion and navigate omni-completion menu correctly
-inoremap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-x>\<C-p>"
+inoremap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
 
 " Map ,x to open files in the same directory as the current file
 map <leader>x :sp <C-R>=expand("%:h")<cr>/
@@ -846,6 +846,33 @@ xmap \\           <Plug>NERDCommenterInvert
 
 " open up command history/buffer faster
 nmap q; q:
+
+" clear the search buffer when hitting return
+nnoremap <CR> :nohlsearch<cr>
+
+" Remap the tab key to do autocompletion or indentation depending on the
+" context (from http://www.vim.org/tips/tip.php?tip_id=102)
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-p>"
+    endif
+endfunction
+inoremap <tab> <c-r>=InsertTabWrapper()<cr>
+inoremap <s-tab> <c-n>
+
+function! RenameFile()
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'))
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        exec ':silent !rm ' . old_name
+        redraw!
+    endif
+endfunction
+map <leader>n :call RenameFile()<cr>
 
 " if &diff
 " nmap <c-h> :diffget 1<cr>
