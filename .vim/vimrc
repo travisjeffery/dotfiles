@@ -713,6 +713,8 @@ function! TagbarOrNextLine()
 endfunction
 nmap <silent> <down> :call TagbarOrNextLine()<cr>
 
+nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
+
 " run given command but preserve position
 function! Preserve(command)
   " Preparation: save last search, and cursor position.
@@ -851,7 +853,7 @@ xmap \\           <Plug>NERDCommenterInvert
 nmap q; q:
 
 " clear the search buffer when hitting return
-nnoremap <CR> :nohlsearch<cr>
+" nnoremap <CR> :nohlsearch<cr>
 
 " Remap the tab key to do autocompletion or indentation depending on the
 " context (from http://www.vim.org/tips/tip.php?tip_id=102)
