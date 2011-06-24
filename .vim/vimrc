@@ -392,7 +392,8 @@ set textwidth=79
 set ignorecase
 " complete words from system dictionary
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
-set complete-=k complete+=k
+" set complete-=k complete+=k
+set complete-=k
 " highlight the line that the cursor is currently on
 set cursorline
 " numbers
@@ -623,8 +624,6 @@ imap <C-f> <esc>la
 imap <C-d> <right><bs>
 " delete-previous-word
 imap <silent> <C-BS> <esc>bvec
-" to call after adding file to project so that command-t has it in cache
-" nmap <leader>T :CommandTFlush<cr>
 " open up vim-rails
 nmap <leader>r :R
 " better movement when editing languages with camelcase and duck typed code
@@ -663,6 +662,7 @@ function! ShowRoutes()
   :normal dd
 endfunction
 map <leader>gR :call ShowRoutes()<cr>
+" call commandtflush in case have added new file(s)
 map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
 map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
 map <leader>gu :CommandTFlush<cr>\|:CommandT test/unit<cr>
@@ -676,6 +676,7 @@ map <leader>gs :CommandTFlush<cr>\|:CommandT public/stylesheets<cr>
 map <leader>gg :topleft 100 :split Gemfile<cr>
 map <leader>gf :CommandT %%/<cr>
 nmap ;; :CommandTFlush<cr>:CommandT<cr>
+nmap ;' :CommandTFlush<cr>:CommandTBuffer<cr>
 nmap <leader><leader> <C-^>
 
 "
