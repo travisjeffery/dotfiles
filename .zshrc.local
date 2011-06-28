@@ -29,6 +29,5 @@ source $ZSH/oh-my-zsh.sh
 
 alias la="ls -a"
 function cd() {builtin cd "$@" && ls -la}
-function macirb() {/usr/local/bin/macirb -f "$@"}
 
 export EDITOR="vim"
