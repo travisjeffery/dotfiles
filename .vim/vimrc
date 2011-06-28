@@ -838,7 +838,7 @@ command! -nargs=1 EditSnippetsForFiletype call EditSnippetsForFiletype('<args>')
 " Seriously, guys. It's not like :W is bound to anything anyway.
 command! W :w
 " Seriously, guys. It's not like :E is bound to anything anyway.
-command! E :e
+command! E :Explore
 
 " jump to the first open window that contains the specified buffer (if there is one).
 " Otherwise: Do not examine other windows.
@@ -879,7 +879,7 @@ function! RenameFile()
         redraw!
     endif
 endfunction
-map <leader>n :call RenameFile()<cr>
+" map <leader>n :call RenameFile()<cr>
 
 " if &diff
 " nmap <c-h> :diffget 1<cr>
