@@ -72,16 +72,16 @@ svn_bundle() {
   (
   cd ~/.vim
   if [ -d "$1" ]; then
-    echo "Updating $1"
-    cd ~/.vim/$1 && git svn pull
+    echo "Updating $2"
+    cd ~/.vim/bundle/$2 && git svn pull
   else
-    echo "Adding $1"
+    echo "Adding $2"
     cd ~/.vim/bundle && git svn clone $2 $3
   fi
   )
 }
 
-svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk web-indent
+svn_bundle http://web-indent.googlecode.com/svn/trunk web-indent
 
 cd ~/.vim
 
