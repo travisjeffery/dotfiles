@@ -66,6 +66,7 @@ git_bundle vim-pathogen git://github.com/tpope/vim-pathogen.git
 git_bundle vim-easymotion git://github.com/Lokaltog/vim-easymotion.git
 git_bundle vim-makegreen git://github.com/reinh/vim-makegreen.git
 git_bundle bundle/rvm-ruby git://github.com/jcf/rvm_ruby.vim.git
+git_bundle bundle/vim-bufonly git://github.com/duff/vim-bufonly.git
 
 svn_bundle() {
   (
