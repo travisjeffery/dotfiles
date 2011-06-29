@@ -62,9 +62,8 @@ git_bundle bundle/vim-addon-mw-utils git://github.com/MarcWeber/vim-addon-mw-uti
 git_bundle snippets git://github.com/akitaonrails/snipmate-snippets.git
 git_bundle bundle/vim-snipmate git://github.com/MarcWeber/snipmate.vim.git
 git_bundle bundle/vim-unimpaired git://github.com/tpope/vim-unimpaired.git
-git_bundle vim-pathogen git://github.com/tpope/vim-pathogen.git
-git_bundle vim-easymotion git://github.com/Lokaltog/vim-easymotion.git
-git_bundle vim-makegreen git://github.com/reinh/vim-makegreen.git
+git_bundle bundle/vim-easymotion git://github.com/Lokaltog/vim-easymotion.git
+git_bundle bundle/vim-makegreen git://github.com/reinh/vim-makegreen.git
 git_bundle bundle/rvm-ruby git://github.com/jcf/rvm_ruby.vim.git
 git_bundle bundle/vim-bufonly git://github.com/duff/vim-bufonly.git
 
@@ -81,8 +80,11 @@ svn_bundle() {
   )
 }
 
-svn_bundle http://web-indent.googlecode.com/svn/trunk web-indent
-
 cd ~/.vim
+git svn clone http://web-indent.googlecode.com/svn/trunk/ bundle/web-indent
+
+rm -rf ~/.vim/autoload
+ln -s ~/.vim/vim-pathogen/autoload ~/.vim/autoload
+
 
 #git submodule update
