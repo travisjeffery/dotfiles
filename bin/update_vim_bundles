@@ -8,7 +8,7 @@ git_bundle() {
     cd ~/.vim/$1 && git pull --rebase
   else
     echo "Adding $1"
-    cd ~/.vim/bundle && git clone $2
+    cd ~/.vim && git clone $2 $1
   fi
   )
 }
