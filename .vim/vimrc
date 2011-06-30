@@ -338,7 +338,7 @@ let g:yankring_window_auto_close = 1
 let g:yankring_window_width = 30
 let g:yankring_window_use_right = 1
 " stop yankring from monitoring movements, too slow
-let g:yankring_o_keys = ''
+" let g:yankring_o_keys = ''
 let g:surround_indent = 1
 let g:rubycomplete_rails = 1
 let g:HammerQuiet = 1
