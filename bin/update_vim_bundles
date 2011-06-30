@@ -26,7 +26,7 @@ git_bundle bundle/vim-fugitive git://github.com/tpope/vim-fugitive.git
 git_bundle bundle/vim-endwise git://github.com/tpope/vim-endwise.git
 git_bundle bundle/gist-vim git://github.com/mattn/gist-vim.git
 git_bundle bundle/grep git://github.com/vim-scripts/grep.vim.git
-git_bundle bundle/IndexedSearch git://github.com/vim-scripts/IndexedSearch.git
+git_bundle bundle/IndexedSearch git@github.com:travisjeffery/IndexedSearch.git
 git_bundle bundle/matchit git://github.com/vim-scripts/matchit.zip.git
 git_bundle bundle/vim-pastie git://github.com/tpope/vim-pastie.git
 git_bundle bundle/vim-ragtag git://github.com/tpope/vim-ragtag.git
