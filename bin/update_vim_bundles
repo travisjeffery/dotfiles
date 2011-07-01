@@ -30,10 +30,6 @@ svn_bundle() {
   )
 }
 
-build_command_t() {
-  cd ~/.vim/bundle/command-t/ruby/command-t && ruby extconf.rb && make
-}
-
 # clean_bundles
 
 git_bundle bundle/nerdtree git://github.com/scrooloose/nerdtree.git
@@ -94,4 +90,3 @@ svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
 ln -s ~/.vim/vim-pathogen/autoload ~/.vim/autoload
 
-build_command_t
