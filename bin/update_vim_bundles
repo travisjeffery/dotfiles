@@ -1,5 +1,9 @@
 # vim:set ft=sh sw=2 sts=2:
 
+clean_bundles() {
+  rm -rf ~/.vim/vim-pathogen rm -rf ~/.vim/autoload && rm -rf ~/.vim/bundle/*
+}
+
 git_bundle() {
   (
   cd ~/.vim
@@ -13,6 +17,25 @@ git_bundle() {
   )
 }
 
+svn_bundle() {
+  (
+  cd ~/.vim
+  if [ -d "$1" ]; then
+    echo "Updating $2"
+    cd ~/.vim/$1 && git svn rebase
+  else
+    echo "Adding $2"
+    cd ~/.vim && git svn clone $2 $1
+  fi
+  )
+}
+
+build_command_t() {
+  cd ~/.vim/bundle/command-t/ruby/command-t && ruby extconf.rb && make
+}
+
+# clean_bundles
+
 git_bundle bundle/nerdtree git://github.com/scrooloose/nerdtree.git
 git_bundle bundle/vim-quickrun git://github.com/thinca/vim-quickrun.git
 git_bundle bundle/cocoa git://github.com/msanders/cocoa.vim.git
@@ -20,7 +43,7 @@ git_bundle bundle/ack git://github.com/mileszs/ack.vim.git
 git_bundle bundle/bufexplorer git://github.com/vim-scripts/bufexplorer.zip.git
 git_bundle bundle/camelcasemotion git://github.com/vim-scripts/camelcasemotion.git
 git_bundle bundle/cheat git://github.com/vim-scripts/cheat.vim.git
-iet_bundle bundle/csapprox git://github.com/godlygeek/csapprox.git
+git_bundle bundle/csapprox git://github.com/godlygeek/csapprox.git
 git_bundle bundle/nerdcommenter git://github.com/scrooloose/nerdcommenter.git
 git_bundle bundle/vim-fugitive git://github.com/tpope/vim-fugitive.git
 git_bundle bundle/vim-endwise git://github.com/tpope/vim-endwise.git
@@ -67,24 +90,8 @@ git_bundle bundle/vim-makegreen git://github.com/reinh/vim-makegreen.git
 git_bundle bundle/rvm-ruby git://github.com/jcf/rvm_ruby.vim.git
 git_bundle bundle/vim-bufonly git://github.com/duff/vim-bufonly.git
 
-svn_bundle() {
-  (
-  cd ~/.vim
-  if [ -d "$1" ]; then
-    echo "Updating $2"
-    cd ~/.vim/bundle/$2 && git svn pull
-  else
-    echo "Adding $2"
-    cd ~/.vim/bundle && git svn clone $2 $3
-  fi
-  )
-}
+svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
-cd ~/.vim
-git svn clone http://web-indent.googlecode.com/svn/trunk/ bundle/web-indent
-
-rm -rf ~/.vim/autoload
 ln -s ~/.vim/vim-pathogen/autoload ~/.vim/autoload
 
-
-#git submodule update
+build_command_t
