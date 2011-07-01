@@ -129,25 +129,25 @@ map Y       y$
 " nnoremap <silent> <C-L> :nohls<CR><C-L>
 inoremap <C-C> <Esc>`^
 
-cnoremap          <C-O> <Up>
+" cnoremap          <C-O> <Up>
 inoremap              ø <C-O>o
 inoremap          <M-o> <C-O>o
 " Emacs style mappings
 inoremap          <C-A> <C-O>^
 inoremap     <C-X><C-@> <C-A>
-cnoremap          <C-A> <Home>
-cnoremap     <C-X><C-A> <C-A>
+" cnoremap          <C-A> <Home>
+" cnoremap     <C-X><C-A> <C-A>
 " If at end of a line of spaces, delete back to the previous line.
 " Otherwise, <Left>
 inoremap <silent> <C-B> <C-R>=getline('.')=~'^\s*$'&&col('.')>strlen(getline('.'))?"0\<Lt>C-D>\<Lt>Esc>kJs":"\<Lt>Left>"<CR>
-cnoremap          <C-B> <Left>
+" cnoremap          <C-B> <Left>
 " If at end of line, decrease indent, else <Del>
 inoremap <silent> <C-D> <C-R>=col('.')>strlen(getline('.'))?"\<Lt>C-D>":"\<Lt>Del>"<CR>
-cnoremap          <C-D> <Del>
+" cnoremap          <C-D> <Del>
 " If at end of line, fix indent, else <Right>
 inoremap <silent> <C-F> <C-R>=col('.')>strlen(getline('.'))?"\<Lt>C-F>":"\<Lt>Right>"<CR>
 inoremap          <C-E> <End>
-cnoremap          <C-F> <Right>
+" cnoremap          <C-F> <Right>
 
 noremap           <F1>   <Esc>
 noremap!          <F1>   <Esc>
