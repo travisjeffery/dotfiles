@@ -32,7 +32,7 @@ svn_bundle() {
 
 # clean_bundles
 
-git_bundle bundle/nerdtree git://github.com/scrooloose/nerdtree.git
+# git_bundle bundle/nerdtree git://github.com/scrooloose/nerdtree.git
 git_bundle bundle/vim-quickrun git://github.com/thinca/vim-quickrun.git
 git_bundle bundle/cocoa git://github.com/msanders/cocoa.vim.git
 git_bundle bundle/ack git://github.com/mileszs/ack.vim.git
@@ -78,13 +78,14 @@ git_bundle bundle/vim-slim git://github.com/bbommarito/vim-slim.git
 git_bundle bundle/scss-syntax git://github.com/cakebaker/scss-syntax.vim.git
 git_bundle bundle/vim-tlib git://github.com/tomtom/tlib_vim.git
 git_bundle bundle/vim-addon-mw-utils git://github.com/MarcWeber/vim-addon-mw-utils.git
-git_bundle snippets git://github.com/akitaonrails/snipmate-snippets.git
-git_bundle bundle/vim-snipmate git://github.com/MarcWeber/snipmate.vim.git
+# git_bundle snippets git://github.com/akitaonrails/snipmate-snippets.git
+git_bundle bundle/vim-snipmate git://github.com/garbas/vim-snipmate.git 
 git_bundle bundle/vim-unimpaired git://github.com/tpope/vim-unimpaired.git
 git_bundle bundle/vim-easymotion git://github.com/Lokaltog/vim-easymotion.git
 git_bundle bundle/vim-makegreen git://github.com/reinh/vim-makegreen.git
 git_bundle bundle/rvm-ruby git://github.com/jcf/rvm_ruby.vim.git
 git_bundle bundle/vim-bufonly git://github.com/duff/vim-bufonly.git
+git_bundle bundle/snipmate-snippets git://github.com/honza/snipmate-snippets.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
