@@ -535,7 +535,7 @@ vmap <leader>a: :Tabularize /:\zs<CR>
 nmap <leader>a :Tabularize /
 vmap <leader>a :Tabularize /
 " indent all lines in current buffer
-nmap <leader>= ggVG=<c-o><c-o>
+nmap <leader>= G=gg<c-o><c-o>
 " open help on current word
 nmap <leader>h :help <c-r>=expand("<cword>")<cr><cr>
 vmap <leader>h "ry:help<space><c-r>r<cr>
@@ -860,24 +860,24 @@ nmap q; q:
 " Remap the tab key to do autocompletion or indentation depending on the
 " context (from http://www.vim.org/tips/tip.php?tip_id=102)
 function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
+  let col = col('.') - 1
+  if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+  else
+    return "\<c-p>"
+  endif
 endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <s-tab> <c-n>
 
 function! RenameFile()
-    let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'))
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        exec ':silent !rm ' . old_name
-        redraw!
-    endif
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'))
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
 endfunction
 " map <leader>n :call RenameFile()<cr>
 
