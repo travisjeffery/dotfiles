@@ -86,6 +86,8 @@ git_bundle bundle/vim-makegreen git://github.com/reinh/vim-makegreen.git
 git_bundle bundle/rvm-ruby git://github.com/jcf/rvm_ruby.vim.git
 git_bundle bundle/vim-bufonly git://github.com/duff/vim-bufonly.git
 git_bundle bundle/snipmate-snippets git://github.com/honza/snipmate-snippets.git
+git_bundle bundle/vimfiler git://github.com/Shougo/vimfiler.git
+git_bundle bundle/vimshell git://github.com/Shougo/vimshell.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 

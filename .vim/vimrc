@@ -404,9 +404,9 @@ set nuw=5
 set timeoutlen=333
 
 if !has("gui")
-  colorscheme zellner
+  colorscheme ir_black
 else
-  colorscheme grb4
+  colorscheme ir_black
 endif
 
 if has("gui")
