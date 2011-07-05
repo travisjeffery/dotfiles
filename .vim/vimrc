@@ -342,7 +342,8 @@ let g:yankring_window_use_right = 1
 let g:surround_indent = 1
 let g:rubycomplete_rails = 1
 let g:HammerQuiet = 1
-
+let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_safe_mode_by_default = 0
 " pressing <space> will increase the size of the window by 15 columns
 let g:yankring_window_increment = 15
 
@@ -403,7 +404,7 @@ set nuw=5
 set timeoutlen=333
 
 if !has("gui")
-  colorscheme grb2
+  colorscheme zellner
 else
   colorscheme grb4
 endif
