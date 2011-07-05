@@ -624,6 +624,7 @@ imap <C-f> <esc>la
 imap <C-d> <right><bs>
 " delete-previous-word
 imap <silent> <C-BS> <esc>bvec
+cmap <C-BS> <c-w>
 " open up vim-rails
 nmap <leader>r :R
 " better movement when editing languages with camelcase and duck typed code
