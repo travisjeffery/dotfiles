@@ -88,6 +88,8 @@ git_bundle bundle/vim-bufonly git://github.com/duff/vim-bufonly.git
 git_bundle bundle/snipmate-snippets git://github.com/honza/snipmate-snippets.git
 git_bundle bundle/vimfiler git://github.com/Shougo/vimfiler.git
 git_bundle bundle/vimshell git://github.com/Shougo/vimshell.git
+git_bundle bundle/visincr git://github.com/vim-scripts/VisIncr.git
+git_bundle bundle/auto-pairs git://github.com/jiangmiao/auto-pairs.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 

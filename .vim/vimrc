@@ -320,6 +320,10 @@ let g:user_zen_settings = {
       \}
 let g:delimitMate_expand_cr = 1
 let g:delimitMate_expand_space = 1
+let delimitMate_balance_matchpairs = 1
+let delimitMate_smart_quotes = 0
+let delimitMate_smart_matchpairs = 0
+let delimitMate_autoclose = 0
 " skip all single-letter deletes (x)
 let g:yankring_min_element_length = 2
 " save last 50 items in history, only show last 50 in yankring window
