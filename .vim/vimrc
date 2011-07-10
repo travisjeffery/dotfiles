@@ -408,9 +408,9 @@ set nuw=5
 set timeoutlen=333
 
 if !has("gui")
-  colorscheme ir_black
+  colorscheme Black
 else
-  colorscheme ir_black
+  colorscheme made_of_color
 endif
 
 if has("gui")
@@ -430,7 +430,8 @@ if has("gui") && has("mac")
   set fuopt+=maxhorz
   set macmeta
   " best font there is
-  set guifont=Monaco:h10
+  " set guifont=Monaco:h10 | set noantialias
+  set antialias | set guifont=Monaco:h12
 endif
 
 if has("gui") && !has("mac")
