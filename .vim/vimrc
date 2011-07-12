@@ -262,6 +262,8 @@ nnoremap Y y$
 
 "mark syntax errors with :signs
 let g:syntastic_enable_signs=1
+let g:syntastic_auto_jump=1
+let g:syntastic_auto_loc_list=1
 
 "snipmate settings
 let g:snips_author = "Travis Jeffery"
@@ -639,6 +641,7 @@ map <silent> b <Plug>CamelCaseMotion_b
 map <silent> e <Plug>CamelCaseMotion_e
 " insert hashrockets quickly for ruby
 imap <C-right> <space>=><space>
+imap <C-;> <space>=><space>
 imap <c-]> <space>=><space>
 " insert currently opened file's filename in command prompt
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
