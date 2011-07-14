@@ -880,6 +880,7 @@ endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <s-tab> <c-n>
 
+" Rename the current file to something initially in the current directory
 function! RenameFile()
   let old_name = expand('%')
   let new_name = input('New file name: ', expand('%'))
@@ -889,13 +890,13 @@ function! RenameFile()
     redraw!
   endif
 endfunction
-" map <leader>n :call RenameFile()<cr>
 
-" if &diff
-" nmap <c-h> :diffget 1<cr>
-" nmap <c-l> :diffget 3<cr>
-" nmap <c-k> [cz.
-" nmap <c-j> ]cz.
-" set nonumber
-" endif
+" Setup for diffmode
+if &diff
+  nmap <c-h> :diffget 1<cr>
+  nmap <c-l> :diffget 3<cr>
+  nmap <c-k> [cz.
+  nmap <c-j> ]cz.
+  set nonumber
+endif
 
