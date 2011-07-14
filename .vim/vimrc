@@ -586,13 +586,6 @@ nnoremap <silent> <Leader>y :YRShow<CR>
 nnoremap <silent> <Leader>Y :GundoToggle<CR>
 inoremap <M-o>       <Esc>o
 inoremap <C-j>       <Down>
-" nmap <d-[> <<
-" nmap <d-]> >>
-" imap <d-[> <<
-" imap <d-]> >>
-" vmap <d-[> <<
-" vmap <d-]> >>
-" nmap <leader>E :tag<space>
 " insert space without leaving normal mode
 nmap <leader><space> i<space><esc>
 " yank current-line without \n
@@ -603,14 +596,7 @@ nmap <right> :bn<cr>
 " set size of buffer on left and right to preferred sizes
 nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
 nmap gff <C-w>gf
-" quickley set the filetype
-" nmap <leader>ft :set ft=
-" nmap <d-/> ,ci
-" vmap <d-/> ,ci
 imap (( ()
-" imap <d-cr> <esc>$a<cr>
-" next one's too kung fu for any computer to cope...
-"imap <space><space> <right>
 imap <c-space> <right>
 "imap -- <%<space>%><esc>2hi
 nmap <leader>- i<space><esc>vs-2lxi
@@ -624,10 +610,6 @@ imap <C-a> <esc>0i
 imap <C-b> <esc>ha
 " forward-one-char
 imap <C-f> <esc>la
-" next-line
-" imap <C-n> <esc>ja
-" previous-line
-" imap <C-p> <esc>ka
 " delete-forward-char
 imap <C-d> <right><bs>
 " delete-previous-word
@@ -833,7 +815,7 @@ endfunction
 command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
 
 " don't type in the entire omni-completion emacs-like binding
-inoremap <C-O> <C-X><C-O> 
+inoremap <C-O> <C-X><C-O>
 " use C-l to look for completion and navigate omni-completion menu correctly
 inoremap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
 
