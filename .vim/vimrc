@@ -240,6 +240,7 @@ set t_Co=256
 
 "hide buffers when not displayed
 set hidden
+set noballooneval
 
 "dont load csapprox if we no gui support - silences an annoying warning
 if !has("gui")
@@ -527,6 +528,7 @@ au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
 au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
 " set git diffs to git filetype automagically
 au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
+
 
 ""
 "
