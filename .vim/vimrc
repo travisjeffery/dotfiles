@@ -240,7 +240,6 @@ set t_Co=256
 
 "hide buffers when not displayed
 set hidden
-set noballooneval
 
 "dont load csapprox if we no gui support - silences an annoying warning
 if !has("gui")
@@ -439,6 +438,7 @@ endif
 
 if has("gui") && !has("mac")
   set guifont=DejaVu\ Sans\ Mono\ 9
+  set noballooneval
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
