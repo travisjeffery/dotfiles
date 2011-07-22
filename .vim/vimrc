@@ -365,6 +365,9 @@ let g:yankring_clipboard_monitor = 1
 " if something changes the default register without going through yankring, use
 " the default register value rather than the top item in yankring's history
 let g:yankring_paste_check_default_buffer = 1
+" better ruby code folding
+let ruby_fold = 1
+set foldmethod=syntax
 
 " swapfile settings and storage directory
 set swapfile
@@ -437,7 +440,7 @@ if has("gui") && has("mac")
 endif
 
 if has("gui") && !has("mac")
-  set guifont=DejaVu\ Sans\ Mono\ 9
+  set guifont=Inconsolata\ 12
   set noballooneval
 endif
 
@@ -449,7 +452,7 @@ endif
 " function.
 map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
 " map <silent> <Leader>tt :call MakeGreen()<cr>
-map <silent> <Leader>tt :!~/.rvm/rubies/default/bin/ruby -I test <c-r>=expand("%:p")<cr><cr>
+" map <silent> <Leader>tt :!~/.rvm/rubies/default/bin/ruby -I test <c-r>=expand("%:p")<cr><cr>
 
 function! RunTests(filename)
   " Write the file and run tests for the given filename
@@ -619,6 +622,7 @@ imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
 " open up vim-rails
 nmap <leader>r :R
+nmap Y y$
 " better movement when editing languages with camelcase and duck typed code
 map <silent> w <Plug>CamelCaseMotion_w
 map <silent> b <Plug>CamelCaseMotion_b
@@ -884,3 +888,4 @@ if &diff
   set nonumber
 endif
 
+map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &" <cr>
