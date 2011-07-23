@@ -365,6 +365,9 @@ let g:yankring_clipboard_monitor = 1
 " if something changes the default register without going through yankring, use
 " the default register value rather than the top item in yankring's history
 let g:yankring_paste_check_default_buffer = 1
+" better ruby code folding
+let ruby_fold = 1
+set foldmethod=syntax
 
 " swapfile settings and storage directory
 set swapfile
@@ -419,6 +422,8 @@ if has("gui")
   set noantialias
   set columns=111
   set lines=69
+  autocmd FileType ruby,eruby set noballooneval
+  set noballooneval
 endif
 
 if has("mac")
@@ -437,8 +442,7 @@ if has("gui") && has("mac")
 endif
 
 if has("gui") && !has("mac")
-  set guifont=DejaVu\ Sans\ Mono\ 9
-  set noballooneval
+  set guifont=Inconsolata\ 12
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -449,7 +453,7 @@ endif
 " function.
 map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
 " map <silent> <Leader>tt :call MakeGreen()<cr>
-map <silent> <Leader>tt :!~/.rvm/rubies/default/bin/ruby -I test <c-r>=expand("%:p")<cr><cr>
+" map <silent> <Leader>tt :!~/.rvm/rubies/default/bin/ruby -I test <c-r>=expand("%:p")<cr><cr>
 
 function! RunTests(filename)
   " Write the file and run tests for the given filename
@@ -600,7 +604,6 @@ nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w>
 nmap gff <C-w>gf
 imap (( ()
 imap <c-space> <right>
-"imap -- <%<space>%><esc>2hi
 nmap <leader>- i<space><esc>vs-2lxi
 nmap <leader>+ :cd %:p:h <bar> new<space>
 " emacs-like keybindings when editing text in insert mode
@@ -619,6 +622,7 @@ imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
 " open up vim-rails
 nmap <leader>r :R
+nmap Y y$
 " better movement when editing languages with camelcase and duck typed code
 map <silent> w <Plug>CamelCaseMotion_w
 map <silent> b <Plug>CamelCaseMotion_b
@@ -790,7 +794,7 @@ nmap <leader>DD :call NERDTreeToggleMax()<cr>
 
 " replace the current buffer's, hopefully, javascript text beautified
 function! JSBeautify()
-  silent! exe '%! jsbeautifier --stdin'
+  silent! exe "%! jsbeautifier --stdin"
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<cr>
 
@@ -884,3 +888,4 @@ if &diff
   set nonumber
 endif
 
+map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &" <cr>
