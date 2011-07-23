@@ -604,7 +604,6 @@ nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w>
 nmap gff <C-w>gf
 imap (( ()
 imap <c-space> <right>
-"imap -- <%<space>%><esc>2hi
 nmap <leader>- i<space><esc>vs-2lxi
 nmap <leader>+ :cd %:p:h <bar> new<space>
 " emacs-like keybindings when editing text in insert mode
@@ -795,7 +794,7 @@ nmap <leader>DD :call NERDTreeToggleMax()<cr>
 
 " replace the current buffer's, hopefully, javascript text beautified
 function! JSBeautify()
-  silent! exe '%! jsbeautifier --stdin'
+  silent! exe "%! jsbeautifier --stdin"
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<cr>
 
