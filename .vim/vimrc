@@ -422,6 +422,8 @@ if has("gui")
   set noantialias
   set columns=111
   set lines=69
+  autocmd FileType ruby,eruby set noballooneval
+  set noballooneval
 endif
 
 if has("mac")
@@ -441,7 +443,6 @@ endif
 
 if has("gui") && !has("mac")
   set guifont=Inconsolata\ 12
-  set noballooneval
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -520,7 +521,6 @@ autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType c set omnifunc=ccomplete#Complete
 autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-autocmd FileType ruby,eruby setlocal noballooneval
 autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
 autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
 autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
