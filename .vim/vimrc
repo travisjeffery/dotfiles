@@ -880,11 +880,12 @@ endfunction
 
 " Setup for diffmode
 if &diff
-  nmap <c-h> :diffget 1<cr>
-  nmap <c-l> :diffget 3<cr>
-  nmap <c-k> [cz.
-  nmap <c-j> ]cz.
-  set nonumber
+  " nmap <c-h> :diffget 1<cr>
+  " nmap <c-l> :diffget 3<cr>
+  " nmap <c-k> [cz.
+  " nmap <c-j> ]cz.
+  set number
+  color grb3
 endif
 
 " way better of running current ruby file, to view output, run `tail -f /tmp/vim.log`
