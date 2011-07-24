@@ -208,6 +208,7 @@ set foldmethod=syntax
 set foldnestmax=3       "deepest fold is 3 levels
 " set nofoldenable        "dont fold by default
 set foldenable
+set foldlevelstart=2
 let ruby_fold = 1
 
 set wildmode=list:longest   "make cmdline tab completion similar to bash
