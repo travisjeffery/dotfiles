@@ -203,9 +203,12 @@ set expandtab
 set autoindent
 
 "folding settings
-set foldmethod=indent   "fold based on indent
+" set foldmethod=indent   "fold based on indent
+set foldmethod=syntax
 set foldnestmax=3       "deepest fold is 3 levels
-set nofoldenable        "dont fold by default
+" set nofoldenable        "dont fold by default
+set foldenable
+let ruby_fold = 1
 
 set wildmode=list:longest   "make cmdline tab completion similar to bash
 set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
@@ -365,9 +368,6 @@ let g:yankring_clipboard_monitor = 1
 " if something changes the default register without going through yankring, use
 " the default register value rather than the top item in yankring's history
 let g:yankring_paste_check_default_buffer = 1
-" better ruby code folding
-let ruby_fold = 1
-set foldmethod=syntax
 
 " swapfile settings and storage directory
 set swapfile
@@ -713,6 +713,7 @@ function! TagbarOrNextLine()
 endfunction
 nmap <silent> <down> :call TagbarOrNextLine()<cr>
 
+" clear the search buffer when hitting return
 nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
 
 " run given command but preserve position
@@ -852,9 +853,6 @@ xmap \\           <Plug>NERDCommenterInvert
 " open up command history/buffer faster
 nmap q; q:
 
-" clear the search buffer when hitting return
-" nnoremap <CR> :nohlsearch<cr>
-
 " Remap the tab key to do autocompletion or indentation depending on the
 " context (from http://www.vim.org/tips/tip.php?tip_id=102)
 function! InsertTabWrapper()
@@ -888,4 +886,5 @@ if &diff
   set nonumber
 endif
 
+" way better of running current ruby file, to view output, run `tail -f /tmp/vim.log`
 map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &" <cr>

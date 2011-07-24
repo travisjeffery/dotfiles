@@ -33,7 +33,7 @@ svn_bundle() {
 }
 
 git_bundle bundle/vim-quickrun git://github.com/thinca/vim-quickrun.git
-git_bundle bundle/cocoa git://github.com/msanders/cocoa.vim.git
+# git_bundle bundle/cocoa git://github.com/msanders/cocoa.vim.git
 git_bundle bundle/ack git://github.com/mileszs/ack.vim.git
 git_bundle bundle/bufexplorer git://github.com/vim-scripts/bufexplorer.zip.git
 git_bundle bundle/camelcasemotion git://github.com/vim-scripts/camelcasemotion.git
