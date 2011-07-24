@@ -84,7 +84,9 @@ git_bundle bundle/snipmate-snippets git://github.com/honza/snipmate-snippets.git
 git_bundle bundle/vimfiler git://github.com/Shougo/vimfiler.git
 git_bundle bundle/visincr git://github.com/vim-scripts/VisIncr.git
 git_bundle bundle/auto-pairs git://github.com/jiangmiao/auto-pairs.git
-git_bundle bundle/vimproc git://github.com/Shougo/vimproc.git
+git_bundle bundle/vimproc git://github.com/Shougo/vimproc.git && (cd ~/.vim/bundle/vimproc && make -f make_mac.mak)
+git_bundle bundle/vim-textobj-user git://github.com/kana/vim-textobj-user.git
+git_bundle bundle/vim-textobj-ruby git://github.com/nelstrom/vim-textobj-rubyblock.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
