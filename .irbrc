@@ -1,2 +1,2 @@
 require 'rubygems' 
-require 'irbtools/more'
+# require 'irbtools/more'

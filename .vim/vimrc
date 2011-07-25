@@ -248,6 +248,9 @@ set hidden
 "dont load csapprox if we no gui support - silences an annoying warning
 if !has("gui")
   let g:CSApprox_loaded = 1
+  colorscheme grb3
+else
+  colorscheme made_of_color
 endif
 
 "make <c-l> clear the highlight as well as redraw
@@ -413,12 +416,6 @@ set nuw=5
 " limit time to assume whether to wait on mapping
 set timeoutlen=333
 
-if !has("gui")
-  colorscheme Black
-else
-  colorscheme made_of_color
-endif
-
 if has("gui")
   set noantialias
   set columns=111
@@ -439,16 +436,13 @@ if has("gui") && has("mac")
   set macmeta
   " best font there is
   " set guifont=Monaco:h10 | set noantialias
-  set antialias | set guifont=Monaco:h12
+  " set antialias | set guifont=Monaco:h12
+  set antialias | set guifont=Inconsolata:h14
 endif
 
 if has("gui") && !has("mac")
   set guifont=Inconsolata\ 12
 endif
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Running tests
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " vim-makegreen binds itself to ,t unless something else is bound to its
 " function.
@@ -885,7 +879,6 @@ if &diff
   " nmap <c-k> [cz.
   " nmap <c-j> ]cz.
   set number
-  color grb3
 endif
 
 " way better of running current ruby file, to view output, run `tail -f /tmp/vim.log`
