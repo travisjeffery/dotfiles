@@ -248,7 +248,7 @@ set hidden
 "dont load csapprox if we no gui support - silences an annoying warning
 if !has("gui")
   let g:CSApprox_loaded = 1
-  colorscheme grb3
+  colorscheme Tomorrow-Night
 else
   colorscheme made_of_color
 endif
