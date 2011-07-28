@@ -30,6 +30,6 @@ source $ZSH/oh-my-zsh.sh
 alias la="ls -a"
 function cd() {builtin cd "$@" && ls -la}
 
-hash pbcopy &>- || alias pbcopy='xclip -selection clipboard'
+hash pbcopy &> /dev/null || alias pbcopy='xclip -selection clipboard'
 
 export EDITOR="vim"
