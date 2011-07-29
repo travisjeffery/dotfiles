@@ -90,5 +90,6 @@ git_bundle bundle/vim-textobj-ruby git://github.com/nelstrom/vim-textobj-rubyblo
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
-ln -s ~/.vim/vim-pathogen/autoload ~/.vim/autoload
+rm -rf ~/.vim/autolaod
+ln -sf ~/.vim/vim-pathogen/autoload ~/.vim/autoload
 
