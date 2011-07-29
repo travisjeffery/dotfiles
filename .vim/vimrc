@@ -206,7 +206,9 @@ set autoindent
 " set foldmethod=indent   "fold based on indent
 set foldmethod=syntax
 set foldnestmax=3       "deepest fold is 3 levels
-set nofoldenable        "dont fold by default
+<<<<<<< HEAD
+" set nofoldenable        "dont fold by default
+set nofoldenable
 set foldlevelstart=2
 let ruby_fold = 1
 
