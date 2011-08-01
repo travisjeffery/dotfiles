@@ -401,6 +401,8 @@ set go-=T
 set guioptions-=L
 " no right scroll bar
 set guioptions-=r
+" console dialogs > popups
+set guioptions+=c
 set textwidth=79
 set ignorecase
 " complete words from system dictionary
@@ -871,7 +873,7 @@ function! RenameFile()
   endif
 endfunction
 
-" Setup for diffmode
+" Setup for diffmode/vimdiff
 if &diff
   " nmap <c-h> :diffget 1<cr>
   " nmap <c-l> :diffget 3<cr>
@@ -882,3 +884,8 @@ endif
 
 " way better of running current ruby file, to view output, run `tail -f /tmp/vim.log`
 map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &" <cr>
+
+" "DiffOrig shows the diff between the current state of the currently open
+" buffer and what's saved on disk.
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+
