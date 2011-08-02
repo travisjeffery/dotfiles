@@ -1,2 +1,4 @@
 require 'rubygems' 
-require 'irbtools/more'
+require 'wirble'
+Wirble.init
+Wirble.colorize
