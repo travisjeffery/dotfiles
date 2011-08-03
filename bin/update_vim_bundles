@@ -1,9 +1,7 @@
 # vim:set ft=sh sw=2 sts=2:
 
 clean_bundles() {
-  rm -rf ~/.vim/vim-pathogen &&
-    rm -rf ~/.vim/autoload &&
-    rm -rf ~/.vim/bundle/*
+  rm -rf ~/.vim/bundle/*
 }
 
 git_bundle() {
@@ -52,7 +50,6 @@ git_bundle bundle/vim-surround git://github.com/tpope/vim-surround.git
 git_bundle bundle/syntastic git://github.com/scrooloose/syntastic.git
 git_bundle bundle/tabular git://github.com/godlygeek/tabular.git
 git_bundle bundle/ZoomWin git://github.com/vim-scripts/ZoomWin.git
-git_bundle vim-pathogen git://github.com/tpope/vim-pathogen.git
 git_bundle bundle/gundo git://github.com/sjl/gundo.vim.git
 git_bundle bundle/vim-racket git://github.com/wlangstroth/vim-racket.git
 git_bundle bundle/command-t git://git.wincent.com/command-t.git
@@ -91,6 +88,11 @@ git_bundle bundle/bufkill git://github.com/vim-scripts/bufkill.vim.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
-rm -rf ~/.vim/autolaod
-ln -sf ~/.vim/vim-pathogen/autoload ~/.vim/autoload
+[ -z "`find ~/.vim/vim-pathogen -type f`" ] &&
+  cd ~/.vim &&
+  rm -rf ~/.vim/autolaod &&
+  rm -rf ~/.vim/vim-pathogen &&
+  git_bundle vim-pathogen git://github.com/tpope/vim-pathogen.git 
+  ln -sf vim-pathogen/autoload/* autoload/
+
 

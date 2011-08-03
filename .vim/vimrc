@@ -1,50 +1,50 @@
-"Use Vim settings, rather then Vi settings (much better!).
-"This must be first, because it changes other options as a side effect.
+
+
 set nocompatible
 
 call pathogen#runtime_append_all_bundles() 
 call pathogen#helptags() 
 
-"allow backspacing over everything in insert mode
+
 set backspace=indent,eol,start
 
-"store lots of :cmdline history
+
 set history=1000
 
-set showcmd     "show incomplete cmds down the bottom
-set showmode    "show current mode down the bottom
+set showcmd     
+set showmode    
 
-set incsearch   "find the next match as we type the search
-set hlsearch    "hilight searches by default
+set incsearch   
+set hlsearch    
 
-set nowrap      "dont wrap lines
-set linebreak   "wrap lines at convenient points
-" We have to have a winheight bigger than we want to set winminheight. But if
-" we set winheight to be huge before winminheight, the winminheight set will
-" fail.
+set nowrap      
+set linebreak   
+
+
+
 set winwidth=84
 set winheight=5
 set winminheight=5
 set winheight=999
-"statusline setup
-set statusline=%f       "tail of the filename
 
-"display a warning if fileformat isnt unix
+set statusline=%f       
+
+
 set statusline+=%#warningmsg#
 set statusline+=%{&ff!='unix'?'['.&ff.']':''}
 set statusline+=%*
 
-"display a warning if file encoding isnt utf-8
+
 set statusline+=%#warningmsg#
 set statusline+=%{(&fenc!='utf-8'&&&fenc!='')?'['.&fenc.']':''}
 set statusline+=%*
 
-set statusline+=%h      "help file flag
-set statusline+=%y      "filetype
-set statusline+=%r      "read only flag
-set statusline+=%m      "modified flag
+set statusline+=%h      
+set statusline+=%y      
+set statusline+=%r      
+set statusline+=%m      
 
-"display a warning if &et is wrong, or we have mixed-indenting
+
 set statusline+=%#error#
 set statusline+=%{StatuslineTabWarning()}
 set statusline+=%*
@@ -57,26 +57,26 @@ set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
-"display a warning if &paste is set
+
 set statusline+=%#error#
 set statusline+=%{&paste?'[paste]':''}
 set statusline+=%*
 
-set statusline+=%=      "left/right separator
+set statusline+=%=      
 set statusline+=%{StatuslineCurrentHighlight()}\ \ "current highlight
-set statusline+=%c,     "cursor column
-set statusline+=%l/%L   "cursor line/total lines
-set statusline+=\ %P    "percent through file
-" Always showstatus bar
+set statusline+=%c,     
+set statusline+=%l/%L   
+set statusline+=\ %P    
+
 set laststatus=2
-" Always show tab bar
+
 set showtabline=2
 
-"recalculate the trailing whitespace warning when idle, and after saving
+
 autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
 
-"return '[\s]' if trailing white space is detected
-"return '' otherwise
+
+
 function! StatuslineTrailingSpaceWarning()
   if !exists("b:statusline_trailing_space_warning")
 
@@ -94,7 +94,7 @@ function! StatuslineTrailingSpaceWarning()
   return b:statusline_trailing_space_warning
 endfunction
 
-"return the syntax highlight group under the cursor ''
+
 function! StatuslineCurrentHighlight()
   let name = synIDattr(synID(line('.'),col('.'),1),'name')
   if name == ''
@@ -104,12 +104,12 @@ function! StatuslineCurrentHighlight()
   endif
 endfunction
 
-"recalculate the tab warning flag when idle and after writing
+
 autocmd cursorhold,bufwritepost * unlet! b:statusline_tab_warning
 
-"return '[&et]' if &et is set wrong
-"return '[mixed-indenting]' if spaces and tabs are used to indent
-"return an empty string if everything is fine
+
+
+
 function! StatuslineTabWarning()
   if !exists("b:statusline_tab_warning")
     let b:statusline_tab_warning = ''
@@ -120,7 +120,7 @@ function! StatuslineTabWarning()
 
     let tabs = search('^\t', 'nw') != 0
 
-    "find spaces that arent used as alignment in the first indent column
+    
     let spaces = search('^ \{' . &ts . ',}[^\t]', 'nw') != 0
 
     if tabs && spaces
@@ -132,16 +132,16 @@ function! StatuslineTabWarning()
   return b:statusline_tab_warning
 endfunction
 
-"recalculate the long line warning when idle and after saving
+
 autocmd cursorhold,bufwritepost * unlet! b:statusline_long_line_warning
 
-"return a warning for "long lines" where "long" is either &textwidth or 80 (if
-"no &textwidth is set)
-"
-"return '' if no long lines
-"return '[#x,my,$z] if long lines are found, were x is the number of long
-"lines, y is the median length of the long lines and z is the length of the
-"longest line
+
+
+
+
+
+
+
 function! StatuslineLongLineWarning()
   if !exists("b:statusline_long_line_warning")
 
@@ -164,7 +164,7 @@ function! StatuslineLongLineWarning()
   return b:statusline_long_line_warning
 endfunction
 
-"return a list containing the lengths of the long lines in this buffer
+
 function! s:LongLines()
   let threshold = (&tw ? &tw : 80)
   let spaces = repeat(" ", &ts)
@@ -183,7 +183,7 @@ function! s:LongLines()
   return long_line_lens
 endfunction
 
-"find the median of the given array of numbers
+
 function! s:Median(nums)
   let nums = sort(a:nums)
   let l = len(nums)
@@ -196,55 +196,55 @@ function! s:Median(nums)
   endif
 endfunction
 
-"indent settings
+
 set shiftwidth=4
 set softtabstop=4
 set expandtab
 set autoindent
 
-"folding settings
-" set foldmethod=indent   "fold based on indent
+
+
 set foldmethod=syntax
-set foldnestmax=3       "deepest fold is 3 levels
-set nofoldenable        "dont fold by default
+set foldnestmax=3       
+set nofoldenable        
 set foldlevelstart=2
 let ruby_fold = 1
 
-set wildmode=list:longest   "make cmdline tab completion similar to bash
-set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
-set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc "stuff to ignore when tab completing
+set wildmode=list:longest   
+set wildmenu                
+set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc 
 
-"display tabs and trailing spaces
-"set list
+
+
 set nolist
 set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
 
-set formatoptions-=o "dont continue comments when pushing o/O
+set formatoptions-=o 
 
-"vertical/horizontal scroll off settings
+
 set scrolloff=3
 set sidescrolloff=7
 set sidescroll=1
 
-"load ftplugins and indent files
+
 filetype on
 filetype plugin on
 filetype indent on
 
-"turn on syntax highlighting
+
 syntax on
 
-"some stuff to get the mouse going in term
+
 set mouse=a
 set ttymouse=xterm2
 
-"tell the term has 256 colors
+
 set t_Co=256
 
-"hide buffers when not displayed
+
 set hidden
 
-"dont load csapprox if we no gui support - silences an annoying warning
+
 if !has("gui")
   let g:CSApprox_loaded = 1
   colorscheme xoria256
@@ -252,29 +252,29 @@ else
   colorscheme made_of_color
 endif
 
-"make <c-l> clear the highlight as well as redraw
+
 nnoremap <silent> <C-L> :nohls<CR><C-L>
-"map to bufexplorer
+
 nnoremap <C-B> :BufExplorer<cr>
 
-"map to fuzzy finder text mate stylez
+
 nnoremap <c-f> :FuzzyFinderTextMate<CR>
 
-"map Q to something useful
+
 noremap Q gq
 
-"make Y consistent with C and D
+
 nnoremap Y y$
 
-"mark syntax errors with :signs
+
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
 
-"snipmate settings
+
 let g:snips_author = "Travis Jeffery"
 
-"visual search mappings
+
 function! s:VSetSearch()
   let temp = @@
   norm! gvy
@@ -284,8 +284,8 @@ endfunction
 vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 
-"jump to last cursor position when opening a file
-"dont do it when writing a commit log entry
+
+
 autocmd BufReadPost * call SetCursorPosition()
 function! SetCursorPosition()
   if &filetype !~ 'svn\|commit\c'
@@ -296,8 +296,8 @@ function! SetCursorPosition()
   end
 endfunction
 
-"define :HighlightLongLines command to highlight the offending parts of
-"lines that are longer than the specified length (defaulting to 80)
+
+
 command! -nargs=? HighlightLongLines call s:HighlightLongLines('<args>')
 function! s:HighlightLongLines(width)
   let targetWidth = a:width != '' ? a:width : 79
@@ -308,11 +308,11 @@ function! s:HighlightLongLines(width)
   endif
 endfunction
 
-""
-"
-" Lets and sets
-"
-"""
+
+
+
+
+
 compiler ruby
 
 let g:NERDTreeWinPos="right"
@@ -332,59 +332,59 @@ let delimitMate_balance_matchpairs = 1
 let delimitMate_smart_quotes = 0
 let delimitMate_smart_matchpairs = 0
 let delimitMate_autoclose = 0
-" skip all single-letter deletes (x)
+
 let g:yankring_min_element_length = 2
-" save last 50 items in history, only show last 50 in yankring window
+
 let g:yankring_max_history = 100
 let g:yankring_max_display = 100
-" save yankring entries across vim instances
+
 let g:yankring_persist = 1
 let g:yankring_share_between_instances = 1
-" don't save duplicates
+
 let g:yankring_ignore_duplicate = 1
-" use a separate vertical split window that auto closes and is 30 chars wide on
-" the right side
+
+
 let g:yankring_window_use_separate = 1
 let g:yankring_window_use_horiz = 0
 let g:yankring_window_auto_close = 1
 let g:yankring_window_width = 30
 let g:yankring_window_use_right = 1
-" stop yankring from monitoring movements, too slow
-" let g:yankring_o_keys = ''
+
+
 let g:surround_indent = 1
 let g:rubycomplete_rails = 1
 let g:HammerQuiet = 1
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_safe_mode_by_default = 0
-" pressing <space> will increase the size of the window by 15 columns
+
 let g:yankring_window_increment = 15
 
-" have yankring manage Vim's numbered registers ("0-"9)
+
 let g:yankring_manage_numbered_reg = 1
 
-" keep the history file in the $HOME/.vim folder rather than $HOME
+
 let g:yankring_history_dir = '$HOME/.tmp'
 
-" yankring keeps an eye on the clipboard
+
 let g:yankring_clipboard_monitor = 1
 
-" if something changes the default register without going through yankring, use
-" the default register value rather than the top item in yankring's history
+
+
 let g:yankring_paste_check_default_buffer = 1
 
-" swapfile settings and storage directory
+
 set swapfile
 if !isdirectory($HOME . "/.tmp")
   call mkdir($HOME . "/.tmp")
 endif
-"undo settings
+
 set undodir=~/.tmp
 set undofile
-"maximum number of changes that can be undone
+
 set undolevels=1000
-"maximum number lines to save for undo on a buffer reload
+
 set undoreload=10000
-"set colorcolumn=+1
+
 set backupdir=~/.tmp
 set directory=~/.tmp
 set backup
@@ -395,26 +395,26 @@ endif
 if filereadable($HOME . "/.passwords")
   source $HOME/.passwords
 endif
-" no toolbar
+
 set go-=T
-" no left scroll bar
+
 set guioptions-=L
-" no right scroll bar
+
 set guioptions-=r
-" console dialogs > popups
+
 set guioptions+=c
 set textwidth=79
 set ignorecase
-" complete words from system dictionary
+
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
-" set complete-=k complete+=k
+
 set complete-=k
-" highlight the line that the cursor is currently on
+
 set cursorline
-" numbers
+
 set nu
 set nuw=5
-" limit time to assume whether to wait on mapping
+
 set timeoutlen=333
 
 if has("gui")
@@ -426,18 +426,12 @@ if has("gui")
 endif
 
 if has("mac")
-  " mac clipboard fix
   set clipboard=unnamed
 endif
 
 if has("gui") && has("mac")
-  " set transparency=0
-  " full screen fills width of screen
   set fuopt+=maxhorz
   set macmeta
-  " best font there is
-  " set guifont=Monaco:h10 | set noantialias
-  " set antialias | set guifont=Monaco:h12
   set antialias | set guifont=Inconsolata:h14
 endif
 
@@ -445,14 +439,13 @@ if has("gui") && !has("mac")
   set guifont=Inconsolata\ 12
 endif
 
-" vim-makegreen binds itself to ,t unless something else is bound to its
-" function.
+
+
 map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
-" map <silent> <Leader>tt :call MakeGreen()<cr>
-" map <silent> <Leader>tt :!~/.rvm/rubies/default/bin/ruby -I test <c-r>=expand("%:p")<cr><cr>
+
+
 
 function! RunTests(filename)
-  " Write the file and run tests for the given filename
   :w
   :silent !echo;echo;echo;echo;echo
   if filereadable("script/test")
@@ -463,7 +456,6 @@ function! RunTests(filename)
 endfunction
 
 function! SetTestFile()
-  " Set the spec file that tests will be run for.
   let t:grb_test_file=@%
 endfunction
 
@@ -474,7 +466,6 @@ function! RunTestFile(...)
     let command_suffix = ""
   endif
 
-  " Run the tests for the previously-marked file.
   let in_spec_file = match(expand("%"), '_spec.rb$') != -1
   if in_spec_file
     call SetTestFile()
@@ -494,7 +485,7 @@ map <leader>T :call RunNearestTest()<cr>
 map <leader>a :call RunTests('spec')<cr>
 
 function! OpenChangedFiles()
-  only " Close all windows, unless they're modified
+  only 
   let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
   let filenames = split(status, "\n")
   exec "edit " . filenames[0]
@@ -504,11 +495,11 @@ function! OpenChangedFiles()
 endfunction
 command! OpenChangedFiles :call OpenChangedFiles()
 
-""
-"
-" Autocommands
-"
-"""
+
+
+
+
+
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType vim set omnifunc=syntaxcomplete#Complete
@@ -524,37 +515,37 @@ autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
 autocmd filetype svn,*commit*,markdown set spell
 autocmd BufNewFile,BufRead *_spec.rb compiler rspec
 autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
-" scratch buffers are Markdown filetypes by default
+
 let g:do_filetype = 0
 au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
 au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
-" set git diffs to git filetype automagically
+
 au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
 
 
-""
-"
-" Mappings
-"
-"""
-" alignment
+
+
+
+
+
+
 nmap <leader>a= :Tabularize /=<CR>
 vmap <leader>a= :Tabularize /=<CR>
 nmap <leader>a: :Tabularize /:\zs<CR>
 vmap <leader>a: :Tabularize /:\zs<CR>
 nmap <leader>a :Tabularize /
 vmap <leader>a :Tabularize /
-" indent all lines in current buffer
+
 nmap <leader>= G=gg<c-o><c-o>
-" open help on current word
+
 nmap <leader>h :help <c-r>=expand("<cword>")<cr><cr>
 vmap <leader>h "ry:help<space><c-r>r<cr>
 nmap <C-cr> <esc>yyp
 imap <S-cr> <esc>$o
 nmap <C-S-cr> d$O<esc>p0x
-" close the current buffer
+
 nmap <leader>q :bd<cr>
-" navigate through buffers
+
 nmap <c-h> <c-w><c-h>
 nmap <c-j> <c-w><c-j>
 nmap <c-k> <c-w><c-k>
@@ -566,20 +557,20 @@ if filereadable("/usr/local/bin/ctags")
 else
   let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
-" a lot of these are not being overwritten by easymotion
+
 nmap <leader>m :TagbarToggle<cr> 
 nmap <leader>d :TagbarOpenAutoClose<cr>
-" navigate through make errors
+
 nmap <leader>c :cnext<cr>
 nmap <leader>p :cprevious<cr>
-" nmap <leader>P :Hammer<CR>
+
 nmap <leader>z :ZoomWin<cr>
-" nmap <leader>f :e ~/.vim/vimrc<cr>
+
 nmap <leader>= miggVG=`i
-" open up vertical and horizontal splits
+
 nmap <leader>v :vsplit<CR> <C-w><C-w>
 nmap <leader>s :split<CR> <C-w><C-w>
-" nmap <leader>w <C-w><C-w>_
+
 nmap <leader>\ :%! fmt -w 79<CR>
 vmap <leader>\ :!fmt -w 79<CR>
 nmap <leader>` :%s/\s*$//ge<CR>
@@ -588,75 +579,77 @@ nnoremap <silent> <Leader>y :YRShow<CR>
 nnoremap <silent> <Leader>Y :GundoToggle<CR>
 inoremap <M-o>       <Esc>o
 inoremap <C-j>       <Down>
-" insert space without leaving normal mode
+
+vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<CR><CR>
+
 nmap <leader><space> i<space><esc>
-" yank current-line without \n
+
 nmap VV 0v$h
-" navigate buffers with arrow keys
+
 nmap <left> :bp<cr>
 nmap <right> :bn<cr>
-" set size of buffer on left and right to preferred sizes
+
 nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
 nmap gff <C-w>gf
 imap (( ()
 imap <c-space> <right>
 nmap <leader>- i<space><esc>vs-2lxi
 nmap <leader>+ :cd %:p:h <bar> new<space>
-" emacs-like keybindings when editing text in insert mode
-" end of line
+
+
 imap <C-e> <esc>$a
-" beginning-of-line
+
 imap <C-a> <esc>0i
-" back-one-char
+
 imap <C-b> <esc>ha
-" forward-one-char
+
 imap <C-f> <esc>la
-" delete-forward-char
+
 imap <C-d> <right><bs>
-" delete-previous-word
+
 imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
-" open up vim-rails
+
 nmap <leader>r :R
 nmap Y y$
-" better movement when editing languages with camelcase and duck typed code
+
 map <silent> w <Plug>CamelCaseMotion_w
 map <silent> b <Plug>CamelCaseMotion_b
 map <silent> e <Plug>CamelCaseMotion_e
-" insert hashrockets quickly for ruby
+
 imap <C-right> <space>=><space>
 imap <C-;> <space>=><space>
 imap <c-]> <space>=><space>
-" insert currently opened file's filename in command prompt
+
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
 cnoremap %& <C-R>=expand('%:p')<cr>
-" cabbrev rrvm ~/.rvm/rubies/default/ruby
-" Visually select the text that was last edited/pasted
+
+
 nmap gV `[v`]
-" navigate changes in file
+
 nmap <S-right> g,
 nmap <S-left> g;
 
-" Map keys to go to specific files
+
 map <leader>gr :topleft :split config/routes.rb<cr>
 function! ShowRoutes()
-  " Requires 'scratch' plugin
+  
   :topleft 100 :split __Routes__
-  " Make sure Vim doesn't write __Routes__ as a file
+ 
   :set buftype=nofile
-  " Delete everything
+
   :normal 1GdG
-  " Put routes output in buffer
+
   :0r! rake -s routes
-  " Size window to number of lines (1 plus rake output length)
+
   :exec ":normal " . line("$") . "_ "
-  " Move cursor to bottom
+
   :normal 1GG
-  " Delete empty trailing line
+
   :normal dd
 endfunction
 map <leader>gR :call ShowRoutes()<cr>
-" call commandtflush in case have added new file(s)
+
 map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
 map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
 map <leader>gu :CommandTFlush<cr>\|:CommandT test/unit<cr>
@@ -674,10 +667,10 @@ nmap ;; :CommandTFlush<cr>:CommandT<cr>
 nmap ;' :CommandTFlush<cr>:CommandTBuffer<cr>
 nmap <leader><leader> <C-^>
 
-"
-" Functions immediately followed by their mapping
-"
-"""
+
+
+
+
 let g:mapSafeBufList = ["\\[BufExplorer\\]", "__Tagbar__", "Nerd_tree_\d*"]
 function! IsMember(list, element)
   for listElement in a:list
@@ -688,8 +681,8 @@ function! IsMember(list, element)
   return 0
 endfunction
 
-" if in bufexplorer buffer up arrow keys goes to previous line, otherwise open
-" bufexplorer
+
+
 function! BufExplorerOrPreviousLine()
   if IsMember(g:mapSafeBufList, bufname("%")) == 1
     normal k
@@ -709,25 +702,25 @@ function! TagbarOrNextLine()
 endfunction
 nmap <silent> <down> :call TagbarOrNextLine()<cr>
 
-" clear the search buffer when hitting return
+
 nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
 
-" run given command but preserve position
+
 function! Preserve(command)
-  " Preparation: save last search, and cursor position.
+  
   let _s=@/
   let l = line(".")
   let c = col(".")
-  " Do the business:
+  
   execute a:command
-  " Clean up: restore previous search history, and cursor position
+ 
   let @/=_s
   call cursor(l, c)
 endfunction
 nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
 nmap _= :call Preserve("normal gg=G")<CR>
 
-" convert visually selected text to proper Titlecase
+
 function! Titlecase()
   if !executable("toTitleCase")
     echo "Missing toTitleCase excutable."
@@ -741,7 +734,7 @@ function! Titlecase()
 endfunction
 vmap <leader>t :call Titlecase()<CR>
 
-" copies filepath to clipboard correctly
+
 function s:FilepathToClipboard()
   if has("mac")
     call system('echo -n '.expand("%").'| pbcopy')
@@ -754,7 +747,7 @@ function s:FilepathToClipboard()
 endfunction
 nmap <leader>% :<C-u>call <SID>FilepathToClipboard()<CR>
 
-" explicitily shows tab indent levels/scopes
+
 function! ToggleIndentGuidesTabs()
   if exists('b:iguides_tabs')
     setlocal nolist
@@ -768,7 +761,7 @@ function! ToggleIndentGuidesTabs()
 endfunction
 nmap <leader><bslash> :call ToggleIndentGuidesTabs()<cr>
 
-" explicitily shows space indent levels/scopes
+
 function! ToggleIndentGuidesSpaces()
   if exists('b:iguides_spaces')
     call matchdelete(b:iguides_spaces)
@@ -782,20 +775,20 @@ function! ToggleIndentGuidesSpaces()
 endfunction
 nmap <leader><tab> :call ToggleIndentGuidesSpaces()<cr>
 
-" open nerdtree and maximize immediately
+
 function! NERDTreeToggleMax()
   :NERDTree
   normal A
 endfunction
 nmap <leader>DD :call NERDTreeToggleMax()<cr>
 
-" replace the current buffer's, hopefully, javascript text beautified
+
 function! JSBeautify()
   silent! exe "%! jsbeautifier --stdin"
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<cr>
 
-" overly complex fuction to open up docco for the current file
+
 function! DoccoAndOpenInBrowser()
   let currentFilePath = expand("%")
   let currentDir = expand("%:h")
@@ -817,12 +810,12 @@ function! DoccoAndOpenInBrowser()
 endfunction
 command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
 
-" don't type in the entire omni-completion emacs-like binding
+
 inoremap <C-O> <C-X><C-O>
-" use C-l to look for completion and navigate omni-completion menu correctly
+
 inoremap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
 
-" Map ,x to open files in the same directory as the current file
+
 map <leader>x :sp <C-R>=expand("%:h")<cr>/
 
 function! EditSnippetsForFiletype(filetype)
@@ -830,27 +823,27 @@ function! EditSnippetsForFiletype(filetype)
 endfunction
 command! -nargs=1 EditSnippetsForFiletype call EditSnippetsForFiletype('<args>')<cr>
 
-" Seriously, guys. It's not like :W is bound to anything anyway.
+
 command! W :w
-" Seriously, guys. It's not like :E is bound to anything anyway.
+
 command! E :Explore
 
-" jump to the first open window that contains the specified buffer (if there is one).
-" Otherwise: Do not examine other windows.
+
+
 set switchbuf=useopen
 
-" Make <leader>' switch between ' and "
+
 nnoremap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
 
-" quick comment/uncomment
+
 nmap \\           <plug>NERDCommenterInvert
 xmap \\           <Plug>NERDCommenterInvert
 
-" open up command history/buffer faster
+
 nmap q; q:
 
-" Remap the tab key to do autocompletion or indentation depending on the
-" context (from http://www.vim.org/tips/tip.php?tip_id=102)
+
+
 function! InsertTabWrapper()
   let col = col('.') - 1
   if !col || getline('.')[col - 1] !~ '\k'
@@ -862,7 +855,7 @@ endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <s-tab> <c-n>
 
-" Rename the current file to something initially in the current directory
+
 function! RenameFile()
   let old_name = expand('%')
   let new_name = input('New file name: ', expand('%'))
@@ -873,7 +866,7 @@ function! RenameFile()
   endif
 endfunction
 
-" Setup for diffmode/vimdiff
+
 if &diff
   " nmap <c-h> :diffget 1<cr>
   " nmap <c-l> :diffget 3<cr>
@@ -882,10 +875,10 @@ if &diff
   set number
 endif
 
-" way better of running current ruby file, to view output, run `tail -f /tmp/vim.log`
+
 map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &" <cr>
 
-" "DiffOrig shows the diff between the current state of the currently open
-" buffer and what's saved on disk.
+
+
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
