@@ -88,13 +88,5 @@ git_bundle bundle/bufkill git://github.com/vim-scripts/bufkill.vim.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
-[ -z "`find ~/.vim/vim-pathogen \( -name '\.git*' \) -prune -o -type f -print`" ] &&
-  cd ~/.vim &&
-  rm -rf autoload/* &&
-  rm -rf vim-pathogen &&
-  git_bundle vim-pathogen git://github.com/tpope/vim-pathogen.git &&
-  ln -sf vim-pathogen/autoload/* autoload/
-
-
-
-
+curl https://raw.github.com/tpope/vim-pathogen/HEAD/autoload/pathogen.vim \
+  > ~/.vim/autoload/pathogen.vim
