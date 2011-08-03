@@ -1,13 +1,10 @@
 
-
 set nocompatible
 
 call pathogen#runtime_append_all_bundles() 
 call pathogen#helptags() 
 
-
 set backspace=indent,eol,start
-
 
 set history=1000
 
@@ -20,8 +17,6 @@ set hlsearch
 set nowrap      
 set linebreak   
 
-
-
 set winwidth=84
 set winheight=5
 set winminheight=5
@@ -29,11 +24,9 @@ set winheight=999
 
 set statusline=%f       
 
-
 set statusline+=%#warningmsg#
 set statusline+=%{&ff!='unix'?'['.&ff.']':''}
 set statusline+=%*
-
 
 set statusline+=%#warningmsg#
 set statusline+=%{(&fenc!='utf-8'&&&fenc!='')?'['.&fenc.']':''}
@@ -43,7 +36,6 @@ set statusline+=%h
 set statusline+=%y      
 set statusline+=%r      
 set statusline+=%m      
-
 
 set statusline+=%#error#
 set statusline+=%{StatuslineTabWarning()}
@@ -56,7 +48,6 @@ set statusline+=%{StatuslineLongLineWarning()}
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
-
 
 set statusline+=%#error#
 set statusline+=%{&paste?'[paste]':''}
@@ -72,10 +63,7 @@ set laststatus=2
 
 set showtabline=2
 
-
 autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
-
-
 
 function! StatuslineTrailingSpaceWarning()
   if !exists("b:statusline_trailing_space_warning")
@@ -94,7 +82,6 @@ function! StatuslineTrailingSpaceWarning()
   return b:statusline_trailing_space_warning
 endfunction
 
-
 function! StatuslineCurrentHighlight()
   let name = synIDattr(synID(line('.'),col('.'),1),'name')
   if name == ''
@@ -104,11 +91,7 @@ function! StatuslineCurrentHighlight()
   endif
 endfunction
 
-
 autocmd cursorhold,bufwritepost * unlet! b:statusline_tab_warning
-
-
-
 
 function! StatuslineTabWarning()
   if !exists("b:statusline_tab_warning")
@@ -132,15 +115,7 @@ function! StatuslineTabWarning()
   return b:statusline_tab_warning
 endfunction
 
-
 autocmd cursorhold,bufwritepost * unlet! b:statusline_long_line_warning
-
-
-
-
-
-
-
 
 function! StatuslineLongLineWarning()
   if !exists("b:statusline_long_line_warning")
@@ -164,7 +139,6 @@ function! StatuslineLongLineWarning()
   return b:statusline_long_line_warning
 endfunction
 
-
 function! s:LongLines()
   let threshold = (&tw ? &tw : 80)
   let spaces = repeat(" ", &ts)
@@ -183,7 +157,6 @@ function! s:LongLines()
   return long_line_lens
 endfunction
 
-
 function! s:Median(nums)
   let nums = sort(a:nums)
   let l = len(nums)
@@ -196,13 +169,10 @@ function! s:Median(nums)
   endif
 endfunction
 
-
 set shiftwidth=4
 set softtabstop=4
 set expandtab
 set autoindent
-
-
 
 set foldmethod=syntax
 set foldnestmax=3       
@@ -214,36 +184,27 @@ set wildmode=list:longest
 set wildmenu                
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc 
 
-
-
 set nolist
 set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
 
 set formatoptions-=o 
 
-
 set scrolloff=3
 set sidescrolloff=7
 set sidescroll=1
-
 
 filetype on
 filetype plugin on
 filetype indent on
 
-
 syntax on
-
 
 set mouse=a
 set ttymouse=xterm2
 
-
 set t_Co=256
 
-
 set hidden
-
 
 if !has("gui")
   let g:CSApprox_loaded = 1
@@ -252,28 +213,21 @@ else
   colorscheme made_of_color
 endif
 
-
 nnoremap <silent> <C-L> :nohls<CR><C-L>
 
 nnoremap <C-B> :BufExplorer<cr>
 
-
 nnoremap <c-f> :FuzzyFinderTextMate<CR>
-
 
 noremap Q gq
 
-
 nnoremap Y y$
-
 
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
 
-
 let g:snips_author = "Travis Jeffery"
-
 
 function! s:VSetSearch()
   let temp = @@
@@ -283,8 +237,6 @@ function! s:VSetSearch()
 endfunction
 vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
-
-
 
 autocmd BufReadPost * call SetCursorPosition()
 function! SetCursorPosition()
@@ -296,8 +248,6 @@ function! SetCursorPosition()
   end
 endfunction
 
-
-
 command! -nargs=? HighlightLongLines call s:HighlightLongLines('<args>')
 function! s:HighlightLongLines(width)
   let targetWidth = a:width != '' ? a:width : 79
@@ -307,11 +257,6 @@ function! s:HighlightLongLines(width)
     echomsg "Usage: HighlightLongLines [natural number]"
   endif
 endfunction
-
-
-
-
-
 
 compiler ruby
 
@@ -343,13 +288,11 @@ let g:yankring_share_between_instances = 1
 
 let g:yankring_ignore_duplicate = 1
 
-
 let g:yankring_window_use_separate = 1
 let g:yankring_window_use_horiz = 0
 let g:yankring_window_auto_close = 1
 let g:yankring_window_width = 30
 let g:yankring_window_use_right = 1
-
 
 let g:surround_indent = 1
 let g:rubycomplete_rails = 1
@@ -359,19 +302,13 @@ let g:vimfiler_safe_mode_by_default = 0
 
 let g:yankring_window_increment = 15
 
-
 let g:yankring_manage_numbered_reg = 1
-
 
 let g:yankring_history_dir = '$HOME/.tmp'
 
-
 let g:yankring_clipboard_monitor = 1
 
-
-
 let g:yankring_paste_check_default_buffer = 1
-
 
 set swapfile
 if !isdirectory($HOME . "/.tmp")
@@ -439,11 +376,7 @@ if has("gui") && !has("mac")
   set guifont=Inconsolata\ 12
 endif
 
-
-
 map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
-
-
 
 function! RunTests(filename)
   :w
@@ -495,11 +428,6 @@ function! OpenChangedFiles()
 endfunction
 command! OpenChangedFiles :call OpenChangedFiles()
 
-
-
-
-
-
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType vim set omnifunc=syntaxcomplete#Complete
@@ -521,13 +449,6 @@ au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
 au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
 
 au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
-
-
-
-
-
-
-
 
 nmap <leader>a= :Tabularize /=<CR>
 vmap <leader>a= :Tabularize /=<CR>
@@ -596,7 +517,6 @@ imap <c-space> <right>
 nmap <leader>- i<space><esc>vs-2lxi
 nmap <leader>+ :cd %:p:h <bar> new<space>
 
-
 imap <C-e> <esc>$a
 
 imap <C-a> <esc>0i
@@ -624,12 +544,10 @@ imap <c-]> <space>=><space>
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
 cnoremap %& <C-R>=expand('%:p')<cr>
 
-
 nmap gV `[v`]
 
 nmap <S-right> g,
 nmap <S-left> g;
-
 
 map <leader>gr :topleft :split config/routes.rb<cr>
 function! ShowRoutes()
@@ -667,10 +585,6 @@ nmap ;; :CommandTFlush<cr>:CommandT<cr>
 nmap ;' :CommandTFlush<cr>:CommandTBuffer<cr>
 nmap <leader><leader> <C-^>
 
-
-
-
-
 let g:mapSafeBufList = ["\\[BufExplorer\\]", "__Tagbar__", "Nerd_tree_\d*"]
 function! IsMember(list, element)
   for listElement in a:list
@@ -680,8 +594,6 @@ function! IsMember(list, element)
   endfor
   return 0
 endfunction
-
-
 
 function! BufExplorerOrPreviousLine()
   if IsMember(g:mapSafeBufList, bufname("%")) == 1
@@ -702,9 +614,7 @@ function! TagbarOrNextLine()
 endfunction
 nmap <silent> <down> :call TagbarOrNextLine()<cr>
 
-
 nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
-
 
 function! Preserve(command)
   
@@ -720,7 +630,6 @@ endfunction
 nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
 nmap _= :call Preserve("normal gg=G")<CR>
 
-
 function! Titlecase()
   if !executable("toTitleCase")
     echo "Missing toTitleCase excutable."
@@ -734,7 +643,6 @@ function! Titlecase()
 endfunction
 vmap <leader>t :call Titlecase()<CR>
 
-
 function s:FilepathToClipboard()
   if has("mac")
     call system('echo -n '.expand("%").'| pbcopy')
@@ -746,7 +654,6 @@ function s:FilepathToClipboard()
   endif
 endfunction
 nmap <leader>% :<C-u>call <SID>FilepathToClipboard()<CR>
-
 
 function! ToggleIndentGuidesTabs()
   if exists('b:iguides_tabs')
@@ -761,7 +668,6 @@ function! ToggleIndentGuidesTabs()
 endfunction
 nmap <leader><bslash> :call ToggleIndentGuidesTabs()<cr>
 
-
 function! ToggleIndentGuidesSpaces()
   if exists('b:iguides_spaces')
     call matchdelete(b:iguides_spaces)
@@ -775,19 +681,16 @@ function! ToggleIndentGuidesSpaces()
 endfunction
 nmap <leader><tab> :call ToggleIndentGuidesSpaces()<cr>
 
-
 function! NERDTreeToggleMax()
   :NERDTree
   normal A
 endfunction
 nmap <leader>DD :call NERDTreeToggleMax()<cr>
 
-
 function! JSBeautify()
   silent! exe "%! jsbeautifier --stdin"
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<cr>
-
 
 function! DoccoAndOpenInBrowser()
   let currentFilePath = expand("%")
@@ -810,11 +713,9 @@ function! DoccoAndOpenInBrowser()
 endfunction
 command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
 
-
 inoremap <C-O> <C-X><C-O>
 
 inoremap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
-
 
 map <leader>x :sp <C-R>=expand("%:h")<cr>/
 
@@ -823,26 +724,18 @@ function! EditSnippetsForFiletype(filetype)
 endfunction
 command! -nargs=1 EditSnippetsForFiletype call EditSnippetsForFiletype('<args>')<cr>
 
-
 command! W :w
 
 command! E :Explore
 
-
-
 set switchbuf=useopen
 
-
 nnoremap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
-
 
 nmap \\           <plug>NERDCommenterInvert
 xmap \\           <Plug>NERDCommenterInvert
 
-
 nmap q; q:
-
-
 
 function! InsertTabWrapper()
   let col = col('.') - 1
@@ -855,7 +748,6 @@ endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <s-tab> <c-n>
 
-
 function! RenameFile()
   let old_name = expand('%')
   let new_name = input('New file name: ', expand('%'))
@@ -866,7 +758,6 @@ function! RenameFile()
   endif
 endfunction
 
-
 if &diff
   " nmap <c-h> :diffget 1<cr>
   " nmap <c-l> :diffget 3<cr>
@@ -875,10 +766,7 @@ if &diff
   set number
 endif
 
-
 map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &" <cr>
-
-
 
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
