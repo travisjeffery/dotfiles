@@ -33,3 +33,24 @@ function cd() {builtin cd "$@" && ls -la}
 hash pbcopy &> /dev/null || alias pbcopy='xclip -selection clipboard'
 
 export EDITOR="vim"
+
+git() {
+  if [[ $@ == merge* ]]; then
+
+    if [[ $@ == *--no-ff* ]]; then
+      command git $@
+      return
+    fi
+
+    if [[ $@ == *--ff* ]]; then
+      command git $@
+    else
+      command git $@ --no-ff
+    fi
+
+  else
+    command git $@
+  fi
+}
+
+
