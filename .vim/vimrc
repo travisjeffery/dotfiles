@@ -766,7 +766,7 @@ if &diff
   set number
 endif
 
-map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &" <cr>
+map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
 
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 

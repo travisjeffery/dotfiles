@@ -53,4 +53,10 @@ git() {
   fi
 }
 
+clean_gvim() {
+  gvim $1 $2 $3 $4 $5 2> /dev/null
+}
+
+alias gvim="clean_gvim"
+
 
