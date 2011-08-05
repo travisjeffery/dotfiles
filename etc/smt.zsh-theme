@@ -1,7 +1,7 @@
 MODE_INDICATOR="%{$fg_bold[red]%}❮%{$reset_color%}%{$fg[red]%}❮❮%{$reset_color%}"
 local return_status="%{$fg[red]%}%(?..⏎)%{$reset_color%} "
 
-ZSH_THEME_GIT_PROMPT_PREFIX="%{$reset_color%}|%{$fg_bold[red]%}"
+ZSH_THEME_GIT_PROMPT_PREFIX="%{$reset_color%} | %{$fg_bold[red]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg_bold[red]%}⚡%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_AHEAD="%{$fg_bold[red]%}!%{$reset_color%}"
@@ -15,11 +15,13 @@ ZSH_THEME_GIT_PROMPT_UNMERGED="%{$fg[yellow]%} ═"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[cyan]%} ✭"
 
 # Format for git_prompt_long_sha() and git_prompt_short_sha()
-ZSH_THEME_GIT_PROMPT_SHA_BEFORE="%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_SHA_BEFORE="%{$reset_color%} | "
 ZSH_THEME_GIT_PROMPT_SHA_AFTER="%{$fg_bold[red]%}"
 
 function prompt_char() {
-  git branch >/dev/null 2>/dev/null && echo "%{$fg[green]%}±%{$reset_color%}" && return
+  if [[ $(git branch &>/dev/null) -gt 0 ]]; then
+    echo -n " | " && git branch >/dev/null 2>/dev/null && echo "%{$fg[green]%}±%{$reset_color%}" && return
+  fi
   hg root >/dev/null 2>/dev/null && echo "%{$fg_bold[red]%}☿%{$reset_color%}" && return
   echo "%{$fg[cyan]%}◯%{$reset_color%}"
 }
@@ -76,8 +78,14 @@ function git_time_since_commit() {
     fi
 }
 
+function rvm_prompt_info() {
+    if [[ -n $(rvm-prompt 2> /dev/null) ]]; then
+        echo -n "%{$reset_color%}| $(rvm-prompt i v g)"
+    fi
+}
+
 PROMPT='
-%{$fg[blue]%}%n%{$reset_color%} ★  %{$fg[cyan]%}%~ %{$reset_color%}$(rvm-prompt i v g)|$(git_prompt_short_sha)$(git_prompt_info)
+%{$fg[blue]%}%n%{$reset_color%} ★  %{$fg[cyan]%}%~ $(rvm_prompt_info)$(git_prompt_short_sha)$(git_prompt_info)
 %{$fg[red]%}%!%{$reset_color%} $(prompt_char) : '
 
 RPROMPT='${return_status}$(git_time_since_commit)$(git_prompt_status)%{$reset_color%}'
