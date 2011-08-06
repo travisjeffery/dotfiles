@@ -552,6 +552,8 @@ cnoremap %& <C-R>=expand('%:p')<cr>
 
 nmap gV `[v`]
 
+nmap \v /\v
+
 nmap <S-right> g,
 nmap <S-left> g;
 
