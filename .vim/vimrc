@@ -1,4 +1,3 @@
-
 set nocompatible
 
 call pathogen#runtime_append_all_bundles() 
@@ -23,6 +22,10 @@ set winminheight=5
 set winheight=999
 
 set statusline=%f       
+
+set statusline+=%{fugitive#statusline()}
+
+set statusline+=%{exists('g:loaded_rvm')?rvm#statusline():''}
 
 set statusline+=%#warningmsg#
 set statusline+=%{&ff!='unix'?'['.&ff.']':''}
@@ -206,6 +209,7 @@ set t_Co=256
 
 set hidden
 
+let g:CSApprox_verbose_level = 0
 if !has("gui")
   let g:CSApprox_loaded = 1
   colorscheme xoria256

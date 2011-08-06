@@ -85,6 +85,7 @@ git_bundle bundle/vimproc git://github.com/Shougo/vimproc.git && (cd ~/.vim/bund
 git_bundle bundle/vim-textobj-user git://github.com/kana/vim-textobj-user.git
 git_bundle bundle/vim-textobj-ruby git://github.com/nelstrom/vim-textobj-rubyblock.git
 git_bundle bundle/bufkill git://github.com/vim-scripts/bufkill.vim.git
+git_bundle bundle/rvm git://github.com/csexton/rvm.vim.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 

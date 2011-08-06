@@ -9,3 +9,5 @@ set complete=slth
 set wildmode=list:full
 set hintchars="hjklasdfgyuiopqwertnmzxcvb"
 set gui=noaddons,nobookmarks,nonavigation,tabs
+
+cabbrev google open google
