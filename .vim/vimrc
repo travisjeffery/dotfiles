@@ -448,6 +448,8 @@ autocmd filetype svn,*commit*,markdown set spell
 autocmd BufNewFile,BufRead *_spec.rb compiler rspec
 autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
 
+autocmd BufReadPost fugitive://* set bufhidden=delete
+
 let g:do_filetype = 0
 au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
 au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
@@ -763,10 +765,10 @@ function! RenameFile()
 endfunction
 
 if &diff
-  " nmap <c-h> :diffget 1<cr>
-  " nmap <c-l> :diffget 3<cr>
-  " nmap <c-k> [cz.
-  " nmap <c-j> ]cz.
+  nmap <c-h> :diffget //2<cr>
+  nmap <c-l> :diffget //3<cr>
+  nmap <c-k> [cz.
+  nmap <c-j> ]cz.
   set number
 endif
 
