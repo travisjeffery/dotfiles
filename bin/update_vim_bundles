@@ -64,7 +64,7 @@ git_bundle bundle/delimitMate git://github.com/Raimondi/delimitMate.git
 # git_bundle bundle/yankring git://github.com/vim-scripts/YankRing.vim.git
 git_bundle bundle/vim-markdown git://github.com/tpope/vim-markdown.git
 git_bundle bundle/vim-repeat git://github.com/tpope/vim-repeat.git
-git_bundle bundle/vim-git git://github.com/tpope/vim-git.git
+# git_bundle bundle/vim-git git://github.com/tpope/vim-git.git
 git_bundle bundle/vim-ruby git://github.com/vim-ruby/vim-ruby.git
 git_bundle bundle/vim-jade git://github.com/digitaltoad/vim-jade.git
 git_bundle bundle/vim-slim git://github.com/bbommarito/vim-slim.git
