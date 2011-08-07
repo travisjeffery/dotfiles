@@ -61,7 +61,7 @@ git_bundle bundle/vim-colors git@github.com:travisjeffery/vim-colors.git
 git_bundle bundle/vim-coffee-script git://github.com/kchmck/vim-coffee-script.git
 git_bundle bundle/hammer git://github.com/robgleeson/hammer.vim.git
 git_bundle bundle/delimitMate git://github.com/Raimondi/delimitMate.git
-# git_bundle bundle/yankring git://github.com/vim-scripts/YankRing.vim.git
+git_bundle bundle/yankring git://github.com/vim-scripts/YankRing.vim.git
 git_bundle bundle/vim-markdown git://github.com/tpope/vim-markdown.git
 git_bundle bundle/vim-repeat git://github.com/tpope/vim-repeat.git
 # git_bundle bundle/vim-git git://github.com/tpope/vim-git.git

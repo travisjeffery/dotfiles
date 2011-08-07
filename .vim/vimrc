@@ -298,6 +298,16 @@ let g:yankring_window_auto_close = 1
 let g:yankring_window_width = 30
 let g:yankring_window_use_right = 1
 
+let g:yankring_window_increment = 15
+
+let g:yankring_manage_numbered_reg = 1
+
+let g:yankring_history_dir = '$HOME/.tmp'
+
+let g:yankring_clipboard_monitor = 1
+
+let g:yankring_paste_check_default_buffer = 1
+
 let g:surround_indent = 1
 let g:rubycomplete_rails = 1
 let g:HammerQuiet = 1
