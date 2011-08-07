@@ -225,7 +225,9 @@ nnoremap <c-f> :FuzzyFinderTextMate<CR>
 
 noremap Q gq
 
-nnoremap Y y$
+function! YRRunAfterMaps()
+  nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
+endfunction
 
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
@@ -341,7 +343,6 @@ set directory=~/.tmp
 set backup
 if filereadable($HOME . "/.githubrc")
   source $HOME/.githubrc
-  let g:gist_clip_command = 'pbcopy'
 endif
 if filereadable($HOME . "/.passwords")
   source $HOME/.passwords
@@ -378,6 +379,9 @@ endif
 
 if has("mac")
   set clipboard=unnamed
+  let g:gist_clip_command = 'pbcopy'
+else
+  let g:gist_clip_command = 'xclip -selection clipboard'
 endif
 
 if has("gui") && has("mac")

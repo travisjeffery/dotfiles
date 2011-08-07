@@ -71,13 +71,13 @@ git_bundle bundle/vim-slim git://github.com/bbommarito/vim-slim.git
 git_bundle bundle/scss-syntax git://github.com/cakebaker/scss-syntax.vim.git
 git_bundle bundle/vim-tlib git://github.com/tomtom/tlib_vim.git
 git_bundle bundle/vim-addon-mw-utils git://github.com/MarcWeber/vim-addon-mw-utils.git
-# git_bundle bundle/vim-snipmate git://github.com/garbas/vim-snipmate.git 
+git_bundle bundle/vim-snipmate git://github.com/garbas/vim-snipmate.git 
 git_bundle bundle/vim-unimpaired git://github.com/tpope/vim-unimpaired.git
 git_bundle bundle/vim-easymotion git://github.com/Lokaltog/vim-easymotion.git
 git_bundle bundle/vim-makegreen git://github.com/reinh/vim-makegreen.git
 git_bundle bundle/rvm-ruby git://github.com/jcf/rvm_ruby.vim.git
 git_bundle bundle/vim-bufonly git://github.com/duff/vim-bufonly.git
-# git_bundle bundle/snipmate-snippets git://github.com/honza/snipmate-snippets.git
+git_bundle bundle/snipmate-snippets git://github.com/honza/snipmate-snippets.git
 git_bundle bundle/vimfiler git://github.com/Shougo/vimfiler.git
 git_bundle bundle/visincr git://github.com/vim-scripts/VisIncr.git
 git_bundle bundle/auto-pairs git://github.com/jiangmiao/auto-pairs.git
