@@ -87,7 +87,7 @@ git_bundle bundle/vim-textobj-ruby git://github.com/nelstrom/vim-textobj-rubyblo
 git_bundle bundle/bufkill git://github.com/vim-scripts/bufkill.vim.git
 git_bundle bundle/rvm git://github.com/csexton/rvm.vim.git
 git_bundle bundle/supertab git://github.com/ervandew/supertab.git
-git_bundle bundle/neocomplcache git://github.com/Shougo/neocomplcache.git
+# git_bundle bundle/neocomplcache git://github.com/Shougo/neocomplcache.git
 
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
