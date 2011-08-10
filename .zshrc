@@ -1,6 +1,7 @@
 # vim:set ft=sh sw=2 sts=2:
 
 path=(
+  "$HOME/.cabal/bin"
   "$HOME/bin"
   "$HOME/local/bin"
   "$HOME/node_modules/.bin"
