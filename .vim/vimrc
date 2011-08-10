@@ -213,8 +213,6 @@ let g:CSApprox_verbose_level = 0
 if !has("gui")
   let g:CSApprox_loaded = 1
   colorscheme xoria256
-else
-  colorscheme made_of_color
 endif
 
 nnoremap <silent> <C-L> :nohls<CR><C-L>
@@ -298,29 +296,13 @@ let g:yankring_window_use_right = 1
 
 let g:yankring_window_increment = 15
 
-" let g:yankring_manage_numbered_reg = 1
-
 let g:yankring_history_dir = '$HOME/.tmp'
-
-" let g:yankring_clipboard_monitor = 1
-
-" let g:yankring_paste_check_default_buffer = 1
 
 let g:surround_indent = 1
 let g:rubycomplete_rails = 1
 let g:HammerQuiet = 1
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_safe_mode_by_default = 0
-
-let g:yankring_window_increment = 15
-
-let g:yankring_manage_numbered_reg = 1
-
-let g:yankring_history_dir = '$HOME/.tmp'
-
-let g:yankring_clipboard_monitor = 1
-
-let g:yankring_paste_check_default_buffer = 1
 
 let g:SuperTabLongestEnhanced = 1
 
