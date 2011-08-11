@@ -183,6 +183,7 @@ set nofoldenable
 set foldlevelstart=2
 let ruby_fold = 1
 
+
 set wildmode=list:longest   
 set wildmenu                
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc 
@@ -227,6 +228,7 @@ function! YRRunAfterMaps()
   nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
 endfunction
 
+let g:rails_installed_menu=0
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
