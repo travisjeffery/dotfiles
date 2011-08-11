@@ -85,6 +85,7 @@ git_bundle bundle/bufkill https://github.com/vim-scripts/bufkill.vim.git
 git_bundle bundle/rvm https://github.com/csexton/rvm.vim.git
 git_bundle bundle/supertab https://github.com/ervandew/supertab.git
 # git_bundle bundle/neocomplcache https://github.com/Shougo/neocomplcache.git
+git_bundle bundle/searchcomplete https://github.com/vim-scripts/SearchComplete.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
