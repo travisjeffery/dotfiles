@@ -213,7 +213,7 @@ set hidden
 let g:CSApprox_verbose_level = 0
 if !has("gui")
   let g:CSApprox_loaded = 1
-  colorscheme xoria256
+  colorscheme Tomorrow
 endif
 
 nnoremap <silent> <C-L> :nohls<CR><C-L>

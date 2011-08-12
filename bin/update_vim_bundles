@@ -51,7 +51,7 @@ git_bundle bundle/tabular https://github.com/godlygeek/tabular.git
 git_bundle bundle/ZoomWin https://github.com/vim-scripts/ZoomWin.git
 git_bundle bundle/gundo https://github.com/sjl/gundo.vim.git
 git_bundle bundle/vim-racket https://github.com/wlangstroth/vim-racket.git
-git_bundle bundle/command-t https://git.wincent.com/command-t.git
+git_bundle bundle/command-t git://git.wincent.com/command-t.git
 git_bundle bundle/vim-help https://github.com/travisjeffery/vim-help
 git_bundle bundle/zencoding-vim http://github.com/mattn/zencoding-vim/
 git_bundle bundle/netrw-vim https://github.com/vim-scripts/netrw.vim.git
