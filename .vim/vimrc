@@ -177,12 +177,11 @@ set softtabstop=4
 set expandtab
 set autoindent
 
-set foldmethod=syntax
-set foldnestmax=3       
 set nofoldenable        
-set foldlevelstart=2
+set foldmethod=indent
+set foldlevelstart=1
+set foldlevel=1
 let ruby_fold = 1
-
 
 set wildmode=list:longest   
 set wildmenu                
@@ -213,7 +212,7 @@ set hidden
 let g:CSApprox_verbose_level = 0
 if !has("gui")
   let g:CSApprox_loaded = 1
-  colorscheme xoria256
+  colorscheme Tomorrow
 endif
 
 nnoremap <silent> <C-L> :nohls<CR><C-L>
@@ -575,6 +574,10 @@ function! ShowRoutes()
 endfunction
 map <leader>gR :call ShowRoutes()<cr>
 
+let g:CommandTMatchWindowReverse  = 1
+let g:CommandTMaxHeight           = 10
+let g:CommandTMaxFiles            = 30000
+let g:CommandTScanDotDirectories  = 1
 map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
 map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
 map <leader>gu :CommandTFlush<cr>\|:CommandT test/unit<cr>
@@ -650,7 +653,7 @@ function! Titlecase()
 endfunction
 vmap <leader>t :call Titlecase()<CR>
 
-function s:FilepathToClipboard()
+function! s:FilepathToClipboard()
   if has("mac")
     call system('echo -n '.expand("%").'| pbcopy')
   else
@@ -768,8 +771,8 @@ function! RenameFile()
 endfunction
 
 if &diff
-  nmap <c-h> :diffget //2<cr>
-  nmap <c-l> :diffget //3<cr>
+  nmap <c-h> :diffget 1<cr>
+  nmap <c-l> :diffget 3<cr>
   nmap <c-k> [cz.
   nmap <c-j> ]cz.
   set number
