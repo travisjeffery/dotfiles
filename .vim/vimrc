@@ -212,8 +212,10 @@ set hidden
 let g:CSApprox_verbose_level = 0
 if !has("gui")
   let g:CSApprox_loaded = 1
-  colorscheme Tomorrow
+  colorscheme default
 endif
+
+set background=light
 
 nnoremap <silent> <C-L> :nohls<CR><C-L>
 
@@ -768,6 +770,9 @@ function! RenameFile()
     redraw!
   endif
 endfunction
+
+set diffopt=filler
+set diffopt+=iwhite
 
 if &diff
   nmap <c-h> :diffget 1<cr>
