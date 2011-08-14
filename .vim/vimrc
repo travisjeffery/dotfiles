@@ -188,7 +188,8 @@ set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc 
 
 set nolist
-set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
+" set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
+set listchars=
 
 set formatoptions-=o 
 
