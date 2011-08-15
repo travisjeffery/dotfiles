@@ -534,6 +534,9 @@ imap <C-d> <right><bs>
 imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
 
+nmap [2 :diffget //2<cr>
+nmap ]3 :diffget //3<cr>
+
 nmap <leader>r :R
 nmap Y y$
 
