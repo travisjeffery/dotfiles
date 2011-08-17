@@ -86,6 +86,7 @@ git_bundle bundle/rvm https://github.com/csexton/rvm.vim.git
 git_bundle bundle/supertab https://github.com/ervandew/supertab.git
 # git_bundle bundle/neocomplcache https://github.com/Shougo/neocomplcache.git
 git_bundle bundle/searchcomplete https://github.com/vim-scripts/SearchComplete.git
+git_bundle bundle/tablineset https://github.com/vim-scripts/TabLineSet.vim.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
