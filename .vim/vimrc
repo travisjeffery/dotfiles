@@ -188,8 +188,7 @@ set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc 
 
 set nolist
-" set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
-set listchars=
+set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
 
 set formatoptions-=o 
 
@@ -780,6 +779,14 @@ if &diff
   nmap <c-j> ]cz.
   set number
 endif
+
+abbrev Utitlies Utilities
+abbrev utitlies utilities
+abbrev init; initialize
+abbrev innit init
+abbrev innitialize initialize
+abbrev seperate separate
+abbrev teh the
 
 map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
 
