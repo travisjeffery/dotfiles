@@ -703,27 +703,6 @@ function! JSBeautify()
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<cr>
 
-function! DoccoAndOpenInBrowser()
-  let currentFilePath = expand("%")
-  let currentDir = expand("%:h")
-  let currentDirname = expand("%:h:t")
-  let currentFilename = expand("%:t")
-  let currentFilenameSansSuffix = expand("%:t:r")
-  let docsDirExists = isdirectory(expand("%:h") . "/docs")
-  echo docsDirExists
-  let doccoPath = "/Users/gau5/node_modules/.bin/docco"
-  let newDocsFilePath = currentDir . "/docs/" . currentFilenameSansSuffix . ".html"
-  silent! exe "!cd " . shellescape(currentDir) . " && " . doccoPath . " " . shellescape(currentFilename)
-  if docsDirExists
-    silent! exe "!open " . shellescape(newDocsFilePath)
-  else
-    silent! exe "!cp -Rf " . shellescape(currentDir . "/docs") . " /tmp" 
-    silent! exe "!open " . "/tmp/docs/" . currentFilenameSansSuffix . ".html"
-    silent! exe "!rm -rf " shellescape(currentDir . "/docs")
-  endif
-endfunction
-command! -nargs=0 Docco call DoccoAndOpenInBrowser()<cr>
-
 inoremap <C-O> <C-X><C-O>
 
 inoremap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
