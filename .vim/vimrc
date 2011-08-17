@@ -213,10 +213,8 @@ set hidden
 let g:CSApprox_verbose_level = 0
 if !has("gui")
   let g:CSApprox_loaded = 1
-  colorscheme default
+  colorscheme grb3
 endif
-
-set background=light
 
 nnoremap <silent> <C-L> :nohls<CR><C-L>
 
@@ -746,8 +744,8 @@ set switchbuf=useopen
 
 nnoremap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
 
-nmap \\           <plug>NERDCommenterInvert
-xmap \\           <Plug>NERDCommenterInvert
+nmap \\ <plug>NERDCommenterInvert
+xmap \\ <Plug>NERDCommenterInvert
 
 nmap q; q:
 
@@ -787,3 +785,21 @@ map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
 
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
+function! InlineVariable()
+    normal "ayiw
+    normal 4diw
+    normal "bd$
+    normal dd
+    normal k$
+    exec '/\<' . @a . '\>'
+    exec ':.s/\<' . @a . '\>/' . @b
+endfunction
+
+vnoremap <leader>rv :call ExtractVariable()<cr>
+nnoremap <leader>ri :call InlineVariable()<cr>
+
+map <leader>/# /^ *#<cr>
+map <leader>/f /^ *def\><cr>
+map <leader>/c /^ *class\><cr>
+map <leader>/i /^ *if\><cr>
+map <leader>df d/\(^ *def\>\)\\|\%$<cr>
