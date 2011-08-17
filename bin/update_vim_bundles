@@ -34,11 +34,11 @@ git_bundle bundle/vim-quickrun https://github.com/thinca/vim-quickrun.git
 # git_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
 git_bundle bundle/ack https://github.com/mileszs/ack.vim.git
 git_bundle bundle/bufexplorer https://github.com/vim-scripts/bufexplorer.zip.git
-git_bundle bundle/camelcasemotion https://github.com/vim-scripts/camelcasemotion.git
+# git_bundle bundle/camelcasemotion https://github.com/vim-scripts/camelcasemotion.git
 # git_bundle bundle/csapprox https://github.com/godlygeek/csapprox.git
 git_bundle bundle/nerdcommenter https://github.com/scrooloose/nerdcommenter.git
 git_bundle bundle/vim-fugitive https://github.com/tpope/vim-fugitive.git
-git_bundle bundle/vim-endwise https://github.com/tpope/vim-endwise.git
+# git_bundle bundle/vim-endwise https://github.com/tpope/vim-endwise.git
 git_bundle bundle/gist-vim https://github.com/mattn/gist-vim.git
 git_bundle bundle/grep https://github.com/vim-scripts/grep.vim.git
 git_bundle bundle/IndexedSearch git@github.com:travisjeffery/IndexedSearch.git
@@ -86,6 +86,7 @@ git_bundle bundle/rvm https://github.com/csexton/rvm.vim.git
 git_bundle bundle/supertab https://github.com/ervandew/supertab.git
 # git_bundle bundle/neocomplcache https://github.com/Shougo/neocomplcache.git
 git_bundle bundle/searchcomplete https://github.com/vim-scripts/SearchComplete.git
+git_bundle bundle/tablineset https://github.com/vim-scripts/TabLineSet.vim.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
