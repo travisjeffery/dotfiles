@@ -106,7 +106,7 @@ function! StatuslineTabWarning()
 
     let tabs = search('^\t', 'nw') != 0
 
-    
+
     let spaces = search('^ \{' . &ts . ',}[^\t]', 'nw') != 0
 
     if tabs && spaces
@@ -536,9 +536,11 @@ cmap <C-BS> <c-w>
 nmap <leader>r :R
 nmap Y y$
 
-map <silent> w <Plug>CamelCaseMotion_w
-map <silent> b <Plug>CamelCaseMotion_b
-map <silent> e <Plug>CamelCaseMotion_e
+if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
+  map <silent> w <Plug>CamelCaseMotion_w
+  map <silent> b <Plug>CamelCaseMotion_b
+  map <silent> e <Plug>CamelCaseMotion_e
+endif
 
 imap <C-right> <space>=><space>
 imap <C-;> <space>=><space>
@@ -556,9 +558,9 @@ nmap <S-left> g;
 
 map <leader>gr :topleft :split config/routes.rb<cr>
 function! ShowRoutes()
-  
+
   :topleft 100 :split __Routes__
- 
+
   :set buftype=nofile
 
   :normal 1GdG
@@ -626,13 +628,13 @@ nmap <silent> <down> :call TagbarOrNextLine()<cr>
 nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
 
 function! Preserve(command)
-  
+
   let _s=@/
   let l = line(".")
   let c = col(".")
-  
+
   execute a:command
- 
+
   let @/=_s
   call cursor(l, c)
 endfunction
@@ -793,13 +795,13 @@ map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
 function! InlineVariable()
-    normal "ayiw
-    normal 4diw
-    normal "bd$
-    normal dd
-    normal k$
-    exec '/\<' . @a . '\>'
-    exec ':.s/\<' . @a . '\>/' . @b
+  normal "ayiw
+  normal 4diw
+  normal "bd$
+  normal dd
+  normal k$
+  exec '/\<' . @a . '\>'
+  exec ':.s/\<' . @a . '\>/' . @b
 endfunction
 
 vnoremap <leader>rv :call ExtractVariable()<cr>
