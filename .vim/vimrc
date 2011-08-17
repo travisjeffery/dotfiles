@@ -722,8 +722,6 @@ command! W :w
 
 command! E :Explore
 
-cabbrev E e
-
 set switchbuf=useopen
 
 nnoremap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
@@ -765,6 +763,7 @@ if &diff
   set number
 endif
 
+cabbrev E e
 abbrev Utitlies Utilities
 abbrev utitlies utilities
 abbrev init; initialize
