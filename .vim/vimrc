@@ -1,200 +1,7 @@
 set nocompatible
 
-call pathogen#runtime_append_all_bundles() 
-call pathogen#helptags() 
-
-set backspace=indent,eol,start
-
-set history=1000
-
-set showcmd     
-set showmode    
-
-set incsearch   
-set hlsearch    
-
-set nowrap      
-set linebreak   
-
-set winwidth=84
-set winheight=5
-set winminheight=5
-set winheight=999
-
-set statusline=%f       
-
-set statusline+=%{fugitive#statusline()}
-
-set statusline+=%{exists('g:loaded_rvm')?rvm#statusline():''}
-
-set statusline+=%#warningmsg#
-set statusline+=%{&ff!='unix'?'['.&ff.']':''}
-set statusline+=%*
-
-set statusline+=%#warningmsg#
-set statusline+=%{(&fenc!='utf-8'&&&fenc!='')?'['.&fenc.']':''}
-set statusline+=%*
-
-set statusline+=%h      
-set statusline+=%y      
-set statusline+=%r      
-set statusline+=%m      
-
-set statusline+=%#error#
-set statusline+=%{StatuslineTabWarning()}
-set statusline+=%*
-
-set statusline+=%{StatuslineTrailingSpaceWarning()}
-
-set statusline+=%{StatuslineLongLineWarning()}
-
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-set statusline+=%#error#
-set statusline+=%{&paste?'[paste]':''}
-set statusline+=%*
-
-set statusline+=%=      
-set statusline+=%{StatuslineCurrentHighlight()}\ \ "current highlight
-set statusline+=%c,     
-set statusline+=%l/%L   
-set statusline+=\ %P    
-
-set laststatus=2
-
-set showtabline=2
-
-autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
-
-function! StatuslineTrailingSpaceWarning()
-  if !exists("b:statusline_trailing_space_warning")
-
-    if !&modifiable
-      let b:statusline_trailing_space_warning = ''
-      return b:statusline_trailing_space_warning
-    endif
-
-    if search('\s\+$', 'nw') != 0
-      let b:statusline_trailing_space_warning = '[\s]'
-    else
-      let b:statusline_trailing_space_warning = ''
-    endif
-  endif
-  return b:statusline_trailing_space_warning
-endfunction
-
-function! StatuslineCurrentHighlight()
-  let name = synIDattr(synID(line('.'),col('.'),1),'name')
-  if name == ''
-    return ''
-  else
-    return '[' . name . ']'
-  endif
-endfunction
-
-autocmd cursorhold,bufwritepost * unlet! b:statusline_tab_warning
-
-function! StatuslineTabWarning()
-  if !exists("b:statusline_tab_warning")
-    let b:statusline_tab_warning = ''
-
-    if !&modifiable
-      return b:statusline_tab_warning
-    endif
-
-    let tabs = search('^\t', 'nw') != 0
-
-
-    let spaces = search('^ \{' . &ts . ',}[^\t]', 'nw') != 0
-
-    if tabs && spaces
-      let b:statusline_tab_warning =  '[mixed-indenting]'
-    elseif (spaces && !&et) || (tabs && &et)
-      let b:statusline_tab_warning = '[&et]'
-    endif
-  endif
-  return b:statusline_tab_warning
-endfunction
-
-autocmd cursorhold,bufwritepost * unlet! b:statusline_long_line_warning
-
-function! StatuslineLongLineWarning()
-  if !exists("b:statusline_long_line_warning")
-
-    if !&modifiable
-      let b:statusline_long_line_warning = ''
-      return b:statusline_long_line_warning
-    endif
-
-    let long_line_lens = s:LongLines()
-
-    if len(long_line_lens) > 0
-      let b:statusline_long_line_warning = "[" .
-            \ '#' . len(long_line_lens) . "," .
-            \ 'm' . s:Median(long_line_lens) . "," .
-            \ '$' . max(long_line_lens) . "]"
-    else
-      let b:statusline_long_line_warning = ""
-    endif
-  endif
-  return b:statusline_long_line_warning
-endfunction
-
-function! s:LongLines()
-  let threshold = (&tw ? &tw : 80)
-  let spaces = repeat(" ", &ts)
-
-  let long_line_lens = []
-
-  let i = 1
-  while i <= line("$")
-    let len = strlen(substitute(getline(i), '\t', spaces, 'g'))
-    if len > threshold
-      call add(long_line_lens, len)
-    endif
-    let i += 1
-  endwhile
-
-  return long_line_lens
-endfunction
-
-function! s:Median(nums)
-  let nums = sort(a:nums)
-  let l = len(nums)
-
-  if l % 2 == 1
-    let i = (l-1) / 2
-    return nums[i]
-  else
-    return (nums[l/2] + nums[(l/2)-1]) / 2
-  endif
-endfunction
-
-set shiftwidth=4
-set softtabstop=4
-set expandtab
-set autoindent
-
-set nofoldenable        
-set foldmethod=indent
-set foldlevelstart=1
-set foldlevel=1
-let ruby_fold = 1
-
-set wildmode=list:longest   
-set wildmenu                
-set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc 
-
-set nolist
-set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
-
-set formatoptions-=o 
-
-set scrolloff=3
-set sidescrolloff=7
-set sidescroll=1
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
 
 filetype on
 filetype plugin on
@@ -202,158 +9,65 @@ filetype indent on
 
 syntax on
 
-set mouse=a
-set ttymouse=xterm2
-
-set t_Co=256
-
-set hidden
-
-let g:CSApprox_verbose_level = 0
-if !has("gui")
-  let g:CSApprox_loaded = 1
-  colorscheme grb3
-endif
-
-nnoremap <silent> <C-L> :nohls<CR><C-L>
-
-nnoremap <C-B> :BufExplorer<cr>
-
-nnoremap <c-f> :FuzzyFinderTextMate<CR>
-
-noremap Q gq
-
-function! YRRunAfterMaps()
-  nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
-endfunction
-
-let g:rails_menu=0
-let g:rails_installed_menu=0
-let g:syntastic_enable_signs=1
-let g:syntastic_auto_jump=1
-let g:syntastic_auto_loc_list=1
-
-let g:snips_author = "Travis Jeffery"
-
-function! s:VSetSearch()
-  let temp = @@
-  norm! gvy
-  let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
-  let @@ = temp
-endfunction
-vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
-vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
-
-autocmd BufReadPost * call SetCursorPosition()
-function! SetCursorPosition()
-  if &filetype !~ 'svn\|commit\c'
-    if line("'\"") > 0 && line("'\"") <= line("$")
-      exe "normal! g`\""
-      normal! zz
-    endif
-  end
-endfunction
-
-command! -nargs=? HighlightLongLines call s:HighlightLongLines('<args>')
-function! s:HighlightLongLines(width)
-  let targetWidth = a:width != '' ? a:width : 79
-  if targetWidth > 0
-    exec 'match Todo /\%>' . (targetWidth) . 'v/'
-  else
-    echomsg "Usage: HighlightLongLines [natural number]"
-  endif
-endfunction
-
-compiler ruby
-
-let g:NERDTreeWinPos="right"
-let mapleader=","
-let g:mapleader=","
-let g:quickrun_direction = 'rightbelow vertical'
-let g:user_zen_leader_key = '<c-e>'
-let g:use_zen_complete_tag = 1
-let g:ragtag_global_maps = 1
-let g:user_zen_settings = {
-      \  'indentation' : '  ',
-      \   'markdown' : { 'extends' : 'html' }
-      \}
-let g:delimitMate_expand_cr = 1
-let g:delimitMate_expand_space = 1
-let delimitMate_balance_matchpairs = 1
-let delimitMate_smart_quotes = 0
-let delimitMate_smart_matchpairs = 0
-let delimitMate_autoclose = 0
-
-let g:yankring_max_history = 1000
-let g:yankring_max_display = 100
-
-let g:yankring_persist = 1
-let g:yankring_share_between_instances = 1
-
-let g:yankring_window_use_separate = 1
-let g:yankring_window_use_horiz = 1
-let g:yankring_window_auto_close = 1
-let g:yankring_window_width = 30
-let g:yankring_window_use_right = 1
-
-let g:yankring_window_increment = 15
-
-let g:yankring_history_dir = '$HOME/.tmp'
-
-let g:surround_indent = 1
-let g:rubycomplete_rails = 1
-let g:HammerQuiet = 1
-let g:vimfiler_as_default_explorer = 1
-let g:vimfiler_safe_mode_by_default = 0
-
-let g:SuperTabLongestEnhanced = 1
-
-let g:SuperTabDefaultCompletionType = "context"
-
-set swapfile
-if !isdirectory($HOME . "/.tmp")
-  call mkdir($HOME . "/.tmp")
-endif
-
+set backspace=indent,eol,start
+set history=1000
+set showcmd
+set showmode
+set incsearch
+set hlsearch
+set nowrap
+set linebreak
+set winwidth=84
+set winheight=5
+set winminheight=5
+set winheight=999
 set undodir=~/.tmp
 set undofile
-
 set undolevels=1000
-
 set undoreload=10000
-
 set backupdir=~/.tmp
 set directory=~/.tmp
 set backup
-if filereadable($HOME . "/.githubrc")
-  source $HOME/.githubrc
-endif
-if filereadable($HOME . "/.passwords")
-  source $HOME/.passwords
-endif
-
-set go-=T
-
-set guioptions-=L
-
-set guioptions-=r
-
-set guioptions+=c
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+set autoindent
+set nofoldenable
+set foldmethod=indent
+set foldlevelstart=1
+set foldlevel=1
+set wildmode=list:longest
+set wildmenu
+set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
+set nolist
+set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
+set formatoptions-=o
+set scrolloff=3
+set sidescrolloff=7
+set sidescroll=1
+set mouse=a
+set ttymouse=xterm2
+set t_Co=256
+set hidden
 set textwidth=79
 set ignorecase
-
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
-
 set complete-=k
-
 set cursorline
-
 set nu
-set nuw=5
-
+" set nuw=5
 set timeoutlen=333
+set laststatus=2
+set showtabline=2
+set diffopt=filler
+set diffopt+=iwhite
+set switchbuf=useopen
 
 if has("gui")
+  set go-=T
+  set guioptions-=L
+  set guioptions-=r
+  set guioptions+=c
   set noantialias
   set columns=111
   set lines=69
@@ -378,49 +92,199 @@ if has("gui") && !has("mac")
   set guifont=Inconsolata\ 12
 endif
 
-map <leader>\dontstealmymapsmakegreen :w\|:call MakeGreen('spec')<cr>
+set statusline=%f
+set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
+set statusline+=%{exists('g:loaded_rvm')?rvm#statusline():''}
+set statusline+=%#warningmsg#
+set statusline+=%{&ff!='unix'?'['.&ff.']':''}
+set statusline+=%*
+set statusline+=%#warningmsg#
+set statusline+=%{(&fenc!='utf-8'&&&fenc!='')?'['.&fenc.']':''}
+set statusline+=%*
+set statusline+=%h
+set statusline+=%y
+set statusline+=%r
+set statusline+=%m
+set statusline+=%#error#
+set statusline+=%*
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+set statusline+=%#error#
+set statusline+=%{&paste?'[paste]':''}
+set statusline+=%*
+set statusline+=%=
+set statusline+=%c,
+set statusline+=%l/%L
+set statusline+=\ %P
 
-function! RunTests(filename)
-  :w
-  :silent !echo;echo;echo;echo;echo
-  if filereadable("script/test")
-    exec ":!script/test " . a:filename
-  else
-    exec ":!bundle exec rspec " . a:filename
+let g:CSApprox_verbose_level = 0
+if !has("gui")
+  let g:CSApprox_loaded = 1
+endif
+
+nmap <silent> <C-L> :nohls<CR><C-L>
+nmap <C-B> :BufExplorer<cr>
+nmap <c-f> :FuzzyFinderTextMate<CR>
+noremap Q gq
+nmap <leader>m :TagbarToggle<cr>
+nmap <leader>d :TagbarOpenAutoClose<cr>
+nmap <leader>c :cnext<cr>
+nmap <leader>p :cprevious<cr>
+nmap <leader>z :ZoomWin<cr>
+nmap <leader>= miggVG=`i
+nmap <leader>v :vsplit<CR> <C-w><C-w>
+nmap <leader>s :split<CR> <C-w><C-w>
+nmap <leader>\ :%! fmt -w 79<CR>
+vmap <leader>\ :!fmt -w 79<CR>
+nmap <leader>` :%s/\s*$//ge<CR>
+nmap <Leader>cd :cd %:p:h<CR>
+nmap <silent> <Leader>y :YRShow<CR>
+nmap <silent> <Leader>Y :GundoToggle<CR>
+imap <M-o>       <Esc>o
+imap <C-j>       <Down>
+nmap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
+nmap \\ <plug>NERDCommenterInvert
+xmap \\ <Plug>NERDCommenterInvert
+nmap q; q:
+vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<CR><CR>
+nmap <leader><space> i<space><esc>
+nmap VV 0v$h
+nmap <left> :bp<cr>
+nmap <right> :bn<cr>
+nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
+nmap gff <C-w>gf
+imap (( ()
+imap <c-space> <right>
+nmap <leader>- i<space><esc>vs-2lxi
+nmap <leader>+ :cd %:p:h <bar> new<space>
+imap <C-e> <esc>$a
+imap <C-a> <esc>0i
+imap <C-b> <esc>ha
+imap <C-f> <esc>la
+imap <C-d> <right><bs>
+imap <silent> <C-BS> <esc>bvec
+cmap <C-BS> <c-w>
+nmap [2 :diffget //2<cr>
+nmap ]3 :diffget //3<cr>
+nmap <leader>r :R
+nmap Y y$
+vmap <leader>rv :call ExtractVariable()<cr>
+nmap <leader>ri :call InlineVariable()<cr>
+nmap <leader>/# /^ *#<cr>
+nmap <leader>/f /^ *def\><cr>
+nmap <leader>/c /^ *class\><cr>
+nmap <leader>/i /^ *if\><cr>
+nmap <leader>df d/\(^ *def\>\)\\|\%$<cr>
+nmap <leader>a= :Tabularize /=<CR>
+vmap <leader>a= :Tabularize /=<CR>
+nmap <leader>a: :Tabularize /:\zs<CR>
+vmap <leader>a: :Tabularize /:\zs<CR>
+nmap <leader>a :Tabularize /
+vmap <leader>a :Tabularize /
+nmap <leader>= G=gg<c-o><c-o>
+nmap <leader>h :help <c-r>=expand("<cword>")<cr><cr>
+vmap <leader>h "ry:help<space><c-r>r<cr>
+nmap <C-cr> <esc>yyp
+imap <S-cr> <esc>$o
+nmap <C-S-cr> d$O<esc>p0x
+nmap <leader>q :bd<cr>
+nmap <c-h> <c-w><c-h>
+nmap <c-j> <c-w><c-j>
+nmap <c-k> <c-w><c-k>
+nmap <c-l> <c-w><c-l>
+nmap <leader>R :QuickRun<cr>
+nmap <leader>D :NERDTree<cr>
+imap <C-right> <space>=><space>
+imap <C-;> <space>=><space>
+imap <c-]> <space>=><space>
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+cnoremap %& <C-R>=expand('%:p')<cr>
+nmap gV `[v`]
+nmap \v /\v
+nmap <S-right> g,
+nmap <S-left> g;
+
+function! YRRunAfterMaps()
+  nmap Y   :<C-U>YRYankCount 'y$'<CR>
+endfunction
+
+function! s:VSetSearch()
+  let temp = @@
+  norm! gvy
+  let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
+  let @@ = temp
+endfunction
+vmap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
+vmap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
+
+autocmd BufReadPost * call SetCursorPosition()
+function! SetCursorPosition()
+  if &filetype !~ 'svn\|commit\c'
+    if line("'\"") > 0 && line("'\"") <= line("$")
+      exe "normal! g`\""
+      normal! zz
+    endif
   end
 endfunction
 
-function! SetTestFile()
-  let t:grb_test_file=@%
-endfunction
+" compiler ruby
+let ruby_fold = 1
+let g:rails_menu=0
+let g:rails_installed_menu=0
+let g:syntastic_enable_signs=1
+let g:syntastic_auto_jump=1
+let g:syntastic_auto_loc_list=1
+let g:snips_author = "Travis Jeffery"
+let g:NERDTreeWinPos="right"
+let g:mapleader=","
+let g:quickrun_direction = 'rightbelow vertical'
+let g:user_zen_leader_key = '<c-e>'
+let g:use_zen_complete_tag = 1
+let g:ragtag_global_maps = 1
+let g:user_zen_settings = {
+      \  'indentation' : '  ',
+      \   'markdown' : { 'extends' : 'html' }
+      \}
+let g:delimitMate_expand_cr = 1
+let g:delimitMate_expand_space = 1
+let delimitMate_balance_matchpairs = 1
+let delimitMate_smart_quotes = 0
+let delimitMate_smart_matchpairs = 0
+let delimitMate_autoclose = 0
+let g:yankring_max_history = 1000
+let g:yankring_max_display = 100
+let g:yankring_persist = 1
+let g:yankring_share_between_instances = 1
+let g:yankring_window_use_separate = 1
+let g:yankring_window_use_horiz = 1
+let g:yankring_window_auto_close = 1
+let g:yankring_window_width = 30
+let g:yankring_window_use_right = 1
+let g:yankring_window_increment = 15
+let g:yankring_history_dir = '$HOME/.tmp'
+let g:surround_indent = 1
+let g:rubycomplete_rails = 1
+let g:HammerQuiet = 1
+let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_safe_mode_by_default = 0
+let g:SuperTabLongestEnhanced = 1
+let g:SuperTabDefaultCompletionType = "context"
 
-function! RunTestFile(...)
-  if a:0
-    let command_suffix = a:1
-  else
-    let command_suffix = ""
-  endif
+set swapfile
+if !isdirectory($HOME . "/.tmp")
+  call mkdir($HOME . "/.tmp")
+endif
 
-  let in_spec_file = match(expand("%"), '_spec.rb$') != -1
-  if in_spec_file
-    call SetTestFile()
-  elseif !exists("t:grb_test_file")
-    return
-  end
-  call RunTests(t:grb_test_file . command_suffix)
-endfunction
-
-function! RunNearestTest()
-  let spec_line_number = line('.')
-  call RunTestFile(":" . spec_line_number)
-endfunction
-
-map <leader>t :call RunTestFile()<cr>
-map <leader>T :call RunNearestTest()<cr>
-map <leader>a :call RunTests('spec')<cr>
+if filereadable($HOME . "/.githubrc")
+  source $HOME/.githubrc
+endif
+if filereadable($HOME . "/.passwords")
+  source $HOME/.passwords
+endif
 
 function! OpenChangedFiles()
-  only 
+  only
   let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
   let filenames = split(status, "\n")
   exec "edit " . filenames[0]
@@ -454,91 +318,11 @@ au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
 
 au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
 
-nmap <leader>a= :Tabularize /=<CR>
-vmap <leader>a= :Tabularize /=<CR>
-nmap <leader>a: :Tabularize /:\zs<CR>
-vmap <leader>a: :Tabularize /:\zs<CR>
-nmap <leader>a :Tabularize /
-vmap <leader>a :Tabularize /
-
-nmap <leader>= G=gg<c-o><c-o>
-
-nmap <leader>h :help <c-r>=expand("<cword>")<cr><cr>
-vmap <leader>h "ry:help<space><c-r>r<cr>
-nmap <C-cr> <esc>yyp
-imap <S-cr> <esc>$o
-nmap <C-S-cr> d$O<esc>p0x
-
-nmap <leader>q :bd<cr>
-
-nmap <c-h> <c-w><c-h>
-nmap <c-j> <c-w><c-j>
-nmap <c-k> <c-w><c-k>
-nmap <c-l> <c-w><c-l>
-nmap <leader>R :QuickRun<cr>
-nmap <leader>D :NERDTree<cr>
 if filereadable("/usr/local/bin/ctags")
   let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
   let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
-
-nmap <leader>m :TagbarToggle<cr> 
-nmap <leader>d :TagbarOpenAutoClose<cr>
-
-nmap <leader>c :cnext<cr>
-nmap <leader>p :cprevious<cr>
-
-nmap <leader>z :ZoomWin<cr>
-
-nmap <leader>= miggVG=`i
-
-nmap <leader>v :vsplit<CR> <C-w><C-w>
-nmap <leader>s :split<CR> <C-w><C-w>
-
-nmap <leader>\ :%! fmt -w 79<CR>
-vmap <leader>\ :!fmt -w 79<CR>
-nmap <leader>` :%s/\s*$//ge<CR>
-nmap <Leader>cd :cd %:p:h<CR>
-nnoremap <silent> <Leader>y :YRShow<CR>
-nnoremap <silent> <Leader>Y :GundoToggle<CR>
-inoremap <M-o>       <Esc>o
-inoremap <C-j>       <Down>
-
-vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<CR><CR>
-
-nmap <leader><space> i<space><esc>
-
-nmap VV 0v$h
-
-nmap <left> :bp<cr>
-nmap <right> :bn<cr>
-
-nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
-nmap gff <C-w>gf
-imap (( ()
-imap <c-space> <right>
-nmap <leader>- i<space><esc>vs-2lxi
-nmap <leader>+ :cd %:p:h <bar> new<space>
-
-imap <C-e> <esc>$a
-
-imap <C-a> <esc>0i
-
-imap <C-b> <esc>ha
-
-imap <C-f> <esc>la
-
-imap <C-d> <right><bs>
-
-imap <silent> <C-BS> <esc>bvec
-cmap <C-BS> <c-w>
-
-nmap [2 :diffget //2<cr>
-nmap ]3 :diffget //3<cr>
-
-nmap <leader>r :R
-nmap Y y$
 
 if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
   map <silent> w <Plug>CamelCaseMotion_w
@@ -546,99 +330,46 @@ if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
   map <silent> e <Plug>CamelCaseMotion_e
 endif
 
-imap <C-right> <space>=><space>
-imap <C-;> <space>=><space>
-imap <c-]> <space>=><space>
-
-cnoremap %% <C-R>=expand('%:h').'/'<cr>
-cnoremap %& <C-R>=expand('%:p')<cr>
-
-nmap gV `[v`]
-
-nmap \v /\v
-
-nmap <S-right> g,
-nmap <S-left> g;
-
-map <leader>gr :topleft :split config/routes.rb<cr>
+nmap <leader>gr :topleft :split config/routes.rb<cr>
 function! ShowRoutes()
-
-  :topleft 100 :split __Routes__
-
-  :set buftype=nofile
-
-  :normal 1GdG
-
-  :0r! rake -s routes
-
-  :exec ":normal " . line("$") . "_ "
-
-  :normal 1GG
-
-  :normal dd
+  topleft 100 :split __Routes__
+  set buftype=nofile
+  normal 1GdG
+  0r! rake -s routes
+  exec ":normal " . line("$") . "_ "
+  normal 1GG
+  normal dd
 endfunction
-map <leader>gR :call ShowRoutes()<cr>
+nmap <leader>gR :call ShowRoutes()<cr>
 
 let g:CommandTMatchWindowReverse  = 1
 let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
-map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
-map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
-map <leader>gu :CommandTFlush<cr>\|:CommandT test/unit<cr>
-map <leader>gF :CommandTFlush<cr>\|:CommandT test/functional<cr>
-map <leader>gt :CommandTFlush<cr>\|:CommandT test<cr>
-map <leader>gm :CommandTFlush<cr>\|:CommandT app/models<cr>
-map <leader>gh :CommandTFlush<cr>\|:CommandT app/helpers<cr>
-map <leader>gl :CommandTFlush<cr>\|:CommandT lib<cr>
-map <leader>gp :CommandTFlush<cr>\|:CommandT public<cr>
-map <leader>gs :CommandTFlush<cr>\|:CommandT public/stylesheets<cr>
-map <leader>gS :CommandTFlush<cr>\|:CommandT spec<cr>
-map <leader>gg :topleft 100 :split Gemfile<cr>
-map <leader>gf :CommandT %%/<cr>
+nmap <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
+nmap <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
+nmap <leader>gu :CommandTFlush<cr>\|:CommandT test/unit<cr>
+nmap <leader>gF :CommandTFlush<cr>\|:CommandT test/functional<cr>
+nmap <leader>gt :CommandTFlush<cr>\|:CommandT test<cr>
+nmap <leader>gm :CommandTFlush<cr>\|:CommandT app/models<cr>
+nmap <leader>gh :CommandTFlush<cr>\|:CommandT app/helpers<cr>
+nmap <leader>gl :CommandTFlush<cr>\|:CommandT lib<cr>
+nmap <leader>gp :CommandTFlush<cr>\|:CommandT public<cr>
+nmap <leader>gs :CommandTFlush<cr>\|:CommandT public/stylesheets<cr>
+nmap <leader>gS :CommandTFlush<cr>\|:CommandT spec<cr>
+nmap <leader>gg :topleft 100 :split Gemfile<cr>
+nmap <leader>gf :CommandT %%/<cr>
 nmap ;; :CommandTFlush<cr>:CommandT<cr>
 nmap ;' :CommandTFlush<cr>:CommandTBuffer<cr>
 nmap <leader><leader> <C-^>
 
-let g:mapSafeBufList = ["\\[BufExplorer\\]", "__Tagbar__", "Nerd_tree_\d*"]
-function! IsMember(list, element)
-  for listElement in a:list
-    if match(a:element, listElement) != -1
-      return 1
-    endif
-  endfor
-  return 0
-endfunction
-
-function! BufExplorerOrPreviousLine()
-  if IsMember(g:mapSafeBufList, bufname("%")) == 1
-    normal k
-  else
-    BufExplorer
-  endif
-endfunction
-nmap <silent> <up> :call BufExplorerOrPreviousLine()<cr>
-nmap <silent> <S-up> :NERDTree<cr>
-
-function! TagbarOrNextLine()
-  if IsMember(g:mapSafeBufList, bufname("%")) == 1
-    normal j
-  else
-    TagbarOpen
-  endif
-endfunction
-nmap <silent> <down> :call TagbarOrNextLine()<cr>
-
 nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
 
 function! Preserve(command)
-
   let _s=@/
   let l = line(".")
   let c = col(".")
-
   execute a:command
-
   let @/=_s
   call cursor(l, c)
 endfunction
@@ -670,66 +401,17 @@ function! s:FilepathToClipboard()
 endfunction
 nmap <leader>% :<C-u>call <SID>FilepathToClipboard()<CR>
 
-function! ToggleIndentGuidesTabs()
-  if exists('b:iguides_tabs')
-    setlocal nolist
-    let &l:listchars = b:iguides_tabs
-    unlet b:iguides_tabs
-  else
-    let b:iguides_tabs = &l:listchars
-    setlocal listchars=tab:┆\ "protect the space
-    setlocal list
-  endif
-endfunction
-nmap <leader><bslash> :call ToggleIndentGuidesTabs()<cr>
-
-function! ToggleIndentGuidesSpaces()
-  if exists('b:iguides_spaces')
-    call matchdelete(b:iguides_spaces)
-    unlet b:iguides_spaces
-  else
-    let pos = range(1, &l:textwidth, &l:shiftwidth)
-    call map(pos, '"\\%" . v:val . "v"')
-    let pat = '\%(\_^\s*\)\@<=\%(' . join(pos, '\|') . '\)\s'
-    let b:iguides_spaces = matchadd('CursorLine', pat)
-  endif
-endfunction
-nmap <leader><tab> :call ToggleIndentGuidesSpaces()<cr>
-
-function! NERDTreeToggleMax()
-  :NERDTree
-  normal A
-endfunction
-nmap <leader>DD :call NERDTreeToggleMax()<cr>
-
 function! JSBeautify()
   silent! exe "%! jsbeautifier --stdin"
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<cr>
 
-inoremap <C-O> <C-X><C-O>
-
-inoremap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
-
-map <leader>x :sp <C-R>=expand("%:h")<cr>/
-
-function! EditSnippetsForFiletype(filetype)
-  silent exe 'e ~/.vim/bundle/snipmate/snippets/' . a:filetype . '.snippets'
-endfunction
-command! -nargs=1 EditSnippetsForFiletype call EditSnippetsForFiletype('<args>')<cr>
+imap <C-O> <C-X><C-O>
+imap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
+nmap <leader>x :sp <C-R>=expand("%:h")<cr>/
 
 command! W :w
-
 command! E :Explore
-
-set switchbuf=useopen
-
-nnoremap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
-
-nmap \\ <plug>NERDCommenterInvert
-xmap \\ <Plug>NERDCommenterInvert
-
-nmap q; q:
 
 function! InsertTabWrapper()
   let col = col('.') - 1
@@ -739,8 +421,8 @@ function! InsertTabWrapper()
     return "\<c-p>"
   endif
 endfunction
-inoremap <tab> <c-r>=InsertTabWrapper()<cr>
-inoremap <s-tab> <c-n>
+imap <tab> <c-r>=InsertTabWrapper()<cr>
+imap <s-tab> <c-n>
 
 function! RenameFile()
   let old_name = expand('%')
@@ -751,9 +433,6 @@ function! RenameFile()
     redraw!
   endif
 endfunction
-
-set diffopt=filler
-set diffopt+=iwhite
 
 if &diff
   nmap <c-h> :diffget 1<cr>
@@ -772,10 +451,8 @@ abbrev innitialize initialize
 abbrev seperate separate
 abbrev teh the
 
-map <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
-
+nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
-
 nmap . .`[
 
 function! InlineVariable()
@@ -788,11 +465,3 @@ function! InlineVariable()
   exec ':.s/\<' . @a . '\>/' . @b
 endfunction
 
-vnoremap <leader>rv :call ExtractVariable()<cr>
-nnoremap <leader>ri :call InlineVariable()<cr>
-
-map <leader>/# /^ *#<cr>
-map <leader>/f /^ *def\><cr>
-map <leader>/c /^ *class\><cr>
-map <leader>/i /^ *if\><cr>
-map <leader>df d/\(^ *def\>\)\\|\%$<cr>
