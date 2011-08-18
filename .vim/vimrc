@@ -264,13 +264,14 @@ if &diff
 endif
 
 cabbrev E e
-abbrev Utitlies Utilities
-abbrev utitlies utilities
-abbrev init; initialize
-abbrev innit init
-abbrev innitialize initialize
-abbrev seperate separate
-abbrev teh the
+iabbrev Utitlies Utilities
+iabbrev utitlies utilities
+iabbrev init; initialize
+iabbrev innit init
+iabbrev innitialize initialize
+iabbrev seperate separate
+iabbrev teh the
+iabbrev ;; =>
 
 nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
 

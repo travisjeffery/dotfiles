@@ -55,6 +55,10 @@ git_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
 git_bundle bundle/zencoding http://github.com/mattn/zencoding-vim/
 git_bundle bundle/zoomwin https://github.com/vim-scripts/ZoomWin.git
 
+# git_bundle bundle/snipmate https://github.com/garbas/vim-snipmate.git 
+# git_bundle bundle/snipmate-snippets https://github.com/honza/snipmate-snippets.git
+# git_bundle bundle/supertab https://github.com/ervandew/supertab.git
+# 
 # git_bundle bundle/quickrun https://github.com/thinca/vim-quickrun.git
 # git_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
 # git_bundle bundle/camelcasemotion https://github.com/vim-scripts/camelcasemotion.git
@@ -77,15 +81,12 @@ git_bundle bundle/zoomwin https://github.com/vim-scripts/ZoomWin.git
 # git_bundle bundle/scss-syntax https://github.com/cakebaker/scss-syntax.vim.git
 # git_bundle bundle/tlib https://github.com/tomtom/tlib_vim.git
 # git_bundle bundle/addon-mw-utils https://github.com/MarcWeber/vim-addon-mw-utils.git
-# git_bundle bundle/snipmate https://github.com/garbas/vim-snipmate.git 
 # git_bundle bundle/easymotion https://github.com/Lokaltog/vim-easymotion.git
 # git_bundle bundle/makegreen https://github.com/reinh/vim-makegreen.git
 # git_bundle bundle/rvm-ruby https://github.com/jcf/rvm_ruby.vim.git
-# git_bundle bundle/snipmate-snippets https://github.com/honza/snipmate-snippets.git
 # git_bundle bundle/visincr https://github.com/vim-scripts/VisIncr.git
 # git_bundle bundle/auto-pairs https://github.com/jiangmiao/auto-pairs.git
 # git_bundle bundle/vimproc https://github.com/Shougo/vimproc.git && (cd ~/.vim/bundle/vimproc && make -f make_mac.mak)
-# git_bundle bundle/supertab https://github.com/ervandew/supertab.git
 # git_bundle bundle/neocomplcache https://github.com/Shougo/neocomplcache.git
 # git_bundle bundle/copypath https://github.com/taku-o/vim-copypath.git
 # git_bundle bundle/tablineset https://github.com/vim-scripts/TabLineSet.vim.git
