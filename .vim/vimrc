@@ -123,6 +123,161 @@ if !has("gui")
   let g:CSApprox_loaded = 1
 endif
 
+" compiler ruby
+let ruby_fold = 1
+let g:rails_menu=0
+let g:rails_installed_menu=0
+let g:syntastic_enable_signs=1
+let g:syntastic_auto_jump=1
+let g:syntastic_auto_loc_list=1
+let g:snips_author = "Travis Jeffery"
+let g:NERDTreeWinPos="right"
+let g:mapleader=","
+let g:quickrun_direction = 'rightbelow vertical'
+let g:user_zen_leader_key = '<c-e>'
+let g:use_zen_complete_tag = 1
+let g:ragtag_global_maps = 1
+let g:user_zen_settings = {
+      \  'indentation' : '  ',
+      \   'markdown' : { 'extends' : 'html' }
+      \}
+let g:delimitMate_expand_cr = 1
+let g:delimitMate_expand_space = 1
+let delimitMate_balance_matchpairs = 1
+let delimitMate_smart_quotes = 0
+let delimitMate_smart_matchpairs = 0
+let delimitMate_autoclose = 0
+let g:yankring_max_history = 1000
+let g:yankring_max_display = 100
+let g:yankring_persist = 1
+let g:yankring_share_between_instances = 1
+let g:yankring_window_use_separate = 1
+let g:yankring_window_use_horiz = 1
+let g:yankring_window_auto_close = 1
+let g:yankring_window_width = 30
+let g:yankring_window_use_right = 1
+let g:yankring_window_increment = 15
+let g:yankring_history_dir = '$HOME/.tmp'
+let g:surround_indent = 1
+let g:rubycomplete_rails = 1
+let g:HammerQuiet = 1
+let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_safe_mode_by_default = 0
+let g:SuperTabLongestEnhanced = 1
+let g:SuperTabDefaultCompletionType = "context"
+let g:CommandTMatchWindowReverse  = 1
+let g:CommandTMaxHeight           = 10
+let g:CommandTMaxFiles            = 30000
+let g:CommandTScanDotDirectories  = 1
+if filereadable("/usr/local/bin/ctags")
+  let g:tagbar_ctags_bin="/usr/local/bin/ctags"
+else
+  let g:tagbar_ctags_bin="/usr/bin/ctags"
+endif
+
+set swapfile
+if !isdirectory($HOME . "/.tmp")
+  call mkdir($HOME . "/.tmp")
+endif
+
+if filereadable($HOME . "/.githubrc")
+  source $HOME/.githubrc
+endif
+if filereadable($HOME . "/.passwords")
+  source $HOME/.passwords
+endif
+
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType vim set omnifunc=syntaxcomplete#Complete
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType c set omnifunc=ccomplete#Complete
+autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
+autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
+autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
+autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
+autocmd filetype svn,*commit*,markdown set spell
+autocmd BufNewFile,BufRead *_spec.rb compiler rspec
+autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
+autocmd BufReadPost fugitive://* set bufhidden=delete
+let g:do_filetype = 0
+au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
+au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
+au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
+
+function! OpenChangedFiles()
+  only
+  let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
+  let filenames = split(status, "\n")
+  exec "edit " . filenames[0]
+  for filename in filenames[1:]
+    exec "sp " . filename
+  endfor
+endfunction
+command! OpenChangedFiles :call OpenChangedFiles()
+
+autocmd BufReadPost * call SetCursorPosition()
+function! SetCursorPosition()
+  if &filetype !~ 'svn\|commit\c'
+    if line("'\"") > 0 && line("'\"") <= line("$")
+      exe "normal! g`\""
+      normal! zz
+    endif
+  end
+endfunction
+
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'))
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+
+function! InlineVariable()
+  normal "ayiw
+  normal 4diw
+  normal "bd$
+  normal dd
+  normal k$
+  exec '/\<' . @a . '\>'
+  exec ':.s/\<' . @a . '\>/' . @b
+endfunction
+
+function! JSBeautify()
+  silent! exe "%! jsbeautifier --stdin"
+endfunction
+command! -nargs=0 JSBeautify call JSBeautify()<cr>
+
+command! W :w
+command! E :Explore
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+
+if &diff
+  nmap <c-h> :diffget 1<cr>
+  nmap <c-l> :diffget 3<cr>
+  nmap <c-k> [cz.
+  nmap <c-j> ]cz.
+  set number
+endif
+
+cabbrev E e
+abbrev Utitlies Utilities
+abbrev utitlies utilities
+abbrev init; initialize
+abbrev innit init
+abbrev innitialize initialize
+abbrev seperate separate
+abbrev teh the
+
+nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
+nmap . .`[
+
 nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<cr>
 nmap <c-f> :FuzzyFinderTextMate<CR>
@@ -218,118 +373,6 @@ endfunction
 vmap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vmap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 
-autocmd BufReadPost * call SetCursorPosition()
-function! SetCursorPosition()
-  if &filetype !~ 'svn\|commit\c'
-    if line("'\"") > 0 && line("'\"") <= line("$")
-      exe "normal! g`\""
-      normal! zz
-    endif
-  end
-endfunction
-
-" compiler ruby
-let ruby_fold = 1
-let g:rails_menu=0
-let g:rails_installed_menu=0
-let g:syntastic_enable_signs=1
-let g:syntastic_auto_jump=1
-let g:syntastic_auto_loc_list=1
-let g:snips_author = "Travis Jeffery"
-let g:NERDTreeWinPos="right"
-let g:mapleader=","
-let g:quickrun_direction = 'rightbelow vertical'
-let g:user_zen_leader_key = '<c-e>'
-let g:use_zen_complete_tag = 1
-let g:ragtag_global_maps = 1
-let g:user_zen_settings = {
-      \  'indentation' : '  ',
-      \   'markdown' : { 'extends' : 'html' }
-      \}
-let g:delimitMate_expand_cr = 1
-let g:delimitMate_expand_space = 1
-let delimitMate_balance_matchpairs = 1
-let delimitMate_smart_quotes = 0
-let delimitMate_smart_matchpairs = 0
-let delimitMate_autoclose = 0
-let g:yankring_max_history = 1000
-let g:yankring_max_display = 100
-let g:yankring_persist = 1
-let g:yankring_share_between_instances = 1
-let g:yankring_window_use_separate = 1
-let g:yankring_window_use_horiz = 1
-let g:yankring_window_auto_close = 1
-let g:yankring_window_width = 30
-let g:yankring_window_use_right = 1
-let g:yankring_window_increment = 15
-let g:yankring_history_dir = '$HOME/.tmp'
-let g:surround_indent = 1
-let g:rubycomplete_rails = 1
-let g:HammerQuiet = 1
-let g:vimfiler_as_default_explorer = 1
-let g:vimfiler_safe_mode_by_default = 0
-let g:SuperTabLongestEnhanced = 1
-let g:SuperTabDefaultCompletionType = "context"
-
-set swapfile
-if !isdirectory($HOME . "/.tmp")
-  call mkdir($HOME . "/.tmp")
-endif
-
-if filereadable($HOME . "/.githubrc")
-  source $HOME/.githubrc
-endif
-if filereadable($HOME . "/.passwords")
-  source $HOME/.passwords
-endif
-
-function! OpenChangedFiles()
-  only
-  let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
-  let filenames = split(status, "\n")
-  exec "edit " . filenames[0]
-  for filename in filenames[1:]
-    exec "sp " . filename
-  endfor
-endfunction
-command! OpenChangedFiles :call OpenChangedFiles()
-
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType vim set omnifunc=syntaxcomplete#Complete
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-autocmd FileType c set omnifunc=ccomplete#Complete
-autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
-autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
-autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
-autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
-autocmd filetype svn,*commit*,markdown set spell
-autocmd BufNewFile,BufRead *_spec.rb compiler rspec
-autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
-
-autocmd BufReadPost fugitive://* set bufhidden=delete
-
-let g:do_filetype = 0
-au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
-au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
-
-au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
-
-if filereadable("/usr/local/bin/ctags")
-  let g:tagbar_ctags_bin="/usr/local/bin/ctags"
-else
-  let g:tagbar_ctags_bin="/usr/bin/ctags"
-endif
-
-if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
-  map <silent> w <Plug>CamelCaseMotion_w
-  map <silent> b <Plug>CamelCaseMotion_b
-  map <silent> e <Plug>CamelCaseMotion_e
-endif
-
 nmap <leader>gr :topleft :split config/routes.rb<cr>
 function! ShowRoutes()
   topleft 100 :split __Routes__
@@ -342,10 +385,6 @@ function! ShowRoutes()
 endfunction
 nmap <leader>gR :call ShowRoutes()<cr>
 
-let g:CommandTMatchWindowReverse  = 1
-let g:CommandTMaxHeight           = 10
-let g:CommandTMaxFiles            = 30000
-let g:CommandTScanDotDirectories  = 1
 nmap <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
 nmap <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
 nmap <leader>gu :CommandTFlush<cr>\|:CommandT test/unit<cr>
@@ -365,6 +404,12 @@ nmap <leader><leader> <C-^>
 
 nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
 
+if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
+  map <silent> w <Plug>CamelCaseMotion_w
+  map <silent> b <Plug>CamelCaseMotion_b
+  map <silent> e <Plug>CamelCaseMotion_e
+endif
+
 function! Preserve(command)
   let _s=@/
   let l = line(".")
@@ -373,6 +418,7 @@ function! Preserve(command)
   let @/=_s
   call cursor(l, c)
 endfunction
+
 nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
 nmap _= :call Preserve("normal gg=G")<CR>
 
@@ -401,17 +447,9 @@ function! s:FilepathToClipboard()
 endfunction
 nmap <leader>% :<C-u>call <SID>FilepathToClipboard()<CR>
 
-function! JSBeautify()
-  silent! exe "%! jsbeautifier --stdin"
-endfunction
-command! -nargs=0 JSBeautify call JSBeautify()<cr>
-
 imap <C-O> <C-X><C-O>
 imap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
 nmap <leader>x :sp <C-R>=expand("%:h")<cr>/
-
-command! W :w
-command! E :Explore
 
 function! InsertTabWrapper()
   let col = col('.') - 1
@@ -423,45 +461,4 @@ function! InsertTabWrapper()
 endfunction
 imap <tab> <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
-
-function! RenameFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'))
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    exec ':silent !rm ' . old_name
-    redraw!
-  endif
-endfunction
-
-if &diff
-  nmap <c-h> :diffget 1<cr>
-  nmap <c-l> :diffget 3<cr>
-  nmap <c-k> [cz.
-  nmap <c-j> ]cz.
-  set number
-endif
-
-cabbrev E e
-abbrev Utitlies Utilities
-abbrev utitlies utilities
-abbrev init; initialize
-abbrev innit init
-abbrev innitialize initialize
-abbrev seperate separate
-abbrev teh the
-
-nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
-nmap . .`[
-
-function! InlineVariable()
-  normal "ayiw
-  normal 4diw
-  normal "bd$
-  normal dd
-  normal k$
-  exec '/\<' . @a . '\>'
-  exec ':.s/\<' . @a . '\>/' . @b
-endfunction
 
