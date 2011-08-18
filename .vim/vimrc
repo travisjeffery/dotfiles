@@ -434,6 +434,8 @@ vmap <leader>t :call Titlecase()<CR>
 
 function! CopyPath()
     let @*=expand('%')
+    let @"=expand('%')
+    let @+=expand('%')
 endfunction
 nmap <leader>% :call CopyPath()<CR>
 
