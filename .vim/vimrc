@@ -56,7 +56,7 @@ set complete-=k
 set cursorline
 set nu
 " set nuw=5
-set timeoutlen=333
+set timeoutlen=200
 set laststatus=2
 set showtabline=2
 set diffopt=filler
