@@ -40,7 +40,7 @@ set wildmode=list:longest
 set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
 set nolist
-set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
+" set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
 set formatoptions-=o
 set scrolloff=3
 set sidescrolloff=7
@@ -124,7 +124,7 @@ if !has("gui")
 endif
 
 " compiler ruby
-let ruby_fold = 1
+" let ruby_fold = 1
 let g:rails_menu=0
 let g:rails_installed_menu=0
 let g:syntastic_enable_signs=1
