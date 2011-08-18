@@ -126,7 +126,7 @@ endif
 nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<cr>
 nmap <c-f> :FuzzyFinderTextMate<CR>
-noremap Q gq
+nmap Q gq
 nmap <leader>m :TagbarToggle<cr>
 nmap <leader>d :TagbarOpenAutoClose<cr>
 nmap <leader>c :cnext<cr>
