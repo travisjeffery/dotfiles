@@ -30,63 +30,64 @@ svn_bundle() {
   )
 }
 
-git_bundle bundle/vim-quickrun https://github.com/thinca/vim-quickrun.git
-# git_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
+git_bundle bundle/indexedsearch git@github.com:travisjeffery/IndexedSearch.git
 git_bundle bundle/ack https://github.com/mileszs/ack.vim.git
 git_bundle bundle/bufexplorer https://github.com/vim-scripts/bufexplorer.zip.git
+git_bundle bundle/bufkill https://github.com/vim-scripts/bufkill.vim.git
+git_bundle bundle/bufonly https://github.com/duff/vim-bufonly.git
+git_bundle bundle/command-t git://git.wincent.com/command-t.git
+git_bundle bundle/fugitive https://github.com/tpope/vim-fugitive.git
+git_bundle bundle/gundo https://github.com/sjl/gundo.vim.git
+git_bundle bundle/help https://github.com/travisjeffery/vim-help
+git_bundle bundle/nerdcommenter https://github.com/scrooloose/nerdcommenter.git
+git_bundle bundle/ragtag https://github.com/tpope/vim-ragtag.git
+git_bundle bundle/rails https://github.com/tpope/vim-rails.git
+git_bundle bundle/repeat https://github.com/tpope/vim-repeat.git
+git_bundle bundle/rvm https://github.com/csexton/rvm.vim.git
+git_bundle bundle/searchcomplete https://github.com/vim-scripts/SearchComplete.git
+git_bundle bundle/surround https://github.com/tpope/vim-surround.git
+git_bundle bundle/syntastic https://github.com/scrooloose/syntastic.git
+git_bundle bundle/tablineset https://github.com/vim-scripts/TabLineSet.vim.git
+git_bundle bundle/textobj-ruby https://github.com/nelstrom/vim-textobj-rubyblock.git
+git_bundle bundle/textobj-user https://github.com/kana/vim-textobj-user.git
+git_bundle bundle/unimpaired https://github.com/tpope/vim-unimpaired.git
+git_bundle bundle/vimfiler https://github.com/Shougo/vimfiler.git
+git_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
+git_bundle bundle/zencoding http://github.com/mattn/zencoding-vim/
+git_bundle bundle/zoomwin https://github.com/vim-scripts/ZoomWin.git
+
+# git_bundle bundle/vim-quickrun https://github.com/thinca/vim-quickrun.git
+# git_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
 # git_bundle bundle/camelcasemotion https://github.com/vim-scripts/camelcasemotion.git
 # git_bundle bundle/csapprox https://github.com/godlygeek/csapprox.git
-git_bundle bundle/nerdcommenter https://github.com/scrooloose/nerdcommenter.git
-git_bundle bundle/vim-fugitive https://github.com/tpope/vim-fugitive.git
 # git_bundle bundle/vim-endwise https://github.com/tpope/vim-endwise.git
-git_bundle bundle/gist-vim https://github.com/mattn/gist-vim.git
-git_bundle bundle/grep https://github.com/vim-scripts/grep.vim.git
-git_bundle bundle/IndexedSearch git@github.com:travisjeffery/IndexedSearch.git
-git_bundle bundle/matchit https://github.com/vim-scripts/matchit.zip.git
-git_bundle bundle/vim-ragtag https://github.com/tpope/vim-ragtag.git
-git_bundle bundle/vim-rails https://github.com/tpope/vim-rails.git
-git_bundle bundle/vim-surround https://github.com/tpope/vim-surround.git
-git_bundle bundle/syntastic https://github.com/scrooloose/syntastic.git
-git_bundle bundle/tabular https://github.com/godlygeek/tabular.git
-git_bundle bundle/ZoomWin https://github.com/vim-scripts/ZoomWin.git
-git_bundle bundle/gundo https://github.com/sjl/gundo.vim.git
-git_bundle bundle/vim-racket https://github.com/wlangstroth/vim-racket.git
-git_bundle bundle/command-t git://git.wincent.com/command-t.git
-git_bundle bundle/vim-help https://github.com/travisjeffery/vim-help
-git_bundle bundle/zencoding-vim http://github.com/mattn/zencoding-vim/
-git_bundle bundle/netrw-vim https://github.com/vim-scripts/netrw.vim.git
-git_bundle bundle/tagbar https://github.com/majutsushi/tagbar.git
-git_bundle bundle/vim-colors git@github.com:travisjeffery/vim-colors.git
-git_bundle bundle/vim-coffee-script https://github.com/kchmck/vim-coffee-script.git
+# git_bundle bundle/gist-vim https://github.com/mattn/gist-vim.git
+# git_bundle bundle/grep https://github.com/vim-scripts/grep.vim.git
+# git_bundle bundle/matchit https://github.com/vim-scripts/matchit.zip.git
+# git_bundle bundle/tabular https://github.com/godlygeek/tabular.git
+# git_bundle bundle/vim-racket https://github.com/wlangstroth/vim-racket.git
+# git_bundle bundle/netrw-vim https://github.com/vim-scripts/netrw.vim.git
+# git_bundle bundle/tagbar https://github.com/majutsushi/tagbar.git
+# git_bundle bundle/vim-colors git@github.com:travisjeffery/vim-colors.git
+# git_bundle bundle/vim-coffee-script https://github.com/kchmck/vim-coffee-script.git
 # git_bundle bundle/delimitMate https://github.com/Raimondi/delimitMate.git
-git_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
-git_bundle bundle/vim-markdown https://github.com/tpope/vim-markdown.git
-git_bundle bundle/vim-repeat https://github.com/tpope/vim-repeat.git
-git_bundle bundle/vim-ruby https://github.com/vim-ruby/vim-ruby.git
-git_bundle bundle/vim-jade https://github.com/digitaltoad/vim-jade.git
-git_bundle bundle/vim-slim https://github.com/bbommarito/vim-slim.git
-git_bundle bundle/scss-syntax https://github.com/cakebaker/scss-syntax.vim.git
-git_bundle bundle/vim-tlib https://github.com/tomtom/tlib_vim.git
-git_bundle bundle/vim-addon-mw-utils https://github.com/MarcWeber/vim-addon-mw-utils.git
-git_bundle bundle/vim-snipmate https://github.com/garbas/vim-snipmate.git 
-git_bundle bundle/vim-unimpaired https://github.com/tpope/vim-unimpaired.git
-git_bundle bundle/vim-easymotion https://github.com/Lokaltog/vim-easymotion.git
-git_bundle bundle/vim-makegreen https://github.com/reinh/vim-makegreen.git
-git_bundle bundle/rvm-ruby https://github.com/jcf/rvm_ruby.vim.git
-git_bundle bundle/vim-bufonly https://github.com/duff/vim-bufonly.git
-git_bundle bundle/snipmate-snippets https://github.com/honza/snipmate-snippets.git
-git_bundle bundle/vimfiler https://github.com/Shougo/vimfiler.git
+# git_bundle bundle/vim-markdown https://github.com/tpope/vim-markdown.git
+# git_bundle bundle/vim-ruby https://github.com/vim-ruby/vim-ruby.git
+# git_bundle bundle/vim-jade https://github.com/digitaltoad/vim-jade.git
+# git_bundle bundle/vim-slim https://github.com/bbommarito/vim-slim.git
+# git_bundle bundle/scss-syntax https://github.com/cakebaker/scss-syntax.vim.git
+# git_bundle bundle/vim-tlib https://github.com/tomtom/tlib_vim.git
+# git_bundle bundle/vim-addon-mw-utils https://github.com/MarcWeber/vim-addon-mw-utils.git
+# git_bundle bundle/vim-snipmate https://github.com/garbas/vim-snipmate.git 
+# git_bundle bundle/vim-easymotion https://github.com/Lokaltog/vim-easymotion.git
+# git_bundle bundle/vim-makegreen https://github.com/reinh/vim-makegreen.git
+# git_bundle bundle/rvm-ruby https://github.com/jcf/rvm_ruby.vim.git
+# git_bundle bundle/snipmate-snippets https://github.com/honza/snipmate-snippets.git
 # git_bundle bundle/visincr https://github.com/vim-scripts/VisIncr.git
 # git_bundle bundle/auto-pairs https://github.com/jiangmiao/auto-pairs.git
-git_bundle bundle/vimproc https://github.com/Shougo/vimproc.git && (cd ~/.vim/bundle/vimproc && make -f make_mac.mak)
-git_bundle bundle/vim-textobj-user https://github.com/kana/vim-textobj-user.git
-git_bundle bundle/vim-textobj-ruby https://github.com/nelstrom/vim-textobj-rubyblock.git
-git_bundle bundle/bufkill https://github.com/vim-scripts/bufkill.vim.git
-git_bundle bundle/rvm https://github.com/csexton/rvm.vim.git
-git_bundle bundle/supertab https://github.com/ervandew/supertab.git
+# git_bundle bundle/vimproc https://github.com/Shougo/vimproc.git && (cd ~/.vim/bundle/vimproc && make -f make_mac.mak)
+# git_bundle bundle/supertab https://github.com/ervandew/supertab.git
 # git_bundle bundle/neocomplcache https://github.com/Shougo/neocomplcache.git
-git_bundle bundle/searchcomplete https://github.com/vim-scripts/SearchComplete.git
-git_bundle bundle/tablineset https://github.com/vim-scripts/TabLineSet.vim.git
 
 svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
