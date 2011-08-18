@@ -276,7 +276,6 @@ abbrev seperate separate
 abbrev teh the
 
 nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
-nmap . .`[
 
 nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<cr>
@@ -362,6 +361,7 @@ nmap <S-left> g;
 
 function! YRRunAfterMaps()
   nmap Y   :<C-U>YRYankCount 'y$'<CR>
+  nmap . .`[
 endfunction
 
 function! s:VSetSearch()

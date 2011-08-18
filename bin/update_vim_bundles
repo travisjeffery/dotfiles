@@ -56,31 +56,31 @@ git_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
 git_bundle bundle/zencoding http://github.com/mattn/zencoding-vim/
 git_bundle bundle/zoomwin https://github.com/vim-scripts/ZoomWin.git
 
-# git_bundle bundle/vim-quickrun https://github.com/thinca/vim-quickrun.git
+# git_bundle bundle/quickrun https://github.com/thinca/vim-quickrun.git
 # git_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
 # git_bundle bundle/camelcasemotion https://github.com/vim-scripts/camelcasemotion.git
 # git_bundle bundle/csapprox https://github.com/godlygeek/csapprox.git
-# git_bundle bundle/vim-endwise https://github.com/tpope/vim-endwise.git
+# git_bundle bundle/endwise https://github.com/tpope/vim-endwise.git
 # git_bundle bundle/gist-vim https://github.com/mattn/gist-vim.git
 # git_bundle bundle/grep https://github.com/vim-scripts/grep.vim.git
 # git_bundle bundle/matchit https://github.com/vim-scripts/matchit.zip.git
 # git_bundle bundle/tabular https://github.com/godlygeek/tabular.git
-# git_bundle bundle/vim-racket https://github.com/wlangstroth/vim-racket.git
+# git_bundle bundle/racket https://github.com/wlangstroth/vim-racket.git
 # git_bundle bundle/netrw-vim https://github.com/vim-scripts/netrw.vim.git
 # git_bundle bundle/tagbar https://github.com/majutsushi/tagbar.git
-# git_bundle bundle/vim-colors git@github.com:travisjeffery/vim-colors.git
-# git_bundle bundle/vim-coffee-script https://github.com/kchmck/vim-coffee-script.git
+# git_bundle bundle/colors git@github.com:travisjeffery/vim-colors.git
+# git_bundle bundle/coffee-script https://github.com/kchmck/vim-coffee-script.git
 # git_bundle bundle/delimitMate https://github.com/Raimondi/delimitMate.git
-# git_bundle bundle/vim-markdown https://github.com/tpope/vim-markdown.git
-# git_bundle bundle/vim-ruby https://github.com/vim-ruby/vim-ruby.git
-# git_bundle bundle/vim-jade https://github.com/digitaltoad/vim-jade.git
-# git_bundle bundle/vim-slim https://github.com/bbommarito/vim-slim.git
+# git_bundle bundle/markdown https://github.com/tpope/vim-markdown.git
+# git_bundle bundle/ruby https://github.com/vim-ruby/vim-ruby.git
+# git_bundle bundle/jade https://github.com/digitaltoad/vim-jade.git
+# git_bundle bundle/slim https://github.com/bbommarito/vim-slim.git
 # git_bundle bundle/scss-syntax https://github.com/cakebaker/scss-syntax.vim.git
-# git_bundle bundle/vim-tlib https://github.com/tomtom/tlib_vim.git
-# git_bundle bundle/vim-addon-mw-utils https://github.com/MarcWeber/vim-addon-mw-utils.git
-# git_bundle bundle/vim-snipmate https://github.com/garbas/vim-snipmate.git 
-# git_bundle bundle/vim-easymotion https://github.com/Lokaltog/vim-easymotion.git
-# git_bundle bundle/vim-makegreen https://github.com/reinh/vim-makegreen.git
+# git_bundle bundle/tlib https://github.com/tomtom/tlib_vim.git
+# git_bundle bundle/addon-mw-utils https://github.com/MarcWeber/vim-addon-mw-utils.git
+# git_bundle bundle/snipmate https://github.com/garbas/vim-snipmate.git 
+# git_bundle bundle/easymotion https://github.com/Lokaltog/vim-easymotion.git
+# git_bundle bundle/makegreen https://github.com/reinh/vim-makegreen.git
 # git_bundle bundle/rvm-ruby https://github.com/jcf/rvm_ruby.vim.git
 # git_bundle bundle/snipmate-snippets https://github.com/honza/snipmate-snippets.git
 # git_bundle bundle/visincr https://github.com/vim-scripts/VisIncr.git
