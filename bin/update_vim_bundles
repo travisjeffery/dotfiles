@@ -55,6 +55,7 @@ git_bundle bundle/vimfiler https://github.com/Shougo/vimfiler.git
 git_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
 git_bundle bundle/zencoding http://github.com/mattn/zencoding-vim/
 git_bundle bundle/zoomwin https://github.com/vim-scripts/ZoomWin.git
+git_bundle bundle/copypath https://github.com/taku-o/vim-copypath.git
 
 # git_bundle bundle/quickrun https://github.com/thinca/vim-quickrun.git
 # git_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
