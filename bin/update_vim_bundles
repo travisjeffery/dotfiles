@@ -47,7 +47,6 @@ git_bundle bundle/rvm https://github.com/csexton/rvm.vim.git
 git_bundle bundle/searchcomplete https://github.com/vim-scripts/SearchComplete.git
 git_bundle bundle/surround https://github.com/tpope/vim-surround.git
 git_bundle bundle/syntastic https://github.com/scrooloose/syntastic.git
-git_bundle bundle/tablineset https://github.com/vim-scripts/TabLineSet.vim.git
 git_bundle bundle/textobj-ruby https://github.com/nelstrom/vim-textobj-rubyblock.git
 git_bundle bundle/textobj-user https://github.com/kana/vim-textobj-user.git
 git_bundle bundle/unimpaired https://github.com/tpope/vim-unimpaired.git
@@ -89,6 +88,7 @@ git_bundle bundle/zoomwin https://github.com/vim-scripts/ZoomWin.git
 # git_bundle bundle/supertab https://github.com/ervandew/supertab.git
 # git_bundle bundle/neocomplcache https://github.com/Shougo/neocomplcache.git
 # git_bundle bundle/copypath https://github.com/taku-o/vim-copypath.git
+# git_bundle bundle/tablineset https://github.com/vim-scripts/TabLineSet.vim.git
 
 # svn_bundle bundle/web-indent http://web-indent.googlecode.com/svn/trunk/
 
