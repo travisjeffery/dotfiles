@@ -435,17 +435,10 @@ function! Titlecase()
 endfunction
 vmap <leader>t :call Titlecase()<CR>
 
-function! s:FilepathToClipboard()
-  if has("mac")
-    call system('echo -n '.expand("%").'| pbcopy')
-  else
-    if !executable('xclip')
-      echo "xclip exectuable needed to pipe text into clipboard."
-    endif
-    call system('echo -n '.expand("%").'| xclip -selection clipboard')
-  endif
+function! CopyPath()
+    let @*=expand('%')
 endfunction
-nmap <leader>% :<C-u>call <SID>FilepathToClipboard()<CR>
+nmap <leader>% :call CopyPath()<CR>
 
 imap <C-O> <C-X><C-O>
 imap <expr> <C-l>     pumvisible() ? "\<C-p>" : "\<C-p>"
