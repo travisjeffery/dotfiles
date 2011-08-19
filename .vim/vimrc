@@ -117,7 +117,7 @@ set statusline+=%c,
 set statusline+=%l/%L
 set statusline+=\ %P
 
-colorscheme elflord
+colorscheme default
 
 let g:CSApprox_verbose_level = 0
 let g:rails_menu=0
