@@ -117,11 +117,9 @@ set statusline+=%c,
 set statusline+=%l/%L
 set statusline+=\ %P
 
-let g:CSApprox_verbose_level = 0
-if !has("gui")
-  let g:CSApprox_loaded = 1
-endif
+colorscheme elflord
 
+let g:CSApprox_verbose_level = 0
 let g:rails_menu=0
 let g:rails_installed_menu=0
 let g:syntastic_enable_signs=1

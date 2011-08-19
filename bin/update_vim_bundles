@@ -36,6 +36,7 @@ git_bundle bundle/bufexplorer https://github.com/vim-scripts/bufexplorer.zip.git
 git_bundle bundle/bufkill https://github.com/vim-scripts/bufkill.vim.git
 git_bundle bundle/bufonly https://github.com/duff/vim-bufonly.git
 git_bundle bundle/command-t git://git.wincent.com/command-t.git
+git_bundle bundle/csapprox https://github.com/godlygeek/csapprox.git
 git_bundle bundle/fugitive https://github.com/tpope/vim-fugitive.git
 git_bundle bundle/gundo https://github.com/sjl/gundo.vim.git
 git_bundle bundle/help https://github.com/travisjeffery/vim-help
