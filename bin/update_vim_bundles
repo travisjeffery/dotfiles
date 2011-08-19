@@ -48,8 +48,10 @@ git_bundle bundle/rvm https://github.com/csexton/rvm.vim.git
 git_bundle bundle/searchcomplete https://github.com/vim-scripts/SearchComplete.git
 git_bundle bundle/surround https://github.com/tpope/vim-surround.git
 git_bundle bundle/syntastic https://github.com/scrooloose/syntastic.git
+git_bundle bundle/textobj-diff https://github.com/kana/vim-textobj-diff.git
 git_bundle bundle/textobj-ruby https://github.com/nelstrom/vim-textobj-rubyblock.git
 git_bundle bundle/textobj-user https://github.com/kana/vim-textobj-user.git
+git_bundle bundle/smartword https://github.com/kana/vim-smartword.git
 git_bundle bundle/unimpaired https://github.com/tpope/vim-unimpaired.git
 git_bundle bundle/vimfiler https://github.com/Shougo/vimfiler.git
 git_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
