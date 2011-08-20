@@ -117,7 +117,7 @@ set statusline+=%c,
 set statusline+=%l/%L
 set statusline+=\ %P
 
-colorscheme default
+colorscheme morning | set background=light
 
 let g:CSApprox_verbose_level = 0
 let g:rails_menu=0
@@ -453,7 +453,7 @@ endfunction
 imap <tab> <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
-function MyTabLine()
+function! MyTabLine()
   let s = ''
   for t in range(tabpagenr('$'))
     if t + 1 == tabpagenr()
