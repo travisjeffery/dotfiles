@@ -397,7 +397,6 @@ nmap <leader>gf :CommandT %%/<cr>
 nmap ;; :CommandTFlush<cr>:CommandT<cr>
 nmap ;' :CommandTFlush<cr>:CommandTBuffer<cr>
 nmap <leader><leader> <C-^>
-
 nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
 
 if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
