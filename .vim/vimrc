@@ -9,6 +9,7 @@ filetype indent on
 
 syntax on
 
+set lazyredraw
 set backspace=indent,eol,start
 set history=1000
 set showcmd
@@ -117,7 +118,8 @@ set statusline+=%c,
 set statusline+=%l/%L
 set statusline+=\ %P
 
-colorscheme morning | set background=light
+set background=light
+colorscheme clean
 
 let g:CSApprox_verbose_level = 0
 let g:rails_menu=0
@@ -126,7 +128,6 @@ let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
 let g:snips_author = "Travis Jeffery"
-let g:NERDTreeWinPos="right"
 let g:mapleader=","
 let g:quickrun_direction = 'rightbelow vertical'
 let g:user_zen_leader_key = '<c-e>'
@@ -271,7 +272,7 @@ iabbrev seperate separate
 iabbrev teh the
 iabbrev ;; =>
 
-nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
+nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>
 
 nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<cr>
@@ -294,8 +295,6 @@ nmap <silent> <Leader>Y :GundoToggle<CR>
 imap <M-o>       <Esc>o
 imap <C-j>       <Down>
 nmap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
-nmap \\ <plug>NERDCommenterInvert
-xmap \\ <Plug>NERDCommenterInvert
 nmap q; q:
 vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<CR><CR>
 nmap <leader><space> i<space><esc>
@@ -343,8 +342,6 @@ nmap <c-h> <c-w><c-h>
 nmap <c-j> <c-w><c-j>
 nmap <c-k> <c-w><c-k>
 nmap <c-l> <c-w><c-l>
-nmap <leader>R :QuickRun<cr>
-nmap <leader>D :NERDTree<cr>
 imap <C-right> <space>=><space>
 imap <C-;> <space>=><space>
 imap <c-]> <space>=><space>
