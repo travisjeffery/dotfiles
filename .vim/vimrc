@@ -119,7 +119,7 @@ set statusline+=%l/%L
 set statusline+=\ %P
 
 set background=light
-colorscheme clean
+colorscheme Tomorrow
 
 let g:CSApprox_verbose_level = 0
 let g:rails_menu=0

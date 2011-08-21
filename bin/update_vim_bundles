@@ -61,17 +61,16 @@ git_bundle bundle/exjumplist https://github.com/kana/vim-exjumplist.git
 git_bundle bundle/gitv https://github.com/gregsexton/gitv.git
 git_bundle bundle/commentary https://github.com/tpope/vim-commentary.git
 git_bundle bundle/blockle https://github.com/jgdavey/vim-blockle.git
+git_bundle bundle/colors https://travisjeffery@github.com/travisjeffery/vim-colors.git
 
 #git_bundle bundle/railscasts https://github.com/jgdavey/vim-railscasts.git
 #git_bundle bundle/pyte https://github.com/therubymug/vim-pyte.git
-
 # git_bundle bundle/nerdcommenter https://github.com/scrooloose/nerdcommenter.git
 # git_bundle bundle/smartchr https://github.com/kana/vim-smartchr.git
 # git_bundle bundle/smarttill https://github.com/kana/vim-smarttill.git
 # git_bundle bundle/snipmate https://github.com/garbas/vim-snipmate.git 
 # git_bundle bundle/snipmate-snippets https://github.com/honza/snipmate-snippets.git
 # git_bundle bundle/supertab https://github.com/ervandew/supertab.git
-# 
 # git_bundle bundle/quickrun https://github.com/thinca/vim-quickrun.git
 # git_bundle bundle/cocoa https://github.com/msanders/cocoa.vim.git
 # git_bundle bundle/camelcasemotion https://github.com/vim-scripts/camelcasemotion.git
