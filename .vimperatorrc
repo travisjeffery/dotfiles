@@ -8,6 +8,6 @@ nmap <c-h> gT
 set complete=slth
 set wildmode=list:full
 set hintchars="hjklasdfgyuiopqwertnmzxcvb"
-set gui=noaddons,nobookmarks,nonavigation,tabs
+set gui=noaddons,nobookmarks,navigation,tabs
 
 cabbrev google open google

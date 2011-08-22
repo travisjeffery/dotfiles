@@ -299,8 +299,6 @@ nmap q; q:
 vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<CR><CR>
 nmap <leader><space> i<space><esc>
 nmap VV 0v$h
-nmap <left> :bp<cr>
-nmap <right> :bn<cr>
 nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
 nmap gff <C-w>gf
 imap (( ()
@@ -351,6 +349,10 @@ nmap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
 nmap <S-left> g;
+nmap [`  <Plug>(exjumplist-previous-buffer)
+nmap ]`  <Plug>(exjumplist-next-buffer)
+nmap <left> <Plug>(exjumplist-previous-buffer)
+nmap <right> <Plug>(exjumplist-next-buffer)
 
 function! YRRunAfterMaps()
   nmap Y   :<C-U>YRYankCount 'y$'<CR>
