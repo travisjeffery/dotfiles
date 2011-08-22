@@ -263,6 +263,7 @@ if &diff
 endif
 
 cabbrev E e
+cabbrev git Git
 iabbrev Utitlies Utilities
 iabbrev utitlies utilities
 iabbrev init; initialize
