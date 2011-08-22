@@ -61,7 +61,7 @@ git_bundle bundle/exjumplist https://github.com/kana/vim-exjumplist.git
 git_bundle bundle/gitv https://github.com/gregsexton/gitv.git
 git_bundle bundle/commentary https://github.com/tpope/vim-commentary.git
 git_bundle bundle/blockle https://github.com/jgdavey/vim-blockle.git
-git_bundle bundle/colors https://travisjeffery@github.com/travisjeffery/vim-colors.git
+git_bundle bundle/colors https://github.com/travisjeffery/vim-colors.git
 
 #git_bundle bundle/railscasts https://github.com/jgdavey/vim-railscasts.git
 #git_bundle bundle/pyte https://github.com/therubymug/vim-pyte.git
