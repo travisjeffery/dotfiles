@@ -262,7 +262,7 @@ iabbrev seperate separate
 iabbrev teh the
 iabbrev ;; =>
 
-nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>
+nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
 
 nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<cr>
