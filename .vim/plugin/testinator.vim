@@ -70,9 +70,8 @@ function s:ExecTest(cmd)
   " else
   "   exe "!echo '" . a:cmd . "' && " . a:cmd
   " endif
-  silent execute "!ruby " . a:cmd . " &> /tmp/vim.log &"
-endfunction
-
+  
+  silent execute "!" . a:cmd . " &> /tmp/vim.log &"
 endfunction
 
 function s:RunTest()
@@ -183,13 +182,13 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 if !hasmapto('<Plug>RubyTestRun')
-  map <unique> <Leader>tt <Plug>RubyTestRun
+  map <unique> <Leader>rt <Plug>RubyTestRun
 endif
 if !hasmapto('<Plug>RubyFileRun')
-  map <unique> <Leader>T <Plug>RubyFileRun
+  map <unique> <Leader>rT <Plug>RubyFileRun
 endif
 if !hasmapto('<Plug>RubyTestRunLast')
-  map <unique> <Leader>l <Plug>RubyTestRunLast
+  map <unique> <Leader>rl <Plug>RubyTestRunLast
 endif
 
 function s:IsRubyTest()
@@ -208,6 +207,9 @@ function s:Run(scope)
     " test scope define what to test
     " 1: test case under cursor
     " 2: all tests in file
+    if !s:IsRubyTest()
+      return
+    endif
     let s:test_scope = a:scope
     call s:test_patterns[s:pattern]()
   endif
@@ -224,9 +226,10 @@ endfunction
 noremap <unique> <script> <Plug>RubyTestRun <SID>Run
 noremap <unique> <script> <Plug>RubyFileRun <SID>RunFile
 noremap <unique> <script> <Plug>RubyTestRunLast <SID>RunLast
-noremap <SID>Run :call <SID>Run(1)<CR>
-noremap <SID>RunFile :call <SID>Run(2)<CR>
-noremap <SID>RunLast :call <SID>RunLast()<CR>
+
+noremap <SID>Run :call <SID>Run(1)<CR>:redraw!<cr>
+noremap <SID>RunFile :call <SID>Run(2)<CR>:redraw!<cr>
+noremap <SID>RunLast :call <SID>RunLast()<CR>:redraw!<cr>
 
 let s:efm='%A%\\d%\\+)%.%#,'
 
@@ -293,4 +296,5 @@ let s:efm_backtrace='%D(in\ %f),'
 let s:efm_ruby='\%-E-e:%.%#,\%+E%f:%l:\ parse\ error,%W%f:%l:\ warning:\ %m,%E%f:%l:in\ %*[^:]:\ %m,%E%f:%l:\ %m,%-C%\tfrom\ %f:%l:in\ %.%#,%-Z%\tfrom\ %f:%l,%-Z%p^'
 
 let &cpo = s:save_cpo
+
 
