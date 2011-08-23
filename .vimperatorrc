@@ -1,3 +1,9 @@
+set complete=slth
+set wildmode=list:full
+set hintchars="hjklasdfgyuiopqwertnmzxcvb"
+set gui=noaddons,nobookmarks,navigation,tabs
+set focuscontent
+
 nmap ,, <C-^>
 nmap <left> gT
 nmap <right> gt
@@ -5,9 +11,27 @@ nmap ,a :back<cr>
 nmap ,f :forward<cr>
 nmap <c-l> gt
 nmap <c-h> gT
-set complete=slth
-set wildmode=list:full
-set hintchars="hjklasdfgyuiopqwertnmzxcvb"
-set gui=noaddons,nobookmarks,navigation,tabs
 
 cabbrev google open google
+
+bmark -t "Google Search" -k "g" http://www.google.com/search?q=%s
+bmark -t "Google Feeling Lucky Search" -k "goto" http://www.google.com/search?q=%s&btnI=I%27m+Feeling+Lucky
+bmark -t "Gmail Search" -k "mail" http://mail.google.com/mail/?search=query&q=%s
+bmark -t "Google History Search" -k "hist" http://www.google.com/searchhistory/find?q=%s
+bmark -t "Google Bookmarks Search" -k "bm" http://www.google.com/bookmarks/find?q=%s
+bmark -t "Google Code Projects Search" -k "projects" http://code.google.com/hosting/search?q=%s
+bmark -t "Google Code Source Code Search" -k "code" http://www.google.com/codesearch?q=%s
+bmark -t "Google Site Search" -k "site" javascript:location=(%22http://www.google.com/search?q=site:%22+location.hostname+%22%20%22+%22%s%22)
+bmark -t "Google Images Search" -k "img" http://images.google.com/images?q=%s
+bmark -t "Google Maps Search" -k "maps" http://maps.google.com/maps?q=%s
+bmark -t "Google OS X Search" -k "osx" http://www.google.com/mac?q=%s
+bmark -t "Google Linux Search" -k "linux" http://www.google.com/linux?q=%s
+bmark -t "Netflix Search" -k "netflix" http://www.netflix.com/Search?v1=%s
+bmark -t "IMDB Search" -k "imdb" http://www.imdb.com/find?%s
+bmark -t "Wikipedia Search" -k "wiki" http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Go
+bmark -t "Dictionary.com Search" -k "dict" http://dictionary.reference.com/search?q=%s
+bmark -t "Thesaurus.com Search" -k "thes" http://thesaurus.reference.com/search?q=%s
+bmark -t "Nethack Search" -k "nethack" http://nethack.wikia.com/wiki/Special:Search?search=%s&go=1
+bmark -t "The Pirate Bay" -k "tpb" http://thepiratebay.org/search/%s
+bmark -t "YouTube" -k "yt" http://www.youtube.com/results?search_query=%s
+bmark -t "Read Later" -k "rl" "javascript:function%20iprl5(){var%20d=document,z=d.createElement('scr'+'ipt'),b=d.body,l=d.location;try{if(!b)throw(0);d.title='(Saving...)%20'+d.title;z.setAttribute('src',l.protocol+'//www.instapaper.com/j/Ab9NMvvAAlm2?u='+encodeURIComponent(l.href)+'&t='+(new%20Date().getTime()));b.appendChild(z);}catch(e){alert('Please%20wait%20until%20the%20page%20has%20loaded.');}}iprl5();void(0)"

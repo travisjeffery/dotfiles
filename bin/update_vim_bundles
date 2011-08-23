@@ -62,6 +62,8 @@ git_bundle bundle/gitv https://github.com/gregsexton/gitv.git
 git_bundle bundle/commentary https://github.com/tpope/vim-commentary.git
 git_bundle bundle/blockle https://github.com/jgdavey/vim-blockle.git
 git_bundle bundle/colors https://github.com/travisjeffery/vim-colors.git
+git_bundle bundle/grex https://github.com/kana/vim-grex.git
+git_bundle bundle/operator-user https://github.com/kana/vim-operator-user.git
 
 #git_bundle bundle/railscasts https://github.com/jgdavey/vim-railscasts.git
 #git_bundle bundle/pyte https://github.com/therubymug/vim-pyte.git
