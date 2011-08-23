@@ -171,7 +171,7 @@ else
   let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
 
-set swapfile
+set noswapfile
 if !isdirectory($HOME . "/.tmp")
   call mkdir($HOME . "/.tmp")
 endif
@@ -254,6 +254,7 @@ endif
 
 cabbrev E e
 cabbrev git Git
+cabbrev ~? ~/
 iabbrev Utitlies Utilities
 iabbrev utitlies utilities
 iabbrev init; initialize
@@ -262,8 +263,6 @@ iabbrev innitialize initialize
 iabbrev seperate separate
 iabbrev teh the
 iabbrev ;; =>
-
-" nmap <leader>tt :silent execute "!ruby % &> /tmp/vim.log &"<cr>:redraw!<cr>
 
 nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<cr>
