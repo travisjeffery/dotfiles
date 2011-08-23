@@ -33,5 +33,5 @@ bmark -t "Dictionary.com Search" -k "dict" http://dictionary.reference.com/searc
 bmark -t "Thesaurus.com Search" -k "thes" http://thesaurus.reference.com/search?q=%s
 bmark -t "Nethack Search" -k "nethack" http://nethack.wikia.com/wiki/Special:Search?search=%s&go=1
 bmark -t "The Pirate Bay" -k "tpb" http://thepiratebay.org/search/%s
-
+bmark -t "YouTube" -k "yt" http://www.youtube.com/results?search_query=%s
 bmark -t "Read Later" "javascript:var%20d=document,w=window,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),f='http://www.instapaper.com/b',l=d.location,e=encodeURIComponent,p='?v=4&k=rx3vDg3LjteR&u='+e(l.href)%20+'&t='+e(d.title)%20+'&s='+e(s),u=f+p;try{if(!/^(.*\.)?instapaper([^.]*)?$/.test(l.host))throw(0);iptstbt();}catch(z){a%20=function(){if(!w.open(u,'t','toolbar=0,resizable=0,status=1,width=250,height=150'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0)"
