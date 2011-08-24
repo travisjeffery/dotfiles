@@ -344,6 +344,8 @@ nmap [`  <Plug>(exjumplist-previous-buffer)
 nmap ]`  <Plug>(exjumplist-next-buffer)
 nmap <left> <Plug>(exjumplist-previous-buffer)
 nmap <right> <Plug>(exjumplist-next-buffer)
+nmap <c-\> \\\
+vmap <c-\> \\
 
 function! YRRunAfterMaps()
   nmap Y   :<C-U>YRYankCount 'y$'<CR>
