@@ -342,8 +342,8 @@ nmap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
 nmap <S-left> g;
-nmap <left> <Plug>(jump-x2-to-previous)
-nmap <right> <Plug>(jump-x2-to-next)
+nmap <left>  <Plug>(exjumplist-previous-buffer)
+nmap <right>  <Plug>(exjumplist-next-buffer)
 nmap <c-\> \\\
 vmap <c-\> \\
 
