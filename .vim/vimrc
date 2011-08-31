@@ -264,6 +264,8 @@ iabbrev innitialize initialize
 iabbrev seperate separate
 iabbrev teh the
 iabbrev ;; =>
+iabbrev shuold should
+iabbrev shulod should
 
 nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<cr>
@@ -340,10 +342,8 @@ nmap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
 nmap <S-left> g;
-nmap [`  <Plug>(exjumplist-previous-buffer)
-nmap ]`  <Plug>(exjumplist-next-buffer)
-nmap <left> <Plug>(exjumplist-previous-buffer)
-nmap <right> <Plug>(exjumplist-next-buffer)
+nmap <left> <Plug>(jump-x2-to-previous)
+nmap <right> <Plug>(jump-x2-to-next)
 nmap <c-\> \\\
 vmap <c-\> \\
 
