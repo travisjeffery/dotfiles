@@ -8,11 +8,15 @@ bindkey ^Q command
 defnonblock on
 defscrollback 5000
 defflow off
-termcapinfo xterm*|rxvt* hs:ts=\E]2;:fs=\007:ds=\E]2;8)\007
 windowlist string "%3n %{= dd}%?%h%:%t%?%=%f%{-}"
 caption    string "%?%F%{y}%?%3n %{= wk}%?%h%:%t%?%{-}"
 activity "Activity in window %n (%t)^G^G"
 bell_msg "Bell in window %n (%t)^G"
+
+attrcolor b ".I"
+termcapinfo xterm "Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm"
+termcapinfo xterm-color "Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm"
+defbce "on"
 
 bind  K kill
 bind  ` select 0
