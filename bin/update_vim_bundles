@@ -35,7 +35,7 @@ git_bundle bundle/ack https://github.com/mileszs/ack.vim.git
 git_bundle bundle/bufexplorer https://github.com/vim-scripts/bufexplorer.zip.git
 git_bundle bundle/bufkill https://github.com/vim-scripts/bufkill.vim.git
 git_bundle bundle/bufonly https://github.com/duff/vim-bufonly.git
-git_bundle bundle/command-t git://git.wincent.com/command-t.git
+git_bundle bundle/command-t git://git.wincent.com/command-t.git && cd ~/.vim/bundle/command-t/ruby/command-t && make clean; ruby extconf.rb && make
 git_bundle bundle/csapprox https://github.com/godlygeek/csapprox.git
 git_bundle bundle/fugitive https://github.com/tpope/vim-fugitive.git
 git_bundle bundle/gundo https://github.com/sjl/gundo.vim.git
@@ -57,7 +57,6 @@ git_bundle bundle/vimfiler https://github.com/Shougo/vimfiler.git
 git_bundle bundle/yankring https://github.com/vim-scripts/YankRing.vim.git
 git_bundle bundle/zencoding http://github.com/mattn/zencoding-vim/
 git_bundle bundle/zoomwin https://github.com/vim-scripts/ZoomWin.git
-git_bundle bundle/exjumplist https://github.com/kana/vim-exjumplist.git
 git_bundle bundle/gitv https://github.com/gregsexton/gitv.git
 git_bundle bundle/commentary https://github.com/tpope/vim-commentary.git
 git_bundle bundle/blockle https://github.com/jgdavey/vim-blockle.git
@@ -65,6 +64,8 @@ git_bundle bundle/colors https://github.com/travisjeffery/vim-colors.git
 git_bundle bundle/grex https://github.com/kana/vim-grex.git
 git_bundle bundle/operator-user https://github.com/kana/vim-operator-user.git
 git_bundle bundle/testerical https://github.com/travisjeffery/testerical.git
+git_bundle bundle/commentary https://github.com/tpope/vim-commentary.git
+git_bundle bundle/jump-x2 https://github.com/travisjeffery/vim-jump-x2.git
 
 #git_bundle bundle/railscasts https://github.com/jgdavey/vim-railscasts.git
 #git_bundle bundle/pyte https://github.com/therubymug/vim-pyte.git

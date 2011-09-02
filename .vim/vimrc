@@ -166,6 +166,7 @@ let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
 let g:testerical_in_spork = 1
+let g:testerical_in_quickfix = 1
 if filereadable("/usr/local/bin/ctags")
   let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
@@ -342,10 +343,11 @@ nmap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
 nmap <S-left> g;
-nmap <left>  <Plug>(exjumplist-previous-buffer)
-nmap <right>  <Plug>(exjumplist-next-buffer)
-nmap <c-\> \\\
-vmap <c-\> \\
+nmap <left>  <Plug>(jump-x2-to-previous)
+nmap <right>  <Plug>(jump-x2-to-next)
+
+xmap <c-\>  <Plug>Commentary
+nmap <c-\> <Plug>CommentaryLine
 
 function! YRRunAfterMaps()
   nmap Y   :<C-U>YRYankCount 'y$'<CR>
