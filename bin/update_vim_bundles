@@ -66,6 +66,8 @@ git_bundle bundle/operator-user https://github.com/kana/vim-operator-user.git
 git_bundle bundle/testerical https://github.com/travisjeffery/testerical.git
 git_bundle bundle/commentary https://github.com/tpope/vim-commentary.git
 git_bundle bundle/jump-x2 https://github.com/travisjeffery/vim-jump-x2.git
+git_bundle bundle/vimproc https://github.com/Shougo/vimproc.git
+git_bundle bundle/unite https://github.com/Shougo/unite.vim.git
 
 #git_bundle bundle/railscasts https://github.com/jgdavey/vim-railscasts.git
 #git_bundle bundle/pyte https://github.com/therubymug/vim-pyte.git
