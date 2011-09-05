@@ -166,6 +166,9 @@ let g:CommandTMatchWindowReverse  = 1
 let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
+let g:testerical_in_spork = 1
+let g:testerical_cmd_test = "ROR_NO_COLOR=1 testdrb %p"
+let g:testerical_cmd_testcase = "ROR_NO_COLOR=1 testdrb %p -n '/%c/'"
 if filereadable("/usr/local/bin/ctags")
   let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
