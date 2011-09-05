@@ -25,6 +25,7 @@ export ZLS_COLORS=$LSCOLORS
 export TERM=xterm
 export LC_CTYPE=en_US.UTF-8
 export LESS=FRX
+export TERM=screen-256color
 
 # make with the nice completion
 autoload -U compinit; compinit

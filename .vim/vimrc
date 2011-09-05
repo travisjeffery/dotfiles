@@ -165,8 +165,6 @@ let g:CommandTMatchWindowReverse  = 1
 let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
-let g:testerical_in_spork = 1
-let g:testerical_in_quickfix = 1
 if filereadable("/usr/local/bin/ctags")
   let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
@@ -245,6 +243,7 @@ command! -nargs=0 JSBeautify call JSBeautify()<cr>
 command! W :w
 command! E :Explore
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+command! VF :VimFiler
 
 if &diff
   nmap <c-h> :diffget 1<cr>
@@ -277,7 +276,7 @@ nmap <leader>d :TagbarOpenAutoClose<cr>
 nmap <leader>c :cnext<cr>
 nmap <leader>p :cprevious<cr>
 nmap <leader>z :ZoomWin<cr>
-nmap <leader>= miggVG=`i
+nmap <leader>= gg=G``
 nmap <leader>v :vsplit<CR> <C-w><C-w>
 nmap <leader>s :split<CR> <C-w><C-w>
 nmap <leader>\ :%! fmt -w 79<CR>
@@ -391,7 +390,7 @@ nmap <leader>gf :CommandT %%/<cr>
 nmap ;; :CommandTFlush<cr>:CommandT<cr>
 nmap ;' :CommandTFlush<cr>:CommandTBuffer<cr>
 nmap <leader><leader> <C-^>
-nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
+nmap <expr> <cr> &bt == "" ? ":nohlsearch<cr>" : "\<cr>" 
 
 if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
   map <silent> w <Plug>CamelCaseMotion_w
@@ -425,9 +424,9 @@ endfunction
 vmap <leader>t :call Titlecase()<CR>
 
 function! CopyPath()
-    let @*=expand('%')
-    let @"=expand('%')
-    let @+=expand('%')
+  let @*=expand('%')
+  let @"=expand('%')
+  let @+=expand('%')
 endfunction
 nmap <leader>% :call CopyPath()<CR>
 
