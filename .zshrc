@@ -25,7 +25,6 @@ export ZLS_COLORS=$LSCOLORS
 export TERM=xterm
 export LC_CTYPE=en_US.UTF-8
 export LESS=FRX
-export TERM=screen-256color
 
 # make with the nice completion
 autoload -U compinit; compinit
@@ -93,6 +92,8 @@ alias cd..='cd ..'
 alias ..='cd ..'
 alias spec='spec -c'
 alias heroku='nocorrect heroku'
+alias tmux='TERM=screen-256color tmux'
+alias screen='TERM=screen-256color screen'
 
 # set cd autocompletion to commonly visited directories
 cdpath=(~ ~/src $DEV_DIR $HASHROCKET_DIR)
