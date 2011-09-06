@@ -62,6 +62,7 @@ set showtabline=2
 set diffopt=filler
 set diffopt+=iwhite
 set switchbuf=useopen
+set shell=/bin/sh
 
 if has("gui")
   set go-=T
@@ -199,8 +200,18 @@ autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
 autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
 autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
 autocmd filetype svn,*commit*,markdown set spell
-autocmd BufNewFile,BufRead *_spec.rb compiler rspec
-autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
+autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
+autocmd FileType ruby
+      \ if expand('%') =~# '_test\.rb$' |
+      \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
+      \ elseif expand('%') =~# '_spec\.rb$' |
+      \   compiler rspec | setl makeprg=rspec\ \"%:p\" |
+      \ else |
+      \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
+      \ endif
+    autocmd User Bundler
+          \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
+
 autocmd BufReadPost fugitive://* set bufhidden=delete
 let g:do_filetype = 0
 au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
@@ -246,6 +257,7 @@ command! -nargs=0 JSBeautify call JSBeautify()<cr>
 command! W :w
 command! E :Explore
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+command! VF :VimFiler
 
 if &diff
   nmap <c-h> :diffget 1<cr>
@@ -278,7 +290,7 @@ nmap <leader>d :TagbarOpenAutoClose<cr>
 nmap <leader>c :cnext<cr>
 nmap <leader>p :cprevious<cr>
 nmap <leader>z :ZoomWin<cr>
-nmap <leader>= miggVG=`i
+nmap <leader>= gg=G<C-o><C-o>
 nmap <leader>v :vsplit<CR> <C-w><C-w>
 nmap <leader>s :split<CR> <C-w><C-w>
 nmap <leader>\ :%! fmt -w 79<CR>
@@ -392,7 +404,7 @@ nmap <leader>gf :CommandT %%/<cr>
 nmap ;; :CommandTFlush<cr>:CommandT<cr>
 nmap ;' :CommandTFlush<cr>:CommandTBuffer<cr>
 nmap <leader><leader> <C-^>
-nmap <expr> <cr> &bt == "quickfix" ? "\<cr>" : ":nohlsearch<cr>"
+nmap <expr> <cr> &bt == "" ? ":nohlsearch<cr>" : "\<cr>" 
 
 if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
   map <silent> w <Plug>CamelCaseMotion_w
@@ -426,9 +438,9 @@ endfunction
 vmap <leader>t :call Titlecase()<CR>
 
 function! CopyPath()
-    let @*=expand('%')
-    let @"=expand('%')
-    let @+=expand('%')
+  let @*=expand('%')
+  let @"=expand('%')
+  let @+=expand('%')
 endfunction
 nmap <leader>% :call CopyPath()<CR>
 

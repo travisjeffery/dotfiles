@@ -1,5 +1,5 @@
 export ZSH=$HOME/.oh-my-zsh
-export ZSH_THEME="smt"
+export ZSH_THEME="cloud"
 source $ZSH/oh-my-zsh.sh
 
 alias la="ls -a"
