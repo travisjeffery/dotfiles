@@ -68,6 +68,8 @@ git_bundle bundle/commentary https://github.com/tpope/vim-commentary.git
 git_bundle bundle/jump-x2 https://github.com/travisjeffery/vim-jump-x2.git
 git_bundle bundle/vimproc https://github.com/Shougo/vimproc.git
 git_bundle bundle/unite https://github.com/Shougo/unite.vim.git
+git_bundle bundle/ruby https://github.com/vim-ruby/vim-ruby.git
+git_bundle bundle/rake https://github.com/tpope/vim-rake.git
 
 #git_bundle bundle/railscasts https://github.com/jgdavey/vim-railscasts.git
 #git_bundle bundle/pyte https://github.com/therubymug/vim-pyte.git
@@ -93,7 +95,6 @@ git_bundle bundle/unite https://github.com/Shougo/unite.vim.git
 # git_bundle bundle/coffee-script https://github.com/kchmck/vim-coffee-script.git
 # git_bundle bundle/delimitMate https://github.com/Raimondi/delimitMate.git
 # git_bundle bundle/markdown https://github.com/tpope/vim-markdown.git
-# git_bundle bundle/ruby https://github.com/vim-ruby/vim-ruby.git
 # git_bundle bundle/jade https://github.com/digitaltoad/vim-jade.git
 # git_bundle bundle/slim https://github.com/bbommarito/vim-slim.git
 # git_bundle bundle/scss-syntax https://github.com/cakebaker/scss-syntax.vim.git
