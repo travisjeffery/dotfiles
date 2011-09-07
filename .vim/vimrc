@@ -119,8 +119,18 @@ set statusline+=%c,
 set statusline+=%l/%L
 set statusline+=\ %P
 
+let g:solarized_termtrans=0
+let g:solarized_degrade=0
+let g:solarized_bold=1
+let g:solarized_underline=1
+let g:solarized_italic=1
+let g:solarized_diffmode="normal"
+let g:solarized_hitrail=0
+let g:solarized_termcolors = 256 
+let g:solarized_visibility = "high" 
+let g:solarized_contrast = "high" 
 set background=light
-colorscheme Tomorrow
+colorscheme solarized
 
 let g:CSApprox_verbose_level = 0
 let g:rails_menu=0
