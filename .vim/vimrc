@@ -361,6 +361,8 @@ nmap <right>  <Plug>(jump-x2-to-next)
 
 xmap <c-\>  <Plug>Commentary
 nmap <c-\> <Plug>CommentaryLine
+vmap s S
+xmap s S
 
 function! YRRunAfterMaps()
   nmap Y   :<C-U>YRYankCount 'y$'<CR>
