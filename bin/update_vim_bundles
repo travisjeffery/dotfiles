@@ -72,6 +72,7 @@ git_bundle bundle/ruby https://github.com/vim-ruby/vim-ruby.git
 git_bundle bundle/rake https://github.com/tpope/vim-rake.git
 git_bundle bundle/bundler https://github.com/tpope/vim-bundler.git
 git_bundle bundle/solarized https://github.com/altercation/vim-colors-solarized.git
+git_bundle bundle/quickrun  https://github.com/thinca/vim-quickrun.git
 
 #git_bundle bundle/railscasts https://github.com/jgdavey/vim-railscasts.git
 #git_bundle bundle/pyte https://github.com/therubymug/vim-pyte.git

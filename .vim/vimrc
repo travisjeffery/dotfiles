@@ -176,9 +176,6 @@ let g:CommandTMatchWindowReverse  = 1
 let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
-let g:testerical_in_spork = 1
-let g:testerical_cmd_testcase = "ROR_NO_COLOR=1 testdrb -Itest %p -n '/%c/'"
-let g:testerical_cmd_test = "ROR_NO_COLOR=1 testdrb -Itest %p"
 if filereadable("/usr/local/bin/ctags")
   let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
@@ -219,8 +216,8 @@ autocmd FileType ruby
       \ else |
       \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
       \ endif
-    autocmd User Bundler
-          \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
+autocmd User Bundler
+      \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 let g:do_filetype = 0
@@ -373,6 +370,25 @@ xmap <c-\>  <Plug>Commentary
 nmap <c-\> <Plug>CommentaryLine
 vmap s S
 xmap s S
+
+let g:quickrun_config = {}
+
+let g:quickrun_config['*'] = {
+      \ 'runner/vimproc/updatetime' : 100,
+      \ 'split': 'vertical rightbelow',
+      \ 'outputter' : 'quickfix',
+      \ 'runner' : 'vimproc',
+      \ 'into' : 0,
+      \ 'runmode' : 'async:remote:vimproc'
+      \}
+
+let g:quickrun_config['ruby'] = {
+      \ 'command' : '/Users/travis/.rvm/bin/ruby-head'
+      \ }
+
+map ,rf <Plug>(testee-test-file)
+map ,rt <Plug>(testee-test-case)
+map ,rl <Plug>(testee-test-last)
 
 function! YRRunAfterMaps()
   nmap Y   :<C-U>YRYankCount 'y$'<CR>
