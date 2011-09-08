@@ -382,9 +382,8 @@ let g:quickrun_config['*'] = {
       \ 'runmode' : 'async:remote:vimproc'
       \}
 
-let g:quickrun_config['ruby'] = {
-      \ 'command' : '/Users/travis/.rvm/bin/ruby-head'
-      \ }
+map <left> <Plug>(poslist-prev-buf)
+map <right> <Plug>(poslist-next-buf)
 
 map ,rf <Plug>(testee-test-file)
 map ,rt <Plug>(testee-test-case)
