@@ -376,7 +376,8 @@ let g:quickrun_config = {}
 let g:quickrun_config['*'] = {
       \ 'runner/vimproc/updatetime' : 100,
       \ 'split': 'vertical rightbelow',
-      \ 'outputter' : 'quickfix',
+      \ 'targets' : ['quickfix', 'buffer'],
+      \ 'outputter' : 'buffer',
       \ 'runner' : 'vimproc',
       \ 'into' : 0,
       \ 'runmode' : 'async:remote:vimproc'
