@@ -371,6 +371,9 @@ nmap <c-\> <Plug>CommentaryLine
 vmap s S
 xmap s S
 
+nnoremap 0 :normal! ^<CR>
+nnoremap ^ :normal! 0<CR>
+
 let g:quickrun_config = {}
 
 let g:quickrun_config['*'] = {
