@@ -55,6 +55,14 @@ set foldlevel=1
 set wildmode=list:longest
 set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
+set virtualedit=block
+if v:version >= 600
+  set autoread
+  set foldmethod=marker
+  set printoptions=paper:letter
+  set sidescrolloff=5
+  set mouse=nvi
+endif
 set nolist
 if (&termencoding ==# 'utf-8' || &encoding ==# 'utf-8') && version >= 700
     let &listchars = "tab:\u21e5\u00b7,trail:\u2423,extends:\u21c9,precedes:\u21c7,nbsp:\u26ad"
@@ -74,7 +82,7 @@ set ignorecase
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
 set complete-=k
 set complete-=i
-set fileformats=unix,doc,mac
+set fileformats=unix,dos,mac
 set cursorline
 set nu
 set timeoutlen=1000
