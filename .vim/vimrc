@@ -1,20 +1,34 @@
-set nocompatible
 
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
+" Section: Options {{{1
+set nocompatible
+
+augroup MyAutoCmd
+    autocmd!
+augroup END
+
 filetype on
-filetype plugin on
-filetype indent on
-
+filetype plugin indent on
 syntax on
-
+set autowrite
 set lazyredraw
 set backspace=indent,eol,start
 set history=1000
+set nostartofline
+set splitbelow
+set splitright
+set previewheight=10
+set helpheight=12
+set noequalalways
+set pumheight=20
+set showfulltag
+set cmdwinheight=5
 set showcmd
 set showmode
 set incsearch
+set mousemodel=popup
 set smartcase
 set hlsearch
 set nowrap
@@ -42,6 +56,11 @@ set wildmode=list:longest
 set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
 set nolist
+if (&termencoding ==# 'utf-8' || &encoding ==# 'utf-8') && version >= 700
+    let &listchars = "tab:\u21e5\u00b7,trail:\u2423,extends:\u21c9,precedes:\u21c7,nbsp:\u26ad"
+else
+    set listchars=tab:>\ ,trail:-,extends:>,precedes:<
+endif
 set formatoptions-=o
 set scrolloff=3
 set sidescrolloff=7
@@ -54,9 +73,12 @@ set textwidth=79
 set ignorecase
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
 set complete-=k
+set complete-=i
+set fileformats=unix,doc,mac
 set cursorline
 set nu
-set timeoutlen=200
+set timeoutlen=1000
+set ttimeoutlen=50
 set laststatus=2
 set showtabline=2
 set diffopt=filler
@@ -65,32 +87,32 @@ set switchbuf=useopen
 set shell=/bin/sh
 
 if has("gui")
-  set go-=T
-  set guioptions-=L
-  set guioptions-=r
-  set guioptions+=c
-  set noantialias
-  set columns=111
-  set lines=69
-  autocmd FileType ruby,eruby set noballooneval
-  set noballooneval
+    set go-=T
+    set guioptions-=L
+    set guioptions-=r
+    set guioptions+=c
+    set noantialias
+    set columns=111
+    set lines=69
+    autocmd FileType ruby,eruby set noballooneval
+    set noballooneval
 endif
 
 if has("mac")
-  set clipboard=unnamed
-  let g:gist_clip_command = 'pbcopy'
+    set clipboard=unnamed
+    let g:gist_clip_command = 'pbcopy'
 else
-  let g:gist_clip_command = 'xclip -selection clipboard'
+    let g:gist_clip_command = 'xclip -selection clipboard'
 endif
 
 if has("gui") && has("mac")
-  set fuopt+=maxhorz
-  set macmeta
-  set antialias | set guifont=Inconsolata:h14
+    set fuopt+=maxhorz
+    set macmeta
+    set antialias | set guifont=Inconsolata:h14
 endif
 
 if has("gui") && !has("mac")
-  set guifont=Inconsolata\ 12
+    set guifont=Inconsolata\ 12
 endif
 
 set statusline=%f
@@ -119,6 +141,15 @@ set statusline+=%c,
 set statusline+=%l/%L
 set statusline+=\ %P
 
+autocmd MyAutoCmd FileType * setl formatoptions-=ro | setl formatoptions+=mM
+
+augroup MyAutoCmd
+  autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
+augroup END
+
+"}}}1
+
+" Section: Plugins {{{1
 let g:solarized_termtrans=0
 let g:solarized_degrade=0
 let g:solarized_bold=1
@@ -145,9 +176,9 @@ let g:user_zen_leader_key = '<c-e>'
 let g:use_zen_complete_tag = 1
 let g:ragtag_global_maps = 1
 let g:user_zen_settings = {
-      \  'indentation' : '  ',
-      \   'markdown' : { 'extends' : 'html' }
-      \}
+            \  'indentation' : '  ',
+            \   'markdown' : { 'extends' : 'html' }
+            \}
 let g:delimitMate_expand_cr = 1
 let g:delimitMate_expand_space = 1
 let delimitMate_balance_matchpairs = 1
@@ -176,22 +207,25 @@ let g:CommandTMatchWindowReverse  = 1
 let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
+
+"}}}1
+
 if filereadable("/usr/local/bin/ctags")
-  let g:tagbar_ctags_bin="/usr/local/bin/ctags"
+    let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
-  let g:tagbar_ctags_bin="/usr/bin/ctags"
+    let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
 
 set noswapfile
 if !isdirectory($HOME . "/.tmp")
-  call mkdir($HOME . "/.tmp")
+    call mkdir($HOME . "/.tmp")
 endif
 
 if filereadable($HOME . "/.githubrc")
-  source $HOME/.githubrc
+    source $HOME/.githubrc
 endif
 if filereadable($HOME . "/.passwords")
-  source $HOME/.passwords
+    source $HOME/.passwords
 endif
 
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
@@ -209,15 +243,15 @@ autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
 autocmd filetype svn,*commit*,markdown set spell
 autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
 autocmd FileType ruby
-      \ if expand('%') =~# '_test\.rb$' |
-      \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
-      \ elseif expand('%') =~# '_spec\.rb$' |
-      \   compiler rspec | setl makeprg=rspec\ \"%:p\" |
-      \ else |
-      \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
-      \ endif
+            \ if expand('%') =~# '_test\.rb$' |
+            \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
+            \ elseif expand('%') =~# '_spec\.rb$' |
+            \   compiler rspec | setl makeprg=rspec\ \"%:p\" |
+            \ else |
+            \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
+            \ endif
 autocmd User Bundler
-      \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
+            \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 let g:do_filetype = 0
@@ -226,38 +260,38 @@ au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
 au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
 
 function! OpenChangedFiles()
-  only
-  let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
-  let filenames = split(status, "\n")
-  exec "edit " . filenames[0]
-  for filename in filenames[1:]
-    exec "sp " . filename
-  endfor
+    only
+    let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
+    let filenames = split(status, "\n")
+    exec "edit " . filenames[0]
+    for filename in filenames[1:]
+        exec "sp " . filename
+    endfor
 endfunction
 command! OpenChangedFiles :call OpenChangedFiles()
 
 autocmd BufReadPost * call SetCursorPosition()
 function! SetCursorPosition()
-  if &filetype !~ 'svn\|commit\c'
-    if line("'\"") > 0 && line("'\"") <= line("$")
-      exe "normal! g`\""
-      normal! zz
-    endif
-  end
+    if &filetype !~ 'svn\|commit\c'
+        if line("'\"") > 0 && line("'\"") <= line("$")
+            exe "normal! g`\""
+            normal! zz
+        endif
+    end
 endfunction
 
 function! InlineVariable()
-  normal "ayiw
-  normal 4diw
-  normal "bd$
-  normal dd
-  normal k$
-  exec '/\<' . @a . '\>'
-  exec ':.s/\<' . @a . '\>/' . @b
+    normal "ayiw
+    normal 4diw
+    normal "bd$
+    normal dd
+    normal k$
+    exec '/\<' . @a . '\>'
+    exec ':.s/\<' . @a . '\>/' . @b
 endfunction
 
 function! JSBeautify()
-  silent! exe "%! jsbeautifier --stdin"
+    silent! exe "%! jsbeautifier --stdin"
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<cr>
 
@@ -266,12 +300,57 @@ command! E :Explore
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 command! VF :VimFiler
 
+" Section: Mappings {{{1
+
+nmap  <Space>   [Space]
+xmap  <Space>   [Space]
+nnoremap  [Space]   <Nop>
+xnoremap  [Space]   <Nop>
+
+nnoremap <silent> [Space]mk  :<C-u>marks<CR>
+nnoremap <silent> [Space]re  :<C-u>registers<CR>
+
+" Useful save mappings{{{2
+nnoremap <silent> [Space]w  :<C-u>update<CR>
+nnoremap <silent> [Space]fw  :<C-u>write!<CR>
+nnoremap <silent> [Space]q  :<C-u>quit<CR>
+nnoremap <silent> [Space]aq  :<C-u>quitall<CR>
+nnoremap <silent> [Space]fq  :<C-u>quitall!<CR>
+nnoremap <Leader><Leader> :<C-u>update<CR>
+"}}}2
+
+" Change current directory{{{2
+nnoremap <silent> [Space]cd :<C-u>call <SID>cd_buffer_dir()<CR>
+function! s:cd_buffer_dir()"{{{
+  let l:filetype = getbufvar(bufnr('%'), '&filetype')
+  if l:filetype ==# 'vimfiler'
+    let l:dir = getbufvar(bufnr('%'), 'vimfiler').current_dir
+  elseif l:filetype ==# 'vimshell'
+    let l:dir = getbufvar(bufnr('%'), 'vimshell').save_dir
+  else
+    let l:dir = isdirectory(bufname('%')) ? bufname('%') : fnamemodify(bufname('%'), ':p:h')
+  endif
+
+  TabpageCD `=l:dir`
+endfunction"}}}2
+nnoremap <ESC><ESC> :nohlsearch<CR>
+
+" Fast search pair.
+nnoremap [Space]p    %
+xnoremap [Space]p    %
+
+" Fast screen move.
+nnoremap [Space]j    z<CR><C-f>z.
+xnoremap [Space]j    z<CR><C-f>z.
+nnoremap [Space]k    z-<C-b>z.
+xnoremap [Space]k    z-<C-b>z.
+
 if &diff
-  nmap <c-h> :diffget 1<cr>
-  nmap <c-l> :diffget 3<cr>
-  nmap <c-k> [cz.
-  nmap <c-j> ]cz.
-  set number
+    nmap <c-h> :diffget 1<cr>
+    nmap <c-l> :diffget 3<cr>
+    nmap <c-k> [cz.
+    nmap <c-j> ]cz.
+    set number
 endif
 
 cabbrev E e
@@ -288,6 +367,25 @@ iabbrev ;; =>
 iabbrev shuold should
 iabbrev shulod should
 
+" smartword.vim"{{{2
+" Replace w and others with smartword-mappings
+nmap w  <Plug>(smartword-w)
+nmap b  <Plug>(smartword-b)
+nmap ge  <Plug>(smartword-ge)
+xmap w  <Plug>(smartword-w)
+xmap b  <Plug>(smartword-b)
+" Operator pending mode.
+omap <Leader>w  <Plug>(smartword-w)
+omap <Leader>b  <Plug>(smartword-b)
+omap <Leader>ge  <Plug>(smartword-ge)
+"}}}2
+
+" camlcasemotion.vim"{{{2
+nmap <silent> W <Plug>CamelCaseMotion_w
+xmap <silent> W <Plug>CamelCaseMotion_w
+nmap <silent> B <Plug>CamelCaseMotion_b
+xmap <silent> W <Plug>CamelCaseMotion_b
+"}}}2
 nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<cr>
 nmap <c-f> :FuzzyFinderTextMate<CR>
@@ -395,28 +493,28 @@ map ,rt <Plug>(testee-test-case)
 map ,rl <Plug>(testee-test-last)
 
 function! YRRunAfterMaps()
-  nmap Y   :<C-U>YRYankCount 'y$'<CR>
-  nmap . .`[
+    nmap Y   :<C-U>YRYankCount 'y$'<CR>
+    nmap . .`[
 endfunction
 
 function! s:VSetSearch()
-  let temp = @@
-  norm! gvy
-  let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
-  let @@ = temp
+    let temp = @@
+    norm! gvy
+    let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
+    let @@ = temp
 endfunction
 vmap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vmap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 
 nmap <leader>gr :topleft :split config/routes.rb<cr>
 function! ShowRoutes()
-  topleft 100 :split __Routes__
-  set buftype=nofile
-  normal 1GdG
-  0r! rake -s routes
-  exec ":normal " . line("$") . "_ "
-  normal 1GG
-  normal dd
+    topleft 100 :split __Routes__
+    set buftype=nofile
+    normal 1GdG
+    0r! rake -s routes
+    exec ":normal " . line("$") . "_ "
+    normal 1GG
+    normal dd
 endfunction
 nmap <leader>gR :call ShowRoutes()<cr>
 
@@ -439,40 +537,40 @@ nmap <leader><leader> <C-^>
 nmap <expr> <cr> &bt == "" ? ":nohlsearch<cr>" : "\<cr>" 
 
 if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
-  map <silent> w <Plug>CamelCaseMotion_w
-  map <silent> b <Plug>CamelCaseMotion_b
-  map <silent> e <Plug>CamelCaseMotion_e
+    map <silent> w <Plug>CamelCaseMotion_w
+    map <silent> b <Plug>CamelCaseMotion_b
+    map <silent> e <Plug>CamelCaseMotion_e
 endif
 
 function! Preserve(command)
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  execute a:command
-  let @/=_s
-  call cursor(l, c)
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    execute a:command
+    let @/=_s
+    call cursor(l, c)
 endfunction
 
 nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
 nmap _= :call Preserve("normal gg=G")<CR>
 
 function! Titlecase()
-  if !executable("toTitleCase")
-    echo "Missing toTitleCase excutable."
-    return
-  endif
-  normal gv"xy
-  let @x = system('echo "'.@x.'"| toTitleCase | tr -d "\n"')
-  let @x = substitute(@x, '^\s*\(.\{-}\)\s*$', '\1', '')
-  normal gv
-  normal "xp
+    if !executable("toTitleCase")
+        echo "Missing toTitleCase excutable."
+        return
+    endif
+    normal gv"xy
+    let @x = system('echo "'.@x.'"| toTitleCase | tr -d "\n"')
+    let @x = substitute(@x, '^\s*\(.\{-}\)\s*$', '\1', '')
+    normal gv
+    normal "xp
 endfunction
 vmap <leader>t :call Titlecase()<CR>
 
 function! CopyPath()
-  let @*=expand('%')
-  let @"=expand('%')
-  let @+=expand('%')
+    let @*=expand('%')
+    let @"=expand('%')
+    let @+=expand('%')
 endfunction
 nmap <leader>% :call CopyPath()<CR>
 
@@ -481,60 +579,62 @@ imap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
 nmap <leader>x :sp <C-R>=expand("%:h")<cr>/
 
 function! InsertTabWrapper()
-  let col = col('.') - 1
-  if !col || getline('.')[col - 1] !~ '\k'
-    return "\<tab>"
-  else
-    return "\<c-p>"
-  endif
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-p>"
+    endif
 endfunction
 imap <tab> <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
+"}}}1
+
 function! MyTabLine()
-  let s = ''
-  for t in range(tabpagenr('$'))
-    if t + 1 == tabpagenr()
-      let s .= '%#TabLineSel#'
-    else
-      let s .= '%#TabLine#'
-    endif
-    let s .= ' '
-    let s .= '%' . (t + 1) . 'T'
-    let s .= t + 1 . ' '
-    let n = ''
-    let m = 0
-    let bc = len(tabpagebuflist(t + 1))
-    for b in tabpagebuflist(t + 1)
-      if getbufvar( b, "&buftype" ) == 'help'
-        let n .= '[H]' . fnamemodify( bufname(b), ':t:s/.txt$//' )
-      elseif getbufvar( b, "&buftype" ) == 'quickfix'
-        let n .= '[Q]'
-      else
-        let n .= pathshorten(bufname(b))
-      endif
-      if getbufvar( b, "&modified" )
-        let m += 1
-      endif
-      if bc > 1
-        let n .= ' '
-      endif
-      let bc -= 1
+    let s = ''
+    for t in range(tabpagenr('$'))
+        if t + 1 == tabpagenr()
+            let s .= '%#TabLineSel#'
+        else
+            let s .= '%#TabLine#'
+        endif
+        let s .= ' '
+        let s .= '%' . (t + 1) . 'T'
+        let s .= t + 1 . ' '
+        let n = ''
+        let m = 0
+        let bc = len(tabpagebuflist(t + 1))
+        for b in tabpagebuflist(t + 1)
+            if getbufvar( b, "&buftype" ) == 'help'
+                let n .= '[H]' . fnamemodify( bufname(b), ':t:s/.txt$//' )
+            elseif getbufvar( b, "&buftype" ) == 'quickfix'
+                let n .= '[Q]'
+            else
+                let n .= pathshorten(bufname(b))
+            endif
+            if getbufvar( b, "&modified" )
+                let m += 1
+            endif
+            if bc > 1
+                let n .= ' '
+            endif
+            let bc -= 1
+        endfor
+        if m > 0
+            let s.= '+ '
+        endif
+        if n == ''
+            let s .= '[No Name]'
+        else
+            let s .= n
+        endif
+        let s .= ' '
     endfor
-    if m > 0
-      let s.= '+ '
+    let s .= '%#TabLineFill#%T'
+    if tabpagenr('$') > 1
+        let s .= '%=%#TabLine#%999XX'
     endif
-    if n == ''
-      let s .= '[No Name]'
-    else
-      let s .= n
-    endif
-    let s .= ' '
-  endfor
-  let s .= '%#TabLineFill#%T'
-  if tabpagenr('$') > 1
-    let s .= '%=%#TabLine#%999XX'
-  endif
-  return s
+    return s
 endfunction
 set tabline=%!MyTabLine()
