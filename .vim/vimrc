@@ -301,7 +301,7 @@ endfunction
 function! JSBeautify()
     silent! exe "%! jsbeautifier --stdin"
 endfunction
-command! -nargs=0 JSBeautify call JSBeautify()<cr>
+command! -nargs=0 JSBeautify call JSBeautify()<CR>
 
 command! W :w
 command! E :Explore
@@ -354,8 +354,8 @@ nnoremap [Space]k    z-<C-b>z.
 xnoremap [Space]k    z-<C-b>z.
 
 if &diff
-    nmap <c-h> :diffget 1<cr>
-    nmap <c-l> :diffget 3<cr>
+    nmap <c-h> :diffget 1<CR>
+    nmap <c-l> :diffget 3<CR>
     nmap <c-k> [cz.
     nmap <c-j> ]cz.
     set number
@@ -395,14 +395,14 @@ nmap <silent> B <Plug>CamelCaseMotion_b
 xmap <silent> W <Plug>CamelCaseMotion_b
 "}}}2
 nmap <silent> <C-L> :nohls<CR><C-L>
-nmap <C-B> :BufExplorer<cr>
+nmap <C-B> :BufExplorer<CR>
 nmap <c-f> :FuzzyFinderTextMate<CR>
 nmap Q gq
-nmap <leader>m :TagbarToggle<cr>
-nmap <leader>d :TagbarOpenAutoClose<cr>
-nmap <leader>c :cnext<cr>
-nmap <leader>p :cprevious<cr>
-nmap <leader>z :ZoomWin<cr>
+nmap <leader>m :TagbarToggle<CR>
+nmap <leader>d :TagbarOpenAutoClose<CR>
+nmap <leader>c :cnext<CR>
+nmap <leader>p :cprevious<CR>
+nmap <leader>z :ZoomWin<CR>
 nmap <leader>= gg=G<C-o><C-o>
 nmap <leader>v :vsplit<CR> <C-w><C-w>
 nmap <leader>s :split<CR> <C-w><C-w>
@@ -414,12 +414,12 @@ nmap <silent> <Leader>y :YRShow<CR>
 nmap <silent> <Leader>Y :GundoToggle<CR>
 imap <M-o>       <Esc>o
 imap <C-j>       <Down>
-nmap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<cr><esc>
+nmap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<CR><esc>
 nmap q; q:
 vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<CR><CR>
 nmap <leader><space> i<space><esc>
 nmap VV 0v$h
-nmap <leader>X <c-w><c-h>:set winwidth=80<cr><c-w><c-l>:set winwidth=31<cr><c-w><c-h>
+nmap <leader>X <c-w><c-h>:set winwidth=80<CR><c-w><c-l>:set winwidth=31<CR><c-w><c-h>
 nmap gff <C-w>gf
 imap (( ()
 imap <c-space> <right>
@@ -432,17 +432,17 @@ imap <C-f> <esc>la
 imap <C-d> <right><bs>
 imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
-nmap [2 :diffget //2<cr>
-nmap ]3 :diffget //3<cr>
+nmap [2 :diffget //2<CR>
+nmap ]3 :diffget //3<CR>
 nmap <leader>r :R
 nmap Y y$
-vmap <leader>rv :call ExtractVariable()<cr>
-nmap <leader>ri :call InlineVariable()<cr>
-nmap <leader>/# /^ *#<cr>
-nmap <leader>/f /^ *def\><cr>
-nmap <leader>/c /^ *class\><cr>
-nmap <leader>/i /^ *if\><cr>
-nmap <leader>df d/\(^ *def\>\)\\|\%$<cr>
+vmap <leader>rv :call ExtractVariable()<CR>
+nmap <leader>ri :call InlineVariable()<CR>
+nmap <leader>/# /^ *#<CR>
+nmap <leader>/f /^ *def\><CR>
+nmap <leader>/c /^ *class\><CR>
+nmap <leader>/i /^ *if\><CR>
+nmap <leader>df d/\(^ *def\>\)\\|\%$<CR>
 nmap <leader>a= :Tabularize /=<CR>
 vmap <leader>a= :Tabularize /=<CR>
 nmap <leader>a: :Tabularize /:\zs<CR>
@@ -450,12 +450,12 @@ vmap <leader>a: :Tabularize /:\zs<CR>
 nmap <leader>a :Tabularize /
 vmap <leader>a :Tabularize /
 nmap <leader>= G=gg<c-o><c-o>
-nmap <leader>h :help <c-r>=expand("<cword>")<cr><cr>
-vmap <leader>h "ry:help<space><c-r>r<cr>
+nmap <leader>h :help <c-r>=expand("<cword>")<CR><CR>
+vmap <leader>h "ry:help<space><c-r>r<CR>
 nmap <C-cr> <esc>yyp
 imap <S-cr> <esc>$o
 nmap <C-S-cr> d$O<esc>p0x
-nmap <leader>q :bd<cr>
+nmap <leader>q :bd<CR>
 nmap <c-h> <c-w><c-h>
 nmap <c-j> <c-w><c-j>
 nmap <c-k> <c-w><c-k>
@@ -463,8 +463,8 @@ nmap <c-l> <c-w><c-l>
 imap <C-right> <space>=><space>
 imap <C-;> <space>=><space>
 imap <c-]> <space>=><space>
-cnoremap %% <C-R>=expand('%:h').'/'<cr>
-cnoremap %& <C-R>=expand('%:p')<cr>
+cnoremap %% <C-R>=expand('%:h').'/'<CR>
+cnoremap %& <C-R>=expand('%:p')<CR>
 nmap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
@@ -515,7 +515,7 @@ endfunction
 vmap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vmap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 
-nmap <leader>gr :topleft :split config/routes.rb<cr>
+nmap <leader>gr :topleft :split config/routes.rb<CR>
 function! ShowRoutes()
     topleft 100 :split __Routes__
     set buftype=nofile
@@ -525,25 +525,25 @@ function! ShowRoutes()
     normal 1GG
     normal dd
 endfunction
-nmap <leader>gR :call ShowRoutes()<cr>
+nmap <leader>gR :call ShowRoutes()<CR>
 
-nmap <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
-nmap <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
-nmap <leader>gu :CommandTFlush<cr>\|:CommandT test/unit<cr>
-nmap <leader>gF :CommandTFlush<cr>\|:CommandT test/functional<cr>
-nmap <leader>gt :CommandTFlush<cr>\|:CommandT test<cr>
-nmap <leader>gm :CommandTFlush<cr>\|:CommandT app/models<cr>
-nmap <leader>gh :CommandTFlush<cr>\|:CommandT app/helpers<cr>
-nmap <leader>gl :CommandTFlush<cr>\|:CommandT lib<cr>
-nmap <leader>gp :CommandTFlush<cr>\|:CommandT public<cr>
-nmap <leader>gs :CommandTFlush<cr>\|:CommandT public/stylesheets<cr>
-nmap <leader>gS :CommandTFlush<cr>\|:CommandT spec<cr>
-nmap <leader>gg :topleft 100 :split Gemfile<cr>
-nmap <leader>gf :CommandT %%/<cr>
-nmap ;; :CommandTFlush<cr>:CommandT<cr>
-nmap ;' :CommandTFlush<cr>:CommandTBuffer<cr>
+nmap <leader>gv :CommandTFlush<CR>\|:CommandT app/views<CR>
+nmap <leader>gc :CommandTFlush<CR>\|:CommandT app/controllers<CR>
+nmap <leader>gu :CommandTFlush<CR>\|:CommandT test/unit<CR>
+nmap <leader>gF :CommandTFlush<CR>\|:CommandT test/functional<CR>
+nmap <leader>gt :CommandTFlush<CR>\|:CommandT test<CR>
+nmap <leader>gm :CommandTFlush<CR>\|:CommandT app/models<CR>
+nmap <leader>gh :CommandTFlush<CR>\|:CommandT app/helpers<CR>
+nmap <leader>gl :CommandTFlush<CR>\|:CommandT lib<CR>
+nmap <leader>gp :CommandTFlush<CR>\|:CommandT public<CR>
+nmap <leader>gs :CommandTFlush<CR>\|:CommandT public/stylesheets<CR>
+nmap <leader>gS :CommandTFlush<CR>\|:CommandT spec<CR>
+nmap <leader>gg :topleft 100 :split Gemfile<CR>
+nmap <leader>gf :CommandT %%/<CR>
+nmap ;; :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
+nmap ;' :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
 nmap <leader><leader> <C-^>
-nmap <expr> <cr> &bt == "" ? ":nohlsearch<cr>" : "\<cr>" 
+nmap <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
 
 if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
     map <silent> w <Plug>CamelCaseMotion_w
@@ -585,7 +585,7 @@ nmap <leader>% :call CopyPath()<CR>
 
 imap <C-O> <C-X><C-O>
 imap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
-nmap <leader>x :sp <C-R>=expand("%:h")<cr>/
+nmap <leader>x :sp <C-R>=expand("%:h")<CR>/
 
 function! InsertTabWrapper()
     let col = col('.') - 1
@@ -595,7 +595,7 @@ function! InsertTabWrapper()
         return "\<c-p>"
     endif
 endfunction
-imap <tab> <c-r>=InsertTabWrapper()<cr>
+imap <tab> <c-r>=InsertTabWrapper()<CR>
 imap <s-tab> <c-n>
 
 "}}}1
