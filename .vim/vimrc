@@ -327,10 +327,11 @@ let g:rails_installed_menu=0
 let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_rails = 1
 "}}}2
-let g:CSApprox_verbose_level = 0
+" Syntastic {{{2
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
+"}}}2
 let g:snips_author = "Travis Jeffery"
 let g:quickrun_direction = 'rightbelow vertical'
 let g:user_zen_leader_key = '<c-e>'
@@ -398,6 +399,7 @@ let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
 "}}}2
 let g:HammerQuiet = 1
+let g:CSApprox_verbose_level = 0
 if filereadable("/usr/local/bin/ctags")
     let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
