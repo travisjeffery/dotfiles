@@ -1,6 +1,4 @@
-
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
+silent! call pathogen#infect()
 
 " Section: Options {{{1
 set nocompatible
@@ -72,12 +70,59 @@ else
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<
 endif
 set formatoptions-=o
-
-" Scroll "{{{2
+" tabline{{{2
+set showtabline=2
+set tabline=%!MyTabLine()
+function! MyTabLine()
+    let s = ''
+    for t in range(tabpagenr('$'))
+        if t + 1 == tabpagenr()
+            let s .= '%#TabLineSel#'
+        else
+            let s .= '%#TabLine#'
+        endif
+        let s .= ' '
+        let s .= '%' . (t + 1) . 'T'
+        let s .= t + 1 . ' '
+        let n = ''
+        let m = 0
+        let bc = len(tabpagebuflist(t + 1))
+        for b in tabpagebuflist(t + 1)
+            if getbufvar( b, "&buftype" ) == 'help'
+                let n .= '[H]' . fnamemodify( bufname(b), ':t:s/.txt$//' )
+            elseif getbufvar( b, "&buftype" ) == 'quickfix'
+                let n .= '[Q]'
+            else
+                let n .= pathshorten(bufname(b))
+            endif
+            if getbufvar( b, "&modified" )
+                let m += 1
+            endif
+            if bc > 1
+                let n .= ' '
+            endif
+            let bc -= 1
+        endfor
+        if m > 0
+            let s.= '+ '
+        endif
+        if n == ''
+            let s .= '[No Name]'
+        else
+            let s .= n
+        endif
+        let s .= ' '
+    endfor
+    let s .= '%#TabLineFill#%T'
+    if tabpagenr('$') > 1
+        let s .= '%=%#TabLine#%999XX'
+    endif
+    return s
+endfunction"}}}2
+" scroll "{{{2
 set scroll=5
 set scrolloff=0
 let g:scrolloff = 15 
-
 autocmd MyAutoCmd CursorMoved * call s:reinventing_scrolloff()
 let s:last_lnum = -1
 function! s:reinventing_scrolloff()
@@ -106,7 +151,7 @@ function! s:reinventing_scrolloff()
     endif
 endfunction
 "}}}2
-
+" Automatically mkdir when writing file in non-existant directory{{{2
 augroup vimrc-auto-mkdir
     autocmd!
     autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
@@ -117,7 +162,7 @@ augroup vimrc-auto-mkdir
             call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
         endif
     endfunction
-augroup END " }}}
+augroup END"}}}2
 set mouse=a
 set ttymouse=xterm2
 set t_Co=256
@@ -129,11 +174,10 @@ set complete-=k
 set complete-=i
 set fileformats=unix,dos,mac
 set cursorline
-set nu
+set number
 set timeoutlen=1000
 set ttimeoutlen=50
 set laststatus=2
-set showtabline=2
 set diffopt=filler
 set diffopt+=iwhite
 set switchbuf=useopen
@@ -144,41 +188,32 @@ if has('unix')
     set nofsync
     set swapsync=
 endif
-
-if has("gui")
-    set go-=T
-    set guioptions-=L
-    set guioptions-=r
-    set guioptions+=c
-    set noantialias
-    set columns=111
-    set lines=69
+set guioptions-=T
+set guioptions-=L
+set guioptions-=r
+set guioptions+=c
+set noantialias
+if has('balloon_eval')
     autocmd FileType ruby,eruby set noballooneval
     set noballooneval
 endif
-
 set norestorescreen
 set t_ti=
 set t_te=
 set shortmess=aI
-
 if has("mac")
     set clipboard=unnamed
     let g:gist_clip_command = 'pbcopy'
 else
     let g:gist_clip_command = 'xclip -selection clipboard'
 endif
-
 if has("gui") && has("mac")
     set fuopt+=maxhorz
     set macmeta
     set antialias | set guifont=Inconsolata:h14
-endif
-
-if has("gui") && !has("mac")
+  else
     set guifont=Inconsolata\ 12
 endif
-
 if &term =~ "^screen"
     augroup MyAutoCmd
         autocmd VimLeave * :set mouse=
@@ -187,7 +222,6 @@ if &term =~ "^screen"
     " workaround for freeze when using mouse on GNU screen.
     set ttymouse=xterm2
 endif
-
 set statusline=%f
 set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 set statusline+=%{exists('g:loaded_rvm')?rvm#statusline():''}
@@ -213,14 +247,13 @@ set statusline+=%=
 set statusline+=%c,
 set statusline+=%l/%L
 set statusline+=\ %{GetDocumentPosition()}
-
 function! GetDocumentPosition()
     return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
 endfunction
 
-
 autocmd MyAutoCmd FileType * setl formatoptions-=ro | setl formatoptions+=mM
 autocmd MyAutoCmd BufWritePost vimrc source $MYVIMRC
+
 " Close help and git window by pressing q.
 autocmd FileType help,git-status,git-log,qf,gitcommit,quickrun,qfreplace,ref,simpletap-summary,vcs-commit,vcs-status
             \ nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>
@@ -231,15 +264,11 @@ function! s:smart_close()
     close
   endif
 endfunction
-
 augroup MyAutoCmd
   autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
 augroup END
-
-"}}}1
-
 " Make a scratch buffer when unnamed buffer{{{2
-augroup vimrc-scratch-buffer"{{{
+augroup vimrc-scratch-buffer
   autocmd!
   autocmd BufEnter * call s:scratch_buffer()
   autocmd FileType qfreplace autocmd! vimrc-scratch * <buffer>
@@ -262,10 +291,10 @@ augroup vimrc-scratch-buffer"{{{
     execute 'saveas' . (v:cmdbang ? '!' : '') ' <afile>'
     filetype detect
   endfunction
-augroup END"}}}
-"}}}2
-
+augroup END"}}}2
+"}}}1
 " Section: Plugins {{{1
+" Solarized{{{2
 let g:solarized_termtrans=0
 let g:solarized_degrade=0
 let g:solarized_bold=1
@@ -278,15 +307,28 @@ let g:solarized_visibility = "high"
 let g:solarized_contrast = "high" 
 set background=light
 colorscheme solarized
-
-let g:CSApprox_verbose_level = 0
+"}}}2
+" netrw {{{2
+let g:netrw_list_hide= '*.swp'
+nnoremap <silent> <BS> :<C-u>Explore<CR>
+" Change default directory.
+set browsedir=current
+if executable('wget')
+  let g:netrw_http_cmd = 'wget'
+endif
+let g:netrw_list_hide = '^\.,^tags$'
+"}}}2
+" rails {{{2
 let g:rails_menu=0
 let g:rails_installed_menu=0
+let g:rubycomplete_buffer_loading = 1
+let g:rubycomplete_rails = 1
+"}}}2
+let g:CSApprox_verbose_level = 0
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
 let g:snips_author = "Travis Jeffery"
-let g:mapleader=","
 let g:quickrun_direction = 'rightbelow vertical'
 let g:user_zen_leader_key = '<c-e>'
 let g:use_zen_complete_tag = 1
@@ -295,12 +337,15 @@ let g:user_zen_settings = {
             \  'indentation' : '  ',
             \   'markdown' : { 'extends' : 'html' }
             \}
+" delimitmate {{{2
 let g:delimitMate_expand_cr = 1
 let g:delimitMate_expand_space = 1
 let delimitMate_balance_matchpairs = 1
 let delimitMate_smart_quotes = 0
 let delimitMate_smart_matchpairs = 0
 let delimitMate_autoclose = 0
+"}}}2
+" YankRing {{{2
 let g:yankring_max_history = 1000
 let g:yankring_max_display = 100
 let g:yankring_persist = 1
@@ -312,17 +357,30 @@ let g:yankring_window_width = 30
 let g:yankring_window_use_right = 1
 let g:yankring_window_increment = 15
 let g:yankring_history_dir = '$HOME/.tmp'
+"}}}2
+" surround {{{2
+let g:surround_{char2nr('-')} = "<% \r %>"
+let g:surround_{char2nr('=')} = "<%= \r %>"
+let g:surround_{char2nr('8')} = "/* \r */"
+let g:surround_{char2nr('s')} = " \r"
+let g:surround_{char2nr('^')} = "/^\r$/"
 let g:surround_indent = 1
-let g:rubycomplete_rails = 1
-let g:HammerQuiet = 1
+"}}}2
+" vimfiler {{{2
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_safe_mode_by_default = 0
+"}}}2
+" SuperTab {{{2
 let g:SuperTabLongestEnhanced = 1
 let g:SuperTabDefaultCompletionType = "context"
+"}}}2
+" CommandT {{{2
 let g:CommandTMatchWindowReverse  = 1
 let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
+"}}}2
+let g:HammerQuiet = 1
 
 "}}}1
 
@@ -343,6 +401,15 @@ if filereadable($HOME . "/.passwords")
     source $HOME/.passwords
 endif
 
+" Section: Commands {{{1
+command! -nargs=* -bang W :w<bang> <args>
+command! -nargs=0 E :Explore
+command! -nargs=0 DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+command! -nargs=0 VF :VimFiler
+command! -bar -nargs=0 SudoW   :setl nomod|silent exe 'write !sudo tee % >/dev/null'|let &mod = v:shell_error
+"}}}1
+
+" Section: Autocommands {{{1
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType vim set omnifunc=syntaxcomplete#Complete
@@ -409,14 +476,11 @@ function! JSBeautify()
     silent! exe "%! jsbeautifier --stdin"
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<CR>
-
-command! W :w
-command! E :Explore
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
-command! VF :VimFiler
+"}}}1
 
 " Section: Mappings {{{1
 
+let g:mapleader=","
 nmap  <Space>   [Space]
 xmap  <Space>   [Space]
 nnoremap  [Space]   <Nop>
@@ -424,6 +488,7 @@ xnoremap  [Space]   <Nop>
 
 nnoremap <silent> [Space]mk  :<C-u>marks<CR>
 nnoremap <silent> [Space]re  :<C-u>registers<CR>
+nnoremap <silent> [Space]yr  :<C-u>YRShow<CR>
 
 " Useful save mappings{{{2
 nnoremap <silent> [Space]w  :<C-u>update<CR>
@@ -559,7 +624,7 @@ cmap <C-BS> <c-w>
 nmap [2 :diffget //2<CR>
 nmap ]3 :diffget //3<CR>
 nmap <Leader>r :R
-nmap Y y$
+nnoremap Y y$
 vmap <Leader>rv :call ExtractVariable()<CR>
 nmap <Leader>ri :call InlineVariable()<CR>
 nmap <Leader>/# /^ *#<CR>
@@ -791,53 +856,6 @@ imap <s-tab> <c-n>
 
 "}}}1
 
-function! MyTabLine()
-    let s = ''
-    for t in range(tabpagenr('$'))
-        if t + 1 == tabpagenr()
-            let s .= '%#TabLineSel#'
-        else
-            let s .= '%#TabLine#'
-        endif
-        let s .= ' '
-        let s .= '%' . (t + 1) . 'T'
-        let s .= t + 1 . ' '
-        let n = ''
-        let m = 0
-        let bc = len(tabpagebuflist(t + 1))
-        for b in tabpagebuflist(t + 1)
-            if getbufvar( b, "&buftype" ) == 'help'
-                let n .= '[H]' . fnamemodify( bufname(b), ':t:s/.txt$//' )
-            elseif getbufvar( b, "&buftype" ) == 'quickfix'
-                let n .= '[Q]'
-            else
-                let n .= pathshorten(bufname(b))
-            endif
-            if getbufvar( b, "&modified" )
-                let m += 1
-            endif
-            if bc > 1
-                let n .= ' '
-            endif
-            let bc -= 1
-        endfor
-        if m > 0
-            let s.= '+ '
-        endif
-        if n == ''
-            let s .= '[No Name]'
-        else
-            let s .= n
-        endif
-        let s .= ' '
-    endfor
-    let s .= '%#TabLineFill#%T'
-    if tabpagenr('$') > 1
-        let s .= '%=%#TabLine#%999XX'
-    endif
-    return s
-endfunction
-set tabline=%!MyTabLine()
 
 set secure
 
