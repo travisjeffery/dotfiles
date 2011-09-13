@@ -39,6 +39,9 @@ set undodir=~/.tmp
 set undofile
 set undolevels=1000
 set undoreload=10000
+if !isdirectory($HOME . "/.tmp")
+    call mkdir($HOME . "/.tmp", 'p')
+endif
 set backupdir=~/.tmp
 set directory=~/.tmp
 set backup
@@ -46,22 +49,21 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 set autoindent
-set nofoldenable
-set foldmethod=indent
-set foldlevelstart=1
-set foldlevel=1
 set wildmode=list:longest
 set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
 set virtualedit=block
 set matchpairs+=<:>
 if v:version >= 600
-  set autoread
-  set foldmethod=marker
-  set printoptions=paper:letter
-  set sidescrolloff=5
-  set sidescroll=1
-  set mouse=nvi
+    set autoread
+    set foldenable
+    set foldlevelstart=1
+    set foldlevel=1
+    set foldmethod=marker
+    set printoptions=paper:letter
+    set sidescrolloff=5
+    set sidescroll=1
+    set mouse=nvi
 endif
 set nolist
 if (&termencoding ==# 'utf-8' || &encoding ==# 'utf-8') && version >= 700
@@ -382,26 +384,18 @@ let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
 "}}}2
 let g:HammerQuiet = 1
-
-"}}}1
-
 if filereadable("/usr/local/bin/ctags")
     let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
     let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
-
-if !isdirectory($HOME . "/.tmp")
-    call mkdir($HOME . "/.tmp")
-endif
-
 if filereadable($HOME . "/.githubrc")
     source $HOME/.githubrc
 endif
 if filereadable($HOME . "/.passwords")
     source $HOME/.passwords
 endif
-
+"}}}1
 " Section: Commands {{{1
 command! -nargs=* -bang W :w<bang> <args>
 command! -nargs=0 E :Explore
@@ -409,7 +403,6 @@ command! -nargs=0 DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | win
 command! -nargs=0 VF :VimFiler
 command! -bar -nargs=0 SudoW   :setl nomod|silent exe 'write !sudo tee % >/dev/null'|let &mod = v:shell_error
 "}}}1
-
 " Section: Autocommands {{{1
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
@@ -847,7 +840,6 @@ imap <tab> <c-r>=InsertTabWrapper()<CR>
 imap <s-tab> <c-n>
 
 "}}}1
-
 
 set secure
 
