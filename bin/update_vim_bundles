@@ -32,7 +32,6 @@ svn_bundle() {
 
 git_bundle bundle/indexedsearch git@github.com:travisjeffery/IndexedSearch.git
 git_bundle bundle/ack https://github.com/mileszs/ack.vim.git
-git_bundle bundle/bufexplorer https://github.com/vim-scripts/bufexplorer.zip.git
 git_bundle bundle/bufkill https://github.com/vim-scripts/bufkill.vim.git
 git_bundle bundle/bufonly https://github.com/duff/vim-bufonly.git
 git_bundle bundle/command-t git://git.wincent.com/command-t.git && cd ~/.vim/bundle/command-t/ruby/command-t && make clean; ruby extconf.rb && make
