@@ -661,6 +661,10 @@ nmap <right>  <Plug>(jump-x2-to-next)
 
 xmap <C-\>  <Plug>Commentary
 nmap <C-\> <Plug>CommentaryLine
+
+if hasmapto('s', 'v')
+    vunmap s
+endif
 vmap s S
 xmap s S
 
