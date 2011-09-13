@@ -253,6 +253,7 @@ endfunction
 
 autocmd MyAutoCmd FileType * setl formatoptions-=ro | setl formatoptions+=mM
 autocmd MyAutoCmd BufWritePost vimrc source $MYVIMRC
+autocmd MyAutoCmd BufWritePost .vimrc source $MYVIMRC
 
 " Close help and git window by pressing q.
 autocmd FileType help,git-status,git-log,qf,gitcommit,quickrun,qfreplace,ref,simpletap-summary,vcs-commit,vcs-status
@@ -477,9 +478,22 @@ function! JSBeautify()
 endfunction
 command! -nargs=0 JSBeautify call JSBeautify()<CR>
 "}}}1
-
+" Section: Abbreviations{{{1
+cabbrev E e
+cabbrev git Git
+cabbrev ~? ~/
+iabbrev Utitlies Utilities
+iabbrev utitlies utilities
+iabbrev init; initialize
+iabbrev innit init
+iabbrev innitialize initialize
+iabbrev seperate separate
+iabbrev teh the
+iabbrev ;; =>
+iabbrev shuold should
+iabbrev shulod should
+"}}}1
 " Section: Mappings {{{1
-
 let g:mapleader=","
 nmap  <Space>   [Space]
 xmap  <Space>   [Space]
@@ -489,6 +503,16 @@ xnoremap  [Space]   <Nop>
 nnoremap <silent> [Space]mk  :<C-u>marks<CR>
 nnoremap <silent> [Space]re  :<C-u>registers<CR>
 nnoremap <silent> [Space]yr  :<C-u>YRShow<CR>
+nnoremap <silent> [Space]ya  :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
+nnoremap <silent> [Space]y%  :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
+
+" Copy current buffer's path to clipboard{{{2
+nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
+function! s:copy_path()
+    let @*=expand('%')
+    let @"=expand('%')
+    let @+=expand('%')
+endfunction"}}}2
 
 " Useful save mappings{{{2
 nnoremap <silent> [Space]w  :<C-u>update<CR>
@@ -541,21 +565,6 @@ if &diff
     nmap <c-j> ]cz.
     set number
 endif
-
-cabbrev E e
-cabbrev git Git
-cabbrev ~? ~/
-iabbrev Utitlies Utilities
-iabbrev utitlies utilities
-iabbrev init; initialize
-iabbrev innit init
-iabbrev innitialize initialize
-iabbrev seperate separate
-iabbrev teh the
-iabbrev ;; =>
-iabbrev shuold should
-iabbrev shulod should
-
 " Move search word and fold open"{{{2
 nnoremap N  Nzv
 nnoremap n  nzv
@@ -563,7 +572,6 @@ nnoremap #  #zv
 nnoremap g*  g*zv
 nnoremap g#  g#zv
 "}}}2
-
 " smartword.vim"{{{2
 " Replace w and others with smartword-mappings
 nmap w  <Plug>(smartword-w)
@@ -726,8 +734,8 @@ function! ForwardParagraph()
 endfunction
 "}}}
 nnoremap <silent> [Space]<Space> :<C-u>buffer #<CR>
-nnoremap 0 :<C-u>normal! ^<CR>
-nnoremap ^ :<C-u>normal! 0<CR>
+nnoremap <silent> 0 :<C-u>normal! ^<CR>
+nnoremap <silent> ^ :<C-u>normal! 0<CR>
 
 xmap p <Plug>(operator-replace)
 xmap P <Plug>(operator-replace)
@@ -751,12 +759,12 @@ let g:quickrun_config['ruby'] = {'command': 'testdrb', 'exec': '%c -Itest %s'}
 "       \ 'runmode' : 'async:remote:vimproc'
 "       \}
 
-map <left> <Plug>(poslist-prev-buf)
-map <right> <Plug>(poslist-next-buf)
+nnoremap <Left> <Plug>(poslist-prev-buf)
+nnoremap <Right> <Plug>(poslist-next-buf)
 
-map ,rf <Plug>(testee-test-file)
-map ,rt <Plug>(testee-test-case)
-map ,rl <Plug>(testee-test-last)
+nnoremap <Leader>rf <Plug>(testee-test-file)
+nnoremap <Leader>rt <Plug>(testee-test-case)
+nnoremap <Leader>rl <Plug>(testee-test-last)
 
 function! YRRunAfterMaps()
     nmap Y   :<C-U>YRYankCount 'y$'<CR>
@@ -784,28 +792,22 @@ function! ShowRoutes()
 endfunction
 nnoremap <Leader>gR :call ShowRoutes()<CR>
 
-nnoremap <Leader>gv :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/views<CR>
-nnoremap <Leader>gc :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/controllers<CR>
-nnoremap <Leader>gu :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/unit<CR>
-nnoremap <Leader>gF :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/functional<CR>
-nnoremap <Leader>gt :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test<CR>
-nnoremap <Leader>gm :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/models<CR>
-nnoremap <Leader>gh :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/helpers<CR>
-nnoremap <Leader>gl :<C-u>CommandTFlush<CR>\|:<C-u>CommandT lib<CR>
-nnoremap <Leader>gp :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public<CR>
-nnoremap <Leader>gs :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public/stylesheets<CR>
-nnoremap <Leader>gS :<C-u>CommandTFlush<CR>\|:<C-u>CommandT spec<CR>
-nnoremap <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
-nnoremap <Leader>gf :<C-u>CommandT %%/<CR>
-nnoremap <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
-nnoremap <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
-nnoremap <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
-
-if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
-    map <silent> w <Plug>CamelCaseMotion_w
-    map <silent> b <Plug>CamelCaseMotion_b
-    map <silent> e <Plug>CamelCaseMotion_e
-endif
+nnoremap <silent> <Leader>gv :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/views<CR>
+nnoremap <silent> <Leader>gc :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/controllers<CR>
+nnoremap <silent> <Leader>gu :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/unit<CR>
+nnoremap <silent> <Leader>gF :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/functional<CR>
+nnoremap <silent> <Leader>gt :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test<CR>
+nnoremap <silent> <Leader>gm :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/models<CR>
+nnoremap <silent> <Leader>gh :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/helpers<CR>
+nnoremap <silent> <Leader>gl :<C-u>CommandTFlush<CR>\|:<C-u>CommandT lib<CR>
+nnoremap <silent> <Leader>gp :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public<CR>
+nnoremap <silent> <Leader>gs :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public/stylesheets<CR>
+nnoremap <silent> <Leader>gS :<C-u>CommandTFlush<CR>\|:<C-u>CommandT spec<CR>
+nnoremap <silent> <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
+nnoremap <silent> <Leader>gf :<C-u>CommandT %%/<CR>
+nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
+nnoremap <silent> <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
+nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
 
 function! Preserve(command)
     let _s=@/
@@ -831,13 +833,6 @@ function! Titlecase()
     normal "xp
 endfunction
 vmap <Leader>t :call Titlecase()<CR>
-
-function! CopyPath()
-    let @*=expand('%')
-    let @"=expand('%')
-    let @+=expand('%')
-endfunction
-nmap <Leader>% :call CopyPath()<CR>
 
 imap <C-O> <C-X><C-O>
 imap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
