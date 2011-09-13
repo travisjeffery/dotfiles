@@ -514,6 +514,10 @@ function! s:copy_path()
     let @+=expand('%')
 endfunction"}}}2
 
+" To keep legacy surround mapping{{{2
+vnoremap s S
+xnoremap s S"{{{2
+
 " Useful save mappings{{{2
 nnoremap <silent> [Space]w  :<C-u>update<CR>
 nnoremap <silent> [Space]fw  :<C-u>write!<CR>
