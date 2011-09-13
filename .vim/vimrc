@@ -469,8 +469,6 @@ if !exists('g:neocomplcache_plugin_completion_length')
         \ 'look' : 4,
         \ }
 endif
-
-
 "}}}2
 let g:HammerQuiet = 1
 let g:CSApprox_verbose_level = 0
