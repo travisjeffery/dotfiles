@@ -724,8 +724,12 @@ function! ForwardParagraph()
 endfunction
 "}}}
 nnoremap <silent> [Space]<Space> :<C-u>buffer #<CR>
-nnoremap <silent> 0 :<C-u>normal! ^<CR>
-nnoremap <silent> ^ :<C-u>normal! 0<CR>
+nnoremap <silent> 0 ^
+nnoremap <silent> ^ 0
+xnoremap <silent> 0 ^
+xnoremap <silent> ^ 0
+vnoremap <silent> 0 ^
+vnoremap <silent> ^ 0
 
 xmap p <Plug>(operator-replace)
 xmap P <Plug>(operator-replace)
