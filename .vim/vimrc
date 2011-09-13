@@ -596,36 +596,31 @@ xmap <silent> W <Plug>CamelCaseMotion_w
 nmap <silent> B <Plug>CamelCaseMotion_b
 xmap <silent> W <Plug>CamelCaseMotion_b
 "}}}2
-nmap <silent> <C-L> :nohls<CR><C-L>
-nmap <C-B> :BufExplorer<CR>
-nmap <c-f> :FuzzyFinderTextMate<CR>
-nmap Q gq
-nmap <Leader>m :TagbarToggle<CR>
-nmap <Leader>d :TagbarOpenAutoClose<CR>
-nmap <Leader>c :cnext<CR>
-nmap <Leader>p :cprevious<CR>
-nmap <Leader>z :ZoomWin<CR>
-nmap <Leader>= gg=G<C-o><C-o>
-nmap <Leader>v :vsplit<CR> <C-w><C-w>
-nmap <Leader>s :split<CR> <C-w><C-w>
-nmap <Leader>\ :%! fmt -w 79<CR>
-vmap <Leader>\ :!fmt -w 79<CR>
-nmap <Leader>` :%s/\s*$//ge<CR>
-nmap <Leader>cd :cd %:p:h<CR>
-nmap <silent> <Leader>y :YRShow<CR>
-nmap <silent> <Leader>Y :GundoToggle<CR>
+nnoremap <C-B> :<C-u>BufExplorer<CR>
+nnoremap Q gq
+nnoremap <Leader>m :TagbarToggle<CR>
+nnoremap <Leader>d :TagbarOpenAutoClose<CR>
+nnoremap <Leader>z :ZoomWin<CR>
+nnoremap <Leader>= gg=G<C-o><C-o>
+nnoremap <Leader>v :<C-u>vsplit<CR><C-w><C-w>
+nnoremap <Leader>s :<C-u>split<CR><C-w><C-w>
+nnoremap <Leader>\ :<C-u>%! fmt -w 79<CR>
+nnoremap <Leader>\ :<C-u>!fmt -w 79<CR>
+nnoremap <Leader>` :<C-u>%s/\s*$//ge<CR>
+nnoremap <Leader>cd :<C-u>cd %:p:h<CR>
+nnoremap <silent> <Leader>y :YRShow<CR>
+nnoremap <silent> <Leader>Y :GundoToggle<CR>
 imap <M-o>       <Esc>o
 imap <C-j>       <Down>
 nmap <Leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<CR><esc>
 vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<CR><CR>
-nmap <Leader><space> i<space><esc>
-nmap VV 0v$h
-nmap <Leader>X <c-w><c-h>:set winwidth=80<CR><c-w><c-l>:set winwidth=31<CR><c-w><c-h>
-nmap gff <C-w>gf
+nnoremap VV 0v$h
+nnoremap <Leader>X <c-w><c-h>:set winwidth=80<CR><c-w><c-l>:set winwidth=31<CR><c-w><c-h>
+nnoremap gff <C-w>gf
 imap (( ()
-imap <c-space> <right>
+inoremap <C-Space> <Right>
 nmap <Leader>- i<space><esc>vs-2lxi
-nmap <Leader>+ :cd %:p:h <bar> new<space>
+nmap <Leader>+ :<C-u>cd %:p:h<bar>new<Space>
 imap <C-e> <esc>$a
 imap <C-a> <esc>0i
 imap <C-b> <esc>ha
@@ -635,7 +630,6 @@ imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
 nmap [2 :diffget //2<CR>
 nmap ]3 :diffget //3<CR>
-nmap <Leader>r :R
 nnoremap Y y$
 vmap <Leader>rv :call ExtractVariable()<CR>
 nmap <Leader>ri :call InlineVariable()<CR>
@@ -655,15 +649,14 @@ nmap <Leader>h :help <c-r>=expand("<cword>")<CR><CR>
 vmap <Leader>h "ry:help<space><c-r>r<CR>
 nmap <C-cr> <esc>yyp
 imap <S-cr> <esc>$o
-nmap <C-S-cr> d$O<esc>p0x
-nmap <Leader>q :bd<CR>
-nmap <c-h> <c-w><c-h>
-nmap <c-j> <c-w><c-j>
-nmap <c-k> <c-w><c-k>
-nmap <c-l> <c-w><c-l>
-imap <C-right> <space>=><space>
-imap <C-;> <space>=><space>
-imap <c-]> <space>=><space>
+nnoremap <C-S-cr> d$O<esc>p0x
+" Split movement{{{2
+nnoremap <C-h> <C-w><C-h>
+nnoremap <C-j> <C-w><C-j>
+nnoremap <C-k> <C-w><C-k>
+nnoremap <C-l> <C-w><C-l>
+"}}}2
+inoremap <C-]> <Space>=><Space>
 cnoremap %% <C-R>=expand('%:h').'/'<CR>
 cnoremap %& <C-R>=expand('%:p')<CR>
 nnoremap gV `[v`]
@@ -673,8 +666,8 @@ nmap <S-left> g;
 nmap <left>  <Plug>(jump-x2-to-previous)
 nmap <right>  <Plug>(jump-x2-to-next)
 
-xmap <c-\>  <Plug>Commentary
-nmap <c-\> <Plug>CommentaryLine
+xmap <C-\>  <Plug>Commentary
+nmap <C-\> <Plug>CommentaryLine
 vmap s S
 xmap s S
 
