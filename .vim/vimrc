@@ -422,7 +422,6 @@ let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
 "}}}2
 " neocomplecache{{{2
-
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_camel_case_completion = 1
