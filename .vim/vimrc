@@ -56,11 +56,13 @@ set wildmode=list:longest
 set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
 set virtualedit=block
+set matchpairs+=<:>
 if v:version >= 600
   set autoread
   set foldmethod=marker
   set printoptions=paper:letter
   set sidescrolloff=5
+  set sidescroll=1
   set mouse=nvi
 endif
 set nolist
@@ -70,9 +72,52 @@ else
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<
 endif
 set formatoptions-=o
-set scrolloff=3
-set sidescrolloff=7
-set sidescroll=1
+
+" Scroll "{{{2
+set scroll=5
+set scrolloff=0
+let g:scrolloff = 15 
+
+autocmd MyAutoCmd CursorMoved * call s:reinventing_scrolloff()
+let s:last_lnum = -1
+function! s:reinventing_scrolloff()
+    if g:scrolloff ==# 0 || s:last_lnum > 0 && line('.') ==# s:last_lnum
+        return
+    endif
+    let s:last_lnum = line('.')
+    let winline     = winline()
+    let winheight   = winheight(0)
+    let middle      = winheight / 2
+    let upside      = (winheight / winline) >= 2
+    " If upside is true, add winlines to above the cursor.
+    " If upside is false, add winlines to under the cursor.
+    if upside
+        let up_num = g:scrolloff - winline + 1
+        let up_num = winline + up_num > middle ? middle - winline : up_num
+        if up_num > 0
+            execute 'normal!' up_num."\<C-y>"
+        endif
+    else
+        let down_num = g:scrolloff - (winheight - winline)
+        let down_num = winline - down_num < middle ? winline - middle : down_num
+        if down_num > 0
+            execute 'normal!' down_num."\<C-e>"
+        endif
+    endif
+endfunction
+"}}}2
+
+augroup vimrc-auto-mkdir
+    autocmd!
+    autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+    function! s:auto_mkdir(dir, force)
+        if !isdirectory(a:dir)
+        \   && (a:force
+        \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
+            call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+        endif
+    endfunction
+augroup END " }}}
 set mouse=a
 set ttymouse=xterm2
 set t_Co=256
@@ -93,6 +138,12 @@ set diffopt=filler
 set diffopt+=iwhite
 set switchbuf=useopen
 set shell=/bin/sh
+set noswapfile
+set updatecount=0
+if has('unix')
+    set nofsync
+    set swapsync=
+endif
 
 if has("gui")
     set go-=T
@@ -105,6 +156,11 @@ if has("gui")
     autocmd FileType ruby,eruby set noballooneval
     set noballooneval
 endif
+
+set norestorescreen
+set t_ti=
+set t_te=
+set shortmess=aI
 
 if has("mac")
     set clipboard=unnamed
@@ -121,6 +177,15 @@ endif
 
 if has("gui") && !has("mac")
     set guifont=Inconsolata\ 12
+endif
+
+if &term =~ "^screen"
+    augroup MyAutoCmd
+        autocmd VimLeave * :set mouse=
+     augroup END
+
+    " workaround for freeze when using mouse on GNU screen.
+    set ttymouse=xterm2
 endif
 
 set statusline=%f
@@ -147,15 +212,58 @@ set statusline+=%*
 set statusline+=%=
 set statusline+=%c,
 set statusline+=%l/%L
-set statusline+=\ %P
+set statusline+=\ %{GetDocumentPosition()}
+
+function! GetDocumentPosition()
+    return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
+endfunction
+
 
 autocmd MyAutoCmd FileType * setl formatoptions-=ro | setl formatoptions+=mM
+autocmd MyAutoCmd BufWritePost vimrc source $MYVIMRC
+" Close help and git window by pressing q.
+autocmd FileType help,git-status,git-log,qf,gitcommit,quickrun,qfreplace,ref,simpletap-summary,vcs-commit,vcs-status
+            \ nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>
+autocmd FileType * if (&readonly || !&modifiable) && !hasmapto('q', 'n')
+            \ | nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>| endif
+function! s:smart_close()
+  if winnr('$') != 1
+    close
+  endif
+endfunction
 
 augroup MyAutoCmd
   autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
 augroup END
 
 "}}}1
+
+" Make a scratch buffer when unnamed buffer{{{2
+augroup vimrc-scratch-buffer"{{{
+  autocmd!
+  autocmd BufEnter * call s:scratch_buffer()
+  autocmd FileType qfreplace autocmd! vimrc-scratch * <buffer>
+
+  function! s:scratch_buffer()
+    if exists('b:scratch_buffer') || bufname('%') != '' || &l:buftype != ''
+      return
+    endif
+    let b:scratch_buffer = 1
+    setlocal buftype=nofile nobuflisted noswapfile bufhidden=hide
+    augroup vimrc-scratch
+      autocmd! * <buffer>
+      autocmd BufWriteCmd <buffer> call s:scratch_on_BufWriteCmd()
+    augroup END
+  endfunction
+  function! s:scratch_on_BufWriteCmd()
+    silent! setl buftype< buflisted< swapfile< bufhidden< nomodified
+    autocmd! vimrc-scratch * <buffer>
+    unlet! b:scratch_buffer
+    execute 'saveas' . (v:cmdbang ? '!' : '') ' <afile>'
+    filetype detect
+  endfunction
+augroup END"}}}
+"}}}2
 
 " Section: Plugins {{{1
 let g:solarized_termtrans=0
@@ -224,7 +332,6 @@ else
     let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
 
-set noswapfile
 if !isdirectory($HOME . "/.tmp")
     call mkdir($HOME . "/.tmp")
 endif
@@ -353,6 +460,15 @@ xnoremap [Space]j    z<CR><C-f>z.
 nnoremap [Space]k    z-<C-b>z.
 xnoremap [Space]k    z-<C-b>z.
 
+nnoremap [Space]ev     :<C-u>edit $MYVIMRC<CR>
+nnoremap [Space]sv     :<C-u>source $MYVIMRC<CR>
+
+nnoremap ; <Nop>
+xnoremap ;  <Nop>
+
+nnoremap ; :
+xnoremap ; :
+
 if &diff
     nmap <c-h> :diffget 1<CR>
     nmap <c-l> :diffget 3<CR>
@@ -375,10 +491,19 @@ iabbrev ;; =>
 iabbrev shuold should
 iabbrev shulod should
 
+" Move search word and fold open"{{{2
+nnoremap N  Nzv
+nnoremap n  nzv
+nnoremap #  #zv
+nnoremap g*  g*zv
+nnoremap g#  g#zv
+"}}}2
+
 " smartword.vim"{{{2
 " Replace w and others with smartword-mappings
 nmap w  <Plug>(smartword-w)
 nmap b  <Plug>(smartword-b)
+nmap e  <Plug>(smartword-e)
 nmap ge  <Plug>(smartword-ge)
 xmap w  <Plug>(smartword-w)
 xmap b  <Plug>(smartword-b)
@@ -398,33 +523,32 @@ nmap <silent> <C-L> :nohls<CR><C-L>
 nmap <C-B> :BufExplorer<CR>
 nmap <c-f> :FuzzyFinderTextMate<CR>
 nmap Q gq
-nmap <leader>m :TagbarToggle<CR>
-nmap <leader>d :TagbarOpenAutoClose<CR>
-nmap <leader>c :cnext<CR>
-nmap <leader>p :cprevious<CR>
-nmap <leader>z :ZoomWin<CR>
-nmap <leader>= gg=G<C-o><C-o>
-nmap <leader>v :vsplit<CR> <C-w><C-w>
-nmap <leader>s :split<CR> <C-w><C-w>
-nmap <leader>\ :%! fmt -w 79<CR>
-vmap <leader>\ :!fmt -w 79<CR>
-nmap <leader>` :%s/\s*$//ge<CR>
+nmap <Leader>m :TagbarToggle<CR>
+nmap <Leader>d :TagbarOpenAutoClose<CR>
+nmap <Leader>c :cnext<CR>
+nmap <Leader>p :cprevious<CR>
+nmap <Leader>z :ZoomWin<CR>
+nmap <Leader>= gg=G<C-o><C-o>
+nmap <Leader>v :vsplit<CR> <C-w><C-w>
+nmap <Leader>s :split<CR> <C-w><C-w>
+nmap <Leader>\ :%! fmt -w 79<CR>
+vmap <Leader>\ :!fmt -w 79<CR>
+nmap <Leader>` :%s/\s*$//ge<CR>
 nmap <Leader>cd :cd %:p:h<CR>
 nmap <silent> <Leader>y :YRShow<CR>
 nmap <silent> <Leader>Y :GundoToggle<CR>
 imap <M-o>       <Esc>o
 imap <C-j>       <Down>
-nmap <leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<CR><esc>
-nmap q; q:
+nmap <Leader>' ""yls<c-r>={'"': "'", "'": '"'}[@"]<CR><esc>
 vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<CR><CR>
-nmap <leader><space> i<space><esc>
+nmap <Leader><space> i<space><esc>
 nmap VV 0v$h
-nmap <leader>X <c-w><c-h>:set winwidth=80<CR><c-w><c-l>:set winwidth=31<CR><c-w><c-h>
+nmap <Leader>X <c-w><c-h>:set winwidth=80<CR><c-w><c-l>:set winwidth=31<CR><c-w><c-h>
 nmap gff <C-w>gf
 imap (( ()
 imap <c-space> <right>
-nmap <leader>- i<space><esc>vs-2lxi
-nmap <leader>+ :cd %:p:h <bar> new<space>
+nmap <Leader>- i<space><esc>vs-2lxi
+nmap <Leader>+ :cd %:p:h <bar> new<space>
 imap <C-e> <esc>$a
 imap <C-a> <esc>0i
 imap <C-b> <esc>ha
@@ -434,28 +558,28 @@ imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
 nmap [2 :diffget //2<CR>
 nmap ]3 :diffget //3<CR>
-nmap <leader>r :R
+nmap <Leader>r :R
 nmap Y y$
-vmap <leader>rv :call ExtractVariable()<CR>
-nmap <leader>ri :call InlineVariable()<CR>
-nmap <leader>/# /^ *#<CR>
-nmap <leader>/f /^ *def\><CR>
-nmap <leader>/c /^ *class\><CR>
-nmap <leader>/i /^ *if\><CR>
-nmap <leader>df d/\(^ *def\>\)\\|\%$<CR>
-nmap <leader>a= :Tabularize /=<CR>
-vmap <leader>a= :Tabularize /=<CR>
-nmap <leader>a: :Tabularize /:\zs<CR>
-vmap <leader>a: :Tabularize /:\zs<CR>
-nmap <leader>a :Tabularize /
-vmap <leader>a :Tabularize /
-nmap <leader>= G=gg<c-o><c-o>
-nmap <leader>h :help <c-r>=expand("<cword>")<CR><CR>
-vmap <leader>h "ry:help<space><c-r>r<CR>
+vmap <Leader>rv :call ExtractVariable()<CR>
+nmap <Leader>ri :call InlineVariable()<CR>
+nmap <Leader>/# /^ *#<CR>
+nmap <Leader>/f /^ *def\><CR>
+nmap <Leader>/c /^ *class\><CR>
+nmap <Leader>/i /^ *if\><CR>
+nmap <Leader>df d/\(^ *def\>\)\\|\%$<CR>
+nmap <Leader>a= :Tabularize /=<CR>
+vmap <Leader>a= :Tabularize /=<CR>
+nmap <Leader>a: :Tabularize /:\zs<CR>
+vmap <Leader>a: :Tabularize /:\zs<CR>
+nmap <Leader>a :Tabularize /
+vmap <Leader>a :Tabularize /
+nmap <Leader>= G=gg<c-o><c-o>
+nmap <Leader>h :help <c-r>=expand("<cword>")<CR><CR>
+vmap <Leader>h "ry:help<space><c-r>r<CR>
 nmap <C-cr> <esc>yyp
 imap <S-cr> <esc>$o
 nmap <C-S-cr> d$O<esc>p0x
-nmap <leader>q :bd<CR>
+nmap <Leader>q :bd<CR>
 nmap <c-h> <c-w><c-h>
 nmap <c-j> <c-w><c-j>
 nmap <c-k> <c-w><c-k>
@@ -465,7 +589,7 @@ imap <C-;> <space>=><space>
 imap <c-]> <space>=><space>
 cnoremap %% <C-R>=expand('%:h').'/'<CR>
 cnoremap %& <C-R>=expand('%:p')<CR>
-nmap gV `[v`]
+nnoremap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
 nmap <S-left> g;
@@ -477,9 +601,77 @@ nmap <c-\> <Plug>CommentaryLine
 vmap s S
 xmap s S
 
+nnoremap <silent> <Tab> :call <SID>NextWindow()<CR>
+nnoremap <silent> <S-Tab> :call <SID>PreviousWindowOrTab()<CR>
+
+function! s:NextWindow()
+  if winnr('$') == 1
+    call s:split_nicely()
+  else
+    wincmd w
+  endif
+endfunction
+
+function! s:NextWindowOrTab()
+  if tabpagenr('$') == 1 && winnr('$') == 1
+    call s:split_nicely()
+  elseif winnr() < winnr("$")
+    wincmd w
+  else
+    tabnext
+    1wincmd w
+  endif
+endfunction
+
+function! s:PreviousWindowOrTab()
+  if winnr() > 1
+    wincmd W
+  else
+    tabprevious
+    execute winnr("$") . "wincmd w"
+  endif
+endfunction
+
+" Split nicely"{{{2
+command! SplitNicely call s:split_nicely()
+function! s:split_nicely()
+  " Split nicely.
+  if winwidth(0) > 2 * &winwidth
+    vsplit
+  else
+    split
+  endif
+  wincmd p
+endfunction
+"}}}2
+" Smart }"{{{2
+nnoremap <silent> } :<C-u>call ForwardParagraph()<CR>
+onoremap <silent> } :<C-u>call ForwardParagraph()<CR>
+xnoremap <silent> } <Esc>:<C-u>call ForwardParagraph()<CR>mzgv`z
+function! ForwardParagraph()
+  let cnt = v:count ? v:count : 1
+  let i = 0
+  while i < cnt
+    if !search('^\s*\n.*\S','W')
+      normal! G$
+      return
+    endif
+    let i = i + 1
+  endwhile
+endfunction
+"}}}
 nnoremap <silent> [Space]<Space> :<C-u>buffer #<CR>
 nnoremap 0 :<C-u>normal! ^<CR>
 nnoremap ^ :<C-u>normal! 0<CR>
+
+xmap p <Plug>(operator-replace)
+xmap P <Plug>(operator-replace)
+
+" Move to top/center/bottom.
+noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ? 'zt' : (winline() == 1)? 'zb' : 'zz'
+
+" Auto escape / substitute.
+xnoremap [Space]s y:%s/<C-r>=substitute(@0, '/', '\\/', 'g')<Return>//g<Left><Left>
 
 let g:quickrun_config = {}
 let g:quickrun_config['ruby'] = {'command': 'testdrb', 'exec': '%c -Itest %s'}
@@ -515,7 +707,7 @@ endfunction
 vmap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vmap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 
-nmap <leader>gr :topleft :split config/routes.rb<CR>
+nmap <Leader>gr :topleft :split config/routes.rb<CR>
 function! ShowRoutes()
     topleft 100 :split __Routes__
     set buftype=nofile
@@ -525,25 +717,24 @@ function! ShowRoutes()
     normal 1GG
     normal dd
 endfunction
-nmap <leader>gR :call ShowRoutes()<CR>
+nnoremap <Leader>gR :call ShowRoutes()<CR>
 
-nmap <leader>gv :CommandTFlush<CR>\|:CommandT app/views<CR>
-nmap <leader>gc :CommandTFlush<CR>\|:CommandT app/controllers<CR>
-nmap <leader>gu :CommandTFlush<CR>\|:CommandT test/unit<CR>
-nmap <leader>gF :CommandTFlush<CR>\|:CommandT test/functional<CR>
-nmap <leader>gt :CommandTFlush<CR>\|:CommandT test<CR>
-nmap <leader>gm :CommandTFlush<CR>\|:CommandT app/models<CR>
-nmap <leader>gh :CommandTFlush<CR>\|:CommandT app/helpers<CR>
-nmap <leader>gl :CommandTFlush<CR>\|:CommandT lib<CR>
-nmap <leader>gp :CommandTFlush<CR>\|:CommandT public<CR>
-nmap <leader>gs :CommandTFlush<CR>\|:CommandT public/stylesheets<CR>
-nmap <leader>gS :CommandTFlush<CR>\|:CommandT spec<CR>
-nmap <leader>gg :topleft 100 :split Gemfile<CR>
-nmap <leader>gf :CommandT %%/<CR>
-nmap ;; :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
-nmap ;' :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
-nmap <leader><leader> <C-^>
-nmap <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
+nnoremap <Leader>gv :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/views<CR>
+nnoremap <Leader>gc :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/controllers<CR>
+nnoremap <Leader>gu :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/unit<CR>
+nnoremap <Leader>gF :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/functional<CR>
+nnoremap <Leader>gt :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test<CR>
+nnoremap <Leader>gm :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/models<CR>
+nnoremap <Leader>gh :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/helpers<CR>
+nnoremap <Leader>gl :<C-u>CommandTFlush<CR>\|:<C-u>CommandT lib<CR>
+nnoremap <Leader>gp :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public<CR>
+nnoremap <Leader>gs :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public/stylesheets<CR>
+nnoremap <Leader>gS :<C-u>CommandTFlush<CR>\|:<C-u>CommandT spec<CR>
+nnoremap <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
+nnoremap <Leader>gf :<C-u>CommandT %%/<CR>
+nnoremap <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
+nnoremap <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
+nnoremap <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
 
 if exists('g:loaded_camelcasemotion') && g:loaded_camelcasemotion == 1
     map <silent> w <Plug>CamelCaseMotion_w
@@ -574,18 +765,18 @@ function! Titlecase()
     normal gv
     normal "xp
 endfunction
-vmap <leader>t :call Titlecase()<CR>
+vmap <Leader>t :call Titlecase()<CR>
 
 function! CopyPath()
     let @*=expand('%')
     let @"=expand('%')
     let @+=expand('%')
 endfunction
-nmap <leader>% :call CopyPath()<CR>
+nmap <Leader>% :call CopyPath()<CR>
 
 imap <C-O> <C-X><C-O>
 imap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
-nmap <leader>x :sp <C-R>=expand("%:h")<CR>/
+nmap <Leader>x :sp <C-R>=expand("%:h")<CR>/
 
 function! InsertTabWrapper()
     let col = col('.') - 1
@@ -647,3 +838,7 @@ function! MyTabLine()
     return s
 endfunction
 set tabline=%!MyTabLine()
+
+set secure
+
+" vim: foldmethod=marker
