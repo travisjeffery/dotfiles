@@ -451,6 +451,7 @@ au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
 au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
 au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
 
+command! OpenChangedFiles :call OpenChangedFiles()
 function! OpenChangedFiles()
     only
     let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
@@ -460,7 +461,6 @@ function! OpenChangedFiles()
         exec "sp " . filename
     endfor
 endfunction
-command! OpenChangedFiles :call OpenChangedFiles()
 
 autocmd BufReadPost * call SetCursorPosition()
 function! SetCursorPosition()
@@ -482,10 +482,10 @@ function! InlineVariable()
     exec ':.s/\<' . @a . '\>/' . @b
 endfunction
 
+command! -nargs=0 JSBeautify call JSBeautify()<CR>
 function! JSBeautify()
     silent! exe "%! jsbeautifier --stdin"
 endfunction
-command! -nargs=0 JSBeautify call JSBeautify()<CR>
 "}}}1
 " Section: Abbreviations{{{1
 cabbrev E e

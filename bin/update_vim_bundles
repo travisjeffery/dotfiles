@@ -62,6 +62,7 @@ git_bundle bundle/blockle https://github.com/jgdavey/vim-blockle.git
 git_bundle bundle/colors https://github.com/travisjeffery/vim-colors.git
 git_bundle bundle/grex https://github.com/kana/vim-grex.git
 git_bundle bundle/operator-user https://github.com/kana/vim-operator-user.git
+git_bundle bundle/operator-replace https://github.com/kana/vim-operator-replace.git
 git_bundle bundle/commentary https://github.com/tpope/vim-commentary.git
 git_bundle bundle/vimproc https://github.com/Shougo/vimproc.git
 git_bundle bundle/unite https://github.com/Shougo/unite.vim.git
