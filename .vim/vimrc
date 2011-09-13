@@ -400,6 +400,11 @@ let g:surround_indent = 1
 " vimfiler {{{2
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_safe_mode_by_default = 0
+let g:vimfiler_enable_clipboard = 0
+let g:vimshell_cd_command = 'TabpageCD'
+command! -nargs=0 VF :VimFiler
+nnoremap <silent>   [Space]v   :<C-u>VimFiler<CR>
+nmap    [Space]h   :<C-u>edit %:h<CR>
 "}}}2
 " SuperTab {{{2
 let g:SuperTabLongestEnhanced = 1
@@ -429,7 +434,6 @@ endif
 command! -nargs=* -bang W :w<bang> <args>
 command! -nargs=0 E :Explore
 command! -nargs=0 DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
-command! -nargs=0 VF :VimFiler
 command! -bar -nargs=0 SudoW   :setl nomod|silent exe 'write !sudo tee % >/dev/null'|let &mod = v:shell_error
 "}}}1
 " Section: Autocommands {{{1
