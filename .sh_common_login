@@ -1,0 +1,130 @@
+# Common rc file for login shells
+# Environment detection  #{{{1
+
+# What machine am I working on?
+  # BUGS: ad hoc conditions to determine.
+  # FIXME: Use hostname for this variable.
+  #        Currently the name of a system is used instead.
+if [ "${OSTYPE%%[^a-z]*}" = 'darwin' ]; then
+  export ENV_WORKING='avril'  # Home - MacBook
+elif [ "$OSTYPE" = 'cygwin' ]; then
+  export ENV_WORKING='summer'  # Home - Cygwin on Windows PC
+elif [ "$HOST" = 'colinux' ]; then
+  export ENV_WORKING='winter'  # Home - coLinux on Windows PC
+elif [ "$HOST" = 'chocolate' ]; then
+  export ENV_WORKING='chocolate'  # Office - Debian on VMWare Player on Windows
+else
+  export ENV_WORKING='linux'
+fi
+
+
+# What machine am I using to access $ENV_WORKING?
+  # FIXME: How to detect the right value?
+  # Currently, I don't often work with situations such as ENV_ACCESS !=
+  # ENV_WORKING.  So that it's useful to assume that both of them are the same.
+export ENV_ACCESS="$ENV_WORKING"
+
+
+
+
+# PATH  #{{{1
+
+export PATH MANPATH INFOPATH
+
+# for cabal
+if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
+
+# for manually built applications - global
+if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
+if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
+if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi
+if [ -d "/usr/local/info" ]; then INFOPATH="/usr/local/info:$INFOPATH"; fi
+
+# for my own tools
+if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
+if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
+if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
+if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
+
+# Misc.  #{{{1
+# Common stuffs  #{{{2
+export EDITOR=vim
+export PAGER=less
+export SHELL=$(which zsh)
+export TZ=JST-9
+
+case "$ENV_ACCESS" in
+  summer)
+    export TERM=rxvt-cygwin-native
+    export LANG=
+    ;;
+  linux|winter|*)
+    # export TERM=...  # Don't touch -- use the default values.
+    # export LANG=...  # Don't touch -- use the default values.
+    ;;
+esac
+
+export CYGHOME="/c/cygwin$HOME"
+
+
+# cvs  #{{{2
+export CVS_RSH=ssh
+if [ "$ENV_WORKING" = 'summer' ]; then
+  export CVSROOT=$HOME/var/cvsroot
+fi
+
+
+# gzip  #{{{2
+export GZIP='--best --name --verbose'
+
+
+# less  #{{{2
+# -P '[?eEOF:?pB%pB\%..]  .?f%f:(stdin).?m (%i of %m).?lb  %lb?L/%L..'
+export LESS='-P [?eEOF:?PB%PB\%..]'
+case "$ENV_ACCESS" in
+  summer)
+    export JLESSCHARSET=japanese-sjis
+    ;;
+  colinux|linux|*)
+    # Don't set.
+    ;;
+esac
+
+
+# Mac OS X  #{{{2
+if [ "$ENV_WORKING" = 'avril' ]; then
+  # To use pbcopy/pbpaste with UTF-8 encoding.
+  export __CF_USER_TEXT_ENCODING=${__CF_USER_TEXT_ENCODING/:*:/:0x08000100:}
+fi
+
+
+# make  #{{{2
+if [ "$ENV_WORKING" = 'summer' ]; then
+  export MAKE_MODE=unix
+fi
+
+
+# X  #{{{2
+if [ "$ENV_WORKING" = 'linux' ] && [ -n "$DISPLAY" ]; then
+  setxkbmap us
+  xmodmap ~/.xmodmaprc
+  if ! xset q | grep $HOME >/dev/null; then
+    for dir in ~/share/fonts/*; do
+      xset fp+ $dir
+    done
+    xset fp rehash
+  fi
+fi
+
+
+
+
+# Last resort  #{{{1
+# RVM: Ruby Version Manager  #{{{2
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+
+
+
+# __END__  #{{{1
+# vim: filetype=sh foldmethod=marker
