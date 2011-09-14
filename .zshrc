@@ -95,7 +95,7 @@ esac
 [ $UID = '0' ] && usercolor="$fg_bold[white]"
 reset_color=$'\e[00m'
 
-PROMPT="%{$usercolor%}%n%{${e}[00m%}@%{${e}[${hostcolor}m%}%m%{${e}[00m%}:%{$dircolor%}%30<...<%~%<<%{${e}[00m%}%{${e}[00m%}\$(git_prompt_info)%# "
+PROMPT="%{$usercolor%}%n%{${e}[00m%}@%{${e}[m%}%m%{${e}[00m%}:%{$dircolor%}%30<...<%~%<<%{${e}[00m%}%{${e}[00m%}\$(git_prompt_info)%# "
 RPS1="%(?..(%{${e}[01;35m%}%?%{${e}[00m%}%)%<<)"
 setopt promptsubst
 
