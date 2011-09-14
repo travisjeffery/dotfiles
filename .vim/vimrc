@@ -34,7 +34,7 @@ set linebreak
 set winwidth=84
 set winheight=5
 set winminheight=5
-set winheight=999
+" set winheight=999
 set undodir=~/.tmp
 set undofile
 set undolevels=1000
@@ -580,6 +580,9 @@ xmap  <Space>   [Space]
 nnoremap  [Space]   <Nop>
 xnoremap  [Space]   <Nop>
 
+nnoremap ; <Nop>
+xnoremap ;  <Nop>
+
 nnoremap <silent> [Space]mk  :<C-u>marks<CR>
 nnoremap <silent> [Space]re  :<C-u>registers<CR>
 nnoremap <silent> [Space]yr  :<C-u>YRShow<CR>
@@ -636,12 +639,6 @@ xnoremap [Space]k    z-<C-b>z.
 nnoremap [Space]ev     :<C-u>edit $MYVIMRC<CR>
 nnoremap [Space]sv     :<C-u>source $MYVIMRC<CR>
 
-nnoremap ; <Nop>
-xnoremap ;  <Nop>
-
-nnoremap ; :
-xnoremap ; :
-
 if &diff
     nmap <c-h> :diffget 1<CR>
     nmap <c-l> :diffget 3<CR>
@@ -669,7 +666,25 @@ omap <Leader>w  <Plug>(smartword-w)
 omap <Leader>b  <Plug>(smartword-b)
 omap <Leader>ge  <Plug>(smartword-ge)
 "}}}2
-
+" Command line buffer {{{2
+nnoremap <sid>(command-line-enter) q:
+xnoremap <sid>(command-line-enter) q:
+nnoremap <sid>(command-line-norange) q:<C-u>
+nmap :  <sid>(command-line-enter)
+xmap :  <sid>(command-line-enter)
+nmap ;  <sid>(command-line-enter)
+xmap ;  <sid>(command-line-enter)
+autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
+function! s:init_cmdwin()
+  nnoremap <buffer><silent> q :<C-u>quit<CR>
+  inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>"
+  startinsert!
+endfunction
+function! s:check_back_space()"{{{
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction"}}}
+"}}}2
 " camlcasemotion.vim"{{{2
 nmap <silent> W <Plug>CamelCaseMotion_w
 xmap <silent> W <Plug>CamelCaseMotion_w
