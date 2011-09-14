@@ -256,7 +256,10 @@ unset -f prompt_setup
 # Aliases  #{{{1
 # common  #{{{2
 
-alias ls='ls --show-control-chars --color=auto'
+alias la="ls -a"
+hash pbcopy &> /dev/null || alias pbcopy='xclip -selection clipboard'
+export EDITOR="vim"
+# alias ls='ls --show-control-chars --color=auto'
 alias la='ls -a'
 alias ll='ls -l'
 alias lal='ls -al'
@@ -359,6 +362,10 @@ fi
 
 
 # Functions  #{{{1
+
+function cd() {
+  builtin cd "$@" && ls -la
+}
 
 if where git &>/dev/null; then
   function prompt-git-head-name() {

@@ -45,7 +45,7 @@ if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
 if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
 if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
 if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
-
+#}}}1
 # Misc.  #{{{1
 # Common stuffs  #{{{2
 export EDITOR=vim
@@ -76,19 +76,6 @@ fi
 
 # gzip  #{{{2
 export GZIP='--best --name --verbose'
-
-
-# less  #{{{2
-# -P '[?eEOF:?pB%pB\%..]  .?f%f:(stdin).?m (%i of %m).?lb  %lb?L/%L..'
-export LESS='-P [?eEOF:?PB%PB\%..]'
-case "$ENV_ACCESS" in
-  summer)
-    export JLESSCHARSET=japanese-sjis
-    ;;
-  colinux|linux|*)
-    # Don't set.
-    ;;
-esac
 
 
 # Mac OS X  #{{{2
