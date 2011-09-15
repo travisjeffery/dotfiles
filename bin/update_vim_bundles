@@ -75,6 +75,7 @@ git_bundle bundle/poslist https://github.com/thinca/vim-poslist.git
 git_bundle bundle/unite-history https://github.com/thinca/vim-unite-history.git
 git_bundle bundle/echodoc https://github.com/Shougo/echodoc.git
 git_bundle bundle/neocomplcache https://github.com/Shougo/neocomplcache.git
+git_bundle bundle/altercmd https://github.com/kana/vim-altercmd.git
 
 #git_bundle bundle/railscasts https://github.com/jgdavey/vim-railscasts.git
 #git_bundle bundle/pyte https://github.com/therubymug/vim-pyte.git
