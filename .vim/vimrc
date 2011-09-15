@@ -589,8 +589,11 @@ xmap  <Space>   [Space]
 nnoremap  [Space]   <Nop>
 xnoremap  [Space]   <Nop>
 
-nnoremap ; <Nop>
-xnoremap ;  <Nop>
+" nnoremap ; <Nop>
+" xnoremap ;  <Nop>
+
+nnoremap ; :
+xnoremap ; :
 
 nnoremap <silent> [Space]mk  :<C-u>marks<CR>
 nnoremap <silent> [Space]re  :<C-u>registers<CR>
@@ -681,8 +684,8 @@ xnoremap <sid>(command-line-enter) q:
 nnoremap <sid>(command-line-norange) q:<C-u>
 nmap :  <sid>(command-line-enter)
 xmap :  <sid>(command-line-enter)
-nmap ;  <sid>(command-line-enter)
-xmap ;  <sid>(command-line-enter)
+" nmap ;  <sid>(command-line-enter)
+" xmap ;  <sid>(command-line-enter)
 autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
 function! s:init_cmdwin()
   nnoremap <buffer><silent> q :<C-u>quit<CR>
@@ -733,7 +736,6 @@ imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
 nmap [2 :diffget //2<CR>
 nmap ]3 :diffget //3<CR>
-nnoremap Y y$
 vmap <Leader>rv :call ExtractVariable()<CR>
 nmap <Leader>ri :call InlineVariable()<CR>
 nmap <Leader>/# /^ *#<CR>
@@ -778,8 +780,8 @@ endif
 vmap s S
 xmap s S
 
-nnoremap <silent> <Tab> :call <SID>NextWindow()<CR>
-nnoremap <silent> <S-Tab> :call <SID>PreviousWindowOrTab()<CR>
+" nnoremap <silent> <Tab> :call <SID>NextWindow()<CR>
+" nnoremap <silent> <S-Tab> :call <SID>PreviousWindowOrTab()<CR>
 
 function! s:NextWindow()
   if winnr('$') == 1
@@ -862,8 +864,8 @@ nnoremap <Leader>rt <Plug>(testee-test-case)
 nnoremap <Leader>rl <Plug>(testee-test-last)
 
 function! YRRunAfterMaps()
-    nmap Y   :<C-U>YRYankCount 'y$'<CR>
-    nmap . .`[
+    nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
+    nnoremap . .`[
 endfunction
 
 function! s:VSetSearch()
@@ -933,6 +935,8 @@ imap <C-O> <C-X><C-O>
 imap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
 nmap <Leader>x :sp <C-R>=expand("%:h")<CR>/
 
+inoremap <Tab> <c-r>=InsertTabWrapper()<CR>
+inoremap <S-Tab> <c-n>
 function! InsertTabWrapper()
     let col = col('.') - 1
     if !col || getline('.')[col - 1] !~ '\k'
@@ -941,8 +945,6 @@ function! InsertTabWrapper()
         return "\<c-p>"
     endif
 endfunction
-imap <tab> <c-r>=InsertTabWrapper()<CR>
-imap <s-tab> <c-n>
 
 "}}}1
 
