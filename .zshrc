@@ -255,7 +255,7 @@ unset -f prompt_setup
 # Aliases  #{{{1
 # common  #{{{2
 
-alias ls='ls --show-control-chars --color=auto'
+# alias ls='ls --show-control-chars --color=auto'
 alias la='ls -a'
 alias ll='ls -l'
 alias lal='ls -al'
