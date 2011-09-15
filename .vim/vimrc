@@ -430,7 +430,7 @@ let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
 "}}}2
-" neocomplecache{{{2
+" neocomplcache{{{2
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_camel_case_completion = 1
@@ -589,11 +589,15 @@ xmap  <Space>   [Space]
 nnoremap  [Space]   <Nop>
 xnoremap  [Space]   <Nop>
 
-" nnoremap ; <Nop>
-" xnoremap ;  <Nop>
+nnoremap ; <Nop>
+xnoremap ;  <Nop>
+nnoremap : <Nop>
+xnoremap :  <Nop>
 
-nnoremap ; :
-xnoremap ; :
+nnoremap <SID>(command-line-enter) :
+xnoremap <SID>(command-line-enter) :
+nmap ; <SID>(command-line-enter)
+xmap ; <SID>(command-line-enter)
 
 nnoremap <silent> [Space]mk  :<C-u>marks<CR>
 nnoremap <silent> [Space]re  :<C-u>registers<CR>
@@ -679,13 +683,13 @@ omap <Leader>b  <Plug>(smartword-b)
 omap <Leader>ge  <Plug>(smartword-ge)
 "}}}2
 " Command line buffer {{{2
-nnoremap <sid>(command-line-enter) q:
-xnoremap <sid>(command-line-enter) q:
-nnoremap <sid>(command-line-norange) q:<C-u>
-nmap :  <sid>(command-line-enter)
-xmap :  <sid>(command-line-enter)
-" nmap ;  <sid>(command-line-enter)
-" xmap ;  <sid>(command-line-enter)
+nnoremap <sid>(command-buffer-enter) q:
+xnoremap <sid>(command-buffer-enter) q:
+nnoremap <sid>(command-buffer-norange) q:<C-u>
+nmap :  <sid>(command-buffer-enter)
+xmap :  <sid>(command-buffer-enter)
+" nmap ;  <sid>(command-buffer-enter)
+" xmap ;  <sid>(command-buffer-enter)
 autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
 function! s:init_cmdwin()
   nnoremap <buffer><silent> q :<C-u>quit<CR>
@@ -931,9 +935,9 @@ function! Titlecase()
 endfunction
 vmap <Leader>t :call Titlecase()<CR>
 
-imap <C-O> <C-X><C-O>
-imap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
-nmap <Leader>x :sp <C-R>=expand("%:h")<CR>/
+inoremap <C-O> <C-X><C-O>
+inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
+nmap <Leader>x <SID>(command-line-enter)<C-u>sp <C-R>=expand("%:h")<CR>/
 
 inoremap <Tab> <c-r>=InsertTabWrapper()<CR>
 inoremap <S-Tab> <c-n>
