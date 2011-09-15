@@ -1,14 +1,13 @@
-silent! call pathogen#infect()
-
 " Section: Options {{{1
 set nocompatible
+filetype plugin indent on
+silent! call pathogen#infect()
 
 augroup MyAutoCmd
     autocmd!
 augroup END
 
 filetype on
-filetype plugin indent on
 syntax on
 set autowrite
 set lazyredraw
