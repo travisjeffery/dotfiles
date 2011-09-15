@@ -5,7 +5,7 @@
 # bourne shell on startup.  It is also sourced by zsh, bash, and ksh, from
 # .zshrc, .bashrc, and .profile, respectively.
 
-for dir in /bin /usr/bin /usr/ucb /usr/local/bin /opt/local/bin /opt/sfw/bin "$HOME/.rbenv/bin" "$HOME/.rbenv/shims" "$HOME/bin"; do
+for dir in /bin /usr/bin /usr/local/bin "$HOME/.rbenv/bin" "$HOME/.rbenv/shims" "$HOME/bin"; do
     if [ -d "$dir" ]; then
         case "$PATH" in
             *"$dir"*) ;;
@@ -14,7 +14,7 @@ for dir in /bin /usr/bin /usr/ucb /usr/local/bin /opt/local/bin /opt/sfw/bin "$H
     fi
 done
 
-for dir in /usr/bin/X11 /opt/sfw/kde/bin /usr/openwin/bin /usr/dt/bin /usr/games /usr/bin/surfraw-elvi /usr/lib/surfraw /var/lib/gems/1.8/bin /usr/local/sbin /usr/sbin /sbin /usr/etc; do
+for dir in /usr/bin/X11 /var/lib/gems/1.8/bin /usr/local/sbin /usr/sbin /sbin /usr/etc; do
     if [ -d "$dir" ]; then
         case "$PATH" in
             *:"$dir":*|*:"$dir"|"$dir":*|"$dir") ;;
@@ -22,9 +22,6 @@ for dir in /usr/bin/X11 /opt/sfw/kde/bin /usr/openwin/bin /usr/dt/bin /usr/games
         esac
     fi
 done
-
-HASHROCKET_DIR="$HOME/src/hashrocket"
-[ ! -r "$HASHROCKET_DIR/dotmatrix/.hashrc" ] || . "$HASHROCKET_DIR/dotmatrix/.hashrc"
 
 if [ -z "$LANG" -a -z "$LC_ALL" -a -f "$HOME/.locale" ]; then
     LANG=`cat "$HOME/.locale"`
@@ -176,22 +173,6 @@ if [ "$interactive" -o "$_" = "interactive" ] || \
         fi
 
         #unalias stop >/dev/null 2>&1
-
-        [ -n "$MAIL" -o ! -f /var/mail/$LOGNAME ] || MAIL=/var/mail/$LOGNAME
-        [ -n "$MAIL" -o ! -f /var/spool/mail/$LOGNAME ] || MAIL=/var/mail/$LOGNAME
-        [ -z "$MAIL" ] || export MAIL
-        if [ -z "$cygwin" -a -x "`which finger 2>/dev/null`" -a -f "$HOME/.hushlogin" ]; then
-            if finger $LOGNAME 2>/dev/null|grep "^New mail" >/dev/null 2>/dev/null; then
-                echo "You have new mail."
-            fi
-        elif [ "$LS_COLORS" -a -f "$HOME/.hushlogin" -a -f "$MAIL" ]; then
-            mtime=-1 atime=-1
-            mtime=`ls -l --time-style=+%s "$MAIL"|awk '{print $6}'`
-            atime=`ls -ul --time-style=+%s "$MAIL"|awk '{print $6}'`
-            if [ "`expr $mtime - $atime`" -gt 0 ]; then
-                echo "You have new mail."
-            fi
-        fi
 
         set -o emacs -o noclobber >/dev/null 2>&1
 

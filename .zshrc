@@ -12,9 +12,9 @@ if [[ $ZSH_VERSION == 4.<->* ]]; then
     setopt histexpiredupsfirst histreduceblanks
 fi
 
-fpath=($fpath ~/.zsh/functions ~/.zsh/functions.zwc ~/.rvm/scripts/zsh/Completion $HASHROCKET_DIR/dotmatrix/.zsh/functions)
-watch=(notme)
-[ -f "$HOME/.friends" ] && watch=(`cat "$HOME/.friends"`)
+fpath=($fpath ~/.zsh/functions ~/.zsh/functions.zwc ~/.rvm/scripts/zsh/Completion)
+# watch=(notme)
+# [ -f "$HOME/.friends" ] && watch=(`cat "$HOME/.friends"`)
 HISTSIZE=100
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 PERIOD=3600
@@ -23,31 +23,11 @@ periodic() { rehash }
 export ENV="$HOME/.shrc"
 interactive=1
 . "$ENV"
-[ ! -f "$HOME/.rvm/scripts/rvm" ] || . "$HOME/.rvm/scripts/rvm"
 
 #domains=(`egrep '^(search|domain)' /etc/resolv.conf 2>/dev/null`)
 #[[ -z $domains ]] || shift 1 domains
 
-if [ -n "$USERPROFILE" ] && which cygpath >/dev/null; then
-    typeset home="`cygpath "$USERPROFILE"`"
-    typeset docs="$home/My Documents"
-    typeset desktop="`cygpath -D 2>/dev/null`"
-    [ -n "$APPDATA" ] || APPDATA="$USERPROFILE/Application Data"
-    typeset appdata="`cygpath "$APPDATA"`"
-    : ~home ~docs ~desktop ~appdata
-elif [ -d "$HOME/Documents" ]; then
-    typeset docs="$HOME/Documents"
-    : ~docs
-fi
-
-if [ -x "`which ruby 2>/dev/null`" ]; then
-    gems="`ruby -rubygems -e 'puts Gem.dir + %{/gems}' 2>/dev/null`"
-    [ -z gems ] || : ~gems
-fi
-
 namedir() { export $1=$PWD; : ~$1 }
-
-friends=()
 
 #for host in $domains; do
 #    boxen=(${boxen%.$host})
@@ -311,7 +291,7 @@ zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %
 zstyle ':completion:*' substitute 1
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
-zstyle ':completion:*' users travis root $USER ${watch/notme/}
+# zstyle ':completion:*' users travis root $USER ${watch/notme/}
 zstyle ':completion:*' verbose true
 zstyle ':completion:*:rm:*' ignore-line yes
 zstyle :compinstall filename "$HOME/.zshrc"
