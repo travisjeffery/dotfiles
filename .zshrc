@@ -230,7 +230,7 @@ function prompt_setup() {
   fi
   local t_host="$c_user%n$c_reset$c_host@$t_hosname$c_reset"
   local t_cwd="$c_yellow%~$c_reset"
-  local t_main='YUKI.N%(!.#.>) '
+  local t_main='%(!.#.>) '
   if [[ 2 -le $SHLVL ]]; then  # is nested interactive shell?
     local t_shlvl=' ($SHLVL)'
   else
@@ -543,5 +543,6 @@ zstyle ':completion:history-words:*' list no
 
 
 
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 # __END__  #{{{1
 # vim: filetype=zsh foldmethod=marker
