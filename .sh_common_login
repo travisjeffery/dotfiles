@@ -32,40 +32,13 @@ export ENV_ACCESS="$ENV_WORKING"
 export PATH MANPATH INFOPATH
 
 if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
-  # for MacPorts
-  if [ -d /opt/local ]; then
-    for i in /opt/local/{bin,sbin}; do
-      if [ -d "$i" ]; then
-        PATH="$i:$PATH"
-      fi
-    done
-    if [ -d "/opt/local/share/man" ]; then
-      MANPATH="/opt/local/share/man:$MANPATH"
-    fi
-  fi
-
   # for cabal
   if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
 
-  # for manually built applications - global
-  if [ -d /usr/local/apps ]; then
-    for i in /usr/local/apps/*; do
-      if [ -d "$i/bin" ]; then PATH="$i/bin:$PATH"; fi
-      if [ -d "$i/man" ]; then MANPATH="$i/man:$MANPATH"; fi
-      if [ -d "$i/share/man" ]; then MANPATH="$i/share/man:$MANPATH"; fi
-      if [ -d "$i/info" ]; then INFOPATH="$i/info:$INFOPATH"; fi
-    done
-  fi
-
-  # for manually built applications - per-user
-  if [ -d "$HOME/apps" ]; then
-    for i in "$HOME/apps/"*; do
-      if [ -d "$i/bin" ]; then PATH="$i/bin:$PATH"; fi
-      if [ -d "$i/man" ]; then MANPATH="$i/man:$MANPATH"; fi
-      if [ -d "$i/share/man" ]; then MANPATH="$i/share/man:$MANPATH"; fi
-      if [ -d "$i/info" ]; then INFOPATH="$i/info:$INFOPATH"; fi
-    done
-  fi
+  if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
+  if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
+  if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi
+  if [ -d "/usr/local/info" ]; then INFOPATH="/usr/local/info:$INFOPATH"; fi
 
   # for my own tools
   if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
@@ -109,17 +82,17 @@ fi
 export GZIP='--best --name --verbose'
 
 
-# less  #{{{2
-# -P '[?eEOF:?pB%pB\%..]  .?f%f:(stdin).?m (%i of %m).?lb  %lb?L/%L..'
-export LESS='-P [?eEOF:?PB%PB\%..]'
-case "$ENV_ACCESS" in
-  summer)
-    export JLESSCHARSET=japanese-sjis
-    ;;
-  colinux|linux|*)
-    # Don't set.
-    ;;
-esac
+# # less  #{{{2
+# # -P '[?eEOF:?pB%pB\%..]  .?f%f:(stdin).?m (%i of %m).?lb  %lb?L/%L..'
+# export LESS='-P [?eEOF:?PB%PB\%..]'
+# case "$ENV_ACCESS" in
+#   summer)
+#     export JLESSCHARSET=japanese-sjis
+#     ;;
+#   colinux|linux|*)
+#     # Don't set.
+#     ;;
+# esac
 
 
 # Mac OS X  #{{{2
