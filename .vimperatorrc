@@ -128,6 +128,8 @@ set scroll=8
 set smartcase
 set titlestring=Firefox
 set urlseparator=
+set wildmode=list:full
+set hintchars="hjklasdfgyuiopqwertnmzxcvb"
 set visualbell
 " }}}
 "-----------------------------------------------------------------

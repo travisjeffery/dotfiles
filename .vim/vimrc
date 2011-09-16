@@ -683,8 +683,24 @@ function! s:copy_path()
 endfunction"}}}2
 
 " To keep legacy surround mapping{{{2
-vnoremap s S
-xnoremap s S"{{{2
+let g:surround_no_mappings=1
+nmap ds  <Plug>Dsurround
+nmap cs  <Plug>Csurround
+nmap ys  <Plug>Ysurround
+nmap yS  <Plug>YSurround
+nmap yss <Plug>Yssurround
+nmap ySs <Plug>YSsurround
+nmap ySS <Plug>YSsurround
+xmap S   <Plug>VSurround
+xmap gS  <Plug>VgSurround
+if !hasmapto("<Plug>Isurround","i") && "" == mapcheck("<C-S>","i")
+  imap    <C-S> <Plug>Isurround
+endif
+imap      <C-G>s <Plug>Isurround
+imap      <C-G>S <Plug>ISurround
+vmap s <Plug>VSurround
+xmap s <Plug>VSurround
+"{{{2
 
 " Useful save mappings{{{2
 nnoremap <silent> [Space]w  :<C-u>update<CR>
