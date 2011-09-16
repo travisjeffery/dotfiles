@@ -943,8 +943,8 @@ noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ? 'zt' : (winline() == 1)? 
 " Auto escape / substitute.
 xnoremap [Space]s y:%s/<C-r>=substitute(@0, '/', '\\/', 'g')<Return>//g<Left><Left>
 
-nnoremap <Left> <Plug>(poslist-prev-buf)
-nnoremap <Right> <Plug>(poslist-next-buf)
+nmap <Left> <Plug>(poslist-prev-buf)
+nmap <Right> <Plug>(poslist-next-buf)
 
 nnoremap <Leader>rf <Plug>(testee-test-file)
 nnoremap <Leader>rt <Plug>(testee-test-case)
