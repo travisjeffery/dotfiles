@@ -573,6 +573,21 @@ command! -nargs=* -bang W :w<bang> <args>
 command! -nargs=0 E :Explore
 command! -nargs=0 DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 command! -bar -nargs=0 SudoW   :setl nomod|silent exe 'write !sudo tee % >/dev/null'|let &mod = v:shell_error
+command! -bar -nargs=* -bang -complete=file Rename :
+      \ let v:errmsg = ""|
+      \ saveas<bang> <args>|
+      \ if v:errmsg == ""|
+      \   call delete(expand("#"))|
+      \ endif
+
+command! -bar -nargs=0 -bang -complete=file Remove :
+      \ let v:errmsg = ''|
+      \ let s:removable = expand('%:p')|
+      \ bdelete<bang>|
+      \ if v:errmsg == ''|
+      \   call delete(s:removable)|
+      \ endif|
+      \ unlet s:removable
 " CD - alternative :cd with more user-friendly completion  "{{{2
 
 command! -complete=customlist,s:complete_cdpath -nargs=+ CD  TabpageCD <args>
@@ -704,8 +719,9 @@ function! s:copy_path()
     let @+=expand('%')
 endfunction"}}}2
 " Altr {{{2
-nmap [Space][ <Plug>(altr-back)
-nmap [Space]]  <Plug>(altr-forward)
+nmap [Window]a  <Plug>(altr-forward)
+nmap [Window]b  <Plug>(altr-forward)
+autocmd MyAutoCmd FileType vim call altr#define('autoload/%.vim', 'doc/%.txt', 'doc/%.jax', 'plugin/%.vim')
 "}}}2
 " To keep legacy surround mapping{{{2
 let g:surround_no_mappings=1
@@ -835,8 +851,35 @@ nnoremap [Quickfix]wM  q:lmake<Space>
 nnoremap [Quickfix]w<Space>  q:lmake<Space>
 nnoremap [Quickfix]wg  q:lgrep<Space>
 "}}}
-
-"}}}
+"}}}2
+" s: Windows and buffers(High priority) "{{{2
+" The prefix key.
+nnoremap    [Window]   <Nop>
+nmap    s [Window]
+nnoremap <silent> [Window]p  :<C-u>call <SID>split_nicely()<CR>
+nnoremap <silent> [Window]v  :<C-u>vsplit<CR>
+nnoremap <silent> [Window]c  :<C-u>call <sid>smart_close()<CR>
+nnoremap <silent> -  :<C-u>call <sid>smart_close()<CR>
+nnoremap <silent> [Window]o  :<C-u>only<CR>
+nnoremap <silent> [Window]<Space>  :<C-u>call <SID>ToggleSplit()<CR>
+function! s:MovePreviousWindow()
+  let l:prev_name = winnr()
+  silent! wincmd p
+  if l:prev_name == winnr()
+    silent! wincmd w
+  endif
+endfunction
+" If window isn't splited, split buffer.
+function! s:ToggleSplit()
+  let l:prev_name = winnr()
+  silent! wincmd w
+  if l:prev_name == winnr()
+    split
+  else
+    call s:smart_close()
+  endif
+endfunction
+"}}}2
 if &diff
     nmap <c-h> :diffget 1<CR>
     nmap <c-l> :diffget 3<CR>
@@ -954,8 +997,8 @@ nnoremap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
 nmap <S-left> g;
-nmap <left>  <Plug>(jump-x2-to-previous)
-nmap <right>  <Plug>(jump-x2-to-next)
+" nmap <left>  <Plug>(jump-x2-to-previous)
+" nmap <right>  <Plug>(jump-x2-to-next)
 
 xmap <C-\>  <Plug>Commentary
 nmap <C-\> <Plug>CommentaryLine
@@ -1009,6 +1052,69 @@ function! s:split_nicely()
     wincmd p
 endfunction
 "}}}2
+" Delete current buffer."{{{
+nnoremap <silent> [Window]d  :<C-u>call <SID>CustomBufferDelete(0)<CR>
+" Force delete current buffer.
+nnoremap <silent> [Window]D  :<C-u>call <SID>CustomBufferDelete(1)<CR>
+function! s:CustomBufferDelete(is_force)
+  let current = bufnr('%')
+
+  call s:CustomAlternateBuffer()
+
+  if a:is_force
+    silent! execute 'bdelete! ' . current
+  else
+    silent! execute 'bdelete ' . current
+  endif
+endfunction
+"}}}
+" Buffer move.
+" Fast buffer switch."{{{
+function! s:CustomAlternateBuffer()
+  if bufnr('%') != bufnr('#') && buflisted(bufnr('#'))
+    buffer #
+  else
+    let l:cnt = 0
+    let l:pos = 1
+    let l:current = 0
+    while l:pos <= bufnr('$')
+      if buflisted(l:pos)
+        if l:pos == bufnr('%')
+          let l:current = l:cnt
+        endif
+
+        let l:cnt += 1
+      endif
+
+      let l:pos += 1
+    endwhile
+
+    if l:current > l:cnt / 2
+      bprevious
+    else
+      bnext
+    endif
+  endif
+endfunction
+"}}}
+" Edit"{{{
+nnoremap <silent> [Window]en  :<C-u>new<CR>
+nnoremap <silent> [Window]ee  :<C-u>JunkFile<CR>
+"}}}
+
+" Scroll other window.
+" nnoremap <silent> <C-y> :<C-u>call <SID>ScrollOtherWindow(1)<CR>
+" inoremap <silent> <A-y> <C-o>:<C-u>call <SID>ScrollOtherWindow(1)<CR>
+" nnoremap <silent> <C-u> :<C-u>call <SID>ScrollOtherWindow(0)<CR>
+" inoremap <silent> <A-u> <C-o>:<C-u>call <SID>ScrollOtherWindow(0)<CR>
+
+function! s:ScrollOtherWindow(direction)
+  execute 'wincmd' (winnr('#') == 0 ? 'w' : 'p')
+  execute (a:direction ? "normal! \<C-d>" : "normal! \<C-u>")
+  wincmd p
+endfunction
+"}}}
+
 " Smart }"{{{2
 nnoremap <silent> } :<C-u>call ForwardParagraph()<CR>
 onoremap <silent> } :<C-u>call ForwardParagraph()<CR>
@@ -1044,10 +1150,8 @@ xnoremap [Space]s y:%s/<C-r>=substitute(@0, '/', '\\/', 'g')<Return>//g<Left><Le
 
 nmap <Left> <Plug>(poslist-prev-buf)
 nmap <Right> <Plug>(poslist-next-buf)
-
-nnoremap <Leader>rf <Plug>(testee-test-file)
-nnoremap <Leader>rt <Plug>(testee-test-case)
-nnoremap <Leader>rl <Plug>(testee-test-last)
+nmap [Space][ <Plug>(poslist-prev-buf)
+nmap [Space]]  <Plug>(poslist-next-buf)
 
 function! YRRunAfterMaps()
     nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
