@@ -32,15 +32,15 @@ export ENV_ACCESS="$ENV_WORKING"
 export PATH MANPATH INFOPATH
 
 if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
-  # for cabal
   if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
+
+  if [ -d "$HOME/.rbenv/bin" ]; then PATH="$HOME/.rbenv/bin:$PATH"; eval "$(rbenv init -)"; fi
 
   if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
   if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
   if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi
   if [ -d "/usr/local/info" ]; then INFOPATH="/usr/local/info:$INFOPATH"; fi
 
-  # for my own tools
   if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
   if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
   if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
@@ -125,7 +125,10 @@ fi
 
 # Last resort  #{{{1
 # RVM: Ruby Version Manager  #{{{2
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+if [ -d "$HOME/.rvm" ]; then
+  [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+fi
 
 
 
