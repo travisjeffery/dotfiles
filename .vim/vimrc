@@ -97,8 +97,8 @@ endif
 set backupdir=~/.tmp
 set directory=~/.tmp
 set backup
-set shiftwidth=4
-set softtabstop=4
+set shiftwidth=2
+set softtabstop=2
 set expandtab
 set autoindent
 set wildmode=list:longest
@@ -178,6 +178,7 @@ set scroll=5
 set scrolloff=0
 let g:scrolloff = 15 
 autocmd MyAutoCmd CursorMoved * call s:reinventing_scrolloff()
+
 let s:last_lnum = -1
 function! s:reinventing_scrolloff()
     if g:scrolloff ==# 0 || s:last_lnum > 0 && line('.') ==# s:last_lnum
@@ -211,8 +212,8 @@ augroup vimrc-auto-mkdir
     autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
     function! s:auto_mkdir(dir, force)
         if !isdirectory(a:dir)
-        \   && (a:force
-        \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
+                    \   && (a:force
+                    \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
             call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
         endif
     endfunction
@@ -265,13 +266,13 @@ if has("gui") && has("mac")
     set fuopt+=maxhorz
     set macmeta
     set antialias | set guifont=Inconsolata:h14
-  else
+else
     set guifont=Inconsolata\ 12
 endif
 if &term =~ "^screen"
     augroup MyAutoCmd
         autocmd VimLeave * :set mouse=
-     augroup END
+    augroup END
 
     " workaround for freeze when using mouse on GNU screen.
     set ttymouse=xterm2
@@ -315,37 +316,52 @@ autocmd FileType help,git-status,git-log,qf,gitcommit,quickrun,qfreplace,ref,sim
 autocmd FileType * if (&readonly || !&modifiable) && !hasmapto('q', 'n')
             \ | nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>| endif
 function! s:smart_close()
-  if winnr('$') != 1
-    close
-  endif
+    if winnr('$') != 1
+        close
+    endif
 endfunction
 augroup MyAutoCmd
-  autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
+    autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
+
+    if v:version >= 700 && isdirectory(expand("~/.trash"))
+        autocmd BufWritePre,BufWritePost * if exists("s:backupdir") | set backupext=~ | let &backupdir = s:backupdir | unlet s:backupdir | endif
+        autocmd BufWritePre ~/*
+                    \ let s:path = expand("~/.trash").strpart(expand("<afile>:p:~:h"),1) |
+                    \ if !isdirectory(s:path) | call mkdir(s:path,"p") | endif |
+                \ let s:backupdir = &backupdir |
+                \ let &backupdir = escape(s:path,'\,').','.&backupdir |
+                \ let &backupext = strftime(".%Y%m%d%H%M%S~",getftime(expand("<afile>:p")))
+    endif
+
+    autocmd CursorHold,BufWritePost,BufReadPost,BufLeave *
+                \ if isdirectory(expand("<amatch>:h")) | let &swapfile = &modified | endif
+
+    autocmd FileType vim  setlocal ai et sta sw=2 sts=2 keywordprg=:help
 augroup END
 " Make a scratch buffer when unnamed buffer{{{2
 augroup vimrc-scratch-buffer
-  autocmd!
-  autocmd BufEnter * call s:scratch_buffer()
-  autocmd FileType qfreplace autocmd! vimrc-scratch * <buffer>
+    autocmd!
+    autocmd BufEnter * call s:scratch_buffer()
+    autocmd FileType qfreplace autocmd! vimrc-scratch * <buffer>
 
-  function! s:scratch_buffer()
-    if exists('b:scratch_buffer') || bufname('%') != '' || &l:buftype != ''
-      return
-    endif
-    let b:scratch_buffer = 1
-    setlocal buftype=nofile nobuflisted noswapfile bufhidden=hide
-    augroup vimrc-scratch
-      autocmd! * <buffer>
-      autocmd BufWriteCmd <buffer> call s:scratch_on_BufWriteCmd()
-    augroup END
-  endfunction
-  function! s:scratch_on_BufWriteCmd()
-    silent! setl buftype< buflisted< swapfile< bufhidden< nomodified
-    autocmd! vimrc-scratch * <buffer>
-    unlet! b:scratch_buffer
-    execute 'saveas' . (v:cmdbang ? '!' : '') ' <afile>'
-    filetype detect
-  endfunction
+    function! s:scratch_buffer()
+        if exists('b:scratch_buffer') || bufname('%') != '' || &l:buftype != ''
+            return
+        endif
+        let b:scratch_buffer = 1
+        setlocal buftype=nofile nobuflisted noswapfile bufhidden=hide
+        augroup vimrc-scratch
+            autocmd! * <buffer>
+            autocmd BufWriteCmd <buffer> call s:scratch_on_BufWriteCmd()
+        augroup END
+    endfunction
+    function! s:scratch_on_BufWriteCmd()
+        silent! setl buftype< buflisted< swapfile< bufhidden< nomodified
+        autocmd! vimrc-scratch * <buffer>
+        unlet! b:scratch_buffer
+        execute 'saveas' . (v:cmdbang ? '!' : '') ' <afile>'
+        filetype detect
+    endfunction
 augroup END"}}}2
 "}}}1
 " Section: Plugins {{{1
@@ -369,7 +385,7 @@ nnoremap <silent> <BS> :<C-u>Explore<CR>
 " Change default directory.
 set browsedir=current
 if executable('wget')
-  let g:netrw_http_cmd = 'wget'
+    let g:netrw_http_cmd = 'wget'
 endif
 let g:netrw_list_hide = '^\.,^tags$'
 "}}}2
@@ -497,44 +513,44 @@ let g:neocomplcache_disable_auto_select_buffer_name_pattern = '\[Command Line\]'
 let g:neocomplcache_max_list = 100
 let g:neocomplcache_force_overwrite_completefunc = 1
 let g:neocomplcache_enable_cursor_hold_i = v:version > 703 ||
-      \ v:version == 703 && has('patch289')
+            \ v:version == 703 && has('patch289')
 let g:neocomplcache_dictionary_filetype_lists = {
-      \ 'default' : '',
-      \ 'ruby' : expand('$DOTVIM/dict/ruby.dict'),
-      \ }
+            \ 'default' : '',
+            \ 'ruby' : expand('$DOTVIM/dict/ruby.dict'),
+            \ }
 let g:neocomplcache_omni_functions = {
-      \ 'python' : 'pythoncomplete#Complete',
-      \ 'ruby' : 'rubycomplete#Complete',
-      \ }
+            \ 'python' : 'pythoncomplete#Complete',
+            \ 'ruby' : 'rubycomplete#Complete',
+            \ }
 let g:neocomplcache_cursor_hold_i_time = 300
 if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
+    let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 let g:neocomplcache_snippets_dir = $HOME . '/snippets'
 if !exists('g:neocomplcache_omni_patterns')
-  let g:neocomplcache_omni_patterns = {}
+    let g:neocomplcache_omni_patterns = {}
 endif
 let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.php = '[^. *\t]\.\w*\|\h\w*::'
 if !exists('g:neocomplcache_same_filetype_lists')
-  let g:neocomplcache_same_filetype_lists = {}
+    let g:neocomplcache_same_filetype_lists = {}
 endif
 let g:neocomplcache_source_look_dictionary_path = ''
 let g:neocomplcache_vim_completefuncs = {
-      \ 'Ref' : 'ref#complete',
-      \ 'Unite' : 'unite#complete_source',
-      \ 'VimFiler' : 'vimfiler#complete',
-      \}
+            \ 'Ref' : 'ref#complete',
+            \ 'Unite' : 'unite#complete_source',
+            \ 'VimFiler' : 'vimfiler#complete',
+            \}
 if !exists('g:neocomplcache_plugin_completion_length')
-  let g:neocomplcache_plugin_completion_length = {
-        \ 'look' : 4,
-        \ }
+    let g:neocomplcache_plugin_completion_length = {
+                \ 'look' : 4,
+                \ }
 endif
 "}}}2
 " Altr {{{2
 augroup MyAutoCmd
-  autocmd FileType ruby call altr#define('lib/%/*.rb', 'lib/%.rb', 'test/%_*.rb', 'test/%.rb')
+    autocmd FileType ruby call altr#define('lib/%/*.rb', 'lib/%.rb', 'test/%_*.rb', 'test/%.rb')
 augroup END
 "}}}2
 let g:HammerQuiet = 1
@@ -561,9 +577,9 @@ command! -bar -nargs=0 SudoW   :setl nomod|silent exe 'write !sudo tee % >/dev/n
 
 command! -complete=customlist,s:complete_cdpath -nargs=+ CD  TabpageCD <args>
 function! s:complete_cdpath(arglead, cmdline, cursorpos)
-  return split(globpath(&cdpath,
-  \                     join(split(a:cmdline, '\s')[1:], ' ') . '*/'),
-  \            "\n")
+    return split(globpath(&cdpath,
+                \                     join(split(a:cmdline, '\s')[1:], ' ') . '*/'),
+                \            "\n")
 endfunction
 
 AlterCommand cd  CD
@@ -571,8 +587,8 @@ AlterCommand cd  CD
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{2
 
 command! -nargs=? TabpageCD
-\   execute 'cd' fnameescape(<q-args>)
-\ | let t:cwd = getcwd()
+            \   execute 'cd' fnameescape(<q-args>)
+            \ | let t:cwd = getcwd()
 "}}}1
 " Section: Autocommands {{{1
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
@@ -703,7 +719,7 @@ nmap ySS <Plug>YSsurround
 xmap S   <Plug>VSurround
 xmap gS  <Plug>VgSurround
 if !hasmapto("<Plug>Isurround","i") && "" == mapcheck("<C-S>","i")
-  imap    <C-S> <Plug>Isurround
+    imap    <C-S> <Plug>Isurround
 endif
 imap      <C-G>s <Plug>Isurround
 imap      <C-G>S <Plug>ISurround
@@ -723,16 +739,16 @@ nnoremap <Leader><Leader> :<C-u>update<CR>
 " Change current directory{{{2
 nnoremap <silent> [Space]cd :<C-u>call <SID>cd_buffer_dir()<CR>
 function! s:cd_buffer_dir()"{{{
-  let l:filetype = getbufvar(bufnr('%'), '&filetype')
-  if l:filetype ==# 'vimfiler'
-    let l:dir = getbufvar(bufnr('%'), 'vimfiler').current_dir
-  elseif l:filetype ==# 'vimshell'
-    let l:dir = getbufvar(bufnr('%'), 'vimshell').save_dir
-  else
-    let l:dir = isdirectory(bufname('%')) ? bufname('%') : fnamemodify(bufname('%'), ':p:h')
-  endif
+    let l:filetype = getbufvar(bufnr('%'), '&filetype')
+    if l:filetype ==# 'vimfiler'
+        let l:dir = getbufvar(bufnr('%'), 'vimfiler').current_dir
+    elseif l:filetype ==# 'vimshell'
+        let l:dir = getbufvar(bufnr('%'), 'vimshell').save_dir
+    else
+        let l:dir = isdirectory(bufname('%')) ? bufname('%') : fnamemodify(bufname('%'), ':p:h')
+    endif
 
-  TabpageCD `=l:dir`
+    TabpageCD `=l:dir`
 endfunction"}}}2
 nnoremap <ESC><ESC> :nohlsearch<CR>
 
@@ -790,13 +806,13 @@ nnoremap [Quickfix]g  q:grep<Space>
 " Toggle quickfix window.
 nnoremap <silent> [Quickfix]<Space> :<C-u>call <SID>toggle_quickfix_window()<CR>
 function! s:toggle_quickfix_window()
-  let _ = winnr('$')
-  cclose
-  if _ == winnr('$')
-    copen
-    setlocal nowrap
-    setlocal whichwrap=b,s
-  endif
+    let _ = winnr('$')
+    cclose
+    if _ == winnr('$')
+        copen
+        setlocal nowrap
+        setlocal whichwrap=b,s
+    endif
 endfunction
 "}}}
 
@@ -858,13 +874,13 @@ xmap :  <sid>(command-buffer-enter)
 " xmap ;  <sid>(command-buffer-enter)
 autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
 function! s:init_cmdwin()
-  nnoremap <buffer><silent> q :<C-u>quit<CR>
-  inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>"
-  startinsert!
+    nnoremap <buffer><silent> q :<C-u>quit<CR>
+    inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>"
+    startinsert!
 endfunction
 function! s:check_back_space()"{{{
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
 endfunction"}}}
 "}}}2
 " camlcasemotion.vim"{{{2
@@ -954,43 +970,43 @@ xmap s S
 " nnoremap <silent> <S-Tab> :call <SID>PreviousWindowOrTab()<CR>
 
 function! s:NextWindow()
-  if winnr('$') == 1
-    call s:split_nicely()
-  else
-    wincmd w
-  endif
+    if winnr('$') == 1
+        call s:split_nicely()
+    else
+        wincmd w
+    endif
 endfunction
 
 function! s:NextWindowOrTab()
-  if tabpagenr('$') == 1 && winnr('$') == 1
-    call s:split_nicely()
-  elseif winnr() < winnr("$")
-    wincmd w
-  else
-    tabnext
-    1wincmd w
-  endif
+    if tabpagenr('$') == 1 && winnr('$') == 1
+        call s:split_nicely()
+    elseif winnr() < winnr("$")
+        wincmd w
+    else
+        tabnext
+        1wincmd w
+    endif
 endfunction
 
 function! s:PreviousWindowOrTab()
-  if winnr() > 1
-    wincmd W
-  else
-    tabprevious
-    execute winnr("$") . "wincmd w"
-  endif
+    if winnr() > 1
+        wincmd W
+    else
+        tabprevious
+        execute winnr("$") . "wincmd w"
+    endif
 endfunction
 
 " Split nicely"{{{2
 command! SplitNicely call s:split_nicely()
 function! s:split_nicely()
-  " Split nicely.
-  if winwidth(0) > 2 * &winwidth
-    vsplit
-  else
-    split
-  endif
-  wincmd p
+    " Split nicely.
+    if winwidth(0) > 2 * &winwidth
+        vsplit
+    else
+        split
+    endif
+    wincmd p
 endfunction
 "}}}2
 " Smart }"{{{2
@@ -998,15 +1014,15 @@ nnoremap <silent> } :<C-u>call ForwardParagraph()<CR>
 onoremap <silent> } :<C-u>call ForwardParagraph()<CR>
 xnoremap <silent> } <Esc>:<C-u>call ForwardParagraph()<CR>mzgv`z
 function! ForwardParagraph()
-  let cnt = v:count ? v:count : 1
-  let i = 0
-  while i < cnt
-    if !search('^\s*\n.*\S','W')
-      normal! G$
-      return
-    endif
-    let i = i + 1
-  endwhile
+    let cnt = v:count ? v:count : 1
+    let i = 0
+    while i < cnt
+        if !search('^\s*\n.*\S','W')
+            normal! G$
+            return
+        endif
+        let i = i + 1
+    endwhile
 endfunction
 "}}}
 nnoremap <silent> [Space]<Space> :<C-u>buffer #<CR>
