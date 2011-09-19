@@ -583,5 +583,6 @@ zstyle ':completion:history-words:*' list no
 
 
 
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 # __END__  #{{{1
 # vim: filetype=zsh foldmethod=marker
