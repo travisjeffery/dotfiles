@@ -413,7 +413,11 @@ let g:quickrun_config['ruby'] = {'command': 'testdrb', 'exec': '%c -Itest %s'}
 "       \ 'runmode' : 'async:remote:vimproc'
 "       \}
 "}}}2
-"Fugitive {{{2
+" CtrlP {{{2
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_persistent_input = 1
+"}}}2
+"Fugitive & Gitv {{{2
 nnoremap [Space]gd :<C-u>Gdiff<CR>
 nnoremap [Space]gs :<C-u>Gstatus<CR>
 nnoremap [Space]gl :<C-u>Glog<CR>
@@ -422,6 +426,7 @@ nnoremap [Space]gC :<C-u>Git commit -- amend<CR>
 nnoremap [Space]gb :<C-u>Gblame<CR>
 nnoremap [Space]gr :<C-u>Gread<CR>
 nnoremap [Space]gw :<C-u>Gwrite<CR>
+nnoremap [Space]gv :<C-u>Gitv<CR>
 "}}}2
 let g:snips_author = "Travis Jeffery"
 let g:quickrun_direction = 'rightbelow vertical'
