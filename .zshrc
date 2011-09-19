@@ -178,7 +178,7 @@ setopt transient_rprompt
 # verbose
 # vi
 # xtrace
-# zle
+setopt zle
 
 
 
@@ -446,6 +446,10 @@ bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
 bindkey -M vicmd '^[k' history-beginning-search-backward
 bindkey -M vicmd '^[j' history-beginning-search-forward
+bindkey -M viins '^p' history-beginning-search-backward
+bindkey -M viins '^n' history-beginning-search-forward
+bindkey "^[[A" history-beginning-search-backward
+bindkey "^[[B" history-beginning-search-forward
 bindkey -M vicmd 'gg' beginning-of-history
 
 # modification
@@ -453,6 +457,14 @@ bindkey -M vicmd 'gu' down-case-word
 bindkey -M vicmd 'gU' up-case-word
 bindkey -M vicmd 'g~' vi-oper-swap-case
 
+# show current mode
+function zle-line-init zle-keymap-select {
+    RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
+    RPS2=$RPS1
+    zle reset-prompt
+}
+zle -N zle-line-init
+zle -N zle-keymap-select
 
 
 
