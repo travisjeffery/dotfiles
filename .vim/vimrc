@@ -557,6 +557,7 @@ augroup MyAutoCmd
     autocmd FileType ruby call altr#define('lib/%/*.rb', 'lib/%.rb', 'test/%_*.rb', 'test/%.rb')
 augroup END
 "}}}2
+let g:indexed_search_shortmess = 1
 let g:HammerQuiet = 1
 let g:CSApprox_verbose_level = 0
 if filereadable("/usr/local/bin/ctags")
@@ -892,8 +893,12 @@ if &diff
     set number
 endif
 " Move search word and fold open"{{{2
-nnoremap N  Nzv
-nnoremap n  nzv
+" nnoremap N  Nzv
+" nnoremap n  nzv
+nnoremap <silent>n :let v:errmsg=''<CR>:silent! norm! nzv<CR>:<C-u>ShowSearchIndex<CR>
+nnoremap <silent>N :let v:errmsg=''<CR>:silent! norm! Nzv<CR>:<C-u>ShowSearchIndex<CR>
+nnoremap <silent>* :let v:errmsg=''<CR>:silent! norm! *zv<CR>:<C-u>ShowSearchIndex<CR>
+nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
 nnoremap #  #zv
 nnoremap g*  g*zv
 nnoremap g#  g#zv
