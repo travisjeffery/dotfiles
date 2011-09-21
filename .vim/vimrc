@@ -5,6 +5,7 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
 Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
 Bundle 'https://github.com/mileszs/ack.vim.git'
@@ -581,13 +582,15 @@ command! -nargs=* -bang W :w<bang> <args>
 command! -nargs=0 E :Explore
 command! -nargs=0 DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 command! -bar -nargs=0 SudoW   :setl nomod|silent exe 'write !sudo tee % >/dev/null'|let &mod = v:shell_error
+" Rename {{{2
 command! -bar -nargs=* -bang -complete=file Rename :
       \ let v:errmsg = ""|
       \ saveas<bang> <args>|
       \ if v:errmsg == ""|
       \   call delete(expand("#"))|
       \ endif
-
+"}}}2
+" Remove {{{2
 command! -bar -nargs=0 -bang -complete=file Remove :
       \ let v:errmsg = ''|
       \ let s:removable = expand('%:p')|
@@ -596,6 +599,7 @@ command! -bar -nargs=0 -bang -complete=file Remove :
       \   call delete(s:removable)|
       \ endif|
       \ unlet s:removable
+"}}}2
 " CD - alternative :cd with more user-friendly completion  "{{{2
 
 command! -complete=customlist,s:complete_cdpath -nargs=+ CD  TabpageCD <args>
@@ -759,7 +763,6 @@ nnoremap <silent> [Space]aq  :<C-u>quitall<CR>
 nnoremap <silent> [Space]fq  :<C-u>quitall!<CR>
 nnoremap <Leader><Leader> :<C-u>update<CR>
 "}}}2
-
 " Change current directory{{{2
 nnoremap <silent> [Space]cd :<C-u>call <SID>cd_buffer_dir()<CR>
 function! s:cd_buffer_dir()"{{{
@@ -1237,7 +1240,7 @@ inoremap <C-O> <C-X><C-O>
 inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
 nmap <Leader>x <SID>(command-line-enter)<C-u>sp <C-R>=expand("%:h")<CR>/
 
-inoremap <Tab> <c-r>=InsertTabWrapper()<CR>
+inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
 inoremap <S-Tab> <c-n>
 function! InsertTabWrapper()
     let col = col('.') - 1
