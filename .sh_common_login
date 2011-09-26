@@ -2,9 +2,9 @@
 # Environment detection  #{{{1
 
 # What machine am I working on?
-  # BUGS: ad hoc conditions to determine.
-  # FIXME: Use hostname for this variable.
-  #        Currently the name of a system is used instead.
+# BUGS: ad hoc conditions to determine.
+# FIXME: Use hostname for this variable.
+#        Currently the name of a system is used instead.
 if [ "${OSTYPE%%[^a-z]*}" = 'darwin' ]; then
   export ENV_WORKING='avril'  # Home - MacBook
 elif [ "$OSTYPE" = 'cygwin' ]; then
@@ -19,9 +19,9 @@ fi
 
 
 # What machine am I using to access $ENV_WORKING?
-  # FIXME: How to detect the right value?
-  # Currently, I don't often work with situations such as ENV_ACCESS !=
-  # ENV_WORKING.  So that it's useful to assume that both of them are the same.
+# FIXME: How to detect the right value?
+# Currently, I don't often work with situations such as ENV_ACCESS !=
+# ENV_WORKING.  So that it's useful to assume that both of them are the same.
 export ENV_ACCESS="$ENV_WORKING"
 
 
@@ -68,6 +68,72 @@ case "$ENV_ACCESS" in
     ;;
 esac
 
+if [ "$TERM" = "xterm" ] ; then
+  if [ -z "$COLORTERM" ] ; then
+    if [ -z "$XTERM_VERSION" ] ; then
+      echo "Warning: Terminal wrongly calling itself 'xterm'."
+    else
+      case "$XTERM_VERSION" in
+        "XTerm(256)") TERM="xterm-256color" ;;
+      "XTerm(88)") TERM="xterm-88color" ;;
+    "XTerm") ;;
+  *)
+    echo "Warning: Unrecognized XTERM_VERSION: $XTERM_VERSION"
+    ;;
+esac
+    fi
+  else
+    case "$COLORTERM" in
+      gnome-terminal)
+        # Those crafty Gnome folks require you to check COLORTERM,
+        # but don't allow you to just *favor* the setting over TERM.
+        # Instead you need to compare it and perform some guesses
+        # based upon the value. This is, perhaps, too simplistic.
+        TERM="gnome-256color"
+        ;;
+      *)
+        echo "Warning: Unrecognized COLORTERM: $COLORTERM"
+        ;;
+    esac
+  fi
+fi
+
+SCREEN_COLORS="`tput colors`"
+if [ -z "$SCREEN_COLORS" ] ; then
+  case "$TERM" in
+    screen-*color-bce)
+      echo "Unknown terminal $TERM. Falling back to 'screen-bce'."
+      export TERM=screen-bce
+      ;;
+    *-88color)
+      echo "Unknown terminal $TERM. Falling back to 'xterm-88color'."
+      export TERM=xterm-88color
+      ;;
+    *-256color)
+      echo "Unknown terminal $TERM. Falling back to 'xterm-256color'."
+      export TERM=xterm-256color
+      ;;
+  esac
+  SCREEN_COLORS=`tput colors`
+fi
+if [ -z "$SCREEN_COLORS" ] ; then
+  case "$TERM" in
+    gnome*|xterm*|konsole*|aterm|[Ee]term)
+      echo "Unknown terminal $TERM. Falling back to 'xterm'."
+      export TERM=xterm
+      ;;
+    rxvt*)
+      echo "Unknown terminal $TERM. Falling back to 'rxvt'."
+      export TERM=rxvt
+      ;;
+    screen*)
+      echo "Unknown terminal $TERM. Falling back to 'screen'."
+      export TERM=screen
+      ;;
+  esac
+  SCREEN_COLORS=`tput colors`
+fi
+
 export CYGHOME="/c/cygwin$HOME"
 
 
@@ -90,48 +156,48 @@ export GZIP='--best --name --verbose'
 #     export JLESSCHARSET=japanese-sjis
 #     ;;
 #   colinux|linux|*)
-#     # Don't set.
-#     ;;
-# esac
+  #     # Don't set.
+  #     ;;
+  # esac
 
 
-# Mac OS X  #{{{2
-if [ "$ENV_WORKING" = 'avril' ]; then
-  # To use pbcopy/pbpaste with UTF-8 encoding.
-  export __CF_USER_TEXT_ENCODING=${__CF_USER_TEXT_ENCODING/:*:/:0x08000100:}
-fi
-
-
-# make  #{{{2
-if [ "$ENV_WORKING" = 'summer' ]; then
-  export MAKE_MODE=unix
-fi
-
-
-# X  #{{{2
-if [ "$ENV_WORKING" = 'linux' ] && [ -n "$DISPLAY" ]; then
-  setxkbmap us
-  xmodmap ~/.xmodmaprc
-  if ! xset q | grep $HOME >/dev/null; then
-    for dir in ~/share/fonts/*; do
-      xset fp+ $dir
-    done
-    xset fp rehash
+  # Mac OS X  #{{{2
+  if [ "$ENV_WORKING" = 'avril' ]; then
+    # To use pbcopy/pbpaste with UTF-8 encoding.
+    export __CF_USER_TEXT_ENCODING=${__CF_USER_TEXT_ENCODING/:*:/:0x08000100:}
   fi
-fi
+
+
+  # make  #{{{2
+  if [ "$ENV_WORKING" = 'summer' ]; then
+    export MAKE_MODE=unix
+  fi
+
+
+  # X  #{{{2
+  if [ "$ENV_WORKING" = 'linux' ] && [ -n "$DISPLAY" ]; then
+    setxkbmap us
+    xmodmap ~/.xmodmaprc
+    if ! xset q | grep $HOME >/dev/null; then
+      for dir in ~/share/fonts/*; do
+        xset fp+ $dir
+      done
+      xset fp rehash
+    fi
+  fi
 
 
 
 
-# Last resort  #{{{1
-# RVM: Ruby Version Manager  #{{{2
+  # Last resort  #{{{1
+  # RVM: Ruby Version Manager  #{{{2
 
-if [ -d "$HOME/.rvm" ]; then
-  [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-fi
-
-
+  if [ -d "$HOME/.rvm" ]; then
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+  fi
 
 
-# __END__  #{{{1
-# vim: filetype=sh foldmethod=marker
+
+
+  # __END__  #{{{1
+  # vim: filetype=sh foldmethod=marker
