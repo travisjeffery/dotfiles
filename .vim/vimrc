@@ -315,7 +315,7 @@ autocmd MyAutoCmd BufWritePost vimrc source $MYVIMRC
 autocmd MyAutoCmd BufWritePost .vimrc source $MYVIMRC
 
 " Close help and git window by pressing q.
-autocmd FileType help,git-status,git-log,qf,gitcommit,quickrun,qfreplace,ref,simpletap-summary,vcs-commit,vcs-status
+autocmd FileType fugitiveblame,help,git-status,git-log,qf,gitcommit,quickrun,qfreplace,ref,simpletap-summary,vcs-commit,vcs-status
             \ nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>
 autocmd FileType * if (&readonly || !&modifiable) && !hasmapto('q', 'n')
             \ | nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>| endif
@@ -507,6 +507,7 @@ let g:CommandTMatchWindowReverse  = 1
 let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
+let g:CommandTMatchWindowAtTop = 0
 "}}}2
 " neocomplcache{{{2
 let g:neocomplcache_enable_at_startup = 1
