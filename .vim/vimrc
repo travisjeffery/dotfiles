@@ -797,16 +797,17 @@ nnoremap [Space]sv     :<C-u>source $MYVIMRC<CR>
 
 " Tags {{{2
 nnoremap [Space]tt <C-]>
-nnoremap [Space]tn :<C-u>tnext<CR>
-nnoremap [Space]tp :<C-u>tprevious<CR>
+nnoremap [Space]tn :<C-u>tn<CR>
+nnoremap [Space]tp :<C-u>tp<CR>
 nnoremap [Space]tl :<C-u>tags<CR>
-nnoremap [Space]tP :<C-u>tfirst<CR>
-nnoremap [Space]tN :<C-u>tlast<CR>
-nnoremap [Space]tk :<C-u>tpop<CR>
-nnoremap [Space]tsn :<C-u>split<CR>\|:<C-u>tnext<CR>
-nnoremap [Space]tsp :<C-u>split<CR>\|:<C-u>tprevious<CR>
-nnoremap [Space]tsP :<C-u>split<CR>\|:<C-u>tfirst<CR>
-nnoremap [Space]tsN :<C-u>split<CR>\|:<C-u>tlast<CR>
+nnoremap [Space]ts :<C-u>ts<CR>
+nnoremap [Space]tP :<C-u>tf<CR>
+nnoremap [Space]tN :<C-u>tl<CR>
+nnoremap [Space]tk :<C-u>tp<CR>
+nnoremap [Space]tsn :<C-u>split<CR>\|:<C-u>tn<CR>
+nnoremap [Space]tsp :<C-u>split<CR>\|:<C-u>tp<CR>
+nnoremap [Space]tsP :<C-u>split<CR>\|:<C-u>tf<CR>
+nnoremap [Space]tsN :<C-u>split<CR>\|:<C-u>tl<CR>
 "}}}2
 " q: Quickfix  "{{{
 
