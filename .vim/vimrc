@@ -61,7 +61,7 @@ Bundle 'https://github.com/kana/vim-altercmd.git'
 filetype plugin indent on
 
 augroup MyAutoCmd
-    autocmd!
+  autocmd!
 augroup END
 
 filetype on
@@ -96,7 +96,7 @@ set undofile
 set undolevels=1000
 set undoreload=10000
 if !isdirectory($HOME . "/.tmp")
-    call mkdir($HOME . "/.tmp", 'p')
+  call mkdir($HOME . "/.tmp", 'p')
 endif
 set backupdir=~/.tmp
 set directory=~/.tmp
@@ -111,71 +111,71 @@ set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
 set virtualedit=block
 set matchpairs+=<:>
 if v:version >= 600
-    set autoread
-    set foldenable
-    set foldlevelstart=1
-    set foldlevel=1
-    set foldmethod=marker
-    set printoptions=paper:letter
-    set sidescrolloff=5
-    set sidescroll=1
-    set mouse=nvi
+  set autoread
+  set foldenable
+  set foldlevelstart=1
+  set foldlevel=1
+  set foldmethod=marker
+  set printoptions=paper:letter
+  set sidescrolloff=5
+  set sidescroll=1
+  set mouse=nvi
 endif
 set nolist
 if (&termencoding ==# 'utf-8' || &encoding ==# 'utf-8') && version >= 700
-    let &listchars = "tab:\u21e5\u00b7,trail:\u2423,extends:\u21c9,precedes:\u21c7,nbsp:\u26ad"
+  let &listchars = "tab:\u21e5\u00b7,trail:\u2423,extends:\u21c9,precedes:\u21c7,nbsp:\u26ad"
 else
-    set listchars=tab:>\ ,trail:-,extends:>,precedes:<
+  set listchars=tab:>\ ,trail:-,extends:>,precedes:<
 endif
 set formatoptions-=o
 " tabline{{{2
 set showtabline=2
 set tabline=%!MyTabLine()
 function! MyTabLine()
-    let s = ''
-    for t in range(tabpagenr('$'))
-        if t + 1 == tabpagenr()
-            let s .= '%#TabLineSel#'
-        else
-            let s .= '%#TabLine#'
-        endif
-        let s .= ' '
-        let s .= '%' . (t + 1) . 'T'
-        let s .= t + 1 . ' '
-        let n = ''
-        let m = 0
-        let bc = len(tabpagebuflist(t + 1))
-        for b in tabpagebuflist(t + 1)
-            if getbufvar( b, "&buftype" ) == 'help'
-                let n .= '[H]' . fnamemodify( bufname(b), ':t:s/.txt$//' )
-            elseif getbufvar( b, "&buftype" ) == 'quickfix'
-                let n .= '[Q]'
-            else
-                let n .= pathshorten(bufname(b))
-            endif
-            if getbufvar( b, "&modified" )
-                let m += 1
-            endif
-            if bc > 1
-                let n .= ' '
-            endif
-            let bc -= 1
-        endfor
-        if m > 0
-            let s.= '+ '
-        endif
-        if n == ''
-            let s .= '[No Name]'
-        else
-            let s .= n
-        endif
-        let s .= ' '
-    endfor
-    let s .= '%#TabLineFill#%T'
-    if tabpagenr('$') > 1
-        let s .= '%=%#TabLine#%999XX'
+  let s = ''
+  for t in range(tabpagenr('$'))
+    if t + 1 == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
     endif
-    return s
+    let s .= ' '
+    let s .= '%' . (t + 1) . 'T'
+    let s .= t + 1 . ' '
+    let n = ''
+    let m = 0
+    let bc = len(tabpagebuflist(t + 1))
+    for b in tabpagebuflist(t + 1)
+      if getbufvar( b, "&buftype" ) == 'help'
+        let n .= '[H]' . fnamemodify( bufname(b), ':t:s/.txt$//' )
+      elseif getbufvar( b, "&buftype" ) == 'quickfix'
+        let n .= '[Q]'
+      else
+        let n .= pathshorten(bufname(b))
+      endif
+      if getbufvar( b, "&modified" )
+        let m += 1
+      endif
+      if bc > 1
+        let n .= ' '
+      endif
+      let bc -= 1
+    endfor
+    if m > 0
+      let s.= '+ '
+    endif
+    if n == ''
+      let s .= '[No Name]'
+    else
+      let s .= n
+    endif
+    let s .= ' '
+  endfor
+  let s .= '%#TabLineFill#%T'
+  if tabpagenr('$') > 1
+    let s .= '%=%#TabLine#%999XX'
+  endif
+  return s
 endfunction"}}}2
 " scroll "{{{2
 set scroll=5
@@ -185,42 +185,42 @@ autocmd MyAutoCmd CursorMoved * call s:reinventing_scrolloff()
 
 let s:last_lnum = -1
 function! s:reinventing_scrolloff()
-    if g:scrolloff ==# 0 || s:last_lnum > 0 && line('.') ==# s:last_lnum
-        return
+  if g:scrolloff ==# 0 || s:last_lnum > 0 && line('.') ==# s:last_lnum
+    return
+  endif
+  let s:last_lnum = line('.')
+  let winline     = winline()
+  let winheight   = winheight(0)
+  let middle      = winheight / 2
+  let upside      = (winheight / winline) >= 2
+  " If upside is true, add winlines to above the cursor.
+  " If upside is false, add winlines to under the cursor.
+  if upside
+    let up_num = g:scrolloff - winline + 1
+    let up_num = winline + up_num > middle ? middle - winline : up_num
+    if up_num > 0
+      execute 'normal!' up_num."\<C-y>"
     endif
-    let s:last_lnum = line('.')
-    let winline     = winline()
-    let winheight   = winheight(0)
-    let middle      = winheight / 2
-    let upside      = (winheight / winline) >= 2
-    " If upside is true, add winlines to above the cursor.
-    " If upside is false, add winlines to under the cursor.
-    if upside
-        let up_num = g:scrolloff - winline + 1
-        let up_num = winline + up_num > middle ? middle - winline : up_num
-        if up_num > 0
-            execute 'normal!' up_num."\<C-y>"
-        endif
-    else
-        let down_num = g:scrolloff - (winheight - winline)
-        let down_num = winline - down_num < middle ? winline - middle : down_num
-        if down_num > 0
-            execute 'normal!' down_num."\<C-e>"
-        endif
+  else
+    let down_num = g:scrolloff - (winheight - winline)
+    let down_num = winline - down_num < middle ? winline - middle : down_num
+    if down_num > 0
+      execute 'normal!' down_num."\<C-e>"
     endif
+  endif
 endfunction
 "}}}2
 " Automatically mkdir when writing file in non-existant directory{{{2
 augroup vimrc-auto-mkdir
-    autocmd!
-    autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
-    function! s:auto_mkdir(dir, force)
-        if !isdirectory(a:dir)
-                    \   && (a:force
-                    \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
-            call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-        endif
-    endfunction
+  autocmd!
+  autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+  function! s:auto_mkdir(dir, force)
+    if !isdirectory(a:dir)
+          \   && (a:force
+          \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
+      call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+    endif
+  endfunction
 augroup END"}}}2
 set mouse=a
 set ttymouse=xterm2
@@ -244,8 +244,8 @@ set shell=/bin/sh
 set noswapfile
 set updatecount=0
 if has('unix')
-    set nofsync
-    set swapsync=
+  set nofsync
+  set swapsync=
 endif
 set guioptions-=T
 set guioptions-=L
@@ -253,33 +253,33 @@ set guioptions-=r
 set guioptions+=c
 set noantialias
 if has('balloon_eval')
-    autocmd FileType ruby,eruby set noballooneval
-    set noballooneval
+  autocmd FileType ruby,eruby set noballooneval
+  set noballooneval
 endif
 set norestorescreen
 set t_ti=
 set t_te=
 set shortmess=aI
 if has("mac")
-    set clipboard=unnamed
-    let g:gist_clip_command = 'pbcopy'
+  set clipboard=unnamed
+  let g:gist_clip_command = 'pbcopy'
 else
-    let g:gist_clip_command = 'xclip -selection clipboard'
+  let g:gist_clip_command = 'xclip -selection clipboard'
 endif
 if has("gui") && has("mac")
-    set fuopt+=maxhorz
-    set macmeta
-    set antialias | set guifont=Inconsolata:h14
+  set fuopt+=maxhorz
+  set macmeta
+  set antialias | set guifont=Inconsolata:h14
 else
-    set guifont=Inconsolata\ 12
+  set guifont=Inconsolata\ 12
 endif
 if &term =~ "^screen"
-    augroup MyAutoCmd
-        autocmd VimLeave * :set mouse=
-    augroup END
+  augroup MyAutoCmd
+    autocmd VimLeave * :set mouse=
+  augroup END
 
-    " workaround for freeze when using mouse on GNU screen.
-    set ttymouse=xterm2
+  " workaround for freeze when using mouse on GNU screen.
+  set ttymouse=xterm2
 endif
 set statusline=%f
 set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
@@ -307,7 +307,7 @@ set statusline+=%c,
 set statusline+=%l/%L
 set statusline+=\ %{GetDocumentPosition()}
 function! GetDocumentPosition()
-    return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
+  return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
 endfunction
 
 autocmd MyAutoCmd FileType * setl formatoptions-=ro | setl formatoptions+=mM
@@ -316,56 +316,56 @@ autocmd MyAutoCmd BufWritePost .vimrc source $MYVIMRC
 
 " Close help and git window by pressing q.
 autocmd FileType fugitiveblame,help,git-status,git-log,qf,gitcommit,quickrun,qfreplace,ref,simpletap-summary,vcs-commit,vcs-status
-            \ nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>
+      \ nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>
 autocmd FileType * if (&readonly || !&modifiable) && !hasmapto('q', 'n')
-            \ | nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>| endif
+      \ | nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>| endif
 function! s:smart_close()
-    if winnr('$') != 1
-        close
-    endif
+  if winnr('$') != 1
+    close
+  endif
 endfunction
 augroup MyAutoCmd
-    autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
+  autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
 
-    if v:version >= 700 && isdirectory(expand("~/.trash"))
-        autocmd BufWritePre,BufWritePost * if exists("s:backupdir") | set backupext=~ | let &backupdir = s:backupdir | unlet s:backupdir | endif
-        autocmd BufWritePre ~/*
-                    \ let s:path = expand("~/.trash").strpart(expand("<afile>:p:~:h"),1) |
-                    \ if !isdirectory(s:path) | call mkdir(s:path,"p") | endif |
-                \ let s:backupdir = &backupdir |
-                \ let &backupdir = escape(s:path,'\,').','.&backupdir |
-                \ let &backupext = strftime(".%Y%m%d%H%M%S~",getftime(expand("<afile>:p")))
-    endif
+  if v:version >= 700 && isdirectory(expand("~/.trash"))
+    autocmd BufWritePre,BufWritePost * if exists("s:backupdir") | set backupext=~ | let &backupdir = s:backupdir | unlet s:backupdir | endif
+    autocmd BufWritePre ~/*
+          \ let s:path = expand("~/.trash").strpart(expand("<afile>:p:~:h"),1) |
+          \ if !isdirectory(s:path) | call mkdir(s:path,"p") | endif |
+        \ let s:backupdir = &backupdir |
+        \ let &backupdir = escape(s:path,'\,').','.&backupdir |
+        \ let &backupext = strftime(".%Y%m%d%H%M%S~",getftime(expand("<afile>:p")))
+  endif
 
-    autocmd CursorHold,BufWritePost,BufReadPost,BufLeave *
-                \ if isdirectory(expand("<amatch>:h")) | let &swapfile = &modified | endif
+  autocmd CursorHold,BufWritePost,BufReadPost,BufLeave *
+        \ if isdirectory(expand("<amatch>:h")) | let &swapfile = &modified | endif
 
-    autocmd FileType vim  setlocal ai et sta sw=2 sts=2 keywordprg=:help
+  autocmd FileType vim  setlocal ai et sta sw=2 sts=2 keywordprg=:help
 augroup END
 " Make a scratch buffer when unnamed buffer{{{2
 augroup vimrc-scratch-buffer
-    autocmd!
-    autocmd BufEnter * call s:scratch_buffer()
-    autocmd FileType qfreplace autocmd! vimrc-scratch * <buffer>
+  autocmd!
+  autocmd BufEnter * call s:scratch_buffer()
+  autocmd FileType qfreplace autocmd! vimrc-scratch * <buffer>
 
-    function! s:scratch_buffer()
-        if exists('b:scratch_buffer') || bufname('%') != '' || &l:buftype != ''
-            return
-        endif
-        let b:scratch_buffer = 1
-        setlocal buftype=nofile nobuflisted noswapfile bufhidden=hide
-        augroup vimrc-scratch
-            autocmd! * <buffer>
-            autocmd BufWriteCmd <buffer> call s:scratch_on_BufWriteCmd()
-        augroup END
-    endfunction
-    function! s:scratch_on_BufWriteCmd()
-        silent! setl buftype< buflisted< swapfile< bufhidden< nomodified
-        autocmd! vimrc-scratch * <buffer>
-        unlet! b:scratch_buffer
-        execute 'saveas' . (v:cmdbang ? '!' : '') ' <afile>'
-        filetype detect
-    endfunction
+  function! s:scratch_buffer()
+    if exists('b:scratch_buffer') || bufname('%') != '' || &l:buftype != ''
+      return
+    endif
+    let b:scratch_buffer = 1
+    setlocal buftype=nofile nobuflisted noswapfile bufhidden=hide
+    augroup vimrc-scratch
+      autocmd! * <buffer>
+      autocmd BufWriteCmd <buffer> call s:scratch_on_BufWriteCmd()
+    augroup END
+  endfunction
+  function! s:scratch_on_BufWriteCmd()
+    silent! setl buftype< buflisted< swapfile< bufhidden< nomodified
+    autocmd! vimrc-scratch * <buffer>
+    unlet! b:scratch_buffer
+    execute 'saveas' . (v:cmdbang ? '!' : '') ' <afile>'
+    filetype detect
+  endfunction
 augroup END"}}}2
 "}}}1
 " Section: Plugins {{{1
@@ -389,7 +389,7 @@ nnoremap <silent> <BS> :<C-u>Explore<CR>
 " Change default directory.
 set browsedir=current
 if executable('wget')
-    let g:netrw_http_cmd = 'wget'
+  let g:netrw_http_cmd = 'wget'
 endif
 let g:netrw_list_hide = '^\.,^tags$'
 "}}}2
@@ -438,9 +438,9 @@ let g:user_zen_leader_key = '<c-e>'
 let g:use_zen_complete_tag = 1
 let g:ragtag_global_maps = 1
 let g:user_zen_settings = {
-            \  'indentation' : '  ',
-            \   'markdown' : { 'extends' : 'html' }
-            \}
+      \  'indentation' : '  ',
+      \   'markdown' : { 'extends' : 'html' }
+      \}
 " Unite {{{2
 let g:unite_enable_split_vertically = 1
 let g:unite_kind_file_cd_command = 'TabpageCD'
@@ -525,18 +525,18 @@ let g:neocomplcache_auto_completion_start_length = 4
 let g:neocomplcache_max_list = 100
 let g:neocomplcache_force_overwrite_completefunc = 1
 let g:neocomplcache_enable_cursor_hold_i = v:version > 703 ||
-            \ v:version == 703 && has('patch289')
+      \ v:version == 703 && has('patch289')
 let g:neocomplcache_dictionary_filetype_lists = {
-            \ 'default' : '',
-            \ 'ruby' : expand('$DOTVIM/dict/ruby.dict'),
-            \ }
+      \ 'default' : '',
+      \ 'ruby' : expand('$DOTVIM/dict/ruby.dict'),
+      \ }
 let g:neocomplcache_omni_functions = {
-            \ 'python' : 'pythoncomplete#Complete',
-            \ 'ruby' : 'rubycomplete#Complete',
-            \ }
+      \ 'python' : 'pythoncomplete#Complete',
+      \ 'ruby' : 'rubycomplete#Complete',
+      \ }
 let g:neocomplcache_cursor_hold_i_time = 300
 if !exists('g:neocomplcache_keyword_patterns')
-    let g:neocomplcache_keyword_patterns = {}
+  let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 let g:neocomplcache_snippets_dir = $HOME . '/snippets'
@@ -545,38 +545,38 @@ let g:neocomplcache_snippets_dir = $HOME . '/snippets'
 " endif
 " let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 if !exists('g:neocomplcache_same_filetype_lists')
-    let g:neocomplcache_same_filetype_lists = {}
+  let g:neocomplcache_same_filetype_lists = {}
 endif
 let g:neocomplcache_source_look_dictionary_path = ''
 let g:neocomplcache_vim_completefuncs = {
-            \ 'Ref' : 'ref#complete',
-            \ 'Unite' : 'unite#complete_source',
-            \ 'VimFiler' : 'vimfiler#complete',
-            \}
+      \ 'Ref' : 'ref#complete',
+      \ 'Unite' : 'unite#complete_source',
+      \ 'VimFiler' : 'vimfiler#complete',
+      \}
 if !exists('g:neocomplcache_plugin_completion_length')
-    let g:neocomplcache_plugin_completion_length = {
-                \ 'look' : 4,
-                \ }
+  let g:neocomplcache_plugin_completion_length = {
+        \ 'look' : 4,
+        \ }
 endif
 "}}}2
 " Altr {{{2
 augroup MyAutoCmd
-    autocmd FileType ruby call altr#define('lib/%/*.rb', 'lib/%.rb', 'test/%_*.rb', 'test/%.rb')
+  autocmd FileType ruby call altr#define('lib/%/*.rb', 'lib/%.rb', 'test/%_*.rb', 'test/%.rb')
 augroup END
 "}}}2
 let g:indexed_search_shortmess = 1
 let g:HammerQuiet = 1
 let g:CSApprox_verbose_level = 0
 if filereadable("/usr/local/bin/ctags")
-    let g:tagbar_ctags_bin="/usr/local/bin/ctags"
+  let g:tagbar_ctags_bin="/usr/local/bin/ctags"
 else
-    let g:tagbar_ctags_bin="/usr/bin/ctags"
+  let g:tagbar_ctags_bin="/usr/bin/ctags"
 endif
 if filereadable($HOME . "/.githubrc")
-    source $HOME/.githubrc
+  source $HOME/.githubrc
 endif
 if filereadable($HOME . "/.passwords")
-    source $HOME/.passwords
+  source $HOME/.passwords
 endif
 "}}}1
 " Section: Commands {{{1
@@ -607,9 +607,9 @@ command! -bar -nargs=0 -bang -complete=file Remove :
 
 command! -complete=customlist,s:complete_cdpath -nargs=+ CD  TabpageCD <args>
 function! s:complete_cdpath(arglead, cmdline, cursorpos)
-    return split(globpath(&cdpath,
-                \                     join(split(a:cmdline, '\s')[1:], ' ') . '*/'),
-                \            "\n")
+  return split(globpath(&cdpath,
+        \                     join(split(a:cmdline, '\s')[1:], ' ') . '*/'),
+        \            "\n")
 endfunction
 
 AlterCommand cd  CD
@@ -617,8 +617,8 @@ AlterCommand cd  CD
 " TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{2
 
 command! -nargs=? TabpageCD
-            \   execute 'cd' fnameescape(<q-args>)
-            \ | let t:cwd = getcwd()
+      \   execute 'cd' fnameescape(<q-args>)
+      \ | let t:cwd = getcwd()
 "}}}1
 " Section: Autocommands {{{1
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
@@ -636,15 +636,15 @@ autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
 autocmd filetype svn,*commit*,markdown set spell
 autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
 autocmd FileType ruby
-            \ if expand('%') =~# '_test\.rb$' |
-            \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
-            \ elseif expand('%') =~# '_spec\.rb$' |
-            \   compiler rspec | setl makeprg=rspec\ \"%:p\" |
-            \ else |
-            \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
-            \ endif
+      \ if expand('%') =~# '_test\.rb$' |
+      \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
+      \ elseif expand('%') =~# '_spec\.rb$' |
+      \   compiler rspec | setl makeprg=rspec\ \"%:p\" |
+      \ else |
+      \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
+      \ endif
 autocmd User Bundler
-            \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
+      \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 let g:do_filetype = 0
@@ -654,38 +654,38 @@ au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filet
 
 command! OpenChangedFiles :call OpenChangedFiles()
 function! OpenChangedFiles()
-    only
-    let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
-    let filenames = split(status, "\n")
-    exec "edit " . filenames[0]
-    for filename in filenames[1:]
-        exec "sp " . filename
-    endfor
+  only
+  let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
+  let filenames = split(status, "\n")
+  exec "edit " . filenames[0]
+  for filename in filenames[1:]
+    exec "sp " . filename
+  endfor
 endfunction
 
 autocmd BufReadPost * call SetCursorPosition()
 function! SetCursorPosition()
-    if &filetype !~ 'svn\|commit\c'
-        if line("'\"") > 0 && line("'\"") <= line("$")
-            exe "normal! g`\""
-            normal! zz
-        endif
-    end
+  if &filetype !~ 'svn\|commit\c'
+    if line("'\"") > 0 && line("'\"") <= line("$")
+      exe "normal! g`\""
+      normal! zz
+    endif
+  end
 endfunction
 
 function! InlineVariable()
-    normal "ayiw
-    normal 4diw
-    normal "bd$
-    normal dd
-    normal k$
-    exec '/\<' . @a . '\>'
-    exec ':.s/\<' . @a . '\>/' . @b
+  normal "ayiw
+  normal 4diw
+  normal "bd$
+  normal dd
+  normal k$
+  exec '/\<' . @a . '\>'
+  exec ':.s/\<' . @a . '\>/' . @b
 endfunction
 
 command! -nargs=0 JSBeautify call JSBeautify()<CR>
 function! JSBeautify()
-    silent! exe "%! jsbeautifier --stdin"
+  silent! exe "%! jsbeautifier --stdin"
 endfunction
 "}}}1
 " Section: Abbreviations{{{1
@@ -729,9 +729,9 @@ nnoremap <silent> [Space]y%  :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
 function! s:copy_path()
-    let @*=expand('%')
-    let @"=expand('%')
-    let @+=expand('%')
+  let @*=expand('%')
+  let @"=expand('%')
+  let @+=expand('%')
 endfunction"}}}2
 " Altr {{{2
 nmap [Window]a  <Plug>(altr-forward)
@@ -750,7 +750,7 @@ nmap ySS <Plug>YSsurround
 xmap S   <Plug>VSurround
 xmap gS  <Plug>VgSurround
 if !hasmapto("<Plug>Isurround","i") && "" == mapcheck("<C-S>","i")
-    imap    <C-S> <Plug>Isurround
+  imap    <C-S> <Plug>Isurround
 endif
 imap      <C-G>s <Plug>Isurround
 imap      <C-G>S <Plug>ISurround
@@ -769,16 +769,16 @@ nnoremap <Leader><Leader> :<C-u>update<CR>
 " Change current directory{{{2
 nnoremap <silent> [Space]cd :<C-u>call <SID>cd_buffer_dir()<CR>
 function! s:cd_buffer_dir()"{{{
-    let l:filetype = getbufvar(bufnr('%'), '&filetype')
-    if l:filetype ==# 'vimfiler'
-        let l:dir = getbufvar(bufnr('%'), 'vimfiler').current_dir
-    elseif l:filetype ==# 'vimshell'
-        let l:dir = getbufvar(bufnr('%'), 'vimshell').save_dir
-    else
-        let l:dir = isdirectory(bufname('%')) ? bufname('%') : fnamemodify(bufname('%'), ':p:h')
-    endif
+  let l:filetype = getbufvar(bufnr('%'), '&filetype')
+  if l:filetype ==# 'vimfiler'
+    let l:dir = getbufvar(bufnr('%'), 'vimfiler').current_dir
+  elseif l:filetype ==# 'vimshell'
+    let l:dir = getbufvar(bufnr('%'), 'vimshell').save_dir
+  else
+    let l:dir = isdirectory(bufname('%')) ? bufname('%') : fnamemodify(bufname('%'), ':p:h')
+  endif
 
-    TabpageCD `=l:dir`
+  TabpageCD `=l:dir`
 endfunction"}}}2
 nnoremap <ESC><ESC> :nohlsearch<CR>
 
@@ -837,13 +837,13 @@ nnoremap [Quickfix]g  q:grep<Space>
 " Toggle quickfix window.
 nnoremap <silent> [Quickfix]<Space> :<C-u>call <SID>toggle_quickfix_window()<CR>
 function! s:toggle_quickfix_window()
-    let _ = winnr('$')
-    cclose
-    if _ == winnr('$')
-        copen
-        setlocal nowrap
-        setlocal whichwrap=b,s
-    endif
+  let _ = winnr('$')
+  cclose
+  if _ == winnr('$')
+    copen
+    setlocal nowrap
+    setlocal whichwrap=b,s
+  endif
 endfunction
 "}}}
 
@@ -896,11 +896,11 @@ function! s:ToggleSplit()
 endfunction
 "}}}2
 if &diff
-    nmap <c-h> :diffget 1<CR>
-    nmap <c-l> :diffget 3<CR>
-    nmap <c-k> [cz.
-    nmap <c-j> ]cz.
-    set number
+  nmap <c-h> :diffget 1<CR>
+  nmap <c-l> :diffget 3<CR>
+  nmap <c-k> [cz.
+  nmap <c-j> ]cz.
+  set number
 endif
 " Move search word and fold open"{{{2
 " nnoremap N  Nzv
@@ -936,13 +936,13 @@ xmap :  <sid>(command-buffer-enter)
 " xmap ;  <sid>(command-buffer-enter)
 autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
 function! s:init_cmdwin()
-    nnoremap <buffer><silent> q :<C-u>quit<CR>
-    inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>"
-    startinsert!
+  nnoremap <buffer><silent> q :<C-u>quit<CR>
+  inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>"
+  startinsert!
 endfunction
 function! s:check_back_space()"{{{
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~ '\s'
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
 endfunction"}}}
 "}}}2
 " camlcasemotion.vim"{{{2
@@ -1023,7 +1023,7 @@ xmap <C-\>  <Plug>Commentary
 nmap <C-\> <Plug>CommentaryLine
 
 if hasmapto('s', 'v')
-    vunmap s
+  vunmap s
 endif
 vmap s S
 xmap s S
@@ -1032,43 +1032,43 @@ xmap s S
 " nnoremap <silent> <S-Tab> :call <SID>PreviousWindowOrTab()<CR>
 
 function! s:NextWindow()
-    if winnr('$') == 1
-        call s:split_nicely()
-    else
-        wincmd w
-    endif
+  if winnr('$') == 1
+    call s:split_nicely()
+  else
+    wincmd w
+  endif
 endfunction
 
 function! s:NextWindowOrTab()
-    if tabpagenr('$') == 1 && winnr('$') == 1
-        call s:split_nicely()
-    elseif winnr() < winnr("$")
-        wincmd w
-    else
-        tabnext
-        1wincmd w
-    endif
+  if tabpagenr('$') == 1 && winnr('$') == 1
+    call s:split_nicely()
+  elseif winnr() < winnr("$")
+    wincmd w
+  else
+    tabnext
+    1wincmd w
+  endif
 endfunction
 
 function! s:PreviousWindowOrTab()
-    if winnr() > 1
-        wincmd W
-    else
-        tabprevious
-        execute winnr("$") . "wincmd w"
-    endif
+  if winnr() > 1
+    wincmd W
+  else
+    tabprevious
+    execute winnr("$") . "wincmd w"
+  endif
 endfunction
 
 " Split nicely"{{{2
 command! SplitNicely call s:split_nicely()
 function! s:split_nicely()
-    " Split nicely.
-    if winwidth(0) > 2 * &winwidth
-        vsplit
-    else
-        split
-    endif
-    wincmd p
+  " Split nicely.
+  if winwidth(0) > 2 * &winwidth
+    vsplit
+  else
+    split
+  endif
+  wincmd p
 endfunction
 "}}}2
 " Delete current buffer."{{{
@@ -1139,15 +1139,15 @@ nnoremap <silent> } :<C-u>call ForwardParagraph()<CR>
 onoremap <silent> } :<C-u>call ForwardParagraph()<CR>
 xnoremap <silent> } <Esc>:<C-u>call ForwardParagraph()<CR>mzgv`z
 function! ForwardParagraph()
-    let cnt = v:count ? v:count : 1
-    let i = 0
-    while i < cnt
-        if !search('^\s*\n.*\S','W')
-            normal! G$
-            return
-        endif
-        let i = i + 1
-    endwhile
+  let cnt = v:count ? v:count : 1
+  let i = 0
+  while i < cnt
+    if !search('^\s*\n.*\S','W')
+      normal! G$
+      return
+    endif
+    let i = i + 1
+  endwhile
 endfunction
 "}}}
 nnoremap <silent> [Space]<Space> :<C-u>buffer #<CR>
@@ -1173,28 +1173,28 @@ nmap [Space][ <Plug>(poslist-prev-buf)
 nmap [Space]]  <Plug>(poslist-next-buf)
 
 function! YRRunAfterMaps()
-    nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
-    nnoremap . .`[
+  nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
+  nnoremap . .`[
 endfunction
 
 function! s:VSetSearch()
-    let temp = @@
-    norm! gvy
-    let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
-    let @@ = temp
+  let temp = @@
+  norm! gvy
+  let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
+  let @@ = temp
 endfunction
 vmap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vmap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 
 nmap <Leader>gr :topleft :split config/routes.rb<CR>
 function! ShowRoutes()
-    topleft 100 :split __Routes__
-    set buftype=nofile
-    normal 1GdG
-    0r! rake -s routes
-    exec ":normal " . line("$") . "_ "
-    normal 1GG
-    normal dd
+  topleft 100 :split __Routes__
+  set buftype=nofile
+  normal 1GdG
+  0r! rake -s routes
+  exec ":normal " . line("$") . "_ "
+  normal 1GG
+  normal dd
 endfunction
 nnoremap <Leader>gR :call ShowRoutes()<CR>
 
@@ -1216,27 +1216,27 @@ nnoremap <silent> <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
 nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
 
 function! Preserve(command)
-    let _s=@/
-    let l = line(".")
-    let c = col(".")
-    execute a:command
-    let @/=_s
-    call cursor(l, c)
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  execute a:command
+  let @/=_s
+  call cursor(l, c)
 endfunction
 
 nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
 nmap _= :call Preserve("normal gg=G")<CR>
 
 function! Titlecase()
-    if !executable("toTitleCase")
-        echo "Missing toTitleCase excutable."
-        return
-    endif
-    normal gv"xy
-    let @x = system('echo "'.@x.'"| toTitleCase | tr -d "\n"')
-    let @x = substitute(@x, '^\s*\(.\{-}\)\s*$', '\1', '')
-    normal gv
-    normal "xp
+  if !executable("toTitleCase")
+    echo "Missing toTitleCase excutable."
+    return
+  endif
+  normal gv"xy
+  let @x = system('echo "'.@x.'"| toTitleCase | tr -d "\n"')
+  let @x = substitute(@x, '^\s*\(.\{-}\)\s*$', '\1', '')
+  normal gv
+  normal "xp
 endfunction
 vmap <Leader>t :call Titlecase()<CR>
 
@@ -1247,14 +1247,72 @@ nmap <Leader>x <SID>(command-line-enter)<C-u>sp <C-R>=expand("%:h")<CR>/
 inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
 inoremap <S-Tab> <c-n>
 function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
+  let col = col('.') - 1
+  if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+  else
+    return "\<c-p>"
+  endif
 endfunction
+"}}}1
+" Platform depends:"{{{1
+" For Linux"{{{
+if exists('$WINDIR')
+  " Cygwin.
 
+  " Use bash.
+  set shell=bash
+else
+  " Use zsh.
+  set shell=zsh
+endif
+
+" Set path.
+let $PATH = expand('~/bin').':/usr/local/bin/:'.$PATH
+
+" For non GVim.
+if !has('gui_running')
+  " Enable 256 color terminal.
+  if !exists('$TMUX')
+    set t_Co=256
+
+    " For screen."{{{
+    if &term =~ '^screen'
+      augroup MyAutoCmd
+        " Show filename on screen statusline.
+        " But invalid 'another' screen buffer.
+        autocmd BufEnter * if $WINDOW != 0 &&  bufname("") !~ "[A-Za-z0-9\]*://"
+              \ | silent! exe '!echo -n "kv:%:t\\"' | endif
+        " When 'mouse' isn't empty, Vim will freeze. Why?
+        autocmd VimLeave * :set mouse=
+      augroup END
+
+      " For Vim inside screen.
+      set ttymouse=xterm2
+    endif
+
+    " For prevent bug.
+    autocmd MyAutoCmd VimLeave * set term=screen
+    "}}}
+  endif
+
+  if has('gui')
+    " Use CSApprox.vim
+
+    " Convert colorscheme in Konsole.
+    let g:CSApprox_konsole = 1
+    let g:CSApprox_attr_map = { 'bold' : 'bold', 'italic' : '', 'sp' : '' }
+  else
+    " Disable error messages.
+    let g:CSApprox_verbose_level = 0
+  endif
+
+  " Change cursor shape.
+  if &term =~ "xterm"
+    let &t_SI = "\<Esc>]12;lightgreen\x7"
+    let &t_EI = "\<Esc>]12;white\x7"
+  endif
+endif
 "}}}1
 
 set secure
