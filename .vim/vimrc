@@ -722,6 +722,9 @@ xnoremap <SID>(command-line-enter) :
 nmap ; <SID>(command-line-enter)
 xmap ; <SID>(command-line-enter)
 
+nnoremap <silent> [Space]; :<C-u>normal!<Space>;<CR>
+nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
+
 nnoremap <silent> [Space]mk  :<C-u>marks<CR>
 nnoremap <silent> [Space]re  :<C-u>registers<CR>
 nnoremap <silent> [Space]yr  :<C-u>YRShow<CR>
