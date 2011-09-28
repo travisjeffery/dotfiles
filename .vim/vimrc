@@ -5,6 +5,7 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/travisjeffery/vim-testee.git'
 Bundle 'https://github.com/tpope/vim-endwise.git'
 Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
@@ -406,8 +407,9 @@ let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
 "}}}2
 " QuickRun {{{2
-let g:quickrun_config = {}
-let g:quickrun_config['ruby'] = {'command': 'testdrb', 'exec': '%c -Itest %s'}
+" let g:quickrun_direction = 'rightbelow horizontal'
+" let g:quickrun_config = {}
+" let g:quickrun_config['ruby'] = {'command': 'testdrb', 'exec': '%c -Itest %s'}
 " let g:quickrun_config['*'] = {
 "       \ 'runner/vimproc/updatetime' : 100,
 "       \ 'split': 'vertical rightbelow',
@@ -433,8 +435,12 @@ nnoremap [Space]gr :<C-u>Gread<CR>
 nnoremap [Space]gw :<C-u>Gwrite<CR>
 nnoremap [Space]gv :<C-u>Gitv<CR>
 "}}}2
+" Testee {{{2
+noremap <leader>rt <Plug>(testee-test-case)
+noremap <leader>rf <Plug>(testee-test-file)
+noremap <leader>rl <Plug>(testee-test-last)
+"}}}2
 let g:snips_author = "Travis Jeffery"
-let g:quickrun_direction = 'rightbelow vertical'
 let g:user_zen_leader_key = '<c-e>'
 let g:use_zen_complete_tag = 1
 let g:ragtag_global_maps = 1
