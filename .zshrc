@@ -1,4 +1,6 @@
 # My zshrc.
+source ~/.sh_common_login
+
 # Misc.  #{{{1
 
 umask 077  # Default permission
@@ -268,6 +270,8 @@ alias gs='git svn'
 alias screen='LANG= screen'
 
 alias ..='cd ..'
+
+alias t='testdrb -Itest'
 
 
 

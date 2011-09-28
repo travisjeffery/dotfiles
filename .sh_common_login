@@ -70,7 +70,9 @@ esac
 
 if [ "$TERM" = "xterm" ] ; then
   export TERM="xterm-256color" 
-else
+fi
+
+if [ "$COLORTERM" = "gnome-terminal" ]; then
   export TERM="gnome-256color"
 fi
 
@@ -115,16 +117,16 @@ export GZIP='--best --name --verbose'
 
 
   # X  #{{{2
-  if [ "$ENV_WORKING" = 'linux' ] && [ -n "$DISPLAY" ]; then
-    setxkbmap us
-    xmodmap ~/.xmodmaprc
-    if ! xset q | grep $HOME >/dev/null; then
-      for dir in ~/share/fonts/*; do
-        xset fp+ $dir
-      done
-      xset fp rehash
-    fi
-  fi
+  # if [ "$ENV_WORKING" = 'linux' ] && [ -n "$DISPLAY" ]; then
+  #   setxkbmap us
+  #   xmodmap ~/.xmodmaprc
+  #   if ! xset q | grep $HOME >/dev/null; then
+  #     for dir in ~/share/fonts/*; do
+  #       xset fp+ $dir
+  #     done
+  #     xset fp rehash
+  #   fi
+  # fi
 
 
 
