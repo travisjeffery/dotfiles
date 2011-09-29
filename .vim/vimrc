@@ -5,7 +5,8 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
-Bundle 'https://github.com/travisjeffery/vim-testee.git'
+Bundle 'https://github.com/kien/ctrlp.vim.git'
+Bundle 'git@github.com:travisjeffery/vim-testee.git'
 Bundle 'https://github.com/tpope/vim-endwise.git'
 Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
