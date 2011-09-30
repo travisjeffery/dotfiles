@@ -5,7 +5,8 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
-Bundle 'https://github.com/travisjeffery/vim-testee.git'
+Bundle 'https://github.com/kien/ctrlp.vim.git'
+Bundle 'git@github.com:travisjeffery/vim-testee.git'
 Bundle 'https://github.com/tpope/vim-endwise.git'
 Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
@@ -35,7 +36,6 @@ Bundle 'https://github.com/kana/vim-textobj-user.git'
 Bundle 'https://github.com/kana/vim-smartword.git'
 Bundle 'https://github.com/tpope/vim-unimpaired.git'
 Bundle 'https://github.com/Shougo/vimfiler.git'
-Bundle 'https://github.com/vim-scripts/YankRing.vim.git'
 Bundle 'http://github.com/mattn/zencoding-vim/'
 Bundle 'https://github.com/vim-scripts/ZoomWin.git'
 Bundle 'https://github.com/gregsexton/gitv.git'
@@ -449,6 +449,7 @@ let g:user_zen_settings = {
       \   'markdown' : { 'extends' : 'html' }
       \}
 " Unite {{{2
+let g:unite_source_history_yank_enable = 1
 let g:unite_enable_split_vertically = 1
 let g:unite_kind_file_cd_command = 'TabpageCD'
 let g:unite_kind_file_lcd_command = 'TabpageCD'
@@ -1185,8 +1186,10 @@ nmap [Space]]  <Plug>(poslist-next-buf)
 
 function! YRRunAfterMaps()
   nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
-  nnoremap . .`[
 endfunction
+
+nnoremap Y y$
+nnoremap . .`[
 
 function! s:VSetSearch()
   let temp = @@
