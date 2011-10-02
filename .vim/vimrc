@@ -245,6 +245,9 @@ set switchbuf=useopen
 set shell=/bin/sh
 set noswapfile
 set updatecount=0
+set noshowmatch
+let g:loaded_matchparen = 1
+set matchtime=0
 if has('unix')
   set nofsync
   set swapsync=
@@ -543,16 +546,16 @@ let g:neocomplcache_omni_functions = {
       \ 'python' : 'pythoncomplete#Complete',
       \ 'ruby' : 'rubycomplete#Complete',
       \ }
-let g:neocomplcache_cursor_hold_i_time = 300
+" let g:neocomplcache_cursor_hold_i_time = 300
 if !exists('g:neocomplcache_keyword_patterns')
   let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 let g:neocomplcache_snippets_dir = $HOME . '/snippets'
-" if !exists('g:neocomplcache_omni_patterns')
-"     let g:neocomplcache_omni_patterns = {}
-" endif
-" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+if !exists('g:neocomplcache_omni_patterns')
+    let g:neocomplcache_omni_patterns = {}
+endif
+let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 if !exists('g:neocomplcache_same_filetype_lists')
   let g:neocomplcache_same_filetype_lists = {}
 endif
@@ -642,6 +645,7 @@ autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
 autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
 autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
 autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
+autocmd FileType vimperator set ft=vim
 autocmd filetype svn,*commit*,markdown set spell
 autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
 autocmd FileType ruby
@@ -983,7 +987,7 @@ vmap <silent> g/ y/<C-R>=substitute(escape(@", '\\/.*$^~[]'), '\n', '\\n', 'g')<
 nnoremap VV 0v$h
 nnoremap <Leader>X <c-w><c-h>:set winwidth=80<CR><c-w><c-l>:set winwidth=31<CR><c-w><c-h>
 nnoremap gff <C-w>gf
-imap (( ()
+" imap (( ()
 inoremap <C-Space> <Right>
 nmap <Leader>- i<space><esc>vs-2lxi
 nmap <Leader>+ :<C-u>cd %:p:h<bar>new<Space>

@@ -165,8 +165,10 @@ nnoremap J   <C-d>
 nnoremap K   <C-u>
 
 " タブ移動
-nnoremap <Right> :tabmove! +1<CR>
-nnoremap <Left>  :tabmove! -1<CR>
+" nnoremap <Right> :tabmove! +1<CR>
+" nnoremap <Left>  :tabmove! -1<CR>
+nnoremap <Left> gT
+nnoremap <Right>  gt
 
 " Escで中止
 nnoremap <Esc>   <C-c>
