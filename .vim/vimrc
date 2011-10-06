@@ -5,6 +5,7 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/h1mesuke/vim-alignta.git'
 Bundle 'https://github.com/kien/ctrlp.vim.git'
 Bundle 'git@github.com:travisjeffery/vim-testee.git'
 Bundle 'https://github.com/tpope/vim-endwise.git'
@@ -69,7 +70,6 @@ augroup END
 filetype on
 syntax on
 set autowrite
-set lazyredraw
 set backspace=indent,eol,start
 set history=1000
 set nostartofline
@@ -552,13 +552,13 @@ if !exists('g:neocomplcache_keyword_patterns')
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 let g:neocomplcache_snippets_dir = $HOME . '/snippets'
-if !exists('g:neocomplcache_omni_patterns')
-    let g:neocomplcache_omni_patterns = {}
-endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-if !exists('g:neocomplcache_same_filetype_lists')
-  let g:neocomplcache_same_filetype_lists = {}
-endif
+" if !exists('g:neocomplcache_omni_patterns')
+"     let g:neocomplcache_omni_patterns = {}
+" endif
+" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+" if !exists('g:neocomplcache_same_filetype_lists')
+"   let g:neocomplcache_same_filetype_lists = {}
+" endif
 let g:neocomplcache_source_look_dictionary_path = ''
 let g:neocomplcache_vim_completefuncs = {
       \ 'Ref' : 'ref#complete',
@@ -715,6 +715,8 @@ iabbrev teh the
 iabbrev ;; =>
 iabbrev shuold should
 iabbrev shulod should
+iabbrev PgTOols PgTools
+iabbrev PgTOOls PgTools
 "}}}1
 " Section: Mappings {{{1
 let g:mapleader=","
@@ -967,12 +969,15 @@ xmap <silent> W <Plug>CamelCaseMotion_w
 nmap <silent> B <Plug>CamelCaseMotion_b
 xmap <silent> W <Plug>CamelCaseMotion_b
 "}}}2
+nnoremap <silent> [Space]a :<C-u>Alignta<Space>
+vnoremap <silent> [Space]a :Alignta<Space>
+xnoremap <silent> [Space]a :Alignta<Space>
 nnoremap Q gq
 nnoremap <Leader>m :TagbarToggle<CR>
 nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
 nnoremap <Leader>= gg=G<C-o><C-o>
-nnoremap <Leader>v :<C-u>vsplit<CR><C-w><C-w>
+nnoremap <Leader>v : <C-u>vsplit<CR><C-w><C-w>
 nnoremap <Leader>s :<C-u>split<CR><C-w><C-w>
 nnoremap <Leader>\ :<C-u>%! fmt -w 79<CR>
 nnoremap <Leader>\ :<C-u>!fmt -w 79<CR>
@@ -1333,6 +1338,7 @@ if !has('gui_running')
 endif
 "}}}1
 
+set lazyredraw
 set secure
 
 " vim: foldmethod=marker
