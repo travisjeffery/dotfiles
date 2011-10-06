@@ -70,6 +70,7 @@ augroup END
 filetype on
 syntax on
 set autowrite
+set cmdheight=2
 set backspace=indent,eol,start
 set history=1000
 set nostartofline
@@ -81,6 +82,7 @@ set noequalalways
 set pumheight=20
 set showfulltag
 set cmdwinheight=5
+set ruler
 set showcmd
 set showmode
 set incsearch
@@ -89,6 +91,16 @@ set smartcase
 set hlsearch
 set nowrap
 set linebreak
+if exists('+fuoptions')
+  set fuoptions=maxhorz,maxvert
+endif
+if exists('+guicursor')
+  set guicursor&
+  set guicursor=a:blinkwait4000-blinkon1500-blinkoff500
+endif
+if exists('+macmeta')
+  set macmeta
+endif
 set winwidth=84
 set winheight=5
 set winminheight=5
@@ -245,6 +257,7 @@ set switchbuf=useopen
 set shell=/bin/sh
 set noswapfile
 set updatecount=0
+set updatetime=50
 set noshowmatch
 let g:loaded_matchparen = 1
 set matchtime=0
@@ -443,6 +456,10 @@ noremap <leader>rt <Plug>(testee-test-case)
 noremap <leader>rf <Plug>(testee-test-file)
 noremap <leader>rl <Plug>(testee-test-last)
 "}}}2
+" grex {{{2
+nmap gD  <SID>(command-line-enter)<C-u>Gred<CR>
+nmap gy  <SID>(command-line-enter)<C-u>Grey<CR>
+"}}}2
 let g:snips_author = "Travis Jeffery"
 let g:user_zen_leader_key = '<c-e>'
 let g:use_zen_complete_tag = 1
@@ -466,6 +483,10 @@ let g:unite_source_file_mru_filename_format = ':~:.'
 let g:unite_source_file_mru_limit = 300
 let g:unite_source_directory_mru_time_format = ''
 let g:unite_source_directory_mru_limit = 300
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+call unite#filters#converter_default#use(['converter_relative_abbr'])
+call unite#custom_filters('file,buffer,file_rec,file_rec/async',
+      \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
 nnoremap <C-B> :<C-u>Unite buffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
 "}}}2
@@ -738,11 +759,11 @@ xmap ; <SID>(command-line-enter)
 nnoremap <silent> [Space]; :<C-u>normal!<Space>;<CR>
 nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
 
-nnoremap <silent> [Space]mk  :<C-u>marks<CR>
-nnoremap <silent> [Space]re  :<C-u>registers<CR>
-nnoremap <silent> [Space]yr  :<C-u>YRShow<CR>
-nnoremap <silent> [Space]ya  :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
-nnoremap <silent> [Space]y%  :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
+nnoremap <silent> [Space]yh :<C-u>Unite history/yank<CR>
+nnoremap <silent> [Space]mk :<C-u>marks<CR>
+nnoremap <silent> [Space]re :<C-u>registers<CR>
+nnoremap <silent> [Space]ya :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
+nnoremap <silent> [Space]y% :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
 
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
@@ -798,20 +819,20 @@ function! s:cd_buffer_dir()"{{{
 
   TabpageCD `=l:dir`
 endfunction"}}}2
-nnoremap <ESC><ESC> :redraw!\|nohlsearch<CR>
+nnoremap <ESC><ESC> :redraw\|nohlsearch<CR>
 
 " Fast search pair.
-nnoremap [Space]p    %
-xnoremap [Space]p    %
+nnoremap [Space]p %
+xnoremap [Space]p %
 
 " Fast screen move.
-nnoremap [Space]j    z<CR><C-f>z.
-xnoremap [Space]j    z<CR><C-f>z.
-nnoremap [Space]k    z-<C-b>z.
-xnoremap [Space]k    z-<C-b>z.
+nnoremap [Space]j z<CR><C-f>z.
+xnoremap [Space]j z<CR><C-f>z.
+nnoremap [Space]k z-<C-b>z.
+xnoremap [Space]k z-<C-b>z.
 
-nnoremap [Space]ev     :<C-u>edit $MYVIMRC<CR>
-nnoremap [Space]sv     :<C-u>source $MYVIMRC<CR>
+nnoremap [Space]ev :<C-u>edit $MYVIMRC<CR>
+nnoremap [Space]sv :<C-u>source $MYVIMRC<CR>
 
 " Tags {{{2
 nnoremap [Space]tt <C-]>
@@ -1033,6 +1054,9 @@ nnoremap <C-l> <C-w><C-l>
 inoremap <C-]> <Space>=><Space>
 cnoremap %% <C-R>=expand('%:h').'/'<CR>
 cnoremap %& <C-R>=expand('%:p')<CR>
+" Search slashes easily (too lazy to prefix backslashes to slashes)
+cnoremap <expr> /  getcmdtype() == '/' ? '\/' : '/'
+nnoremap <expr> gc  <SID>keys_to_select_the_last_changed_text()
 nnoremap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
@@ -1051,6 +1075,24 @@ xmap s S
 
 " nnoremap <silent> <Tab> :call <SID>NextWindow()<CR>
 " nnoremap <silent> <S-Tab> :call <SID>PreviousWindowOrTab()<CR>
+
+function! s:keys_to_select_the_last_changed_text()
+  " It is not possible to determine whether the last operation to change text
+  " is linewise or not, so guess the wise of the last operation from the range
+  " of '[ and '], like wise of a register content set by setreg() without
+  " {option}.
+
+  let col_begin = col("'[")
+  let col_end = col("']")
+  let length_end = len(getline("']"))
+
+  let maybe_linewise_p = (col_begin == 1
+  \                       && (col_end == length_end
+  \                           || (length_end == 0 && col_end == 1)))
+  return '`[' . (maybe_linewise_p ? 'V' : 'v') . '`]'
+endfunction
+
+
 
 function! s:NextWindow()
   if winnr('$') == 1
@@ -1237,6 +1279,197 @@ nnoremap <silent> <Leader>gf :<C-u>CommandT %%/<CR>
 nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
 nnoremap <silent> <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
 nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
+" Delete the content of the current line (not the line itself).
+nnoremap dl  0d$
+
+command! -nargs=+ Allmap
+\   execute 'map' <q-args>
+\ | execute 'map!' <q-args>
+
+command! -nargs=+ Allnoremap
+\   execute 'noremap' <q-args>
+\ | execute 'noremap!' <q-args>
+
+command! -nargs=+ Allunmap
+\   execute 'unmap' <q-args>
+\ | execute 'unmap!' <q-args>
+
+command! -bang -nargs=* Cmap  call s:cmd_Cmap('', '<bang>', [<f-args>])
+command! -nargs=* Ccmap  call s:cmd_Cmap('c', '', [<f-args>])
+command! -nargs=* Cimap  call s:cmd_Cmap('i', '', [<f-args>])
+command! -nargs=* Clmap  call s:cmd_Cmap('l', '', [<f-args>])
+command! -nargs=* Cnmap  call s:cmd_Cmap('n', '', [<f-args>])
+command! -nargs=* Comap  call s:cmd_Cmap('o', '', [<f-args>])
+command! -nargs=* Csmap  call s:cmd_Cmap('s', '', [<f-args>])
+command! -nargs=* Cvmap  call s:cmd_Cmap('v', '', [<f-args>])
+command! -nargs=* Cxmap  call s:cmd_Cmap('x', '', [<f-args>])
+command! -nargs=* Callmap  call s:cmd_Cmap('All', '', [<f-args>])
+command! -nargs=* Cobjmap  call s:cmd_Cmap('Obj', '', [<f-args>])
+
+function! s:separate_list(list, regexp)
+  let i = 0
+  while i < len(a:list) && a:list[i] =~# a:regexp
+    let i += 1
+  endwhile
+  return [(0 < i ? a:list[:i-1] : []), a:list[(i):]]
+endfunction
+
+function! s:contains_p(list, regexp)
+  for item in a:list
+    if item =~# a:regexp
+      return s:TRUE
+    endif
+  endfor
+  return s:FALSE
+endfunction
+
+function! s:cmd_Cmap(prefix, suffix, args)
+  " FIXME: This parsing may not be compatible with the original one.
+  let [options, rest] = s:separate_list(a:args,
+  \ '^\c<\(buffer\|expr\|script\|silent\|special\|unique\|count\|noexec\)>$')
+  if len(rest) < 2
+    throw 'Insufficient number of arguments: ' . string(rest)
+  endif
+  let lhs = rest[0]
+  let script = rest[1:]
+  let count_p = s:contains_p(options, '^\c<count>$')
+  let noexec_p = s:contains_p(options, '^\c<noexec>$')
+  call filter(options, 'v:val !~# ''^\c<\(count\|noexec\)>$''')
+
+  execute a:prefix.'noremap'.a:suffix join(options) lhs
+  \ ':'.(count_p ? '' : '<C-u>') . join(script) . (noexec_p ? '' : '<Return>')
+endfunction
+ 
+let s:FALSE = 0
+let s:TRUE = !s:FALSE
+
+command! -bang -nargs=* Fmap  call s:cmd_Fmap('', '<bang>', [<f-args>])
+command! -nargs=* Fcmap  call s:cmd_Fmap('c', '', [<f-args>])
+command! -nargs=* Fimap  call s:cmd_Fmap('i', '', [<f-args>])
+command! -nargs=* Flmap  call s:cmd_Fmap('l', '', [<f-args>])
+command! -nargs=* Fnmap  call s:cmd_Fmap('n', '', [<f-args>])
+command! -nargs=* Fomap  call s:cmd_Fmap('o', '', [<f-args>])
+command! -nargs=* Fsmap  call s:cmd_Fmap('s', '', [<f-args>])
+command! -nargs=* Fvmap  call s:cmd_Fmap('v', '', [<f-args>])
+command! -nargs=* Fxmap  call s:cmd_Fmap('x', '', [<f-args>])
+command! -nargs=* Fallmap  call s:cmd_Fmap('All', '', [<f-args>])
+command! -nargs=* Fobjmap  call s:cmd_Fmap('Obj', '', [<f-args>])
+
+Allnoremap <C-z>  <Nop>
+Cnmap <C-z>  SuspendWithAutomticCD
+
+if !exists('s:GNU_SCREEN_AVAILABLE_P')
+  if has('gui_running')
+    " In GUI, $WINDOW is not reliable, because GUI process is independent from
+    " GNU screen process.  Check availability of executable instead.
+    let s:GNU_SCREEN_AVAILABLE_P = executable('screen')
+  else
+    " In CUI, availability of executable is not reliable, because Vim may be
+    " invoked with "screen ssh example.com vim" and GNU screen may be
+    " available at example.com.  Check $WINDOW instead.
+    let s:GNU_SCREEN_AVAILABLE_P = len($WINDOW) != 0
+  endif
+endif
+
+command! -bar -nargs=0 SuspendWithAutomticCD
+\ call s:cmd_SuspendWithAutomticCD()
+function! s:cmd_SuspendWithAutomticCD()
+  if s:GNU_SCREEN_AVAILABLE_P
+    call s:activate_terminal()
+
+    " \015 = <C-m>
+    " To avoid adding the cd script into the command-line history,
+    " there are extra leading whitespaces in the cd script.
+    silent execute '!screen -X eval'
+    \              '''select another'''
+    \              '''stuff "  cd \"'.getcwd().'\"  \#\#,vim-auto-cd\015"'''
+    redraw!
+    let s:GNU_SCREEN_AVAILABLE_P = (v:shell_error == 0)
+  endif
+
+  if !s:GNU_SCREEN_AVAILABLE_P
+    suspend
+  endif
+endfunction
+
+
+" Show the lines which match to the last search pattern.
+Cnmap <count> g/  global//print
+Cvmap <count> g/  global//print
+
+function! s:cmd_Fmap(prefix, suffix, args)
+  " FIXME: This parsing may not be compatible with the original one.
+  let [options, rest] = s:separate_list(a:args,
+  \ '^\c<\(buffer\|expr\|script\|silent\|special\|unique\)>$')
+  if len(rest) < 2
+    throw 'Insufficient number of arguments: ' . string(rest)
+  endif
+  let lhs = rest[0]
+  let rhs = rest[1:]
+
+  execute a:prefix.'noremap'.a:suffix join(options) lhs
+  \ ':<C-u>call' join(rhs) '<Return>'
+endfunction
+
+
+" Objmap - :map for text objects  "{{{3
+"
+" Keys for text objects should be mapped in Visual mode and Operator-pending
+" mode.  The following commands are just wrappers to avoid DRY violation.
+
+command! -nargs=+ Objmap
+\   execute 'omap' <q-args>
+\ | execute 'vmap' <q-args>
+
+command! -nargs=+ Objnoremap
+\   execute 'onoremap' <q-args>
+\ | execute 'vnoremap' <q-args>
+
+command! -nargs=+ Objunmap
+\   execute 'ounmap' <q-args>
+\ | execute 'vunmap' <q-args>
+
+
+" Operatormap - :map for oeprators  "{{{3
+"
+" Keys for operators should be mapped in Normal mode and Visual mode.  The
+" following commands are just wrappers to avoid DRY violation.
+"
+" FIXME: How about mapping to g@ in Operator-pending mode
+"        to use {operator}{operator} pattern?
+
+command! -nargs=+ Operatormap
+\   execute 'nmap' <q-args>
+\ | execute 'vmap' <q-args>
+
+command! -nargs=+ Operatornoremap
+\   execute 'nnoremap' <q-args>
+\ | execute 'vnoremap' <q-args>
+
+command! -nargs=+ Operatorunmap
+\   execute 'nunmap' <q-args>
+\ | execute 'vunmap' <q-args>
+
+
+
+
+Fvmap *  <SID>search_the_selected_text_literaly('n')
+Fvmap #  <SID>search_the_selected_text_literaly('N')
+
+function! s:search_the_selected_text_literaly(search_command)
+  let reg_0 = [@0, getregtype('0')]
+  let reg_u = [@", getregtype('"')]
+
+  normal! gvy
+  let @/ = @0
+  call histadd('/', '\V' . escape(@0, '\'))
+  execute 'normal!' a:search_command
+  let v:searchforward = a:search_command ==# 'n'
+
+  call setreg('0', reg_0[0], reg_0[1])
+  call setreg('"', reg_u[0], reg_u[1])
+endfunction
+
 
 function! Preserve(command)
   let _s=@/
