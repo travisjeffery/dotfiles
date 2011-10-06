@@ -70,6 +70,7 @@ filetype on
 syntax on
 set autowrite
 set lazyredraw
+set cmdheight=2
 set backspace=indent,eol,start
 set history=1000
 set nostartofline
