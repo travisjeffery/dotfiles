@@ -69,6 +69,7 @@ augroup END
 
 filetype on
 syntax on
+set lazyredraw
 set autowrite
 set cmdheight=2
 set backspace=indent,eol,start
@@ -1571,7 +1572,6 @@ if !has('gui_running')
 endif
 "}}}1
 
-set lazyredraw
 set secure
 
 " vim: foldmethod=marker
