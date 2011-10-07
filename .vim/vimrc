@@ -1065,6 +1065,42 @@ nmap <S-left> g;
 " nmap <left>  <Plug>(jump-x2-to-previous)
 " nmap <right>  <Plug>(jump-x2-to-next)
 
+function! s:jump_section_n(pattern)
+  let pattern = a:pattern[1:]
+  let forward_p = a:pattern[0] == '/'
+  let flags = forward_p ? 'W' : 'Wb'
+
+  mark '
+  let i = 0
+  while i < v:count1
+    if search(pattern, flags) == 0
+      if forward_p
+        normal! G
+      else
+        normal! gg
+      endif
+      break
+    endif
+    let i = i + 1
+  endwhile
+endfunction
+
+" for visual mode.  a:motion is '[[', '[]', ']]' or ']['.
+function! s:jump_section_v(motion)
+  execute 'normal!' "gv\<Esc>"
+  execute 'normal' v:count1 . a:motion
+  let line = line('.')
+  let col = col('.')
+
+  normal! gv
+  call cursor(line, col)
+endfunction
+
+" for operator-pending mode.  a:motion is '[[', '[]', ']]' or ']['.
+function! s:jump_section_o(motion)
+  execute 'normal' v:count1 . a:motion
+endfunction
+
 xmap <C-\>  <Plug>Commentary
 nmap <C-\> <Plug>CommentaryLine
 
@@ -1451,11 +1487,18 @@ command! -nargs=+ Operatorunmap
 \   execute 'nunmap' <q-args>
 \ | execute 'vunmap' <q-args>
 
-
-
-
 Fvmap *  <SID>search_the_selected_text_literaly('n')
 Fvmap #  <SID>search_the_selected_text_literaly('N')
+
+Fvmap <silent> ]]  <SID>jump_section_v(']]')
+Fvmap <silent> ][  <SID>jump_section_v('][')
+Fvmap <silent> [[  <SID>jump_section_v('[[')
+Fvmap <silent> []  <SID>jump_section_v('[]')
+Fomap <silent> ]]  <SID>jump_section_o(']]')
+Fomap <silent> ][  <SID>jump_section_o('][')
+Fomap <silent> [[  <SID>jump_section_o('[[')
+Fomap <silent> []  <SID>jump_section_o('[]')
+
 
 function! s:search_the_selected_text_literaly(search_command)
   let reg_0 = [@0, getregtype('0')]
