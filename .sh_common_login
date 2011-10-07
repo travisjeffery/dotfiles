@@ -73,7 +73,7 @@ if [ "$TERM" = "xterm" ] ; then
 fi
 
 if [ "$COLORTERM" = "gnome-terminal" ]; then
-  export TERM="gnome-256color"
+  export TERM="gnome"
 fi
 
 export CYGHOME="/c/cygwin$HOME"
