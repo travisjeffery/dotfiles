@@ -55,7 +55,7 @@ fi
 export EDITOR=vim
 export PAGER=less
 export SHELL=$(which zsh)
-export TZ=JST-9
+export TZ=EST
 
 case "$ENV_ACCESS" in
   summer)

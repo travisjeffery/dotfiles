@@ -363,12 +363,6 @@ fi
 
 # Functions  #{{{1
 
-devreview() {
-  if [[ -n $1 ]]; then
-    git log --pretty=oneline | egrep "Merge branch '${1}.*' into dev" | awk '{print "https://github.com/nulogy/packmanager/commit/" $1}'
-  fi
-}
-
 if where git &>/dev/null; then
   function prompt-git-head-name() {
     local git_dir="$(git rev-parse --git-dir 2>/dev/null)"
