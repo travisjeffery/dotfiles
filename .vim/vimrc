@@ -800,8 +800,9 @@ vmap s <Plug>VSurround
 xmap s <Plug>VSurround
 " neocomplcache {{{2
 inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
-" inoremap <expr><CR> neocomplcache#smart_close_popup()."\<CR>"
-inoremap <silent><expr><CR> neocomplcache#smart_close_popup()."\<CR>"
+
+nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
+inoremap <expr><CR> <C-r>=neocomplcache#smart_close_popup()<CR><CR>
 
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
@@ -810,7 +811,7 @@ inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
       \neocomplcache#sources#completefunc_complete#call_completefunc('googlesuggest_complete#completefunc')
 " <C-y>: paste.
-inoremap <expr><C-y>  pumvisible() ? neocomplcache#close_popup() :  "\<C-r>\""
+inoremap <expr><C-y>  pumvisible() ? neocomplcache#close_popup() :  "\<C-r>"
 " <C-e>: close popup.
 inoremap <expr><C-e>  pumvisible() ? neocomplcache#cancel_popup() : "\<End>"
 " <C-k>: unite completion.
@@ -821,9 +822,9 @@ inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 
 " <C-n>: neocomplcache.
-inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
+" inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 " <C-p>: keyword completion.
-inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
+" inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
 
 "{{{2
 "{{{2
@@ -1345,7 +1346,6 @@ nnoremap <silent> <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
 nnoremap <silent> <Leader>gf :<C-u>CommandT %%/<CR>
 nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
 nnoremap <silent> <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
-nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
 " Delete the content of the current line (not the line itself).
 nnoremap dl  0d$
 
