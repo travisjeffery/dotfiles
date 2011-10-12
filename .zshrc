@@ -273,6 +273,8 @@ alias ..='cd ..'
 
 alias t='testdrb -Itest'
 
+alias ber='bundle exec ruby'
+alias be='bundle exec'
 
 
 
@@ -503,19 +505,16 @@ bindkey -M viins '^Z' my-screen-to-other
 # Completion  #{{{1
 # by compinstall  #{{{2
 
-# Completion caching
 zstyle ':completion::complete:*' use-cache on
 zstyle ':completion::complete:*' cache-path .zcache
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
-#Completion Options
 zstyle ':completion:*:match:*' original only
 zstyle ':completion::prefix-1:*' completer _complete
 zstyle ':completion:predict:*' completer _complete
 zstyle ':completion:incremental:*' completer _complete _correct
 zstyle ':completion:*' completer _complete _prefix _correct _prefix _match _approximate
 
-# Path Expansion
 zstyle ':completion:*' expand 'yes'
 zstyle ':completion:*' squeeze-shlashes 'yes'
 zstyle ':completion::complete:*' '\\'
@@ -523,7 +522,6 @@ zstyle ':completion::complete:*' '\\'
 zstyle ':completion:*:*:*:default' menu yes select
 zstyle ':completion:*:*:default' force-list always
 
-# GNU Colors 需要/etc/DIR_COLORS文件 否则自动补全时候选菜单中的选项不能彩色显示
 [ -f /etc/DIR_COLORS ] && eval $(dircolors -b /etc/DIR_COLORS)
 export ZLSCOLORS="${LS_COLORS}"
 zmodload  zsh/complist
@@ -537,14 +535,13 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:processes' command 'ps -au$USER'
 
-# Group matches and Describe
 zstyle ':completion:*:matches' group 'yes'
 zstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:options' auto-description '%d'
 zstyle ':completion:*:descriptions' format $'\e[01;33m -- %d --\e[0m'
 zstyle ':completion:*:messages' format $'\e[01;35m -- %d --\e[0m'
 zstyle ':completion:*:warnings' format $'\e[01;31m -- No Matches Found --\e[0m'
-zstyle :compinstall filename '/home/kana/.zshrc'
+zstyle :compinstall filename "/home/$USER/.zshrc"
 
 autoload -Uz compinit
 compinit
