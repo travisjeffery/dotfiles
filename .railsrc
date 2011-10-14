@@ -1,0 +1,57 @@
+# activerecord logging methods
+# very useful for digging into
+# queries
+require 'logger'
+
+def enable_logger
+  log_to(Logger.new(STDOUT))
+end
+
+def disable_logger
+  log_to(nil)
+end
+
+def log_to(logger)
+  ActiveRecord::Base.logger = logger
+  ActiveRecord::Base.clear_active_connections!
+end
+
+# map_by_method
+ActiveRecord::Relation.send :include, MapByMethod
+
+# devise login
+def login(options={})
+  options.reverse_merge! :url => '/users/sign_in', :user => {"login"=>"login", "password"=>"password"}
+  ApplicationController.allow_forgery_protection = false
+  app.post(options[:url] , "user" => options[:user])
+end
+
+# prints nice informations
+# about a Model.
+def show(object)
+  y object.class == Class ? object.column_names.sort : object.class.column_names.sort
+end
+
+def tables
+  y ActiveRecord::Base.connection.tables
+end
+
+# I use this one to dig into Rails core_ext
+class Class
+  def core_ext
+    self.instance_methods.map {|m| [m, self.instance_method(m).source_location] }.select {|m| m[1] && m[1][0] =~/activesupport/}.map {|m| m[0]}.sort
+  end
+end
+
+# https://github.com/cldwalker/hirb/issues/46#issuecomment-1870823
+Pry.config.print = proc do |output, value|
+  Hirb::View.view_or_page_output(value) || Pry::DEFAULT_PRINT.call(output, value)
+end
+
+Hirb.enable
+
+# Hit all models for auto-completion
+ActiveRecord::Base.connection.tables.each {|t| t.singularize.classify.constantize rescue nil }
+
+# logging into console by default
+enable_logger

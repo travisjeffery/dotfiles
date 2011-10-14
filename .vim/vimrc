@@ -839,7 +839,7 @@ function! s:cd_buffer_dir()"{{{
 
   TabpageCD `=l:dir`
 endfunction"}}}2
-nnoremap <ESC><ESC> :redraw\|nohlsearch<CR>
+nnoremap <ESC><ESC> :redraw!\|nohlsearch<CR>
 
 " Fast search pair.
 nnoremap [Space]p %
