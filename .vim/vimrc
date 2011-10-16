@@ -24,7 +24,6 @@ Bundle 'https://github.com/tpope/vim-ragtag.git'
 Bundle 'git@github.com:travisjeffery/vim-rails.git'
 Bundle 'https://github.com/tpope/vim-repeat.git'
 Bundle 'https://github.com/csexton/rvm.vim.git'
-Bundle 'https://github.com/vim-scripts/SearchComplete.git'
 Bundle 'https://github.com/tpope/vim-surround.git'
 Bundle 'https://github.com/scrooloose/syntastic.git'
 Bundle 'https://github.com/kana/vim-textobj-entire.git'
@@ -839,7 +838,7 @@ function! s:cd_buffer_dir()"{{{
 
   TabpageCD `=l:dir`
 endfunction"}}}2
-nnoremap <ESC><ESC> :redraw\|nohlsearch<CR>
+nnoremap <ESC><ESC> :redraw!\|nohlsearch<CR>
 
 " Fast search pair.
 nnoremap [Space]p %
