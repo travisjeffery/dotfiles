@@ -4,3 +4,6 @@
 [submodule ".rbenv"]
 	path = .rbenv
 	url = git://github.com/sstephenson/rbenv.git
+[submodule ".config/awesome"]
+	path = .config/awesome
+	url = git@github.com:travisjeffery/awesome-window-manager-config.git
