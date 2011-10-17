@@ -5,6 +5,8 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/thinca/vim-qfreplace.git'
+Bundle 'https://github.com/Shougo/vimshell.git'
 Bundle 'https://github.com/h1mesuke/vim-alignta.git'
 Bundle 'https://github.com/kien/ctrlp.vim.git'
 Bundle 'git@github.com:travisjeffery/vim-testee.git'
@@ -462,6 +464,9 @@ noremap <leader>rl <Plug>(testee-test-last)
 nmap gD  <SID>(command-line-enter)<C-u>Gred<CR>
 nmap gy  <SID>(command-line-enter)<C-u>Grey<CR>
 "}}}2
+" qfreplace.vim {{{2
+autocmd MyAutoCmd FileType qf nnoremap <buffer> r :<C-u>Qfreplace<CR>
+"{{{2
 let g:snips_author = "Travis Jeffery"
 let g:user_zen_leader_key = '<c-e>'
 let g:use_zen_complete_tag = 1

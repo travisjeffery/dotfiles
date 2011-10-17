@@ -584,6 +584,15 @@ zstyle ':completion:history-words:*' list no
 
 
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+  # RVM: Ruby Version Manager  #{{{2
+  if [ -d "$HOME/.rvm" ]; then
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+  fi
+  #}}}
+
+  # Bundler #{{{2
+  [ -f "$HOME/.sh/bundler-exec.sh" ] && source "$HOME/.sh/bundler-exec.sh"
+
+  #}}}
 # __END__  #{{{1
 # vim: filetype=zsh foldmethod=marker
