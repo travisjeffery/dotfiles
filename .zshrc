@@ -591,7 +591,7 @@ zstyle ':completion:history-words:*' list no
   #}}}
 
   # Bundler #{{{2
-  [ -f "$HOME/.sh/bundler-exec.sh" ] && source "$HOME/.sh/bundler-exec.sh"
+  source "$HOME/.sh/bundler-exec.sh"
 
   #}}}
 # __END__  #{{{1
