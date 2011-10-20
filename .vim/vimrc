@@ -5,6 +5,7 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/pangloss/vim-javascript.git'
 Bundle 'https://github.com/thinca/vim-qfreplace.git'
 Bundle 'https://github.com/Shougo/vimshell.git'
 Bundle 'https://github.com/h1mesuke/vim-alignta.git'
@@ -816,8 +817,8 @@ imap <C-k>  <Plug>(neocomplcache_start_unite_complete)
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 " inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
-inoremap <expr><Space>  pumvisible() ? neocomplcache#close_popup() :  "\<Space>"
-inoremap <expr><C-l>  pumvisible() ? neocomplcache#cancel_popup() :  "\<Space>"
+inoremap <expr><Space>  pumvisible() ? neocomplcache#close_popup()."\<Space>" :  "\<Space>"
+inoremap <expr><C-l>  pumvisible() ? neocomplcache#cancel_popup()."\<Space>" :  "\<Space>"
 inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
 "{{{2
