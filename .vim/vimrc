@@ -807,7 +807,7 @@ xmap s <Plug>VSurround
 " neocomplcache {{{2
 inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
-" inoremap <expr><CR> <C-r>=neocomplcache#smart_close_popup()<CR><CR>
+inoremap <expr><CR> <C-r>=neocomplcache#cancel_popup()<CR><CR>
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
@@ -818,7 +818,7 @@ imap <C-k>  <Plug>(neocomplcache_start_unite_complete)
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 " inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
-inoremap <expr><C-l>  pumvisible() ? neocomplcache#close_popup()."\<Space>" :  "\<Space>"
+inoremap <expr><C-l>  pumvisible() ? neocomplcache#close_popup():  "\<C-p>"
 inoremap <expr><Space>  pumvisible() ? neocomplcache#cancel_popup()."\<Space>" :  "\<Space>"
 inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
