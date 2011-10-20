@@ -811,12 +811,13 @@ inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
       \neocomplcache#sources#completefunc_complete#call_completefunc('googlesuggest_complete#completefunc')
 inoremap <expr><C-y>  pumvisible() ? neocomplcache#close_popup() :  "\<C-r>"
-inoremap <expr><Space>  pumvisible() ? neocomplcache#close_popup() :  "\<Space>"
 inoremap <expr><C-e>  pumvisible() ? neocomplcache#cancel_popup() : "\<End>"
 imap <C-k>  <Plug>(neocomplcache_start_unite_complete)
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
+" inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
+inoremap <expr><Space>  pumvisible() ? neocomplcache#close_popup() :  "\<Space>"
+inoremap <expr><C-l>  pumvisible() ? neocomplcache#cancel_popup() :  "\<Space>"
 inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
 "{{{2
@@ -1039,7 +1040,7 @@ nnoremap VV 0v$h
 nnoremap <Leader>X <c-w><c-h>:set winwidth=80<CR><c-w><c-l>:set winwidth=31<CR><c-w><c-h>
 nnoremap gff <C-w>gf
 " imap (( ()
-inoremap <C-Space> <Right>
+" inoremap <C-Space> <Right>
 nmap <Leader>- i<space><esc>vs-2lxi
 nmap <Leader>+ :<C-u>cd %:p:h<bar>new<Space>
 imap <C-e> <esc>$a
