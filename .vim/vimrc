@@ -43,7 +43,6 @@ Bundle 'https://github.com/Shougo/vimfiler.git'
 Bundle 'http://github.com/mattn/zencoding-vim/'
 Bundle 'https://github.com/vim-scripts/ZoomWin.git'
 Bundle 'https://github.com/gregsexton/gitv.git'
-Bundle 'https://github.com/tpope/vim-commentary.git'
 Bundle 'https://github.com/jgdavey/vim-blockle.git'
 Bundle 'https://github.com/travisjeffery/vim-colors.git'
 Bundle 'https://github.com/kana/vim-grex.git'
@@ -808,6 +807,7 @@ xmap s <Plug>VSurround
 " neocomplcache {{{2
 inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
+silent! iunmap <Cr>
 inoremap <expr><CR> <C-r>=neocomplcache#cancel_popup()<CR><CR>
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
@@ -1008,6 +1008,11 @@ function! s:init_cmdwin()
   inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>"
   startinsert!
 endfunction
+autocmd MyAutoCmd FileType unite call s:unite_settings()
+function! s:unite_settings() "{{{2
+  nnoremap <expr> <Esc> input('Exit unite?[y/N]:') =~? '^y\%[es]$' ? "\<Plug>(unite_exit)" : ''
+endfunction
+"}}}
 function! s:check_back_space()"{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~ '\s'
