@@ -1,0 +1,20 @@
+
+;; ----- smex-history -----
+(
+ eval-buffer
+ clojure-jack-in
+ package-install
+ magit-status
+ cd
+ 5x5
+ arp
+)
+
+;; ----- smex-data -----
+(
+ (magit-status . 1)
+ (package-install . 2)
+ (clojure-jack-in . 8)
+ (clojure-load-file . 1)
+ (eval-buffer . 1)
+)
