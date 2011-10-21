@@ -13,3 +13,6 @@
 [submodule ".emacs.d/vendor/surround"]
 	path = .emacs.d/vendor/surround
 	url = https://github.com/timcharper/evil-surround.git
+[submodule ".emacs.d/vendor/evil"]
+	path = .emacs.d/vendor/evil
+	url = git://gitorious.org/evil/evil.git
