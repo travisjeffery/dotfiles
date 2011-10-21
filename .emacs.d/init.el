@@ -3,6 +3,7 @@
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
 
+
 (when (not package-archive-contents)
   (package-refresh-contents))
 
@@ -63,12 +64,12 @@
           (add-to-list 'name-and-pos (cons name position))))))))
 
 (global-set-key [(super shift t)] 'ido-goto-symbol)
-                                        ; (global-set-key (kbd "A-T") 'ido-goto-symbol)
-
 
 (global-linum-mode)
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message t)
+
+(setq scroll-preserve-screen-position 1)
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
 
