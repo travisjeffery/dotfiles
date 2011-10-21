@@ -1,10 +1,2 @@
 ;;; -*- coding: utf-8 -*-
-(("/Applications/Aquamacs.app/Contents/Resources/etc/NEWS" . 109)
- ("/Users/travis/.emacs.d/el-get/.loaddefs.el" . 686)
- ("/Users/travis/.emacs.d/init.el" . 5478)
- ("/Users/travis/.ido.last" . 23338)
- ("/Users/travis/Library/Application Support/Aquamacs Emacs/elpa/archives/gnu/archive-contents" . 1786)
- ("/Users/travis/Library/Application Support/Aquamacs Emacs/elpa/archives/tromey/archive-contents" . 11669)
- ("/Users/travis/packmanager/Gemfile" . 2474)
- ("/Users/travis/packmanager/test/unit/break_test.rb" . 443)
- ("/Users/travis/rails/Gemfile" . 2319))
+(("/home/travis/packmanager/test/unit/break_test.rb" . 3749))
