@@ -5,6 +5,7 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/thinca/vim-github.git'
 Bundle 'https://github.com/pangloss/vim-javascript.git'
 Bundle 'https://github.com/thinca/vim-qfreplace.git'
 Bundle 'https://github.com/Shougo/vimshell.git'
