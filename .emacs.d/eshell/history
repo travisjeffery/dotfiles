@@ -1,0 +1,6 @@
+ls
+type ruby
+bundle exec rake db:load
+bundle
+gem install bundler
+exit

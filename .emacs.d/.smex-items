@@ -1,20 +1,29 @@
 
 ;; ----- smex-history -----
 (
- eval-buffer
- clojure-jack-in
+ smex
+ ruby-mode
  package-install
  magit-status
- cd
- 5x5
- arp
+ occur
+ find-name-dired
+ eshell
 )
 
 ;; ----- smex-data -----
 (
- (magit-status . 1)
- (package-install . 2)
+ (magit-status . 8)
+ (package-install . 10)
  (clojure-jack-in . 8)
  (clojure-load-file . 1)
  (eval-buffer . 1)
+ (ruby-mode . 2)
+ (regexp-builder . 1)
+ (eshell . 1)
+ (find-name-dired . 2)
+ (occur . 1)
+ (magit-log-mode . 1)
+ (magit-diff-working-tree . 1)
+ (magit-diff . 1)
+ (smex . 1)
 )
