@@ -393,13 +393,13 @@ augroup END"}}}2
 "}}}1
 " Section: Plugins {{{1
 " Solarized{{{2
-let g:solarized_termtrans=0
-let g:solarized_degrade=0
-let g:solarized_bold=1
-let g:solarized_underline=1
-let g:solarized_italic=1
-let g:solarized_diffmode="normal"
-let g:solarized_hitrail=0
+" let g:solarized_termtrans=0
+" let g:solarized_degrade=0
+" let g:solarized_bold=1
+" let g:solarized_underline=1
+" let g:solarized_italic=1
+" let g:solarized_diffmode="normal"
+" let g:solarized_hitrail=0
 " let g:solarized_termcolors = 256 
 let g:solarized_visibility = "high" 
 let g:solarized_contrast = "high" 
@@ -1449,7 +1449,8 @@ function! s:cmd_SuspendWithAutomticCD()
     " there are extra leading whitespaces in the cd script.
     silent execute '!screen -X eval'
     \              '''select another'''
-    \              '''stuff "  cd \"'.getcwd().'\"  \#\#,vim-auto-cd\015"'''
+    \              '''stuff "  cd \"'.getcwd().'\"  '
+    " \#\#,vim-auto-cd\015"'''
     redraw!
     let s:GNU_SCREEN_AVAILABLE_P = (v:shell_error == 0)
   endif
@@ -1459,6 +1460,19 @@ function! s:cmd_SuspendWithAutomticCD()
   endif
 endfunction
 
+function! s:activate_terminal()  "{{{2
+  if !has('gui_running')
+    return
+  endif
+
+  if has('macunix')
+    " There is alternative way to activate, but it's slow:
+    " !osascript -e 'tell application "Terminal" to activate the front window'
+    silent !open -a Terminal
+  else
+    " This platform is not supported.
+  endif
+endfunction
 
 " Show the lines which match to the last search pattern.
 Cnmap <count> g/  global//print
