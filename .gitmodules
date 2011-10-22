@@ -16,3 +16,9 @@
 [submodule ".emacs.d/vendor/evil"]
 	path = .emacs.d/vendor/evil
 	url = git://gitorious.org/evil/evil.git
+[submodule ".emacs.d/el-get/el-get"]
+	path = .emacs.d/el-get/el-get
+	url = https://github.com/dimitri/el-get.git
+[submodule ".emacs.d/el-get/textmate"]
+	path = .emacs.d/el-get/textmate
+	url = https://github.com/defunkt/textmate.el.git
