@@ -200,6 +200,7 @@ function prompt_setup() {
   local c_green=$'\e[32m'
   local c_red=$'\e[31m'
   local c_yellow=$'\e[33m'
+  local c_blue=$'\e[34m'
 
   local c_user
   case "$USER" in
@@ -231,7 +232,7 @@ function prompt_setup() {
     t_hosname='%m'
   fi
   local t_host="$c_user%n$c_reset$c_host@$t_hosname$c_reset"
-  local t_cwd="$c_yellow%~$c_reset"
+  local t_cwd="$c_blue%~$c_reset"
   local t_main='%(!.#.>) '
   if [[ 2 -le $SHLVL ]]; then  # is nested interactive shell?
     local t_shlvl=' ($SHLVL)'
@@ -243,6 +244,7 @@ function prompt_setup() {
 $t_host $t_cwd$t_shlvl\$(prompt-git-head-name)
 $t_main"
 }
+
 
 prompt_setup
 unset -f prompt_setup
@@ -546,8 +548,58 @@ zstyle :compinstall filename "/home/$USER/.zshrc"
 autoload -Uz compinit
 compinit
 
+autoload promptinit
+promptinit
 
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats '(%s)-[%b]'
+zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+precmd () {
+    psvar=()
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+}
+RPROMPT="%1(v|%F{green}%1v%f|)"
 
+# surround.vimみたいにクォートで囲む <<<
+# http://d.hatena.ne.jp/mollifier/20091220/p1
+
+autoload -U modify-current-argument
+
+# シングルクォート用
+_quote-previous-word-in-single() {
+    modify-current-argument '${(qq)${(Q)ARG}}'
+    zle vi-forward-blank-word
+}
+zle -N _quote-previous-word-in-single
+bindkey '^[q' _quote-previous-word-in-single
+
+# ダブルクォート用
+_quote-previous-word-in-double() {
+    modify-current-argument '${(qqq)${(Q)ARG}}'
+    zle vi-forward-blank-word
+}
+zle -N _quote-previous-word-in-double
+bindkey '^[Q' _quote-previous-word-in-double
+# >>>
+
+### search history ### <<<
+autoload history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^P" history-beginning-search-backward-end
+bindkey "^N" history-beginning-search-forward-end
+
+# ^R, ^S: history-incremental-pattern-search-(forward|backward) <<<
+autoload -Uz is-at-least
+if is-at-least 4.3.10; then
+    # http://subtech.g.hatena.ne.jp/secondlife/20110222/1298354852
+    # http://subtech.g.hatena.ne.jp/mayuki/20110310/1299761759
+    # zsh 4.3.10 でないと動かない
+    bindkey '^R' history-incremental-pattern-search-backward
+    bindkey '^S' history-incremental-pattern-search-forward
+fi
+# >>>
 
 # Misc.  #{{{2
 
