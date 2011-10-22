@@ -5,6 +5,8 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/vim-scripts/Align.git'
+Bundle 'https://github.com/vim-scripts/SQLUtilities.git'
 Bundle 'https://github.com/thinca/vim-github.git'
 Bundle 'https://github.com/pangloss/vim-javascript.git'
 Bundle 'https://github.com/thinca/vim-qfreplace.git'
@@ -1008,10 +1010,6 @@ function! s:init_cmdwin()
   inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>"
   startinsert!
 endfunction
-autocmd MyAutoCmd FileType unite call s:unite_settings()
-function! s:unite_settings() "{{{2
-  nnoremap <expr> <Esc> input('Exit unite?[y/N]:') =~? '^y\%[es]$' ? "\<Plug>(unite_exit)" : ''
-endfunction
 "}}}
 function! s:check_back_space()"{{{
   let col = col('.') - 1
@@ -1067,8 +1065,8 @@ nmap <Leader>/f /^ *def\><CR>
 nmap <Leader>/c /^ *class\><CR>
 nmap <Leader>/i /^ *if\><CR>
 nmap <Leader>df d/\(^ *def\>\)\\|\%$<CR>
-nmap <Leader>a= :Tabularize /=<CR>
-vmap <Leader>a= :Tabularize /=<CR>
+" nmap <Leader>a= :Tabularize /=<CR>
+" vmap <Leader>a= :Tabularize /=<CR>
 nmap <Leader>a: :Tabularize /:\zs<CR>
 vmap <Leader>a: :Tabularize /:\zs<CR>
 nmap <Leader>a :Tabularize /
