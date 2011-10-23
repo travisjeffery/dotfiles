@@ -1,3 +1,5 @@
+source $HOME/.sh_common_login
+
 autoload -U compinit
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
@@ -28,12 +30,6 @@ bindkey -e
 
 #
 # Set environment variables
-#
-#PATH="/sbin:/bin:/usr/sbin:/usr/lib/ccache/bin:/usr/bin"
-PATH="$HOME/.local/bin:$PATH"
-PATH="$HOME/.gem/ruby/1.9.1/bin:$PATH"
-PATH="$HOME/bin:/usr/lib/ccache/bin:$PATH"
-export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/X11R6/bin"
 
 #if [ -x "`whence llvm-gcc`" ]; then
 #    export CC="llvm-gcc"

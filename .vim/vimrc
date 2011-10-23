@@ -5,6 +5,7 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/vim-scripts/VimClojure.git'
 Bundle 'https://github.com/vim-scripts/Align.git'
 Bundle 'https://github.com/vim-scripts/SQLUtilities.git'
 Bundle 'https://github.com/thinca/vim-github.git'
@@ -459,9 +460,9 @@ nnoremap [Space]gw :<C-u>Gwrite<CR>
 nnoremap [Space]gv :<C-u>Gitv<CR>
 "}}}2
 " Testee {{{2
-noremap <leader>rt <Plug>(testee-test-case)
-noremap <leader>rf <Plug>(testee-test-file)
-noremap <leader>rl <Plug>(testee-test-last)
+" noremap <leader>rt <Plug>(testee-test-case)
+" noremap <leader>rf <Plug>(testee-test-file)
+" noremap <leader>rl <Plug>(testee-test-last)
 "}}}2
 " grex {{{2
 nmap gD  <SID>(command-line-enter)<C-u>Gred<CR>
