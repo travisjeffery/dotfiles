@@ -1,650 +1,143 @@
-# My zshrc.
-source ~/.sh_common_login
-
-# Misc.  #{{{1
-
-umask 077  # Default permission
-ulimit -c 0  # Don't create core dumps
-bindkey -v  # vi!  vi!
-
-
-
-
-
-
-
-
-# Parameters  #{{{1
-
-case "$ENV_WORKING" in
-  avril)
-    export CDPATH="$(echo . ~/{working,Downloads,} | tr ' ' ':')"
-    ;;
-  summer)
-    export CDPATH="$(echo . ~/freq{,/latest{,/working,/u}} | tr ' ' ':')"
-    ;;
-  *)
-    export CDPATH="$(echo . ~/{working,} | tr ' ' ':')"
-    ;;
-esac
-HISTFILE=~/.zsh_history
-HISTSIZE=100000
-SAVEHIST=100000
-
-
-
-
-
-
-
-
-# Options  #{{{1
-
-# aliases
-unsetopt all_export
-# always_last_prompt
-# always_to_end
-setopt append_history
-setopt auto_cd
-# auto_continue
-setopt auto_list
-setopt auto_menu
-# auto_name_dirs
-setopt auto_param_keys
-setopt auto_param_slash
-# auto_pushd
-setopt auto_remove_slash
-# auto_resume
-setopt bad_pattern
-setopt bang_hist
-# bare_glob_qual
-# setopt bash_auto_list
-unsetopt beep
-# bg_nice
-# brace_ccl
-# bsd_echo
-setopt case_glob
-# c_bases
-unsetopt cdable_vars
-# chase_dots
-# chase_links
-setopt check_jobs
-# clobber
-# complete_aliases
-# complete_in_word
-# correct
-# correct_all
-# csh_junkie_history
-# csh_junkie_loops
-# csh_junkie_quotes
-# csh_null_glob
-# csh_nullcmd
-# dvorak
-# emacs
-# equals
-# err_exit
-# err_return
-# exec
-setopt extended_glob
-# extended_history
-# flow_control
-# function_argzero
-setopt glob
-# glob_assign
-setopt glob_complete
-# glob_dots
-# glob_subst
-# global_export
-# global_rcs
-# hash_cmds
-# hash_dirs
-# hash_list_all
-# hist_allow_clobber
-# hist_beep
-# hist_expire_dups_first
-# hist_find_no_dups
-# hist_ignore_all_dups
-setopt hist_ignore_dups
-setopt hist_ignore_space
-# hist_no_functions
-# hist_no_store
-# hist_reduce_blanks
-# hist_save_no_dups
-# hist_verify
-# hup
-# ignore_braces
-setopt ignore_eof
-# inc_append_history
-# interactive
-setopt interactive_comments
-# ksh_arrays
-# ksh_autoload
-# ksh_glob
-# ksh_option_print
-# ksh_typeset
-setopt list_ambiguous
-# list_beep
-setopt list_packed
-# list_rows_first
-setopt list_types
-# local_options
-# local_traps
-# login
-setopt long_list_jobs
-# magic_equal_subst
-# mail_warning
-# mark_dirs
-setopt menu_complete
-# monitor
-setopt multios
-setopt nomatch
-# notify
-unsetopt null_glob
-# numeric_glob_sort
-# octal_zeroes
-# overstrike
-# path_dirs
-# posix_builtins
-setopt print_eight_bit
-# print_exit_value
-# privileged
-# prompt_bang
-# prompt_cr
-setopt prompt_percent
-setopt prompt_subst
-# pushd_ignore_dups
-# pushd_minus
-# pushd_silent
-# pushd_to_home
-setopt rc_expand_param
-# rc_quotes
-# rcs
-# rec_exact
-# restricted
-# rm_star_silent
-# rm_star_wait
-# sh_file_expansion
-# sh_glob
-# sh_nullcmd
-# sh_option_letters
-# sh_word_split
-setopt share_history
-# shin_stdin
-# short_loops
-# single_command
-# single_line_zle
-# sun_keyboard_hack
-setopt transient_rprompt
-# typeset_silent
-# unset
-# verbose
-# vi
-# xtrace
-setopt zle
-
-
-
-
-
-
-
-
-# Prompt  #{{{1
-#
-# user@host cwd (shlvl)
-# $
-
-function prompt_setup() {
-  local c_reset=$'\e[0m'
-  local c_cyan=$'\e[36m'
-  local c_green=$'\e[32m'
-  local c_red=$'\e[31m'
-  local c_yellow=$'\e[33m'
-  local c_blue=$'\e[34m'
-
-  local c_user
-  case "$USER" in
-    root)
-      c_user="$c_red"
-      ;;
-    *)
-      c_user="$c_green"
-      ;;
-  esac
-  local c_host
-  case "$HOST" in
-    winter)
-      c_host="$c_cyan"
-      ;;
-    *)
-      if [ "$ENV_WORKING" != "$ENV_ACCESS" ]; then
-        c_host="$c_cyan"
-      else
-        c_host="$c_green"
-      fi
-      ;;
-  esac
-
-    # On Mac OS X, %m may be expanded to an IP address.
-    # Use the computer name from System Preferences if available.
-  local t_hosname="$(scutil --get ComputerName 2>/dev/null)"
-  if [ "$?" != 0 ]; then
-    t_hosname='%m'
-  fi
-  local t_host="$c_user%n$c_reset$c_host@$t_hosname$c_reset"
-  local t_cwd="$c_blue%~$c_reset"
-  local t_main='%(!.#.>) '
-  if [[ 2 -le $SHLVL ]]; then  # is nested interactive shell?
-    local t_shlvl=' ($SHLVL)'
-  else
-    local t_shlvl=''
-  fi
-
-  PS1="
-$t_host $t_cwd$t_shlvl\$(prompt-git-head-name)
-$t_main"
-}
-
-
-prompt_setup
-unset -f prompt_setup
-
-
-
-
-
-
-
-
-# Aliases  #{{{1
-# common  #{{{2
-
-# alias ls='ls --show-control-chars --color=auto'
-alias la='ls -a'
-alias ll='ls -l'
-alias lal='ls -al'
-alias lla='ls -la'
-alias altr='ls -altr'
-
-alias v='vim'
-alias g='git'
-alias gs='git svn'
-alias screen='LANG= screen'
-
-alias ..='cd ..'
-
-alias t='testdrb -Itest'
-
-alias ber='bundle exec ruby'
-alias be='bundle exec'
-
-
-
-# colinux only  #{{{2
-
-if [ "$ENV_WORKING" = 'winter' ]; then
-  alias shutdown-colinux='sudo halt; exit'
-
-  # mount wrappers  #{{{
-  alias mount-c='mount-x c'
-  alias umount-c='umount-x c'
-
-  #alias mount-c='mount-c-smbfs'
-  #alias umount-c='sudo umount /c'
-  alias mount-c-cofs='sudo mount -t cofs cofs0 /c -o defaults,noatime,noexec,user,uid=$USER,gid=users'
-  #alias mount-c-smbfs='sudo mount -t smbfs "//windows/C\$" /c -o defaults,noatime,user,uid=$USER,gid=users,fmask=0644,dmask=0755,username=$USER'
-
-  alias mount-x='mount-x-samba'
-  alias umount-x='umount-x-samba'
-
-  function mount-x-samba() {
-    if [ $# != 1 ]; then
-      echo "Usage: $0 {drive-letter}"
-      return 1
-    fi
-    sudo mount -t smbfs \
-         "//windows/$(echo "$1" | tr '[:lower:]' '[:upper:]')\$" "/$1" \
-         -o "defaults,noatime,user,uid=$USER,gid=users,fmask=0644,dmask=0755,username=$USER"
-  }
-  function umount-x-samba() {
-    if [ $# != 1 ]; then
-      echo "Usage: $0 {drive-letter}"
-      return 1
-    fi
-    sudo umount "/$1"
-  }
-
-  function mount-x-sshfs() {
-    if [ $# != 1 ]; then
-      echo "Usage: $0 {drive-letter}"
-      return 1
-    fi
-    sshfs "cygwin:/cygdrive/$1" "/$1"
-  }
-  function umount-x-sshfs() {
-    if [ $# != 1 ]; then
-      echo "Usage: $0 {drive-letter}"
-      return 1
-    fi
-    fusermount -u "/$1"
-  }
-  #}}}
-
-  function backup-repos() {  #{{{
-    local datetime=$(date '+%Y-%m-%dT%H-%M-%S')
-
-    for i in cereja config meta nicht vim
-    do
-      pushd ~/freq/latest/working/$i &>/dev/null
-        echo "Processing $i ..."
-        git gc
-        tar jcf /c/cygwin/home/$USER/var/$datetime-git-$i.tar.bz2 .git/
-        # # disabled, it's somewhat dangerous.
-        # # if dcommit is necessary, do it manually.
-        # git-svn dcommit
-      popd &>/dev/null
-    done
-
-    ssh cygwin <<END
-    pushd ~/var &>/dev/null
-      # # experimental: disabled to fully migrate to git.
-      # for i in cereja nicht repos vim
-      # do
-      #   tar jcf $datetime-svn-\$i.tar.bz2 svn-\$i/
-      # done
-      cp -av $datetime-*.tar.bz2 /e/backup/repos/
-    popd &>/dev/null
-END
-  }  #}}}
-fi
-
-
-
-
-
-
-
-
-# Functions  #{{{1
-
-if where git &>/dev/null; then
-  function prompt-git-head-name() {
-    local git_dir="$(git rev-parse --git-dir 2>/dev/null)"
-    if [ -z "$git_dir" ]; then
-      return 1
-    fi
-
-    local head_name=''
-    local additional_info=''
-    if [ -d "$git_dir/rebase-apply" ]; then
-      if [ -f "$git_dir/rebase-apply/rebasing" ]; then
-        additional_info="REBASE"
-      elif [ -f "$git_dir/rebase-apply/applying" ]; then
-        additional_info="AM"
-      else
-        additional_info="AM/REBASE"
-      fi
-      head_name="$(git symbolic-ref HEAD 2>/dev/null)"
-    elif [ -f "$git_dir/rebase-merge/interactive" ]; then
-      additional_info="REBASE-i"
-      head_name="$(< "$git_dir/rebase-merge/head-name")"
-    elif [ -d "$git_dir/rebase-merge" ]; then
-      additional_info="REBASE-m"
-      head_name="$(< "$git_dir/rebase-merge/head-name")"
-    elif [ -f "$git_dir/MERGE_HEAD" ]; then
-      additional_info="MERGING"
-      head_name="$(git symbolic-ref HEAD 2>/dev/null)"
-    fi
-    if [ -z "$head_name" ]; then
-      head_name="$(git branch | sed -e 's/^\* //;t;d')"
-      if [ "$head_name" = '(no branch)' ]; then
-        # "git branch" doesn't show the correct name of a branch after
-        # "git checkout {commitish-and-not-the-head-of-a-branch}",
-        # so we have to use another method to get the name of {commitish}.
-        head_name="($(
-          {
-            fgrep 'checkout: moving from ' "$git_dir/logs/HEAD" |
-            sed '$s/^.* to \([^ ]*\)$/\1/;t;d'
-          } 2>/dev/null
-        ))"
-      elif [ "$head_name" = '' ]; then
-        head_name='(just initialized; nothing commited)'
-      fi
-    else
-      head_name="${head_name##refs/heads/}"
-    fi
-    if [ -n "$additional_info" ]; then
-      additional_info="|$additional_info"
-    fi
-
-    echo " [$head_name$additional_info]"
-    return 0
-  }
-else
-  function prompt-git-head-name() {
-    echo ''
-  }
-fi
-
-
-
-
-
-
-
-
-# Line Editor  #{{{1
-# Vim-like behavior  #{{{2
-
-# Another Esc key.
-bindkey -M viins '\C-@' vi-cmd-mode
-bindkey -M vicmd '\C-@' vi-cmd-mode
-
-# to delete characters beyond the starting point of the current insertion.
-bindkey -M viins '\C-h' backward-delete-char
-bindkey -M viins '\C-w' backward-kill-word
-bindkey -M viins '\C-u' backward-kill-line
-
-# undo/redo more than once.
-bindkey -M vicmd 'u' undo
-bindkey -M vicmd '\C-r' redo
-
-# history
-bindkey -M vicmd '/' history-incremental-search-backward
-bindkey -M vicmd '?' history-incremental-search-forward
-bindkey -M vicmd '^[k' history-beginning-search-backward
-bindkey -M vicmd '^[j' history-beginning-search-forward
-bindkey -M viins '^p' history-beginning-search-backward
-bindkey -M viins '^n' history-beginning-search-forward
-bindkey "^[[A" history-beginning-search-backward
-bindkey "^[[B" history-beginning-search-forward
-bindkey -M vicmd 'gg' beginning-of-history
-
-# modification
-bindkey -M vicmd 'gu' down-case-word
-bindkey -M vicmd 'gU' up-case-word
-bindkey -M vicmd 'g~' vi-oper-swap-case
-
-# show current mode
-function zle-line-init zle-keymap-select {
-    RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
-    RPS2=$RPS1
-    zle reset-prompt
-}
-zle -N zle-line-init
-zle -N zle-keymap-select
-
-
-
-# Misc.  #{{{2
-
-bindkey -M vicmd '\C-t' transpose-chars
-bindkey -M viins '\C-t' transpose-chars
-bindkey -M vicmd '^[t' transpose-words
-bindkey -M viins '^[t' transpose-words
-
-# Disable - the default binding _history-complete-older is very annoying
-# whenever I begin to search with the same key sequence.
-bindkey -M viins -r '^[/'
-
-# Experimental: Alternate keys to the original bindings.
-bindkey -M viins '^[,' _history-complete-newer
-bindkey -M viins '^[.' _history-complete-older
-
-# Hot key to continue a Vim process from the previous pseudo-:suspend.
-my-screen-to-other () { screen -X other; }
-zle -N my-screen-to-other
-bindkey -M vicmd '^Z' my-screen-to-other
-bindkey -M viins '^Z' my-screen-to-other
-
-
-
-
-
-
-
-
-# Completion  #{{{1
-# by compinstall  #{{{2
-
-zstyle ':completion::complete:*' use-cache on
-zstyle ':completion::complete:*' cache-path .zcache
-zstyle ':completion:*:cd:*' ignore-parents parent pwd
-
-zstyle ':completion:*:match:*' original only
-zstyle ':completion::prefix-1:*' completer _complete
-zstyle ':completion:predict:*' completer _complete
-zstyle ':completion:incremental:*' completer _complete _correct
-zstyle ':completion:*' completer _complete _prefix _correct _prefix _match _approximate
-
-zstyle ':completion:*' expand 'yes'
-zstyle ':completion:*' squeeze-shlashes 'yes'
-zstyle ':completion::complete:*' '\\'
-
-zstyle ':completion:*:*:*:default' menu yes select
-zstyle ':completion:*:*:default' force-list always
-
-[ -f /etc/DIR_COLORS ] && eval $(dircolors -b /etc/DIR_COLORS)
-export ZLSCOLORS="${LS_COLORS}"
-zmodload  zsh/complist
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31' 
-
-zstyle ':completion:*' completer _complete _match _approximate
-zstyle ':completion:*:match:*' original only
-zstyle ':completion:*:approximate:*' max-errors 1 numeric
-
-zstyle ':completion:*:*:kill:*' menu yes select
-zstyle ':completion:*:processes' command 'ps -au$USER'
-
-zstyle ':completion:*:matches' group 'yes'
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:options' auto-description '%d'
-zstyle ':completion:*:descriptions' format $'\e[01;33m -- %d --\e[0m'
-zstyle ':completion:*:messages' format $'\e[01;35m -- %d --\e[0m'
-zstyle ':completion:*:warnings' format $'\e[01;31m -- No Matches Found --\e[0m'
-zstyle :compinstall filename "/home/$USER/.zshrc"
-
-autoload -Uz compinit
-compinit
-
-autoload promptinit
-promptinit
-
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' formats '(%s)-[%b]'
-zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
-precmd () {
-    psvar=()
-    LANG=en_US.UTF-8 vcs_info
-    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-}
-RPROMPT="%1(v|%F{green}%1v%f|)"
-
-# surround.vimみたいにクォートで囲む <<<
-# http://d.hatena.ne.jp/mollifier/20091220/p1
-
-autoload -U modify-current-argument
-
-# シングルクォート用
-_quote-previous-word-in-single() {
-    modify-current-argument '${(qq)${(Q)ARG}}'
-    zle vi-forward-blank-word
-}
-zle -N _quote-previous-word-in-single
-bindkey '^[q' _quote-previous-word-in-single
-
-# ダブルクォート用
-_quote-previous-word-in-double() {
-    modify-current-argument '${(qqq)${(Q)ARG}}'
-    zle vi-forward-blank-word
-}
-zle -N _quote-previous-word-in-double
-bindkey '^[Q' _quote-previous-word-in-double
-# >>>
-
-### search history ### <<<
+autoload -U compinit
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
+bindkey "^[[A" history-beginning-search-backward-end
+bindkey "^[[B" history-beginning-search-forward-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
-# ^R, ^S: history-incremental-pattern-search-(forward|backward) <<<
-autoload -Uz is-at-least
-if is-at-least 4.3.10; then
-    # http://subtech.g.hatena.ne.jp/secondlife/20110222/1298354852
-    # http://subtech.g.hatena.ne.jp/mayuki/20110310/1299761759
-    # zsh 4.3.10 でないと動かない
-    bindkey '^R' history-incremental-pattern-search-backward
-    bindkey '^S' history-incremental-pattern-search-forward
-fi
-# >>>
+compinit
 
-# Misc.  #{{{2
+zstyle ':completion::complete:*' use-cache 1
 
-# Generate functions like the followings to enable the default completion of
-# zsh for user-defined aliases of git commands.  Because such aliases aren't
-# automatically recognized by zsh.
+setopt EXTENDED_GLOB AUTO_PUSHD LISTPACKED \
+       AUTOREMOVESLASH HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS \
+       SHARE_HISTORY APPEND_HISTORY
+setopt NO_BEEP
+
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE="10000"
+SAVEHIST="10000"
+
+NULL="/dev/null"
+
+bindkey -e
+
+#[[ -e "/etc/zsh/zprofile" ]] && source /etc/zsh/zprofile
+
 #
-#   _git-$alias_name() {
-#     _git-$original_command "$@"
-#   }
+# Set environment variables
+#
+#PATH="/sbin:/bin:/usr/sbin:/usr/lib/ccache/bin:/usr/bin"
+PATH="$HOME/.local/bin:$PATH"
+PATH="$HOME/.gem/ruby/1.9.1/bin:$PATH"
+PATH="$HOME/bin:/usr/lib/ccache/bin:$PATH"
+export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/X11R6/bin"
 
-_git  # FIXME: force loading as necessary
-source <(
-  git config --global --list |
-    sed -e '/!/!s/^alias\.\([^=]*\)=\(.*\)$/\1 \2/;t;d' |
-    awk '{
-      print "_git-" $1 "() {"
-      print "  _git-" $2 " \"\$@\""
-      print "}"
-    }'
-)
+#if [ -x "`whence llvm-gcc`" ]; then
+#    export CC="llvm-gcc"
+#    export CXX="llvm-g++"
+#fi
+
+if [ -x "`whence vim`" ]; then
+    export EDITOR="`whence vim`"
+    alias vi="`whence vim`"
+else
+    export EDITOR="`whence vi`"
+fi
+
+if [ -x "`whence lv`" ]; then
+    export PAGER="`whence lv`"
+    export LV="-c"
+elif [ -x "`whence less`" ]; then
+    export PAGER="`whence less`"
+    export LESS="-isR"
+    alias lv="less"
+else
+    export PAGER="/bin/more"
+fi
+
+#
+# Set aliases
+#
+
+setopt complete_aliases
+
+case "$OSTYPE" in
+    linux*)
+	alias ls="/bin/ls -A --color=auto"
+	export LS_COLORS='no=00:fi=00:di=01;36:ln=00;35:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32:'
+	zstyle ':completion:*' list-colors 'di=01;36' 'ln=00;35' 'so=01;35' 'ex=01;32' 'bd=40;33;01' 'cd=40;33;01'
+	alias -g pg="-pg -g -static -lc_p"
+	;;
+    freebsd*)
+        alias ls="/bin/ls -AGw"
+        alias fetch="fetch -r"
+        ;;
+    *)
+	alias ls="/bin/ls -A"
+	;;
+esac
+
+# if [ -x "`whence mvn`" ]; then
+    # alias mvn="`whence mvn` -DarchetypeGroupId=org.naniyueni -DarchetypeArtifactId=template -DarchetypeVersion=1.0 -DgroupId=org.naniyueni"
+# fi
 
 
-# Don't show matches as a list for _history-complete-older and
-# _history-complete-newer.  Because number of matches is usually very big so
-# the list for them is annoying.
+[[ -x "`whence gmcs`" ]] && alias gmcs="gmcs -out:a.out" mcs=gmcs
+[[ -x "`whence powerpill`" ]] && alias pacman="`whence powerpill` --nomessages"
+[[ -x "`whence rascut`" ]] && alias rascut="_JAVA_OPTIONS=-Duser.language=en `whence rascut`"
+[[ -x "`whence mplayer`" ]] && alias mplayer="`whence mplayer` -softvol"
+[[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
 
-zstyle ':completion:history-words:*' list no
+alias ll="ls -l"
+alias lz="ll -Z"
+alias df="df -h"
+alias du="du -h"
+alias gprof="gprof -b"
+alias cdrecord="cdrecord driveropts=burnfree"
+alias wodim="wodim driveropts=burnfree"
+alias emacs="emacs -nw"
+# alias yaourt="yaourt --tmp /home/tmp"
+alias display="display -geometry +0+0"
+alias rhino="rlwrap java -jar /usr/share/java/js.jar"
 
+PROG="`whence virtualenv`"
+[ -x "$PROG" ] && alias virtualenv="$PROG --no-site-packages"
 
+SCREEN_PROG="`whence screen`"
+[ -x "$SCREEN_PROG" ] && [ -n "$STY" ] && alias exit="$SCREEN_PROG -d $STY"
 
+TMUX_PROG="`whence tmux`"
+[ -x "$TMUX_PROG" ] && [ -n "$TMUX" ] && alias exit="$TMUX_PROG detach"
 
+#
+# Set prompt
+#
+PROMPT="[%~]
+[%n@%M]%# "
 
+# ulimit -c unlimited
+umask 072
 
+if [ "$PS1" -a `uname -s` = "Linux" ]; then
+    mkdir -p -m 0700 /dev/cgroup/cpu/user/$$ > /dev/null 2>&1
+    echo $$ > /dev/cgroup/cpu/user/$$/tasks
+    echo 1 > /dev/cgroup/cpu/user/$$/notify_on_release
+fi
 
+source $HOME/.zsh/zaw/zaw.zsh
+bindkey '^R' zaw-history
+zstyle ':filter-select:highlight' matched fg=yellow,standout
+zstyle ':filter-select' max-lines 10 
+zstyle ':filter-select' max-lines -10 
+zstyle ':filter-select' case-insensitive yes
+zstyle ':filter-select' extended-search yes
 
-  # RVM: Ruby Version Manager  #{{{2
-  if [ -d "$HOME/.rvm" ]; then
-    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-  fi
-  #}}}
+source $HOME/.zsh/auto-fu.zsh/auto-fu.zsh
+zle-line-init () {auto-fu-init;}; zle -N zle-line-init
+zstyle ':completion:*' completer _oldlist _complete
+zle -N zle-keymap-select auto-fu-zle-keymap-select
+zstyle ':auto-fu:var' postdisplay $''
 
-  # Bundler #{{{2
-  source "$HOME/.sh/bundler-exec.sh"
-
-  #}}}
-# __END__  #{{{1
-# vim: filetype=zsh foldmethod=marker
