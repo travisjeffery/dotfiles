@@ -117,11 +117,11 @@ PROMPT="[%~]
 # ulimit -c unlimited
 umask 072
 
-if [ "$PS1" -a `uname -s` = "Linux" ]; then
-    mkdir -p -m 0700 /dev/cgroup/cpu/user/$$ > /dev/null 2>&1
-    echo $$ > /dev/cgroup/cpu/user/$$/tasks
-    echo 1 > /dev/cgroup/cpu/user/$$/notify_on_release
-fi
+# if [ "$PS1" -a `uname -s` = "Linux" ]; then
+#     mkdir -p -m 0700 /dev/cgroup/cpu/user/$$ > /dev/null 2>&1
+#     echo $$ > /dev/cgroup/cpu/user/$$/tasks
+#     echo 1 > /dev/cgroup/cpu/user/$$/notify_on_release
+# fi
 
 source $HOME/.zsh/zaw/zaw.zsh
 bindkey '^R' zaw-history
