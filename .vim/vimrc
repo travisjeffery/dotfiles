@@ -1,10 +1,12 @@
 " Section: Options {{{1
 set nocompatible
 
+let s:iswin = has('win32') || has('win64')
 " Vundle {{{2
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'git://github.com/Shougo/vim-vcs.git'
 Bundle 'https://github.com/vim-scripts/VimClojure.git'
 Bundle 'https://github.com/vim-scripts/Align.git'
 Bundle 'https://github.com/vim-scripts/SQLUtilities.git'
@@ -470,7 +472,7 @@ nmap gy  <SID>(command-line-enter)<C-u>Grey<CR>
 "}}}2
 " qfreplace.vim {{{2
 autocmd MyAutoCmd FileType qf nnoremap <buffer> r :<C-u>Qfreplace<CR>
-"{{{2
+" Misc {{{2
 let g:snips_author = "Travis Jeffery"
 let g:user_zen_leader_key = '<c-e>'
 let g:use_zen_complete_tag = 1
@@ -537,7 +539,146 @@ let g:surround_indent = 1
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_safe_mode_by_default = 0
 let g:vimfiler_enable_clipboard = 0
-let g:vimshell_cd_command = 'TabpageCD'
+" vimshell.vim"{{{
+"let g:vimshell_user_prompt = "3\ngetcwd()"
+"let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+"let g:vimshell_user_prompt = 'printf("%s  %50s", fnamemodify(getcwd(), ":~"), vimshell#vcs#info("(%s)-[%b]"))'
+let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+let g:vimshell_right_prompt = 'vcs#info("(%s)-[%b]%p", "(%s)-[%b|%a]%p")'
+let g:vimshell_prompt = '% '
+"let g:vimshell_environment_term = 'xterm'
+" let g:vimshell_cd_command = 'TabpageCD'
+let g:vimshell_split_command = ''
+
+if s:iswin
+  " Display user name on Windows.
+  "let g:vimshell_prompt = $USERNAME."% "
+
+  " Use ckw.
+  let g:vimshell_use_terminal_command = 'ckw -e'
+else
+  " Display user name on Linux.
+  "let g:vimshell_prompt = $USER."% "
+
+  " Use zsh history.
+  let g:vimshell_external_history_path = expand('~/.zsh-history')
+
+  call vimshell#set_execute_file('bmp,jpg,png,gif', 'gexe eog')
+  call vimshell#set_execute_file('mp3,m4a,ogg', 'gexe amarok')
+  let g:vimshell_execute_file_list['zip'] = 'zipinfo'
+  call vimshell#set_execute_file('tgz,gz', 'gzcat')
+  call vimshell#set_execute_file('tbz,bz2', 'bzcat')
+
+  " Use gnome-terminal.
+  let g:vimshell_use_terminal_command = 'gnome-terminal -e'
+endif
+
+" Initialize execute file list.
+let g:vimshell_execute_file_list = {}
+call vimshell#set_execute_file('txt,vim,c,h,cpp,d,xml,java', 'vim')
+let g:vimshell_execute_file_list['rb'] = 'ruby'
+let g:vimshell_execute_file_list['pl'] = 'perl'
+let g:vimshell_execute_file_list['py'] = 'python'
+call vimshell#set_execute_file('html,xhtml', 'gexe firefox')
+
+
+autocmd MyAutoCmd FileType vimshell call s:vimshell_settings()
+function! s:vimshell_settings()
+  imap <buffer><silent> &  <C-o>:call vimshell#mappings#push_and_execute('cd ..')<CR>
+
+  inoremap <buffer><expr>'  pumvisible() ? "\<C-y>" : "'"
+  imap <buffer><BS>  <Plug>(vimshell_another_delete_backward_char)
+  imap <buffer><C-h>  <Plug>(vimshell_another_delete_backward_char)
+  inoremap <silent><expr><buffer><C-r>  unite#sources#vimshell_history#start_complete(!0)
+
+  call vimshell#altercmd#define('g', 'git')
+  call vimshell#altercmd#define('i', 'iexe')
+  call vimshell#altercmd#define('t', 'texe')
+  call vimshell#set_alias('l.', 'ls -d .*')
+  call vimshell#set_galias('L', 'ls -l')
+  call vimshell#hook#add('chpwd', 'my_chpwd', s:vimshell_hooks.chpwd)
+  call vimshell#hook#add('emptycmd', 'my_emptycmd', s:vimshell_hooks.emptycmd)
+  call vimshell#hook#add('preprompt', 'my_preprompt', s:vimshell_hooks.preprompt)
+  call vimshell#hook#add('preexec', 'my_preexec', s:vimshell_hooks.preexec)
+  " call vimshell#hook#set('preexec', [s:SID_PREFIX() . 'vimshell_hooks_preexec'])
+endfunction
+
+autocmd MyAutoCmd FileType int-* call s:interactive_settings()
+function! s:interactive_settings()
+  call vimshell#hook#set('input', [s:vimshell_hooks.input])
+endfunction
+
+autocmd MyAutoCmd FileType term-* call s:terminal_settings()
+function! s:terminal_settings()
+  inoremap <silent><buffer><expr> <Plug>(vimshell_term_send_semicolon) vimshell#term_mappings#send_key(';')
+  inoremap <silent><buffer><expr> j<Space> vimshell#term_mappings#send_key('j')
+  "inoremap <silent><buffer><expr> <Up> vimshell#term_mappings#send_keys("\<ESC>[A")
+
+  " Sticky key.
+  imap <buffer><expr> ;  <SID>texe_sticky_func()
+
+  " Escape key.
+  iunmap <buffer> <ESC><ESC>
+  imap <buffer> <ESC>         <Plug>(vimshell_term_send_escape)
+endfunction
+function! s:texe_sticky_func()
+  let sticky_table = {
+        \',' : '<', '.' : '>', '/' : '?',
+        \'1' : '!', '2' : '@', '3' : '#', '4' : '$', '5' : '%',
+        \'6' : '^', '7' : '&', '8' : '*', '9' : '(', '0' : ')', '-' : '_', '=' : '+',
+        \';' : ':', '[' : '{', ']' : '}', '`' : '~', "'" : "\"", '\' : '|',
+        \}
+  let special_table = {
+        \"\<ESC>" : "\<ESC>", "\<Space>" : "\<Plug>(vimshell_term_send_semicolon)", "\<CR>" : ";\<CR>"
+        \}
+
+  if mode() !~# '^c'
+    echo 'Input sticky key: '
+  endif
+  let char = ''
+
+  while char == ''
+    let char = nr2char(getchar())
+  endwhile
+
+  if char =~ '\l'
+    return toupper(char)
+  elseif has_key(sticky_table, char)
+    return sticky_table[char]
+  elseif has_key(special_table, char)
+    return special_table[char]
+  else
+    return ''
+  endif
+endfunction
+
+let s:vimshell_hooks = {}
+function! s:vimshell_hooks.chpwd(args, context)
+  if len(split(glob('*'), '\n')) < 100
+    call vimshell#execute('ls')
+  endif
+endfunction
+function! s:vimshell_hooks.emptycmd(cmdline, context)
+  call vimshell#set_prompt_command('ls')
+  return 'ls'
+endfunction
+function! s:vimshell_hooks.preprompt(args, context)
+  " call vimshell#execute('echo "preprompt"')
+endfunction
+function! s:vimshell_hooks.preexec(cmdline, context)
+  " call vimshell#execute('echo "preexec"')
+
+  let args = vimproc#parser#split_args(a:cmdline)
+  if len(args) > 0 && args[0] ==# 'diff'
+    call vimshell#set_syntax('diff')
+  endif
+
+  return a:cmdline
+endfunction
+function! s:vimshell_hooks.input(input, context)
+  " echomsg 'input'
+  return a:input
+endfunction
 command! -nargs=0 VF :VimFiler
 nnoremap <silent>   [Space]v   :<C-u>VimFiler<CR>
 nmap    [Space]h   :<C-u>edit %:h<CR>
@@ -595,6 +736,9 @@ let g:neocomplcache_source_look_dictionary_path = ''
 let g:neocomplcache_vim_completefuncs = {
       \ 'Ref' : 'ref#complete',
       \ 'Unite' : 'unite#complete_source',
+      \ 'VimShellExecute' : 'vimshell#complete#vimshell_execute_complete#completefunc',
+      \ 'VimShellInteractive' : 'vimshell#complete#vimshell_execute_complete#completefunc',
+      \ 'VimShellTerminal' : 'vimshell#complete#vimshell_execute_complete#completefunc',
       \ 'VimFiler' : 'vimfiler#complete',
       \}
 if !exists('g:neocomplcache_plugin_completion_length')
@@ -1030,7 +1174,7 @@ nnoremap Q gq
 nnoremap <Leader>m :TagbarToggle<CR>
 nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
-nnoremap <Leader>= gg=G<C-o><C-o>
+nnoremap <Leader>= ggVG=<C-o><C-o>
 nnoremap <Leader>v : <C-u>vsplit<CR><C-w><C-w>
 nnoremap <Leader>s :<C-u>split<CR><C-w><C-w>
 nnoremap <Leader>\ :<C-u>%! fmt -w 79<CR>
@@ -1094,8 +1238,22 @@ nnoremap gV `[v`]
 nmap \v /\v
 nmap <S-right> g,
 nmap <S-left> g;
+" nnoremap / /\v
+" vnoremap / /\v
 " nmap <left>  <Plug>(jump-x2-to-previous)
 " nmap <right>  <Plug>(jump-x2-to-next)
+cnoremap <c-x> <c-r>=<SID>PasteEscaped()<cr>
+function! s:PasteEscaped()
+  echo "\\".getcmdline()."\""
+  let char = getchar()
+  if char == "\<esc>"
+    return ''
+  else
+    let register_content = getreg(nr2char(char))
+    let escaped_register = escape(register_content, '\'.getcmdtype())
+    return substitute(escaped_register, '\n', '\\n', 'g')
+  endif
+endfunction
 
 function! s:jump_section_n(pattern)
   let pattern = a:pattern[1:]
@@ -1156,8 +1314,8 @@ function! s:keys_to_select_the_last_changed_text()
   let length_end = len(getline("']"))
 
   let maybe_linewise_p = (col_begin == 1
-  \                       && (col_end == length_end
-  \                           || (length_end == 0 && col_end == 1)))
+        \                       && (col_end == length_end
+        \                           || (length_end == 0 && col_end == 1)))
   return '`[' . (maybe_linewise_p ? 'V' : 'v') . '`]'
 endfunction
 
@@ -1351,16 +1509,16 @@ nnoremap <silent> <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
 nnoremap dl  0d$
 
 command! -nargs=+ Allmap
-\   execute 'map' <q-args>
-\ | execute 'map!' <q-args>
+      \   execute 'map' <q-args>
+      \ | execute 'map!' <q-args>
 
 command! -nargs=+ Allnoremap
-\   execute 'noremap' <q-args>
-\ | execute 'noremap!' <q-args>
+      \   execute 'noremap' <q-args>
+      \ | execute 'noremap!' <q-args>
 
 command! -nargs=+ Allunmap
-\   execute 'unmap' <q-args>
-\ | execute 'unmap!' <q-args>
+      \   execute 'unmap' <q-args>
+      \ | execute 'unmap!' <q-args>
 
 command! -bang -nargs=* Cmap  call s:cmd_Cmap('', '<bang>', [<f-args>])
 command! -nargs=* Ccmap  call s:cmd_Cmap('c', '', [<f-args>])
@@ -1394,7 +1552,7 @@ endfunction
 function! s:cmd_Cmap(prefix, suffix, args)
   " FIXME: This parsing may not be compatible with the original one.
   let [options, rest] = s:separate_list(a:args,
-  \ '^\c<\(buffer\|expr\|script\|silent\|special\|unique\|count\|noexec\)>$')
+        \ '^\c<\(buffer\|expr\|script\|silent\|special\|unique\|count\|noexec\)>$')
   if len(rest) < 2
     throw 'Insufficient number of arguments: ' . string(rest)
   endif
@@ -1405,9 +1563,9 @@ function! s:cmd_Cmap(prefix, suffix, args)
   call filter(options, 'v:val !~# ''^\c<\(count\|noexec\)>$''')
 
   execute a:prefix.'noremap'.a:suffix join(options) lhs
-  \ ':'.(count_p ? '' : '<C-u>') . join(script) . (noexec_p ? '' : '<Return>')
+        \ ':'.(count_p ? '' : '<C-u>') . join(script) . (noexec_p ? '' : '<Return>')
 endfunction
- 
+
 let s:FALSE = 0
 let s:TRUE = !s:FALSE
 
@@ -1440,7 +1598,7 @@ if !exists('s:GNU_SCREEN_AVAILABLE_P')
 endif
 
 command! -bar -nargs=0 SuspendWithAutomticCD
-\ call s:cmd_SuspendWithAutomticCD()
+      \ call s:cmd_SuspendWithAutomticCD()
 function! s:cmd_SuspendWithAutomticCD()
   if s:GNU_SCREEN_AVAILABLE_P
     call s:activate_terminal()
@@ -1449,8 +1607,8 @@ function! s:cmd_SuspendWithAutomticCD()
     " To avoid adding the cd script into the command-line history,
     " there are extra leading whitespaces in the cd script.
     silent execute '!screen -X eval'
-    \              '''select another'''
-    \              '''stuff "  cd \"'.getcwd().'\"  '
+          \              '''select another'''
+          \              '''stuff "  cd \"'.getcwd().'\"  '
     " \#\#,vim-auto-cd\015"'''
     redraw!
     let s:GNU_SCREEN_AVAILABLE_P = (v:shell_error == 0)
@@ -1482,7 +1640,7 @@ Cvmap <count> g/  global//print
 function! s:cmd_Fmap(prefix, suffix, args)
   " FIXME: This parsing may not be compatible with the original one.
   let [options, rest] = s:separate_list(a:args,
-  \ '^\c<\(buffer\|expr\|script\|silent\|special\|unique\)>$')
+        \ '^\c<\(buffer\|expr\|script\|silent\|special\|unique\)>$')
   if len(rest) < 2
     throw 'Insufficient number of arguments: ' . string(rest)
   endif
@@ -1490,7 +1648,7 @@ function! s:cmd_Fmap(prefix, suffix, args)
   let rhs = rest[1:]
 
   execute a:prefix.'noremap'.a:suffix join(options) lhs
-  \ ':<C-u>call' join(rhs) '<Return>'
+        \ ':<C-u>call' join(rhs) '<Return>'
 endfunction
 
 
@@ -1500,16 +1658,16 @@ endfunction
 " mode.  The following commands are just wrappers to avoid DRY violation.
 
 command! -nargs=+ Objmap
-\   execute 'omap' <q-args>
-\ | execute 'vmap' <q-args>
+      \   execute 'omap' <q-args>
+      \ | execute 'vmap' <q-args>
 
 command! -nargs=+ Objnoremap
-\   execute 'onoremap' <q-args>
-\ | execute 'vnoremap' <q-args>
+      \   execute 'onoremap' <q-args>
+      \ | execute 'vnoremap' <q-args>
 
 command! -nargs=+ Objunmap
-\   execute 'ounmap' <q-args>
-\ | execute 'vunmap' <q-args>
+      \   execute 'ounmap' <q-args>
+      \ | execute 'vunmap' <q-args>
 
 
 " Operatormap - :map for oeprators  "{{{3
@@ -1521,16 +1679,16 @@ command! -nargs=+ Objunmap
 "        to use {operator}{operator} pattern?
 
 command! -nargs=+ Operatormap
-\   execute 'nmap' <q-args>
-\ | execute 'vmap' <q-args>
+      \   execute 'nmap' <q-args>
+      \ | execute 'vmap' <q-args>
 
 command! -nargs=+ Operatornoremap
-\   execute 'nnoremap' <q-args>
-\ | execute 'vnoremap' <q-args>
+      \   execute 'nnoremap' <q-args>
+      \ | execute 'vnoremap' <q-args>
 
 command! -nargs=+ Operatorunmap
-\   execute 'nunmap' <q-args>
-\ | execute 'vunmap' <q-args>
+      \   execute 'nunmap' <q-args>
+      \ | execute 'vunmap' <q-args>
 
 Fvmap *  <SID>search_the_selected_text_literaly('n')
 Fvmap #  <SID>search_the_selected_text_literaly('N')
