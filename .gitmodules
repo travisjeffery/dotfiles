@@ -22,11 +22,11 @@
 [submodule ".emacs.d/el-get/textmate"]
 	path = .emacs.d/el-get/textmate
 	url = https://github.com/defunkt/textmate.el.git
-[submodule ".zsh/auto-fu"]
-	path = .zsh/auto-fu
+[submodule ".zsh/auto-fu.zsh"]
+	path = .zsh/auto-fu.zsh
 	url = https://github.com/hchbaw/auto-fu.zsh.git
-[submodule "/Users/travis/.zsh/zaw"]
-	path = /Users/travis/.zsh/zaw
+[submodule ".zsh/zaw"]
+	path = .zsh/zaw
 	url = git://github.com/zsh-users/zaw.git
 [submodule ".zsh/opp"]
 	path = .zsh/opp
