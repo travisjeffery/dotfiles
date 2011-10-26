@@ -67,7 +67,9 @@ Bundle 'https://github.com/thinca/vim-unite-history.git'
 Bundle 'https://github.com/Shougo/echodoc.git'
 Bundle 'https://github.com/Shougo/neocomplcache.git'
 Bundle 'https://github.com/kana/vim-altercmd.git'
-"}}}2
+Bundle 'https://github.com/mattn/gist-vim.git'
+Bundle 'https://github.com/kana/vim-scratch.git'
+"}}}
 
 filetype plugin indent on
 
