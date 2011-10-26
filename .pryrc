@@ -1,6 +1,7 @@
 # -*- mode: ruby -*- vim:set ft=ruby:
 
 Pry.config.editor = "vim"
+Pry.config.history.file = "~/.irb_history"
 
 Pry.config.history.file = if defined?(Bundler)
                             Bundler.tmp.parent.join('history.rb')

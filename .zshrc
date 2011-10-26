@@ -85,7 +85,7 @@ esac
 [[ -x "`whence powerpill`" ]] && alias pacman="`whence powerpill` --nomessages"
 [[ -x "`whence rascut`" ]] && alias rascut="_JAVA_OPTIONS=-Duser.language=en `whence rascut`"
 [[ -x "`whence mplayer`" ]] && alias mplayer="`whence mplayer` -softvol"
-[[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
+# [[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
 
 alias ll="ls -l"
 alias lz="ll -Z"
@@ -215,3 +215,57 @@ EOT
     afu-ad-delete-unambiguous-prefix afu+accept-and-hold
 fi
 
+BUNDLED_COMMANDS=(cap
+capify
+cucumber
+foreman
+haml
+heroku
+html2haml
+guard
+rackup
+rails
+rake
+rake2thor
+rspec
+ruby
+sass
+sass-convert
+serve
+shotgun
+spec
+spork
+thin
+thor
+tilt
+tt
+unicorn
+unicorn_rails)
+
+is-bundler-installed()
+{
+  which bundle > /dev/null 2>&1
+}
+
+is-within-bundled-project()
+{
+  local dir="$(pwd)"
+  while [ "$(dirname $dir)" != "/" ]; do
+    [ -f "$dir/Gemfile" ] && return
+    dir="$(dirname $dir)"
+  done
+  false
+}
+
+run-with-bundler()
+{
+  if is-bundler-installed && is-within-bundled-project; then
+    bundle exec $@
+  else
+    $@
+  fi
+}
+
+for CMD in $BUNDLED_COMMANDS; do
+  alias $CMD="run-with-bundler $CMD"
+done

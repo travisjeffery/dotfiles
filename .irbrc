@@ -1,3 +1,17 @@
+# Auto indenting
+IRB.conf[:AUTO_INDENT]=true
+
+# Tab completion
+require 'irb/completion'
+
+# Remove the annoying irb(main):001:0 and replace with >>
+IRB.conf[:PROMPT_MODE]  = :SIMPLE
+
+# Save History between irb sessions
+require 'irb/ext/save-history'
+IRB.conf[:SAVE_HISTORY] = 10000
+IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb-save-history"
+
 # https://github.com/carlhuda/bundler/issues/183#issuecomment-1149953
 if defined?(::Bundler)
   global_gemset = ENV['GEM_PATH'].split(':').grep(/ruby.*@global/).first
@@ -9,6 +23,7 @@ if defined?(::Bundler)
     end
   end
 end
+
 # Use Pry everywhere
 require "rubygems"
 require 'pry'
