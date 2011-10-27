@@ -6,6 +6,7 @@ let s:iswin = has('win32') || has('win64')
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/roman/golden-ratio.git'
 Bundle 'https://github.com/kchmck/vim-coffee-script.git'
 Bundle 'git://github.com/Shougo/vim-vcs.git'
 Bundle 'https://github.com/vim-scripts/VimClojure.git'
@@ -1095,6 +1096,8 @@ nnoremap <silent> [Window]c  :<C-u>call <sid>smart_close()<CR>
 nnoremap <silent> -  :<C-u>call <sid>smart_close()<CR>
 nnoremap <silent> [Window]o  :<C-u>only<CR>
 nnoremap <silent> [Window]<Space>  :<C-u>call <SID>ToggleSplit()<CR>
+
+nnoremap <silent> [Window]s  <Plug>(golden_ratio_resize)
 function! s:MovePreviousWindow()
   let l:prev_name = winnr()
   silent! wincmd p
