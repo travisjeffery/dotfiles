@@ -6,6 +6,8 @@ let s:iswin = has('win32') || has('win64')
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/ujihisa/vital.vim.git'
+Bundle 'https://github.com/int3/vim-extradite.git'
 Bundle 'https://github.com/roman/golden-ratio.git'
 Bundle 'https://github.com/kchmck/vim-coffee-script.git'
 Bundle 'git://github.com/Shougo/vim-vcs.git'
@@ -134,7 +136,7 @@ set autoindent
 set wildmode=list:longest
 set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
-set virtualedit=block
+set virtualedit=all
 set matchpairs+=<:>
 if v:version >= 600
   set autoread
@@ -958,8 +960,8 @@ xmap s <Plug>VSurround
 " neocomplcache {{{2
 inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
-silent! iunmap <Cr>
-inoremap <expr><CR> <C-r>=neocomplcache#cancel_popup()<CR><CR>
+" silent! iunmap <Cr>
+inoremap <expr><CR> pumvisible() ? "\<C-r>=neocomplcache#cancel_popup()\<CR>\<CR>" : "\<CR>" 
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
@@ -974,6 +976,7 @@ inoremap <expr><C-l>  pumvisible() ? neocomplcache#close_popup():  "\<C-p>"
 inoremap <expr><Space>  pumvisible() ? neocomplcache#cancel_popup()."\<Space>" :  "\<Space>"
 inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
+
 "{{{2
 "{{{2
 

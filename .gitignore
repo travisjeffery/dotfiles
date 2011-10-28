@@ -1,5 +1,3 @@
 .vim/bundle/*
 .vim/vim-pathogen
 .oh-my-zsh/*
-.emacs.d/places
-.emacs.d/.smex-items

@@ -1,28 +1,44 @@
 # -*- mode: ruby -*- vim:set ft=ruby:
 
 Pry.config.editor = "vim"
-Pry.config.history.file = "~/.irb_history"
+Pry.config.commands.import Pry::ExtendedCommands::Experimental
 
-Pry.config.history.file = if defined?(Bundler)
-                            Bundler.tmp.parent.join('history.rb')
-                          else
-                            File.expand_path('~/.history.rb')
-                          end
+Pry.config.prompt = [proc { "$ " },
+                     proc { "     | " }]
 
-cs=Pry::CommandSet.new do
-  import Pry::Commands
-  command "lm","Alias for ls -m" do |args|
-   run "ls", "-m #{args}"
+default_command_set = Pry::CommandSet.new do
+  command "copy", "Copy argument to the clip-board" do |str|
+    IO.popen('pbcopy', 'w') { |f| f << str.to_s }
   end
-  command "lM", "Alias for ls -M" do |args|
-   run "ls", "-M #{args}"
+
+  command "clear" do
+    system 'clear'
+    if ENV['RAILS_ENV']
+      output.puts "Rails Environment: " + ENV['RAILS_ENV']
+    end
+  end
+
+  command "sql", "Send sql over AR." do |query|
+    if ENV['RAILS_ENV'] || defined?(Rails)
+      pp ActiveRecord::Base.connection.select_all(query)
+    else
+      pp "Pry did not require the environment, try `pconsole`"
+    end
+  end
+
+  command "caller_method" do |depth|
+    depth = depth.to_i || 1
+    if /^(.+?):(\d+)(?::in `(.*)')?/ =~ caller(depth+1).first
+      file   = Regexp.last_match[1]
+      line   = Regexp.last_match[2].to_i
+      method = Regexp.last_match[3]
+      output.puts [file, line, method]
+    end
   end
 end
 
-Pry.config.commands = cs
+Pry.config.commands.import default_command_set
+Pry.config.should_load_plugins = false
 
 # loading rails configuration if it is running as a rails console
 load File.dirname(__FILE__) + '/.railsrc' if defined?(Rails) && Rails.env
-
-$LOAD_PATH.unshift(File.expand_path('~/.ruby/lib'), File.expand_path('~/.ruby'))
-$LOAD_PATH.uniq!
