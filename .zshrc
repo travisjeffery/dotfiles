@@ -126,8 +126,8 @@ umask 072
 source $HOME/.zsh/zaw/zaw.zsh
 bindkey '^R' zaw-history
 zstyle ':filter-select:highlight' matched fg=yellow,standout
-zstyle ':filter-select' max-lines 10 
-zstyle ':filter-select' max-lines -10 
+zstyle ':filter-select' max-lines 10
+zstyle ':filter-select' max-lines -10
 zstyle ':filter-select' case-insensitive yes
 zstyle ':filter-select' extended-search yes
 
@@ -266,6 +266,6 @@ run-with-bundler()
   fi
 }
 
-for CMD in $BUNDLED_COMMANDS; do
-  alias $CMD="run-with-bundler $CMD"
-done
+# for CMD in $BUNDLED_COMMANDS; do
+#   alias $CMD="run-with-bundler $CMD"
+# done

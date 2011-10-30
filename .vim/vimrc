@@ -6,6 +6,8 @@ let s:iswin = has('win32') || has('win64')
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/jiangmiao/auto-pairs.git'
+Bundle 'https://github.com/majutsushi/tagbar.git'
 Bundle 'https://github.com/ujihisa/vital.vim.git'
 Bundle 'https://github.com/int3/vim-extradite.git'
 Bundle 'https://github.com/roman/golden-ratio.git'
@@ -115,9 +117,9 @@ endif
 if exists('+macmeta')
   set macmeta
 endif
-set winwidth=84
-set winheight=5
-set winminheight=5
+" set winwidth=84
+" set winheight=5
+" set winminheight=5
 " set winheight=999
 set undodir=~/.tmp
 set undofile
@@ -301,7 +303,8 @@ endif
 if has("gui") && has("mac")
   set fuopt+=maxhorz
   set macmeta
-  set antialias | set guifont=Inconsolata:h14
+  set antialias
+  set guifont=Inconsolata:h14
 else
   set guifont=Inconsolata\ 12
 endif
@@ -900,6 +903,7 @@ iabbrev shuold should
 iabbrev shulod should
 iabbrev PgTOols PgTools
 iabbrev PgTOOls PgTools
+abbrev shuold should
 "}}}1
 " Section: Mappings {{{1
 let g:mapleader=","
@@ -960,8 +964,13 @@ xmap s <Plug>VSurround
 " neocomplcache {{{2
 inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
-" silent! iunmap <Cr>
-inoremap <expr><CR> pumvisible() ? "\<C-r>=neocomplcache#cancel_popup()\<CR>\<CR>" : "\<CR>" 
+
+imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
+
+function! s:CrInInsertModeBetterWay()
+  return pumvisible() ? "\<C-e>\<Cr>"  : "\<Cr>"
+endfunction
+
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
@@ -1218,6 +1227,12 @@ nmap <Leader>/# /^ *#<CR>
 nmap <Leader>/f /^ *def\><CR>
 nmap <Leader>/c /^ *class\><CR>
 nmap <Leader>/i /^ *if\><CR>
+
+nmap \# /^ *#<CR>
+nmap \f /^ *def\>
+nmap \c /^ *class\>
+nmap \i /^ *if\>
+
 nmap <Leader>df d/\(^ *def\>\)\\|\%$<CR>
 " nmap <Leader>a= :Tabularize /=<CR>
 " vmap <Leader>a= :Tabularize /=<CR>
