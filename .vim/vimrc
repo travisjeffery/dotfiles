@@ -6,6 +6,7 @@ let s:iswin = has('win32') || has('win64')
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
 Bundle 'https://github.com/ujihisa/vital.vim.git'
 Bundle 'https://github.com/int3/vim-extradite.git'
 Bundle 'https://github.com/roman/golden-ratio.git'
