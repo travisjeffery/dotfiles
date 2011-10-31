@@ -7,9 +7,13 @@ filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
+Bundle 'https://github.com/h1mesuke/unite-outline.git'
+Bundle 'https://github.com/tsukkee/unite-tag.git'
+" Bundle 'https://github.com/jiangmiao/auto-pairs.git'
+Bundle 'https://github.com/majutsushi/tagbar.git'
 Bundle 'https://github.com/ujihisa/vital.vim.git'
 Bundle 'https://github.com/int3/vim-extradite.git'
-Bundle 'https://github.com/roman/golden-ratio.git'
+" Bundle 'https://github.com/roman/golden-ratio.git'
 Bundle 'https://github.com/kchmck/vim-coffee-script.git'
 Bundle 'git://github.com/Shougo/vim-vcs.git'
 Bundle 'https://github.com/vim-scripts/VimClojure.git'
@@ -48,7 +52,7 @@ Bundle 'https://github.com/kana/vim-textobj-lastpat.git'
 Bundle 'https://github.com/nelstrom/vim-textobj-rubyblock.git'
 Bundle 'https://github.com/kana/vim-textobj-user.git'
 Bundle 'https://github.com/kana/vim-smartword.git'
-Bundle 'https://github.com/tpope/vim-unimpaired.git'
+Bundle 'git@github.com:travisjeffery/vim-unimpaired.git'
 Bundle 'https://github.com/Shougo/vimfiler.git'
 Bundle 'http://github.com/mattn/zencoding-vim/'
 Bundle 'https://github.com/vim-scripts/ZoomWin.git'
@@ -116,9 +120,9 @@ endif
 if exists('+macmeta')
   set macmeta
 endif
-set winwidth=84
-set winheight=5
-set winminheight=5
+" set winwidth=84
+" set winheight=5
+" set winminheight=5
 " set winheight=999
 set undodir=~/.tmp
 set undofile
@@ -302,7 +306,8 @@ endif
 if has("gui") && has("mac")
   set fuopt+=maxhorz
   set macmeta
-  set antialias | set guifont=Inconsolata:h14
+  set antialias
+  set guifont=Inconsolata:h14
 else
   set guifont=Inconsolata\ 12
 endif
@@ -358,7 +363,7 @@ function! s:smart_close()
   endif
 endfunction
 augroup MyAutoCmd
-  autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
+  autocmd FileType vim nnoremap <silent><buffer> [Space]so :write <Bar> :source % <Bar> echo "source " . bufname('%')<CR>
 
   if v:version >= 700 && isdirectory(expand("~/.trash"))
     autocmd BufWritePre,BufWritePost * if exists("s:backupdir") | set backupext=~ | let &backupdir = s:backupdir | unlet s:backupdir | endif
@@ -505,7 +510,7 @@ let g:unite_source_directory_mru_time_format = ''
 let g:unite_source_directory_mru_limit = 300
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#converter_default#use(['converter_relative_abbr'])
-call unite#custom_filters('file,buffer,file_rec,file_rec/async',
+call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
 nnoremap <C-B> :<C-u>Unite buffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
@@ -735,7 +740,7 @@ let g:neocomplcache_snippets_dir = $HOME . '/snippets'
 " if !exists('g:neocomplcache_omni_patterns')
 "     let g:neocomplcache_omni_patterns = {}
 " endif
-" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*<Bar>\h\w*::'
 " if !exists('g:neocomplcache_same_filetype_lists')
 "   let g:neocomplcache_same_filetype_lists = {}
 " endif
@@ -879,6 +884,18 @@ function! InlineVariable()
   exec ':.s/\<' . @a . '\>/' . @b
 endfunction
 
+function! HtmlEscape()
+  silent s/&/\&amp;/eg
+  silent s/</\&lt;/eg
+  silent s/>/\&gt;/eg
+endfunction
+
+function! HtmlUnEscape()
+  silent s/&lt;/</eg
+  silent s/&gt;/>/eg
+  silent s/&amp;/\&/eg
+endfunction
+
 command! -nargs=0 JSBeautify call JSBeautify()<CR>
 function! JSBeautify()
   silent! exe "%! jsbeautifier --stdin"
@@ -901,6 +918,7 @@ iabbrev shuold should
 iabbrev shulod should
 iabbrev PgTOols PgTools
 iabbrev PgTOOls PgTools
+abbrev shuold should
 "}}}1
 " Section: Mappings {{{1
 let g:mapleader=","
@@ -925,8 +943,10 @@ nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
 nnoremap <silent> [Space]yh :<C-u>Unite history/yank<CR>
 nnoremap <silent> [Space]mk :<C-u>marks<CR>
 nnoremap <silent> [Space]re :<C-u>registers<CR>
-nnoremap <silent> [Space]ya :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
-nnoremap <silent> [Space]y% :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
+nnoremap <silent> [Space]ya :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
+nnoremap <silent> [Space]y% :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
+
+nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
@@ -961,8 +981,13 @@ xmap s <Plug>VSurround
 " neocomplcache {{{2
 inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
-" silent! iunmap <Cr>
-inoremap <expr><CR> pumvisible() ? "\<C-r>=neocomplcache#cancel_popup()\<CR>\<CR>" : "\<CR>" 
+
+imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
+
+function! s:CrInInsertModeBetterWay()
+  return pumvisible() ? "\<C-e>\<Cr>"  : "\<Cr>"
+endfunction
+
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
@@ -1003,7 +1028,7 @@ function! s:cd_buffer_dir()"{{{
 
   TabpageCD `=l:dir`
 endfunction"}}}2
-nnoremap <ESC><ESC> :redraw!\|nohlsearch<CR>
+nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
 
 " Fast search pair.
 nnoremap [Space]p %
@@ -1027,10 +1052,10 @@ nnoremap [Space]ts :<C-u>ts<CR>
 nnoremap [Space]tP :<C-u>tf<CR>
 nnoremap [Space]tN :<C-u>tl<CR>
 nnoremap [Space]tk :<C-u>tp<CR>
-nnoremap [Space]tsn :<C-u>split<CR>\|:<C-u>tn<CR>
-nnoremap [Space]tsp :<C-u>split<CR>\|:<C-u>tp<CR>
-nnoremap [Space]tsP :<C-u>split<CR>\|:<C-u>tf<CR>
-nnoremap [Space]tsN :<C-u>split<CR>\|:<C-u>tl<CR>
+nnoremap [Space]tsn :<C-u>split<CR><Bar>:<C-u>tn<CR>
+nnoremap [Space]tsp :<C-u>split<CR><Bar>:<C-u>tp<CR>
+nnoremap [Space]tsP :<C-u>split<CR><Bar>:<C-u>tf<CR>
+nnoremap [Space]tsN :<C-u>split<CR><Bar>:<C-u>tl<CR>
 "}}}2
 " q: Quickfix  "{{{
 
@@ -1219,7 +1244,12 @@ nmap <Leader>/# /^ *#<CR>
 nmap <Leader>/f /^ *def\><CR>
 nmap <Leader>/c /^ *class\><CR>
 nmap <Leader>/i /^ *if\><CR>
-nmap <Leader>df d/\(^ *def\>\)\\|\%$<CR>
+
+nmap \# /^ *#<CR>
+nnoremap gs <Nop>
+nmap gs :vimgrep /^ *\(context\<Bar>test\<Bar>def\<Bar>should\<Bar>class\)/ %<CR><Bar>:cw<CR>
+nmap \, /\<\><Left><Left>
+
 " nmap <Leader>a= :Tabularize /=<CR>
 " vmap <Leader>a= :Tabularize /=<CR>
 nmap <Leader>a: :Tabularize /:\zs<CR>
@@ -1328,8 +1358,6 @@ function! s:keys_to_select_the_last_changed_text()
         \                           || (length_end == 0 && col_end == 1)))
   return '`[' . (maybe_linewise_p ? 'V' : 'v') . '`]'
 endfunction
-
-
 
 function! s:NextWindow()
   if winnr('$') == 1
@@ -1500,17 +1528,17 @@ function! ShowRoutes()
 endfunction
 nnoremap <Leader>gR :call ShowRoutes()<CR>
 
-nnoremap <silent> <Leader>gv :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/views<CR>
-nnoremap <silent> <Leader>gc :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/controllers<CR>
-nnoremap <silent> <Leader>gu :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/unit<CR>
-nnoremap <silent> <Leader>gF :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/functional<CR>
-nnoremap <silent> <Leader>gt :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test<CR>
-nnoremap <silent> <Leader>gm :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/models<CR>
-nnoremap <silent> <Leader>gh :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/helpers<CR>
-nnoremap <silent> <Leader>gl :<C-u>CommandTFlush<CR>\|:<C-u>CommandT lib<CR>
-nnoremap <silent> <Leader>gp :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public<CR>
-nnoremap <silent> <Leader>gs :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public/stylesheets<CR>
-nnoremap <silent> <Leader>gS :<C-u>CommandTFlush<CR>\|:<C-u>CommandT spec<CR>
+nnoremap <silent> <Leader>gv :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/views<CR>
+nnoremap <silent> <Leader>gc :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/controllers<CR>
+nnoremap <silent> <Leader>gu :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test/unit<CR>
+nnoremap <silent> <Leader>gF :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test/functional<CR>
+nnoremap <silent> <Leader>gt :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test<CR>
+nnoremap <silent> <Leader>gm :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/models<CR>
+nnoremap <silent> <Leader>gh :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/helpers<CR>
+nnoremap <silent> <Leader>gl :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT lib<CR>
+nnoremap <silent> <Leader>gp :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT public<CR>
+nnoremap <silent> <Leader>gs :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT public/stylesheets<CR>
+nnoremap <silent> <Leader>gS :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT spec<CR>
 nnoremap <silent> <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
 nnoremap <silent> <Leader>gf :<C-u>CommandT %%/<CR>
 nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
@@ -1644,8 +1672,16 @@ function! s:activate_terminal()  "{{{2
 endfunction
 
 " Show the lines which match to the last search pattern.
-Cnmap <count> g/  global//print
-Cvmap <count> g/  global//print
+" Cnmap <count> g/  global//print
+" Cvmap <count> g/  global//print
+
+" Ditto for quickfix
+
+Cnmap <count> g/  :<C-U>vimgrep /<C-R>//j %<CR><Bar>:cw<CR>
+Cvmap <count> g/  :<C-U>vimgrep /<C-R>//j %<CR><Bar>:cw<CR>
+
+nmap go <Nop>
+nmap go <SID>(command-line-enter)<C-u>Unite outline<CR>
 
 function! s:cmd_Fmap(prefix, suffix, args)
   " FIXME: This parsing may not be compatible with the original one.
