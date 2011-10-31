@@ -509,7 +509,7 @@ let g:unite_source_directory_mru_time_format = ''
 let g:unite_source_directory_mru_limit = 300
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#converter_default#use(['converter_relative_abbr'])
-call unite#custom_filters('file,buffer,file_rec,file_rec/async',
+call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
 nnoremap <C-B> :<C-u>Unite buffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
@@ -1347,8 +1347,6 @@ function! s:keys_to_select_the_last_changed_text()
   return '`[' . (maybe_linewise_p ? 'V' : 'v') . '`]'
 endfunction
 
-
-
 function! s:NextWindow()
   if winnr('$') == 1
     call s:split_nicely()
@@ -1670,6 +1668,9 @@ endfunction
 Cnmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
 Cvmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
 
+
+nmap go <Nop>
+Cnmap go  :Unite outline<CR>
 
 function! s:cmd_Fmap(prefix, suffix, args)
   " FIXME: This parsing may not be compatible with the original one.
