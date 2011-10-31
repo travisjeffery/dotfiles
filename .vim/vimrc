@@ -6,6 +6,10 @@ let s:iswin = has('win32') || has('win64')
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'https://github.com/h1mesuke/unite-outline.git'
+Bundle 'https://github.com/tsukkee/unite-tag.git'
+" Bundle 'https://github.com/jiangmiao/auto-pairs.git'
+Bundle 'https://github.com/majutsushi/tagbar.git'
 Bundle 'https://github.com/ujihisa/vital.vim.git'
 Bundle 'https://github.com/int3/vim-extradite.git'
 Bundle 'https://github.com/roman/golden-ratio.git'
@@ -115,9 +119,9 @@ endif
 if exists('+macmeta')
   set macmeta
 endif
-set winwidth=84
-set winheight=5
-set winminheight=5
+" set winwidth=84
+" set winheight=5
+" set winminheight=5
 " set winheight=999
 set undodir=~/.tmp
 set undofile
@@ -301,7 +305,8 @@ endif
 if has("gui") && has("mac")
   set fuopt+=maxhorz
   set macmeta
-  set antialias | set guifont=Inconsolata:h14
+  set antialias
+  set guifont=Inconsolata:h14
 else
   set guifont=Inconsolata\ 12
 endif
@@ -504,7 +509,7 @@ let g:unite_source_directory_mru_time_format = ''
 let g:unite_source_directory_mru_limit = 300
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#converter_default#use(['converter_relative_abbr'])
-call unite#custom_filters('file,buffer,file_rec,file_rec/async',
+call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
 nnoremap <C-B> :<C-u>Unite buffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
@@ -878,6 +883,18 @@ function! InlineVariable()
   exec ':.s/\<' . @a . '\>/' . @b
 endfunction
 
+function! HtmlEscape()
+  silent s/&/\&amp;/eg
+  silent s/</\&lt;/eg
+  silent s/>/\&gt;/eg
+endfunction
+
+function! HtmlUnEscape()
+  silent s/&lt;/</eg
+  silent s/&gt;/>/eg
+  silent s/&amp;/\&/eg
+endfunction
+
 command! -nargs=0 JSBeautify call JSBeautify()<CR>
 function! JSBeautify()
   silent! exe "%! jsbeautifier --stdin"
@@ -900,6 +917,7 @@ iabbrev shuold should
 iabbrev shulod should
 iabbrev PgTOols PgTools
 iabbrev PgTOOls PgTools
+abbrev shuold should
 "}}}1
 " Section: Mappings {{{1
 let g:mapleader=","
@@ -926,6 +944,8 @@ nnoremap <silent> [Space]mk :<C-u>marks<CR>
 nnoremap <silent> [Space]re :<C-u>registers<CR>
 nnoremap <silent> [Space]ya :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
 nnoremap <silent> [Space]y% :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
+
+nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
@@ -960,8 +980,13 @@ xmap s <Plug>VSurround
 " neocomplcache {{{2
 inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
-" silent! iunmap <Cr>
-inoremap <expr><CR> pumvisible() ? "\<C-r>=neocomplcache#cancel_popup()\<CR>\<CR>" : "\<CR>" 
+
+imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
+
+function! s:CrInInsertModeBetterWay()
+  return pumvisible() ? "\<C-e>\<Cr>"  : "\<Cr>"
+endfunction
+
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
@@ -1218,6 +1243,13 @@ nmap <Leader>/# /^ *#<CR>
 nmap <Leader>/f /^ *def\><CR>
 nmap <Leader>/c /^ *class\><CR>
 nmap <Leader>/i /^ *if\><CR>
+
+nmap \# /^ *#<CR>
+nmap \s /^ *\(context\\|test\\|def\\|should\\|class\)<CR>
+nnoremap gs <Nop>
+nmap gs :vimgrep /^ *\(context\\|test\\|def\\|should\\|class\)/ %<CR>
+nmap \, /\<\><Left><Left>
+
 nmap <Leader>df d/\(^ *def\>\)\\|\%$<CR>
 " nmap <Leader>a= :Tabularize /=<CR>
 " vmap <Leader>a= :Tabularize /=<CR>
@@ -1327,8 +1359,6 @@ function! s:keys_to_select_the_last_changed_text()
         \                           || (length_end == 0 && col_end == 1)))
   return '`[' . (maybe_linewise_p ? 'V' : 'v') . '`]'
 endfunction
-
-
 
 function! s:NextWindow()
   if winnr('$') == 1
@@ -1643,8 +1673,16 @@ function! s:activate_terminal()  "{{{2
 endfunction
 
 " Show the lines which match to the last search pattern.
-Cnmap <count> g/  global//print
-Cvmap <count> g/  global//print
+" Cnmap <count> g/  global//print
+" Cvmap <count> g/  global//print
+
+" Ditto for quickfix
+
+Cnmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
+Cvmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
+
+nmap go <Nop>
+Cnmap go  :Unite outline<CR>
 
 function! s:cmd_Fmap(prefix, suffix, args)
   " FIXME: This parsing may not be compatible with the original one.
