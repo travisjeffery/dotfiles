@@ -883,6 +883,18 @@ function! InlineVariable()
   exec ':.s/\<' . @a . '\>/' . @b
 endfunction
 
+function! HtmlEscape()
+  silent s/&/\&amp;/eg
+  silent s/</\&lt;/eg
+  silent s/>/\&gt;/eg
+endfunction
+
+function! HtmlUnEscape()
+  silent s/&lt;/</eg
+  silent s/&gt;/>/eg
+  silent s/&amp;/\&/eg
+endfunction
+
 command! -nargs=0 JSBeautify call JSBeautify()<CR>
 function! JSBeautify()
   silent! exe "%! jsbeautifier --stdin"
@@ -1236,6 +1248,7 @@ nmap \# /^ *#<CR>
 nmap \s /^ *\(context\\|test\\|def\\|should\\|class\)<CR>
 nnoremap gs <Nop>
 nmap gs :vimgrep /^ *\(context\\|test\\|def\\|should\\|class\)/ %<CR>
+nmap \, /\<\><Left><Left>
 
 nmap <Leader>df d/\(^ *def\>\)\\|\%$<CR>
 " nmap <Leader>a= :Tabularize /=<CR>
@@ -1667,7 +1680,6 @@ endfunction
 
 Cnmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
 Cvmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
-
 
 nmap go <Nop>
 Cnmap go  :Unite outline<CR>
