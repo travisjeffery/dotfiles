@@ -1662,8 +1662,14 @@ function! s:activate_terminal()  "{{{2
 endfunction
 
 " Show the lines which match to the last search pattern.
-Cnmap <count> g/  global//print
-Cvmap <count> g/  global//print
+" Cnmap <count> g/  global//print
+" Cvmap <count> g/  global//print
+
+" Ditto for quickfix
+
+Cnmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
+Cvmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
+
 
 function! s:cmd_Fmap(prefix, suffix, args)
   " FIXME: This parsing may not be compatible with the original one.
