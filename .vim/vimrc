@@ -12,7 +12,7 @@ Bundle 'https://github.com/tsukkee/unite-tag.git'
 Bundle 'https://github.com/majutsushi/tagbar.git'
 Bundle 'https://github.com/ujihisa/vital.vim.git'
 Bundle 'https://github.com/int3/vim-extradite.git'
-Bundle 'https://github.com/roman/golden-ratio.git'
+" Bundle 'https://github.com/roman/golden-ratio.git'
 Bundle 'https://github.com/kchmck/vim-coffee-script.git'
 Bundle 'git://github.com/Shougo/vim-vcs.git'
 Bundle 'https://github.com/vim-scripts/VimClojure.git'
@@ -362,7 +362,7 @@ function! s:smart_close()
   endif
 endfunction
 augroup MyAutoCmd
-  autocmd FileType vim nnoremap <silent><buffer> [Space]so :write \| source % \| echo "source " . bufname('%')<CR>
+  autocmd FileType vim nnoremap <silent><buffer> [Space]so :write <Bar> :source % <Bar> echo "source " . bufname('%')<CR>
 
   if v:version >= 700 && isdirectory(expand("~/.trash"))
     autocmd BufWritePre,BufWritePost * if exists("s:backupdir") | set backupext=~ | let &backupdir = s:backupdir | unlet s:backupdir | endif
@@ -739,7 +739,7 @@ let g:neocomplcache_snippets_dir = $HOME . '/snippets'
 " if !exists('g:neocomplcache_omni_patterns')
 "     let g:neocomplcache_omni_patterns = {}
 " endif
-" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*<Bar>\h\w*::'
 " if !exists('g:neocomplcache_same_filetype_lists')
 "   let g:neocomplcache_same_filetype_lists = {}
 " endif
@@ -942,8 +942,8 @@ nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
 nnoremap <silent> [Space]yh :<C-u>Unite history/yank<CR>
 nnoremap <silent> [Space]mk :<C-u>marks<CR>
 nnoremap <silent> [Space]re :<C-u>registers<CR>
-nnoremap <silent> [Space]ya :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
-nnoremap <silent> [Space]y% :<C-u>1,$y<CR>\|:<C-u>1,$y+<CR>
+nnoremap <silent> [Space]ya :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
+nnoremap <silent> [Space]y% :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
 
 nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 
@@ -1027,7 +1027,7 @@ function! s:cd_buffer_dir()"{{{
 
   TabpageCD `=l:dir`
 endfunction"}}}2
-nnoremap <ESC><ESC> :redraw!\|nohlsearch<CR>
+nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
 
 " Fast search pair.
 nnoremap [Space]p %
@@ -1051,10 +1051,10 @@ nnoremap [Space]ts :<C-u>ts<CR>
 nnoremap [Space]tP :<C-u>tf<CR>
 nnoremap [Space]tN :<C-u>tl<CR>
 nnoremap [Space]tk :<C-u>tp<CR>
-nnoremap [Space]tsn :<C-u>split<CR>\|:<C-u>tn<CR>
-nnoremap [Space]tsp :<C-u>split<CR>\|:<C-u>tp<CR>
-nnoremap [Space]tsP :<C-u>split<CR>\|:<C-u>tf<CR>
-nnoremap [Space]tsN :<C-u>split<CR>\|:<C-u>tl<CR>
+nnoremap [Space]tsn :<C-u>split<CR><Bar>:<C-u>tn<CR>
+nnoremap [Space]tsp :<C-u>split<CR><Bar>:<C-u>tp<CR>
+nnoremap [Space]tsP :<C-u>split<CR><Bar>:<C-u>tf<CR>
+nnoremap [Space]tsN :<C-u>split<CR><Bar>:<C-u>tl<CR>
 "}}}2
 " q: Quickfix  "{{{
 
@@ -1245,12 +1245,10 @@ nmap <Leader>/c /^ *class\><CR>
 nmap <Leader>/i /^ *if\><CR>
 
 nmap \# /^ *#<CR>
-nmap \s /^ *\(context\\|test\\|def\\|should\\|class\)<CR>
 nnoremap gs <Nop>
-nmap gs :vimgrep /^ *\(context\\|test\\|def\\|should\\|class\)/ %<CR>
+nmap gs :vimgrep /^ *\(context\<Bar>test\<Bar>def\<Bar>should\<Bar>class\)/ %<CR><Bar>:cw<CR>
 nmap \, /\<\><Left><Left>
 
-nmap <Leader>df d/\(^ *def\>\)\\|\%$<CR>
 " nmap <Leader>a= :Tabularize /=<CR>
 " vmap <Leader>a= :Tabularize /=<CR>
 nmap <Leader>a: :Tabularize /:\zs<CR>
@@ -1529,17 +1527,17 @@ function! ShowRoutes()
 endfunction
 nnoremap <Leader>gR :call ShowRoutes()<CR>
 
-nnoremap <silent> <Leader>gv :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/views<CR>
-nnoremap <silent> <Leader>gc :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/controllers<CR>
-nnoremap <silent> <Leader>gu :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/unit<CR>
-nnoremap <silent> <Leader>gF :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test/functional<CR>
-nnoremap <silent> <Leader>gt :<C-u>CommandTFlush<CR>\|:<C-u>CommandT test<CR>
-nnoremap <silent> <Leader>gm :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/models<CR>
-nnoremap <silent> <Leader>gh :<C-u>CommandTFlush<CR>\|:<C-u>CommandT app/helpers<CR>
-nnoremap <silent> <Leader>gl :<C-u>CommandTFlush<CR>\|:<C-u>CommandT lib<CR>
-nnoremap <silent> <Leader>gp :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public<CR>
-nnoremap <silent> <Leader>gs :<C-u>CommandTFlush<CR>\|:<C-u>CommandT public/stylesheets<CR>
-nnoremap <silent> <Leader>gS :<C-u>CommandTFlush<CR>\|:<C-u>CommandT spec<CR>
+nnoremap <silent> <Leader>gv :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/views<CR>
+nnoremap <silent> <Leader>gc :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/controllers<CR>
+nnoremap <silent> <Leader>gu :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test/unit<CR>
+nnoremap <silent> <Leader>gF :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test/functional<CR>
+nnoremap <silent> <Leader>gt :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test<CR>
+nnoremap <silent> <Leader>gm :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/models<CR>
+nnoremap <silent> <Leader>gh :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/helpers<CR>
+nnoremap <silent> <Leader>gl :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT lib<CR>
+nnoremap <silent> <Leader>gp :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT public<CR>
+nnoremap <silent> <Leader>gs :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT public/stylesheets<CR>
+nnoremap <silent> <Leader>gS :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT spec<CR>
 nnoremap <silent> <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
 nnoremap <silent> <Leader>gf :<C-u>CommandT %%/<CR>
 nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
@@ -1678,8 +1676,8 @@ endfunction
 
 " Ditto for quickfix
 
-Cnmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
-Cvmap <count> g/  :vimgrep /<C-R>//j %<CR>\|:cw<CR>
+Cnmap <count> g/  :<C-U>vimgrep /<C-R>//j %<CR><Bar>:cw<CR>
+Cvmap <count> g/  :<C-U>vimgrep /<C-R>//j %<CR><Bar>:cw<CR>
 
 nmap go <Nop>
 Cnmap go  :Unite outline<CR>

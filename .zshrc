@@ -266,6 +266,6 @@ run-with-bundler()
   fi
 }
 
-# for CMD in $BUNDLED_COMMANDS; do
-#   alias $CMD="run-with-bundler $CMD"
-# done
+for CMD in $BUNDLED_COMMANDS; do
+  alias $CMD="run-with-bundler $CMD"
+done
