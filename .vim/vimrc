@@ -143,7 +143,7 @@ set autoindent
 set wildmode=list:longest
 set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
-set virtualedit=all
+set virtualedit=block
 set matchpairs+=<:>
 if v:version >= 600
   set autoread
@@ -982,7 +982,8 @@ vmap s <Plug>VSurround
 xmap s <Plug>VSurround
 " neocomplcache {{{2
 inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
-nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
+" nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
+nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
 
 imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
 
