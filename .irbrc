@@ -24,8 +24,8 @@ if defined?(::Bundler)
   end
 end
 
-# Use Pry everywhere
-require "rubygems"
-require 'pry'
-Pry.start
-exit
+# # Use Pry everywhere
+# require "rubygems"
+# require 'pry'
+# Pry.start
+# exit

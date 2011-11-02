@@ -423,7 +423,7 @@ colorscheme solarized
 "}}}2
 " netrw {{{2
 let g:netrw_list_hide= '*.swp'
-nnoremap <silent> <BS> :<C-u>Explore<CR>
+" nnoremap <silent> <BS> :<C-u>Explore<CR>
 " Change default directory.
 set browsedir=current
 if executable('wget')
@@ -1592,7 +1592,7 @@ function! s:cmd_Cmap(prefix, suffix, args)
   let [options, rest] = s:separate_list(a:args,
         \ '^\c<\(buffer\|expr\|script\|silent\|special\|unique\|count\|noexec\)>$')
   if len(rest) < 2
-    throw 'Insufficient number of arguments: ' . string(rest)
+    throw 'Insufficient number of arglineuments: ' . string(rest)
   endif
   let lhs = rest[0]
   let script = rest[1:]
