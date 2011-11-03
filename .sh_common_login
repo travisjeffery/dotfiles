@@ -69,13 +69,13 @@ case "$ENV_ACCESS" in
     ;;
 esac
 
-if [ "$TERM" = "xterm" ] ; then
-  export TERM="xterm-256color" 
-fi
+# if [ "$TERM" = "xterm" ] ; then
+#   export TERM="xterm-256color" 
+# fi
 
-if [ "$COLORTERM" = "gnome-terminal" ]; then
-  export TERM="gnome"
-fi
+# if [ "$COLORTERM" = "gnome-terminal" ]; then
+#   export TERM="gnome"
+# fi
 
 export CYGHOME="/c/cygwin$HOME"
 
