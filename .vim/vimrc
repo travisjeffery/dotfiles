@@ -8,6 +8,7 @@ filetype off
 " call vundle#rc()
 set rtp+=~/.vim/bundle/neobundle/
 call neobundle#rc(expand('~/.bundle'))
+NeoBundle 'https://github.com/timcharper/textile.vim.git'
 NeoBundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
 NeoBundle 'https://github.com/h1mesuke/unite-outline.git'
 NeoBundle 'https://github.com/tsukkee/unite-tag.git'
@@ -1859,10 +1860,10 @@ if !has('gui_running')
   endif
 
   " Change cursor shape.
-  if &term =~ "xterm"
-    let &t_SI = "\<Esc>]12;lightgreen\x7"
-    let &t_EI = "\<Esc>]12;white\x7"
-  endif
+  " if &term =~ "xterm"
+  "   let &t_SI = "\<Esc>]12;lightgreen\x7"
+  "   let &t_EI = "\<Esc>]12;white\x7"
+  " endif
 endif
 "}}}1
 

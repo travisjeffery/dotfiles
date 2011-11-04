@@ -315,7 +315,10 @@ lazy fmap -modes=i -events=keydown,keypress <C-n> <Down>
 " GMail {{{
 "   add ! l gl g/ + -
 "   delete /
-lazy fmaps -u='mail\.google\.com/mail' c j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/ + -
+" lazy fmaps -u='mail\.google\.com/mail' c j k n p o u e x s r z # [ ] ! ? . gi gs gt gd ga gc gk gl <C-s> l *a *n *r *u *s *t T g/ + -
+
+autocmd LocationChange .* js modes.passAllKeys = /mail\.google\.com/.test(buffer.URL)
+autocmd LocationChange mail\\.google\\.com :set editor="gvim -f -c 'set ft=mail'"
 " }}}
 " RememberTheMilk {{{
 "   remove f <Esc> i d + - <Tab> <S-Tab>
