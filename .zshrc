@@ -9,6 +9,8 @@ bindkey "^[[B" history-beginning-search-forward-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
+fpath=("$HOME/.zsh/completions" $fpath)
+
 compinit
 
 zstyle ':completion::complete:*' use-cache 1

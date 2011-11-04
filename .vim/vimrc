@@ -10,6 +10,7 @@ set rtp+=~/.vim/bundle/neobundle/
 call neobundle#rc(expand('~/.bundle'))
 NeoBundle 'https://github.com/timcharper/textile.vim.git'
 NeoBundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
+NeoBundle 'https://github.com/Shougo/unite-build.git'
 NeoBundle 'https://github.com/h1mesuke/unite-outline.git'
 NeoBundle 'https://github.com/tsukkee/unite-tag.git'
 " NeoBundle 'https://github.com/jiangmiao/auto-pairs.git'
@@ -986,19 +987,21 @@ inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 " nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
 nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
 
+nmap R <Nop>
+nmap R <SID>(command-line-enter)s//
 imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
 
-function! s:CrInInsertModeBetterWay()
-  return pumvisible() ? "\<C-e>\<Cr>"  : "\<Cr>"
-endfunction
+" function! s:CrInInsertModeBetterWay()
+"   return pumvisible() ? "\<C-r>=neocomplcache#cancel_popup()"  : "\<Cr>"
+" endfunction
 
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
-      \neocomplcache#sources#completefunc_complete#call_completefunc('googlesuggest_complete#completefunc')
+    \neocomplcache#sources#completefunc_complete#call_completefunc('googlesuggest_complete#completefunc')
 inoremap <expr><C-y>  pumvisible() ? neocomplcache#close_popup() :  "\<C-r>"
 inoremap <expr><C-e>  pumvisible() ? neocomplcache#cancel_popup() : "\<End>"
-imap <C-k>  <Plug>(neocomplcache_start_unite_complete)
+" imap <C-k>  <Plug>(neocomplcache_start_unite_complete)
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 " inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
