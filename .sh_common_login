@@ -69,6 +69,8 @@ case "$ENV_ACCESS" in
     ;;
 esac
 
+export TERM=xterm-256color
+
 # if [ "$TERM" = "xterm" ] ; then
 #   export TERM="xterm-256color" 
 # fi
