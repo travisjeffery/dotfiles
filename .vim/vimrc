@@ -41,7 +41,7 @@ NeoBundle 'https://github.com/tpope/vim-fugitive.git'
 NeoBundle 'https://github.com/sjl/gundo.vim.git'
 NeoBundle 'https://github.com/travisjeffery/vim-help'
 NeoBundle 'https://github.com/tpope/vim-ragtag.git'
-NeoBundle 'git@github.com:travisjeffery/vim-rails.git'
+NeoBundle 'git@github.com:travisjeffery/vim-rails-fork.git'
 NeoBundle 'https://github.com/tpope/vim-repeat.git'
 NeoBundle 'https://github.com/csexton/rvm.vim.git'
 NeoBundle 'https://github.com/tpope/vim-surround.git'
@@ -417,9 +417,9 @@ let g:solarized_underline=1
 let g:solarized_italic=1
 let g:solarized_diffmode="normal"
 let g:solarized_hitrail=0
-let g:solarized_termcolors = 256 
-let g:solarized_visibility = "high" 
-let g:solarized_contrast = "high" 
+let g:solarized_termcolor=256 
+let g:solarized_visibility="high" 
+let g:solarized_contrast="high" 
 set background=light
 colorscheme solarized
 "}}}2
