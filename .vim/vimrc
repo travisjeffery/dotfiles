@@ -8,6 +8,7 @@ filetype off
 " call vundle#rc()
 set rtp+=~/.vim/bundle/neobundle/
 call neobundle#rc(expand('~/.bundle'))
+NeoBundle 'https://github.com/timcharper/textile.vim.git'
 NeoBundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
 NeoBundle 'https://github.com/h1mesuke/unite-outline.git'
 NeoBundle 'https://github.com/tsukkee/unite-tag.git'
@@ -410,7 +411,7 @@ augroup END"}}}2
 "}}}1
 " Section: Plugins {{{1
 " Solarized{{{2
-let g:solarized_termtrans=0
+let g:solarized_termtrans=1
 let g:solarized_degrade=0
 let g:solarized_bold=1
 let g:solarized_underline=1

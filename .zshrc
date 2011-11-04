@@ -215,6 +215,11 @@ EOT
     afu-ad-delete-unambiguous-prefix afu+accept-and-hold
 fi
 
+
+if [ -f "$HOME/.dir_colors" ]; then
+  eval `dircolors $HOME/.dir_colors`
+fi
+
 BUNDLED_COMMANDS=(cap
 capify
 cucumber
