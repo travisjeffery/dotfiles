@@ -8,6 +8,8 @@ filetype off
 " call vundle#rc()
 set rtp+=~/.vim/bundle/neobundle/
 call neobundle#rc(expand('~/.bundle'))
+NeoBundle 'https://github.com/vim-scripts/EnhancedJumps.git'
+NeoBundle 'https://github.com/vim-scripts/ReplaceWithRegister.git'
 NeoBundle 'https://github.com/timcharper/textile.vim.git'
 NeoBundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
 NeoBundle 'https://github.com/Shougo/unite-build.git'
@@ -281,9 +283,9 @@ set shell=/bin/sh
 set noswapfile
 set updatecount=0
 set updatetime=50
-set noshowmatch
+set showmatch
 let g:loaded_matchparen = 1
-set matchtime=0
+set matchtime=1
 if has('unix')
   set nofsync
   set swapsync=
@@ -989,7 +991,7 @@ nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>"
 
 nmap R <Nop>
 nmap R <SID>(command-line-enter)s//
-imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
+" imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
 
 " function! s:CrInInsertModeBetterWay()
 "   return pumvisible() ? "\<C-r>=neocomplcache#cancel_popup()"  : "\<Cr>"
