@@ -8,7 +8,7 @@ filetype off
 " call vundle#rc()
 set rtp+=~/.vim/bundle/neobundle/
 call neobundle#rc(expand('~/.bundle'))
-NeoBundle 'https://github.com/vim-scripts/EnhancedJumps.git'
+" NeoBundle 'https://github.com/vim-scripts/EnhancedJumps.git'
 NeoBundle 'https://github.com/vim-scripts/ReplaceWithRegister.git'
 NeoBundle 'https://github.com/timcharper/textile.vim.git'
 NeoBundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
@@ -45,7 +45,7 @@ NeoBundle 'https://github.com/tpope/vim-fugitive.git'
 NeoBundle 'https://github.com/sjl/gundo.vim.git'
 NeoBundle 'https://github.com/travisjeffery/vim-help'
 NeoBundle 'https://github.com/tpope/vim-ragtag.git'
-NeoBundle 'git@github.com:travisjeffery/vim-rails-fork.git'
+NeoBundle 'git@github.com:travisjeffery/vim-rails.git'
 NeoBundle 'https://github.com/tpope/vim-repeat.git'
 NeoBundle 'https://github.com/csexton/rvm.vim.git'
 NeoBundle 'https://github.com/tpope/vim-surround.git'

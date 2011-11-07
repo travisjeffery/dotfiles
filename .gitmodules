@@ -6,7 +6,7 @@
 	url = git://github.com/sstephenson/rbenv.git
 [submodule ".config/awesome"]
 	path = .config/awesome
-	url = git@github.com:travisjeffery/awesome-window-manager-config.git
+	url = git@github.com:travisjeffery/awesome-wm.git
 [submodule ".emacs.d/vendor/nyan-mode"]
 	path = .emacs.d/vendor/nyan-mode
 	url = https://github.com/TeMPOraL/nyan-mode.git
