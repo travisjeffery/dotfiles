@@ -910,7 +910,7 @@ endfunction
 " Section: Abbreviations{{{1
 cabbrev E e
 cabbrev RModel Rmodel
-cabbrev git Git
+" cabbrev git Git
 cabbrev ~? ~/
 iabbrev Utitlies Utilities
 iabbrev utitlies utilities
@@ -1257,7 +1257,7 @@ nmap <Leader>/i /^ *if\><CR>
 nmap \# /^ *#<CR>
 nnoremap gs <Nop>
 nmap gs :vimgrep /^ *\(context\<Bar>test\<Bar>def\<Bar>should\<Bar>class\)/ %<CR><Bar>:cw<CR>
-nmap \, /\<\><Left><Left>
+nmap \/ /\<\><Left><Left>
 
 " nmap <Leader>a= :Tabularize /=<CR>
 " vmap <Leader>a= :Tabularize /=<CR>
