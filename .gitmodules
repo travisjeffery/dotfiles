@@ -34,9 +34,6 @@
 [submodule "/Users/travis/.zsh/fizsh"]
 	path = .zsh/fizsh
 	url = https://github.com/zsh-users/fizsh.git
-[submodule ".emacs.d"]
-	path = .emacs.d
-	url = https://github.com/bbatsov/emacs-prelude.git
 [submodule ".vim/bundle/neobundle"]
 	path = .vim/bundle/neobundle
 	url = https://github.com/Shougo/neobundle.vim.git
