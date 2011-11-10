@@ -79,7 +79,7 @@ NeoBundle 'https://github.com/thinca/vim-quickrun.git'
 NeoBundle 'https://github.com/thinca/vim-poslist.git'
 NeoBundle 'https://github.com/thinca/vim-unite-history.git'
 NeoBundle 'https://github.com/Shougo/echodoc.git'
-NeoBundle 'https://github.com/Shougo/neocomplcache.git'
+" NeoBundle 'https://github.com/Shougo/neocomplcache.git'
 NeoBundle 'https://github.com/kana/vim-altercmd.git'
 NeoBundle 'https://github.com/mattn/gist-vim.git'
 NeoBundle 'https://github.com/kana/vim-scratch.git'
@@ -530,8 +530,8 @@ nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
 let g:echodoc_enable_at_startup = 1
 "}}}2
 " delimitmate {{{2
-let g:delimitMate_expand_cr = 1
-let g:delimitMate_expand_space = 1
+let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
 let delimitMate_matchpairs = "(:),[:],{:}"
 let delimitMate_balance_matchpairs = 1
 let delimitMate_smart_quotes = 1
@@ -995,7 +995,7 @@ imap      <C-G>S <Plug>ISurround
 vmap s <Plug>VSurround
 xmap s <Plug>VSurround
 " neocomplcache {{{2
-inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
+" inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 " nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
 " imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
 
@@ -1003,26 +1003,24 @@ inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
 "   return pumvisible() ? "\<C-r>=neocomplcache#cancel_popup()"  : "\<Cr>"
 " endfunction
 
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
-inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
-inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
-    \neocomplcache#sources#completefunc_complete#call_completefunc('googlesuggest_complete#completefunc')
-inoremap <expr><C-y>  pumvisible() ? neocomplcache#close_popup() :  "\<C-r>"
-inoremap <expr><C-e>  pumvisible() ? neocomplcache#cancel_popup() : "\<End>"
+" inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
+"     \neocomplcache#sources#completefunc_complete#call_completefunc('googlesuggest_complete#completefunc')
+" inoremap <expr><C-y>  pumvisible() ? neocomplcache#close_popup() :  "\<C-r>"
+" inoremap <expr><C-e>  pumvisible() ? neocomplcache#cancel_popup() : "\<End>"
 " imap <C-k>  <Plug>(neocomplcache_start_unite_complete)
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 " inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
-inoremap <expr><C-l>  pumvisible() ? neocomplcache#close_popup():  "\<C-p>"
-inoremap <expr><Space>  pumvisible() ? neocomplcache#cancel_popup()."\<Space>" :  "\<Space>"
+" inoremap <expr><C-l>  pumvisible() ? neocomplcache#close_popup():  "\<C-p>"
+" inoremap <expr><Space>  pumvisible() ? neocomplcache#cancel_popup()."\<Space>" :  "\<Space>"
+
 inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
+inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 
-nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
-nmap R <Nop>
-nmap R <SID>(command-line-enter)s//
 "{{{2
 
 " Useful save mappings{{{2
@@ -1048,6 +1046,10 @@ function! s:cd_buffer_dir()"{{{
   TabpageCD `=l:dir`
 endfunction"}}}2
 nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
+
+nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
+nmap R <Nop>
+nmap R <SID>(command-line-enter)s//
 
 " Fast search pair.
 nnoremap [Space]p %
