@@ -1223,7 +1223,6 @@ nnoremap Q gq
 nnoremap <Leader>m :TagbarToggle<CR>
 nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
-nnoremap <Leader>= ggVG=<C-o><C-o>
 nnoremap <Leader>v : <C-u>vsplit<CR><C-w><C-w>
 nnoremap <Leader>s :<C-u>split<CR><C-w><C-w>
 nnoremap <Leader>\ :<C-u>%! fmt -w 79<CR>
