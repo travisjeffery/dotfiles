@@ -1050,6 +1050,8 @@ nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
 nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
 nmap R <Nop>
 nmap R <SID>(command-line-enter)s//
+nnoremap <C-y> 5<C-y>
+nnoremap <C-e> 5<C-e>
 
 " Fast search pair.
 nnoremap [Space]p %
