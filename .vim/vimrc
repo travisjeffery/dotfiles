@@ -1010,7 +1010,7 @@ xmap s <Plug>VSurround
 " imap <C-k>  <Plug>(neocomplcache_start_unite_complete)
 " inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 " inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-" inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
+inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
 " inoremap <expr><C-l>  pumvisible() ? neocomplcache#close_popup():  "\<C-p>"
 " inoremap <expr><Space>  pumvisible() ? neocomplcache#cancel_popup()."\<Space>" :  "\<Space>"
 
