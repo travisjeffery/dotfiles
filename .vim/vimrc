@@ -8,6 +8,8 @@ filetype off
 " call vundle#rc()
 set rtp+=~/.vim/bundle/neobundle/
 call neobundle#rc(expand('~/.bundle'))
+NeoBundle 'https://github.com/thinca/vim-ref.git'
+NeoBundle 'https://github.com/ujihisa/quicklearn.git'
 NeoBundle 'https://github.com/Raimondi/delimitMate.git'
 " NeoBundle 'https://github.com/vim-scripts/EnhancedJumps.git'
 NeoBundle 'https://github.com/vim-scripts/ReplaceWithRegister.git'
@@ -32,7 +34,6 @@ NeoBundle 'https://github.com/thinca/vim-qfreplace.git'
 NeoBundle 'https://github.com/Shougo/vimshell.git'
 NeoBundle 'https://github.com/h1mesuke/vim-alignta.git'
 NeoBundle 'https://github.com/kien/ctrlp.vim.git'
-NeoBundle 'git@github.com:travisjeffery/vim-testee.git'
 NeoBundle 'https://github.com/tpope/vim-endwise.git'
 NeoBundle 'https://github.com/gmarik/vundle.git'
 NeoBundle 'https://github.com/kana/vim-altr.git'
@@ -852,6 +853,10 @@ autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
 autocmd FileType vimperator set ft=vim
 autocmd filetype svn,*commit*,markdown set spell
 autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
+autocmd FileType python
+      \   setl makeprg=python\ \"%:p\" 
+autocmd User Bundler
+      \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 autocmd FileType ruby
       \ if expand('%') =~# '_test\.rb$' |
       \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
@@ -1084,7 +1089,7 @@ nnoremap [Space]tsN :<C-u>split<CR><Bar>:<C-u>tl<CR>
 
 " The prefix key.
 nnoremap [Quickfix]   <Nop>
-nmap    q  [Quickfix]
+" nmap    q  [Quickfix]
 " Disable Ex-mode.
 nnoremap Q  q
 
