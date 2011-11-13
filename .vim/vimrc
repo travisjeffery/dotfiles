@@ -1056,7 +1056,7 @@ nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
 
 nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
 nmap R <Nop>
-nmap R <SID>(command-line-enter)s//
+nmap R <SID>(command-line-enter)%s//
 nnoremap <C-y> 5<C-y>
 nnoremap <C-e> 5<C-e>
 
@@ -1277,7 +1277,7 @@ nmap <Leader>a: :Tabularize /:\zs<CR>
 vmap <Leader>a: :Tabularize /:\zs<CR>
 nmap <Leader>a :Tabularize /
 vmap <Leader>a :Tabularize /
-nmap <Leader>= G=gg<c-o><c-o>
+nmap <Leader>= maG=gg`a
 nmap <Leader>h :help <c-r>=expand("<cword>")<CR><CR>
 vmap <Leader>h "ry:help<space><c-r>r<CR>
 nmap <C-cr> <esc>yyp
