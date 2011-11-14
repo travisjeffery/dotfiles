@@ -1519,10 +1519,15 @@ noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ? 'zt' : (winline() == 1)? 
 " Auto escape / substitute.
 xnoremap [Space]s y:%s/<C-r>=substitute(@0, '/', '\\/', 'g')<Return>//g<Left><Left>
 
-nmap <Left> <Plug>(poslist-prev-buf)
-nmap <Right> <Plug>(poslist-next-buf)
-nmap [Space][ <Plug>(poslist-prev-buf)
-nmap [Space]]  <Plug>(poslist-next-buf)
+if exists('g:loaded_poslist')
+  nmap <Left> <Plug>(poslist-prev-buf)
+  nmap <Right> <Plug>(poslist-next-buf)
+  nmap [Space][ <Plug>(poslist-prev-buf)
+  nmap [Space]]  <Plug>(poslist-next-buf)
+else
+  nmap [Space][ <Plug>(exjumplist-previous-buffer)
+  nmap [Space]] <Plug>(exjumplist-next-buffer)
+endif
 
 function! YRRunAfterMaps()
   nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
