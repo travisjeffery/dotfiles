@@ -858,6 +858,8 @@ autocmd filetype svn,*commit*,markdown set spell
 autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
 autocmd FileType python
       \   setl makeprg=python\ \"%:p\" 
+autocmd FileType clojure
+      \   setl makeprg=clj\ \"%:p\" 
 autocmd User Bundler
       \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 autocmd FileType ruby
