@@ -40,3 +40,6 @@
 [submodule ".zsh/completions"]
 	path = .zsh/completions
 	url = git://github.com/zsh-users/zsh-completions.git
+[submodule ".emacs.d/vendor/wrap-region"]
+	path = .emacs.d/vendor/wrap-region
+	url = https://github.com/rejeep/wrap-region.git
