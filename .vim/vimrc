@@ -285,7 +285,6 @@ set laststatus=2
 set diffopt=filler
 set diffopt+=iwhite
 set switchbuf=useopen
-set shell=/bin/sh
 set noswapfile
 set updatecount=0
 set updatetime=50
@@ -1838,7 +1837,7 @@ if exists('$WINDIR')
   set shell=bash
 else
   " Use zsh.
-  set shell=zsh
+  set shell=sh
 endif
 
 " Set path.
