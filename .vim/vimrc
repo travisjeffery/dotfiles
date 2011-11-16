@@ -308,7 +308,8 @@ endif
 set norestorescreen
 set t_ti=
 set t_te=
-set shortmess=aI
+set shortmess=filtIoOA
+set report=0
 if has("mac")
   set clipboard=unnamed
   let g:gist_clip_command = 'pbcopy'
@@ -1073,6 +1074,10 @@ xnoremap [Space]k z-<C-b>z.
 nnoremap [Space]ev :<C-u>edit $MYVIMRC<CR>
 nnoremap [Space]sv :<C-u>source $MYVIMRC<CR>
 
+" q commands "{{{2
+nnoremap Q  gq
+vnoremap Q  gq
+"}}}
 " Tags {{{2
 nnoremap [Space]tt <C-]>
 nnoremap [Space]tn :<C-u>tn<CR>
@@ -1093,7 +1098,6 @@ nnoremap [Space]tsN :<C-u>split<CR><Bar>:<C-u>tl<CR>
 nnoremap [Quickfix]   <Nop>
 " nmap    q  [Quickfix]
 " Disable Ex-mode.
-nnoremap Q  q
 
 " For quickfix list  "{{{
 nnoremap <silent> [Quickfix]n  :<C-u>cnext<CR>
