@@ -161,6 +161,7 @@ if v:version >= 600
   set foldlevelstart=1
   set foldlevel=1
   set foldmethod=marker
+  set foldopen=block,insert,jump,mark,percent,quickfix,search,tag,undo
   set printoptions=paper:letter
   set sidescrolloff=5
   set sidescroll=1
