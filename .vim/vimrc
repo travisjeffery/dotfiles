@@ -11,19 +11,16 @@ call neobundle#rc(expand('~/.bundle'))
 NeoBundle 'https://github.com/tpope/vim-rvm.git'
 NeoBundle 'https://github.com/thinca/vim-ref.git'
 NeoBundle 'https://github.com/ujihisa/quicklearn.git'
-" NeoBundle 'https://github.com/Raimondi/delimitMate.git'
 NeoBundle 'https://github.com/jiangmiao/auto-pairs.git'
-" NeoBundle 'https://github.com/vim-scripts/EnhancedJumps.git'
 NeoBundle 'https://github.com/vim-scripts/ReplaceWithRegister.git'
 NeoBundle 'https://github.com/timcharper/textile.vim.git'
 NeoBundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
 NeoBundle 'https://github.com/Shougo/unite-build.git'
 NeoBundle 'https://github.com/h1mesuke/unite-outline.git'
 NeoBundle 'https://github.com/tsukkee/unite-tag.git'
-" NeoBundle 'https://github.com/jiangmiao/auto-pairs.git'
 NeoBundle 'https://github.com/majutsushi/tagbar.git'
 NeoBundle 'https://github.com/ujihisa/vital.vim.git'
-NeoBundle 'https://github.com/int3/vim-extradite.git'
+NeoBundle 'git@github.com:travisjeffery/vim-extradite.git'
 " NeoBundle 'https://github.com/roman/golden-ratio.git'
 NeoBundle 'https://github.com/kchmck/vim-coffee-script.git'
 NeoBundle 'git://github.com/Shougo/vim-vcs.git'
@@ -288,7 +285,6 @@ set laststatus=2
 set diffopt=filler
 set diffopt+=iwhite
 set switchbuf=useopen
-set shell=/bin/sh
 set noswapfile
 set updatecount=0
 set updatetime=50
@@ -1841,7 +1837,7 @@ if exists('$WINDIR')
   set shell=bash
 else
   " Use zsh.
-  set shell=zsh
+  set shell=sh
 endif
 
 " Set path.
