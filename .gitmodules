@@ -43,3 +43,9 @@
 [submodule ".emacs.d/vendor/wrap-region"]
 	path = .emacs.d/vendor/wrap-region
 	url = https://github.com/rejeep/wrap-region.git
+[submodule ".emacs.d/vendor/fuzzy-find-in-project"]
+	path = .emacs.d/vendor/fuzzy-find-in-project
+	url = https://github.com/justinweiss/fuzzy-find-in-project.git
+[submodule ".emacs.d/vendor/eproject"]
+	path = .emacs.d/vendor/eproject
+	url = https://github.com/jrockway/eproject.git
