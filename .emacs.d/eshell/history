@@ -26,3 +26,26 @@ ls *.rar
 rm -rf Sudden.Impact.1983.WS.DVDRip.XviD.iNT-EwDp.*
 ls
 which ruby
+which ruby
+echo $PATH
+ruby -v
+cd ~/ninja-config/
+git st
+git diff
+ls
+git st
+git diff
+git st
+git co 
+git co .
+git st
+git add .emacs.d -f
+it st
+git st
+git st
+git ci -m 'emacs.d'
+git pu
+git st
+git fixup
+git st
+git commit --amend
