@@ -218,7 +218,7 @@ EOT
 fi
 
 
-if [ -f "$HOME/.dir_colors" ]; then
+if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
   eval `dircolors $HOME/.dir_colors`
 fi
 

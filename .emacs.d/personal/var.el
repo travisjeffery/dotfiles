@@ -1,1 +1,0 @@
-(setq linum-format "  %d ")

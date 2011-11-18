@@ -1,3 +1,8 @@
 .vim/bundle/*
 .vim/vim-pathogen
 .oh-my-zsh/*
+.config/ranger
+.emacs.d/recentf
+.emacs.d/savehist
+.emacs.d/saveplace
+.emacs.d/eshell
