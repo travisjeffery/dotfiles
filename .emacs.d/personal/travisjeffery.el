@@ -8,7 +8,10 @@
    version-control 1)
 
 (vendor 'color-theme-solarized)
-(color-theme-solarized-ligh1)
+(color-theme-solarized-light)
+
+(vendor 'evil)
+(evil-mode 1)
 
 (vendor 'wrap-region)
 (wrap-region-global-mode 1)
