@@ -13,6 +13,9 @@
 (vendor 'evil)
 (evil-mode 1)
 
+(vendor 'surround)
+(global-surround-mode 1)
+
 (setq visible-bell t)
 
 (vendor 'wrap-region)
