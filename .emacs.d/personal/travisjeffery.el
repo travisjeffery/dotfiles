@@ -13,6 +13,8 @@
 (vendor 'evil)
 (evil-mode 1)
 
+(setq visible-bell t)
+
 (vendor 'wrap-region)
 (wrap-region-global-mode 1)
 
