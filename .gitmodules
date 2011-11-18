@@ -49,3 +49,9 @@
 [submodule ".emacs.d/vendor/eproject"]
 	path = .emacs.d/vendor/eproject
 	url = https://github.com/jrockway/eproject.git
+[submodule ".emacs.d/vendor/color-theme-solarized"]
+	path = .emacs.d/vendor/color-theme-solarized
+	url = https://github.com/sellout/emacs-color-theme-solarized.git
+[submodule ".emacs.d/vendor/tumble"]
+	path = .emacs.d/vendor/tumble
+	url = git://github.com/febuiles/tumble.git
