@@ -10,11 +10,28 @@
 (vendor 'color-theme-solarized)
 (color-theme-solarized-light)
 
-(vendor 'evil)
-(evil-mode 1)
+;(vendor 'evil)
+;(evil-mode 1)
+;(vendor 'surround)
+;(global-surround-mode 1)
 
-(vendor 'surround)
-(global-surround-mode 1)
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(setq confirm-nonexistent-file-or-buffer nil)
+
+(setq ido-create-new-buffer 'always)
+
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message t)
+
+(setq kil-buffer-query-functions
+      (remq 'process-kill-buffer-query-function
+            kill-buffer-query-functions))
+
+(tooltip-mode -1)
+(setq tooltip-use-echo-area t)
+
+(setq enable-recursive-minibuffers t)
 
 (setq visible-bell t)
 
