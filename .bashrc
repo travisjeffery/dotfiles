@@ -1,3 +1,4 @@
+source $HOME/.sh_common_login
 # MISC.  {{{1
 
 umask 077  # Default permission
