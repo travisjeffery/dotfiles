@@ -780,6 +780,7 @@ augroup END
 " Clojure {{{2
 let g:vimclojure#HighlightBuiltins=1
 let g:vimclojure#ParenRainbow=1
+let vimclojure#FuzzyIndent = 1
 "}}}2
 let g:indexed_search_shortmess=1
 let g:HammerQuiet=1
@@ -944,7 +945,7 @@ iabbrev PgTOOls PgTools
 abbrev shuold should
 "}}}1
 " Section: Mappings {{{1
-let g:mapleader=","
+let mapleader=","
 nmap  <Space>   [Space]
 xmap  <Space>   [Space]
 nnoremap  [Space]   <Nop>
