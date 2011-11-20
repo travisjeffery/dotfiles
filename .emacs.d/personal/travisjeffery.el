@@ -1,3 +1,12 @@
+(vendor 'color-theme-solarized)
+;(vendor 'evil)
+;(vendor 'surround)
+(vendor 'wrap-region)
+(vendor 'fuzzy-find-in-project)
+(vendor 'eprojec1)
+(vendor 'tumble)
+(vendor 'pomodoro)
+
 (setq
    backup-by-copying t
    backup-directory-alist
@@ -21,12 +30,9 @@
       (message file)
       (delete-file file))))
 
-(vendor 'color-theme-solarized)
 (color-theme-solarized-light)
 
-;(vendor 'evil)
 ;(evil-mode 1)
-;(vendor 'surround)
 ;(global-surround-mode 1)
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -49,13 +55,10 @@
 
 (setq visible-bell t)
 
-(vendor 'wrap-region)
 (wrap-region-global-mode 1)
 
 (textmate-mode 1)
 
-(vendor 'fuzzy-find-in-projec1)
-(vendor 'eprojec1)
 (require 'eproject-extras)
 
 (define-project-type clojure (generic)
@@ -70,8 +73,11 @@
 (browse-kill-ring-default-keybindings)
 
 (setq ack-prompt-for-directory 1)
+(put 'erase-buffer 'disabled nil)
 
-(setenv "PATH" "/Users/travis/.rvm/gems/ruby-head/bin:/Users/travis/.rvm/gems/ruby-head@global/bin:/Users/travis/.rvm/rubies/ruby-head/bin:/Users/travis/.rvm/bin:/Users/travis/bin:/usr/local/bin:/Users/travis/.rbenv/shims:/Users/travis/.rbenv/bin:/Users/travis/.lein/bin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/X11/bin")
+(setenv "PATH" "/Users/travis/.rvm/bin:/Users/travis/.rvm/gems/ruby-head/bin:/Users/travis/.rvm/gems/ruby-head@global/bin:/Users/travis/.rvm/rubies/ruby-head/bin:/Users/travis/.rvm/bin:/Users/travis/bin:/usr/local/bin:/Users/travis/.rbenv/shims:/Users/travis/.rbenv/bin:/Users/travis/.lein/bin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/X11/bin")
+
+(rvm-use-default)
 
 (whitespace-mode 0)
 
@@ -82,5 +88,3 @@
 
 (setq delete-by-moving-to-trash t)
 (setq browse-url-browser-function 'browse-url-default-macosx-browser)
-
-(vendor 'tumble)
