@@ -60,6 +60,10 @@
 ;; yari provides a nice Emacs interface to ri
 (require 'yari)
 
+;; yaml-mode
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+
 ; TODO fix ruby-end and package ruby-block for marmalade
 (require 'ruby-block)
 (require 'ruby-end)
@@ -77,6 +81,14 @@
 
 (require 'haml-mode)
 (require 'scss-mode)
+
+(defun prelude-scss-mode-hook ()
+  ;; indent like in Ruby
+  (setq css-indent-offset 2)
+  ;; turn off annoying auto-compile on save
+  (setq scss-compile-at-save nil))
+
+(add-hook 'scss-mode-hook 'prelude-scss-mode-hook)
 
 ;; cucumber support
 (require 'feature-mode)

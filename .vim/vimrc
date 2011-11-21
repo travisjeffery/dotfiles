@@ -8,6 +8,7 @@ filetype off
 " call vundle#rc()
 set rtp+=~/.vim/bundle/neobundle/
 call neobundle#rc(expand('~/.bundle'))
+NeoBundle 'https://github.com/mattn/lisper-vim.git'
 NeoBundle 'https://github.com/tpope/vim-rvm.git'
 NeoBundle 'https://github.com/thinca/vim-ref.git'
 NeoBundle 'https://github.com/ujihisa/quicklearn.git'
@@ -781,7 +782,9 @@ augroup END
 " Clojure {{{2
 let g:vimclojure#HighlightBuiltins=1
 let g:vimclojure#ParenRainbow=1
+let vimclojure#FuzzyIndent = 1
 "}}}2
+let g:AutoPairs = {'(':')', '[':']', '{':'}','"':'"'}
 let g:indexed_search_shortmess=1
 let g:HammerQuiet=1
 let g:CSApprox_verbose_level=0
@@ -945,7 +948,7 @@ iabbrev PgTOOls PgTools
 abbrev shuold should
 "}}}1
 " Section: Mappings {{{1
-let g:mapleader=","
+let mapleader=","
 nmap  <Space>   [Space]
 xmap  <Space>   [Space]
 nnoremap  [Space]   <Nop>
