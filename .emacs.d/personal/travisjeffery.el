@@ -75,9 +75,10 @@
 (setq ack-prompt-for-directory 1)
 (put 'erase-buffer 'disabled nil)
 
-(setenv "PATH" "/Users/travis/.rvm/bin:/Users/travis/.rvm/gems/ruby-head/bin:/Users/travis/.rvm/gems/ruby-head@global/bin:/Users/travis/.rvm/rubies/ruby-head/bin:/Users/travis/.rvm/bin:/Users/travis/bin:/usr/local/bin:/Users/travis/.rbenv/shims:/Users/travis/.rbenv/bin:/Users/travis/.lein/bin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/X11/bin")
+(setenv "PATH" "/Users/travis/bin:/usr/local/bin:/Users/travis/.rbenv/shims:/Users/travis/.rbenv/bin:/Users/travis/.lein/bin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/X11/bin")
 
-(rvm-use-default)
+(if (file-exists-p "~/.rvm")
+    (rvm-use-default))
 
 (whitespace-mode 0)
 

@@ -8,6 +8,7 @@ filetype off
 " call vundle#rc()
 set rtp+=~/.vim/bundle/neobundle/
 call neobundle#rc(expand('~/.bundle'))
+NeoBundle 'https://github.com/mattn/lisper-vim.git'
 NeoBundle 'https://github.com/tpope/vim-rvm.git'
 NeoBundle 'https://github.com/thinca/vim-ref.git'
 NeoBundle 'https://github.com/ujihisa/quicklearn.git'
