@@ -51,6 +51,9 @@
 (require 're-builder)
 (setq reb-re-syntax 'string)
 
+(setq cua-enable-cua-keys nil)           
+(cua-mode t)                             
+
 (setq
  backup-by-copying t
  backup-directory-alist
