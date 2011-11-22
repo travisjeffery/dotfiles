@@ -80,6 +80,11 @@
 
 (setq confirm-nonexistent-file-or-buffer nil)
 
+(setq
+ scroll-margin 20
+ scroll-conservatively 101
+ scroll-preserve-screen-position 1)
+
 (setq ido-create-new-buffer 'always)
 
 (setq inhibit-startup-message t
@@ -132,6 +137,8 @@
 
 (global-linum-mode 1)
 (setq linum-format "  %d ")
+
+(setq fringe-mode 0)
 
 (setq delete-by-moving-to-trash t)
 (setq browse-url-browser-function 'browse-url-default-macosx-browser)
