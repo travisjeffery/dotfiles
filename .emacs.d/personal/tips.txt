@@ -18,7 +18,6 @@ Manipulate whitespace:
 => C-x C-o
 => (delete-blank-lines)
 
-
 Clojure:
 
 Swap between implementation and test:
@@ -32,3 +31,17 @@ Get details about failure/error:
 
 Reload current file:
 => C-c C-l
+
+Org Mode:
+
+Cycle through item's state:
+=> S-Left, S-Right
+
+Clock in on current task:
+=> C-c C-x C-i
+
+Clock out on current task:
+=> C-c C-x C-o
+
+Change state of current task:
+=> C-c C-t
