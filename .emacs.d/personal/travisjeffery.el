@@ -1,20 +1,64 @@
+(when (not package-archive-contents)
+  (package-refresh-contents))
+;; Add in your own as you wish:
+(defvar my-packages '(
+                      auctex
+                      browse-kill-ring
+                      clojure-mode
+                      coffee-mode
+                      color-theme
+                      deft
+                      find-file-in-project
+                      full-ack
+                      gist
+                      haml-mode
+                      haskell-mode
+                      idle-highlight-mode
+                      ido-ubiquitous
+                      magit
+                      markdown-mode
+                      paredit
+                      projectile
+                      python
+                      rvm
+                      sass-mode
+                      save-visited-files
+                      scss-mode
+                      smex
+                      slime
+                      clojure-test-mode
+                      starter-kit
+                      textmate
+                      undo-tree
+                      yaml-mode
+                      yari
+                      yasnippet
+                      )
+  "A list of packages to ensure are installed at launch.")
+
+(dolist (p my-packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
+
 (vendor 'color-theme-solarized)
-;(vendor 'evil)
-;(vendor 'surround)
 (vendor 'wrap-region)
 (vendor 'fuzzy-find-in-project)
-(vendor 'eprojec1)
+(vendor 'eproject)
 (vendor 'tumble)
 (vendor 'pomodoro)
+(load "vimgolf")
+
+(require 're-builder)
+(setq reb-re-syntax 'string)
 
 (setq
-   backup-by-copying t
-   backup-directory-alist
-    '(("." . "~/.tmp"))
-   delete-old-versions t
-   kept-new-versions 6
-   kept-old-versions 2
-   version-control t)
+ backup-by-copying t
+ backup-directory-alist
+ '(("." . "~/.tmp"))
+ delete-old-versions t
+ kept-new-versions 6
+ kept-old-versions 2
+ version-control t)
 
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
@@ -32,9 +76,6 @@
 
 (color-theme-solarized-light)
 
-;(evil-mode 1)
-;(global-surround-mode 1)
-
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -43,6 +84,7 @@
 
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message t)
+
 
 (setq kil-buffer-query-functions
       (remq 'process-kill-buffer-query-function
@@ -77,12 +119,16 @@
 
 (setenv "PATH" "/Users/travis/bin:/usr/local/bin:/Users/travis/.rbenv/shims:/Users/travis/.rbenv/bin:/Users/travis/.lein/bin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/X11/bin")
 
+(add-hook 'ruby-mode-hook       'esk-paredit-nonlisp)
+(add-hook 'espresso-mode-hook   'esk-paredit-nonlisp)
+
+(push "/usr/local/bin" exec-path)
+
 (if (file-exists-p "~/.rvm")
-    (rvm-use-default))
+    (push "~/.rvm/bin" exec-path)
+  (rvm-use-default))
 
 (whitespace-mode 0)
-
-(load "vimgolf")
 
 (global-linum-mode 1)
 (setq linum-format "  %d ")

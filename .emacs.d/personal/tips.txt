@@ -18,3 +18,17 @@ Manipulate whitespace:
 => C-x C-o
 => (delete-blank-lines)
 
+
+Clojure:
+
+Swap between implementation and test:
+=> C-c t
+
+Run tests in current buffer:
+=> C-c C-,
+
+Get details about failure/error:
+=> C-c C-'
+
+Reload current file:
+=> C-c C-l

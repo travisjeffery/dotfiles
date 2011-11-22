@@ -9,3 +9,5 @@ url
 elpa
 abbrev_defs
 personal
+.smex-items
+places
