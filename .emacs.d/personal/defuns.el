@@ -7,6 +7,13 @@
      ((file-directory-p suffix) (add-to-list 'load-path suffix) (require library))
      ((file-exists-p suffix) (require library)))))
 
+(defun esk-paredit-nonlisp ()
+  "Turn on paredit mode for non-lisps."
+  (set (make-local-variable 'paredit-space-for-delimiter-predicate)
+       (lambda (endp delimiter)
+         (equal (char-syntax (char-before)) ?\")))
+  (paredit-mode 1))
+
 (defun command-t ()
   (interactive)
   (fuzzy-find-project-root (eproject-root))
