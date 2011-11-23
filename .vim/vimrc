@@ -298,7 +298,7 @@ set noswapfile
 set updatecount=0
 set updatetime=50
 set showmatch
-let g:loaded_matchparen = 1
+" let loaded_matchparen = 1
 set matchtime=1
 if has('unix')
   set nofsync
