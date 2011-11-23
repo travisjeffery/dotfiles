@@ -55,3 +55,6 @@
 [submodule ".emacs.d/vendor/tumble"]
 	path = .emacs.d/vendor/tumble
 	url = git://github.com/febuiles/tumble.git
+[submodule ".emacs.d"]
+	path = .emacs.d
+	url = git@github.com:travisjeffery/emacs.d.git
