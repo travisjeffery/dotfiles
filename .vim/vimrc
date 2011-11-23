@@ -115,6 +115,11 @@ set helpheight=12
 set noequalalways
 set pumheight=20
 set showfulltag
+set cscopetag
+if has('quickfix')
+  set cscopequickfix=s-,c-,d-,i-,t-,e-
+endif
+set cscopeverbose
 set cmdwinheight=5
 set ruler
 set showcmd
@@ -942,6 +947,20 @@ iabbrev shuold should
 iabbrev shulod should
 iabbrev PgTOols PgTools
 iabbrev PgTOOls PgTools
+if has('quickfix')
+  cnoreabbrev <expr> csa
+        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs add'  : 'csa')
+  cnoreabbrev <expr> csf
+        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs find' : 'csf')
+  cnoreabbrev <expr> csk
+        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs kill' : 'csk')
+  cnoreabbrev <expr> csr
+        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs reset' : 'csr')
+  cnoreabbrev <expr> css
+        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs show' : 'css')
+  cnoreabbrev <expr> csh
+        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs help' : 'csh')
+endif
 abbrev shuold should
 "}}}1
 " Section: Mappings {{{1
