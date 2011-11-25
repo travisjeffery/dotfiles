@@ -7,14 +7,14 @@
 [submodule ".config/awesome"]
 	path = .config/awesome
 	url = git@github.com:travisjeffery/awesome-wm.git
-[submodule ".emacs.d/vendor/nyan-mode"]
-	path = .emacs.d/vendor/nyan-mode
+[submodule ".emacs.d/site-lisp/nyan-mode"]
+	path = .emacs.d/site-lisp/nyan-mode
 	url = https://github.com/TeMPOraL/nyan-mode.git
-[submodule ".emacs.d/vendor/surround"]
-	path = .emacs.d/vendor/surround
+[submodule ".emacs.d/site-lisp/surround"]
+	path = .emacs.d/site-lisp/surround
 	url = https://github.com/timcharper/evil-surround.git
-[submodule ".emacs.d/vendor/evil"]
-	path = .emacs.d/vendor/evil
+[submodule ".emacs.d/site-lisp/evil"]
+	path = .emacs.d/site-lisp/evil
 	url = git://gitorious.org/evil/evil.git
 [submodule ".emacs.d/el-get/el-get"]
 	path = .emacs.d/el-get/el-get
@@ -40,21 +40,18 @@
 [submodule ".zsh/completions"]
 	path = .zsh/completions
 	url = git://github.com/zsh-users/zsh-completions.git
-[submodule ".emacs.d/vendor/wrap-region"]
-	path = .emacs.d/vendor/wrap-region
+[submodule ".emacs.d/site-lisp/wrap-region"]
+	path = .emacs.d/site-lisp/wrap-region
 	url = https://github.com/rejeep/wrap-region.git
-[submodule ".emacs.d/vendor/fuzzy-find-in-project"]
-	path = .emacs.d/vendor/fuzzy-find-in-project
+[submodule ".emacs.d/site-lisp/fuzzy-find-in-project"]
+	path = .emacs.d/site-lisp/fuzzy-find-in-project
 	url = https://github.com/justinweiss/fuzzy-find-in-project.git
-[submodule ".emacs.d/vendor/eproject"]
-	path = .emacs.d/vendor/eproject
+[submodule ".emacs.d/site-lisp/eproject"]
+	path = .emacs.d/site-lisp/eproject
 	url = https://github.com/jrockway/eproject.git
-[submodule ".emacs.d/vendor/color-theme-solarized"]
-	path = .emacs.d/vendor/color-theme-solarized
+[submodule ".emacs.d/site-lisp/color-theme-solarized"]
+	path = .emacs.d/site-lisp/color-theme-solarized
 	url = https://github.com/sellout/emacs-color-theme-solarized.git
-[submodule ".emacs.d/vendor/tumble"]
-	path = .emacs.d/vendor/tumble
+[submodule ".emacs.d/site-lisp/tumble"]
+	path = .emacs.d/site-lisp/tumble
 	url = git://github.com/febuiles/tumble.git
-[submodule ".emacs.d"]
-	path = .emacs.d
-	url = git@github.com:travisjeffery/emacs.d.git
