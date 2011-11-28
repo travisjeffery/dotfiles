@@ -9,6 +9,8 @@ filetype off
 " set rtp+=~/.vim/bundle/Bundle/
 " call neobundle#rc(expand('~/.bundle'))
 Bundle 'https://github.com/mattn/sonictemplate-vim.git'
+Bundle 'https://github.com/tyru/open-browser.vim.git'
+Bundle 'https://github.com/mattn/webapi-vim.git'
 Bundle 'https://github.com/gregsexton/MatchTag.git'
 Bundle 'https://github.com/mattn/lisper-vim.git'
 Bundle 'https://github.com/tpope/vim-rvm.git'
@@ -429,6 +431,11 @@ augroup vimrc-scratch-buffer
 augroup END"}}}2
 "}}}1
 " Section: Plugins {{{1
+" open-browser{{{2
+let g:netrw_nogx = 1 " disable netrw's gx mapping.
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
+"}}}
 " Solarized{{{2
 let g:solarized_termtrans=1
 let g:solarized_degrade=0
@@ -463,6 +470,7 @@ let g:rubycomplete_rails = 1
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
+let g:syntastic_quiet_warnings=1
 "}}}2
 " QuickRun {{{2
 " let g:quickrun_direction = 'rightbelow horizontal'
@@ -784,7 +792,6 @@ endif
 "}}}2
 " Clojure {{{2
 let g:vimclojure#HighlightBuiltins=1
-let g:vimclojure#ParenRainbow=1
 let vimclojure#FuzzyIndent = 1
 "}}}2
 let g:template_vim_template_dir = $HOME.'.vim/template'
@@ -1004,6 +1011,7 @@ endfunction"}}}2
 autocmd MyAutoCmd FileType vim call altr#define('autoload/%.vim', 'doc/%.txt', 'doc/%.jax', 'plugin/%.vim')
 autocmd MyAutoCmd FileType clojure call altr#define('src/*/%.clj', 'test/*/%.clj', 'test/*/test/%.clj')
 autocmd FileType ruby call altr#define('lib/%/*.rb', 'lib/%.rb', 'test/%_*.rb', 'test/%.rb')
+autocmd FileType coffee call altr#define('src/%/*.coffee', 'src/%.coffee', 'test/%_*.coffee', 'test/%.coffee')
 autocmd FileType * command! -buffer A call altr#forward()
 "}}}2
 " To keep legacy surround mapping{{{2
@@ -1044,7 +1052,7 @@ inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
 " inoremap <expr><C-l>  pumvisible() ? neocomplcache#close_popup():  "\<C-p>"
 " inoremap <expr><Space>  pumvisible() ? neocomplcache#cancel_popup()."\<Space>" :  "\<Space>"
 
-inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
+" inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"

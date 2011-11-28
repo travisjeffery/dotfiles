@@ -6,3 +6,12 @@
 .emacs.d/savehist
 .emacs.d/saveplace
 .emacs.d/eshell
+.emacs.d/site-lisp
+.emacs.d/swank
+.emacs.d/url
+.emacs.d/backups
+.emacs.d/auto-save-list
+.emacs.d/places
+.emacs.d/elpa
+.emacs.d/smex-items
+
