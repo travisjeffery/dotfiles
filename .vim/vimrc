@@ -8,6 +8,7 @@ filetype off
  call vundle#rc('~/.bundle')
 " set rtp+=~/.vim/bundle/Bundle/
 " call neobundle#rc(expand('~/.bundle'))
+Bundle 'https://github.com/mattn/sonictemplate-vim.git'
 Bundle 'https://github.com/gregsexton/MatchTag.git'
 Bundle 'https://github.com/mattn/lisper-vim.git'
 Bundle 'https://github.com/tpope/vim-rvm.git'
@@ -786,6 +787,7 @@ let g:vimclojure#HighlightBuiltins=1
 let g:vimclojure#ParenRainbow=1
 let vimclojure#FuzzyIndent = 1
 "}}}2
+let g:template_vim_template_dir = $HOME.'.vim/template'
 let g:AutoPairs = {'(':')', '[':']', '{':'}','"':'"'}
 let g:indexed_search_shortmess=1
 let g:HammerQuiet=1
