@@ -493,6 +493,7 @@ let g:ctrlp_working_path_mode = 0
 let g:ctrlp_persistent_input = 0
 let g:ctrlp_open_new_file = 0
 let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_split_window = 0
 "}}}2
 "Fugitive & Gitv {{{2
 nnoremap [Space]gd :<C-u>Gdiff<CR>
