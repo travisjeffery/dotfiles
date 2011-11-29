@@ -1,5 +1,9 @@
 (require 'cl)
 
+(add-hook 'js-mode '(lambda ()
+                      (paredit-mode -1)
+                      (autopair-mode 1)))
+
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -112,6 +116,9 @@
       kept-new-versions 6
       kept-old-versions 2
       version-control 1
+      fill-column 79
+      autopair-autowrap 1
+      cua-enable-cua-keys 0
       )
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/git-emacs")
@@ -171,6 +178,20 @@
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-unset-key (kbd "C-x m"))
 
+(autopair-global-mode 1)
+(cua-mode 1)
+
+(defvar autopair-modes '(r-mode ruby-mode js-mode python-mode html-mode))
+(defun turn-on-autopair-mode () (autopair-mode 1))
+(dolist (mode autopair-modes) (add-hook (intern (concat (symbol-name mode) "-hook")) 'turn-on-autopair-mode))
+(defadvice paredit-mode (around disable-autopairs-around (arg))
+  "Disable autopairs mode if paredit-mode is turned on"
+  ad-do-it
+  (if (null ad-return-value)
+      (autopair-mode 1)
+    (autopair-mode 0)))
+(ad-activate 'paredit-mode)
+
 (color-theme-sanityinc-solarized-light)
 (textmate-mode)
 (add-hook 'python-mode-hook '(lambda ()
@@ -180,9 +201,6 @@
                              (textmate-mode)
                              (esk-paredit-nonlisp)))
 (add-hook 'clojure-mode-hook 'paredit-mode)
-(add-hook 'js-mode '(lambda ()
-                      (paredit-mode -1)
-                      (autopair-mode 1)))
 
 (global-linum-mode)
 (wrap-region-global-mode)
