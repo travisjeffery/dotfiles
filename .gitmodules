@@ -25,3 +25,13 @@
 [submodule ".zsh/completions"]
 	path = .zsh/completions
 	url = git://github.com/zsh-users/zsh-completions.git
+
+[submodule ".emacs.d/site-lisp/solarized"]
+	path = .emacs.d/site-lisp/solarized
+	url = https://github.com/sellout/emacs-color-theme-solarized.git
+[submodule ".emacs.d/site-lisp/twittering-mode"]
+	path = .emacs.d/site-lisp/twittering-mode
+	url = https://github.com/hayamiz/twittering-mode.git
+[submodule ".emacs.d/site-lisp/git-emacs"]
+	path = .emacs.d/site-lisp/git-emacs
+	url = https://github.com/tsgates/git-emacs.git

@@ -1,9 +1,0 @@
-[submodule "site-lisp/solarized"]
-	path = site-lisp/solarized
-	url = https://github.com/sellout/emacs-color-theme-solarized.git
-[submodule "site-lisp/twittering-mode"]
-	path = site-lisp/twittering-mode
-	url = https://github.com/hayamiz/twittering-mode.git
-[submodule "site-lisp/git-emacs"]
-	path = site-lisp/git-emacs
-	url = https://github.com/tsgates/git-emacs.git
