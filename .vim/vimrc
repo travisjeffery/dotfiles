@@ -8,6 +8,8 @@ filetype off
  call vundle#rc('~/.bundle')
 " set rtp+=~/.vim/bundle/Bundle/
 " call neobundle#rc(expand('~/.bundle'))
+Bundle 'https://github.com/juvenn/mustache.vim.git'
+Bundle 'https://github.com/tpope/vim-markdown.git'
 Bundle 'https://github.com/tyru/open-browser.vim.git'
 Bundle 'https://github.com/mattn/webapi-vim.git'
 Bundle 'git@github.com:travisjeffery/vim-tumblr.git'
