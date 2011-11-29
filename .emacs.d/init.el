@@ -40,6 +40,7 @@
                       auto-complete
                       js2-mode
                       ace-jump-mode
+                      autopair-mode
                       )
   "A list of packages to ensure are installed at launch.")
 
@@ -196,11 +197,16 @@
 (textmate-mode)
 (add-hook 'python-mode-hook '(lambda ()
                                (textmate-mode)
-                               (esk-paredit-nonlisp)))
+                               (esk-paredit-nonlisp)
+                               (flyspell-prog-mode)))
 (add-hook 'ruby-mode-hook '(lambda ()
                              (textmate-mode)
-                             (esk-paredit-nonlisp)))
-(add-hook 'clojure-mode-hook 'paredit-mode)
+                             (esk-paredit-nonlisp)
+                             (flyspell-prog-mode)))
+(add-hook 'clojure-mode-hook '(lambda ()
+                                (enable-paredit-mode)
+                                (flyspell-prog-mode)))
+
 
 (global-linum-mode)
 (wrap-region-global-mode)
