@@ -35,3 +35,6 @@
 [submodule ".emacs.d/site-lisp/git-emacs"]
 	path = .emacs.d/site-lisp/git-emacs
 	url = https://github.com/tsgates/git-emacs.git
+[submodule ".emacs.d/site-lisp/jade-mode"]
+	path = .emacs.d/site-lisp/jade-mode
+	url = https://github.com/brianc/jade-mode.git
