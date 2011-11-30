@@ -1,8 +1,5 @@
 (require 'cl)
 
-(add-hook 'js-mode '(lambda ()
-                      (paredit-mode -1)
-                      (autopair-mode 1)))
 
 (require 'package)
 (add-to-list 'package-archives
@@ -183,7 +180,11 @@
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-unset-key (kbd "C-x m"))
 
-(autopair-global-mode 1)
+(set-default 'autopair-dont-activate #'(lambda () (eq major-mode 'sldb-mode)))
+(add-hook 'js-mode '(lambda ()
+                      (paredit-mode -1)
+                      (autopair-mode 1)))
+(autopair-global-mode)
 (cua-mode 1)
 
 (defvar autopair-modes '(r-mode ruby-mode js-mode python-mode html-mode))
