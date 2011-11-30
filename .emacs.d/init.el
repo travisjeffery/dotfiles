@@ -37,6 +37,8 @@
                       auto-complete
                       js2-mode
                       ace-jump-mode
+                      autopair
+                      color-theme-sanityinc-solarized
                       )
   "A list of packages to ensure are installed at launch.")
 
@@ -197,7 +199,6 @@
       (autopair-mode 1)
     (autopair-mode 0)))
 (ad-activate 'paredit-mode)
-
 (color-theme-sanityinc-solarized-light)
 (textmate-mode)
 (add-hook 'python-mode-hook '(lambda ()
