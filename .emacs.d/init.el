@@ -39,6 +39,7 @@
                       ace-jump-mode
                       autopair
                       color-theme-sanityinc-solarized
+                      tumble
                       )
   "A list of packages to ensure are installed at launch.")
 
