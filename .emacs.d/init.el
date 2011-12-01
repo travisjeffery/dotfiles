@@ -349,3 +349,7 @@
 (setq textmate-find-files-command "git ls-tree --full-tree --name-only -r HEAD")
 (load custom-file 'noerror)
 
+(eshell)
+(with-current-buffer "*eshell*" (setq pcomplete-cycle-completions nil))
+(set-face-foreground 'eshell-prompt "#2075c7")
+
