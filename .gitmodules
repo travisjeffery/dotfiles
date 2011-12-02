@@ -43,3 +43,6 @@
 [submodule ".emacs.d/site-lisp/js3-mode"]
 	path = .emacs.d/site-lisp/js3-mode
 	url = https://github.com/thomblake/js3-mode.git
+[submodule ".emacs.d/site-lisp/zencoding"]
+	path = .emacs.d/site-lisp/zencoding
+	url = https://github.com/rooney/zencoding.git

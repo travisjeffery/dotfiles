@@ -121,6 +121,7 @@
       autopair-autowrap 1
       cua-enable-cua-keys 0
       ediff-split-window-function 'split-window-vertically
+      zencoding-preview-default 0
       )
 
 (defun duplicate-line ()
@@ -249,7 +250,6 @@ and the point, not include the isearch word."
   '(require 'anything-match-plugin))
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml")
-(load "~/.emacs.d/site-lisp/nxhtml/autostart")
 
 (eval-after-load "dired"
   '(progn
@@ -295,6 +295,13 @@ and the point, not include the isearch word."
 (ad-activate 'paredit-mode)
 (color-theme-sanityinc-solarized-light)
 (textmate-mode)
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/zencoding")
+(require 'zencoding-mode)
+(add-hook 'nxhtml-mode-hook 'zencoding-mode)
+(add-hook 'zencoding-mode-hook '(lambda ()
+                                  (define-key zencoding-mode-map (kbd "C-c ,") 'zencoding-expand-line)))
+
 (add-hook 'python-mode-hook '(lambda ()
                                (textmate-mode)
                                (esk-paredit-nonlisp)
