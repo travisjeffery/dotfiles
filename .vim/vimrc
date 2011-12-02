@@ -885,13 +885,7 @@ autocmd FileType clojure
 autocmd User Bundler
       \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 autocmd FileType ruby
-      \ if expand('%') =~# '_test\.rb$' |
-      \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
-      \ elseif expand('%') =~# '_spec\.rb$' |
-      \   compiler rspec | setl makeprg=rspec\ \"%:p\" |
-      \ else |
-      \   compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" |
-      \ endif
+      \ compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" 
 autocmd User Bundler
       \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 
