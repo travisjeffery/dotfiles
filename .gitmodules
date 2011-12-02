@@ -37,3 +37,6 @@
 [submodule ".emacs.d/site-lisp/jade-mode"]
 	path = .emacs.d/site-lisp/jade-mode
 	url = https://github.com/brianc/jade-mode.git
+[submodule ".emacs.d/site-lisp/js3-mode"]
+	path = .emacs.d/site-lisp/js3-mode
+	url = https://github.com/thomblake/js3-mode.git

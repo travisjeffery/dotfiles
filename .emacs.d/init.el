@@ -118,11 +118,29 @@
       fill-column 79
       autopair-autowrap 1
       cua-enable-cua-keys 0
+      ediff-split-window-function 'split-window-vertically
       )
+
+(defun duplicate-line ()
+  (interactive)
+  (save-excursion
+    (let ((line-text (buffer-substring-no-properties
+                      (line-beginning-position)
+                      (line-end-position))))
+      (move-end-of-line 1)
+      (newline)
+      (insert line-text))))
+
+(global-set-key (kbd "C-c p") 'duplicate-line)
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/js3-mode")
+(autoload 'js3-mode "js3" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js3-mode))
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/git-emacs")
 (require 'autopair)
 (add-to-list 'load-path "~/.emacs.d/site-lisp/twittering-mode")
+(add-to-list 'load-path "~/.emacs.d/")
 (require 'twittering-mode)
 (add-to-list 'load-path "~/.emacs.d/site-lisp/jade-mode")
 (require 'sws-mode)
@@ -130,6 +148,58 @@
 (add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
 (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
 (add-to-list 'auto-mode-alist '("\\.html$" . nxml-mode))
+(require 'init-auto-complete)
+(global-auto-complete-mode)
+(require 'init-clojure)
+(require 'init-flyspell)
+
+(global-set-key (kbd "M-/") 'hippie-expand)
+
+(setq hippie-expand-try-functions-list
+      '(try-complete-file-name-partially
+        try-complete-file-name
+        try-expand-dabbrev
+        try-expand-dabbrev-all-buffers
+        try-expand-dabbrev-from-kill))
+
+(defun zap-to-isearch (rbeg rend)
+  "Kill the region between the mark and the closest portion of
+the isearch match string. The behaviour is meant to be analogous
+to zap-to-char; let's call it zap-to-isearch. The deleted region
+does not include the isearch word. This is meant to be bound only
+in isearch mode.  The point of this function is that oftentimes
+you want to delete some portion of text, one end of which happens
+to be an active isearch word. The observation to make is that if
+you use isearch a lot to move the cursor around (as you should,
+it is much more efficient than using the arrows), it happens a
+lot that you could just delete the active region between the mark
+and the point, not include the isearch word."
+  (interactive "r")
+  (when (not mark-active)
+    (error "Mark is not active"))
+  (let* ((isearch-bounds (list isearch-other-end (point)))
+         (ismin (apply 'min isearch-bounds))
+         (ismax (apply 'max isearch-bounds))
+         )
+    (if (< (mark) ismin)
+        (kill-region (mark) ismin)
+      (if (> (mark) ismax)
+          (kill-region ismax (mark))
+        (error "Internal error in isearch kill function.")))
+    (isearch-exit)
+    ))
+
+(define-key isearch-mode-map [(meta z)] 'zap-to-isearch)
+
+(global-set-key (kbd "C-c r") 'query-replace-regexp)
+(defalias 'qrr 'query-replace-regexp)
+
+(defun dos2unix ()
+  (interactive)
+  (beginning-of-buffer)
+  (while 
+      (search-forward "\r") 
+    (replace-match "")))
 
 (defvar anything-c-source-occur
   '((name . "Occur")
@@ -187,6 +257,9 @@
 (add-hook 'js-mode '(lambda ()
                       (paredit-mode -1)
                       (autopair-mode 1)))
+
+(require 'init-javascript)
+(require 'init-rails)
 (autopair-global-mode)
 (cua-mode 1)
 
