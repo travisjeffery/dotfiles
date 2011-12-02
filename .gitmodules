@@ -40,3 +40,6 @@
 [submodule ".emacs.d/site-lisp/key-chord"]
 	path = .emacs.d/site-lisp/key-chord
 	url = https://github.com/emacsmirror/key-chord.git
+[submodule ".emacs.d/site-lisp/js3-mode"]
+	path = .emacs.d/site-lisp/js3-mode
+	url = https://github.com/thomblake/js3-mode.git
