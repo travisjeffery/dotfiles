@@ -40,6 +40,7 @@
                       autopair
                       color-theme-sanityinc-solarized
                       tumble
+                      iy-go-to-char
                       )
   "A list of packages to ensure are installed at launch.")
 
@@ -122,14 +123,29 @@
       )
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/git-emacs")
+(require 'git-emacs)
+(require 'git-blame)
+
 (require 'autopair)
+
 (add-to-list 'load-path "~/.emacs.d/site-lisp/twittering-mode")
 (require 'twittering-mode)
+
 (add-to-list 'load-path "~/.emacs.d/site-lisp/jade-mode")
 (require 'sws-mode)
 (require 'jade-mode)    
 (add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
 (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/key-chord")
+(require 'key-chord)
+(key-chord-mode 1)
+
+(global-auto-revert-mode 1)
+(windmove-default-keybindings 'meta)
+(setq windmove-wrap-around t)
+(setq x-select-enable-clipboard t)
+
 
 (defvar anything-c-source-occur
   '((name . "Occur")
@@ -160,6 +176,9 @@
 
 (eval-after-load "anything"
   '(require 'anything-match-plugin))
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml")
+(load "~/.emacs.d/site-lisp/nxhtml/autostart")
 
 (eval-after-load "dired"
   '(progn
@@ -205,13 +224,16 @@
 (add-hook 'python-mode-hook '(lambda ()
                                (textmate-mode)
                                (esk-paredit-nonlisp)
+                               (electric-layout-mode)
                                (flyspell-prog-mode)))
 (add-hook 'ruby-mode-hook '(lambda ()
                              (textmate-mode)
                              (esk-paredit-nonlisp)
+                             (electric-layout-mode)
                              (flyspell-prog-mode)))
 (add-hook 'clojure-mode-hook '(lambda ()
                                 (enable-paredit-mode)
+                                (electric-layout-mode)
                                 (flyspell-prog-mode)))
 
 
@@ -350,3 +372,23 @@
 (setq textmate-find-files-command "git ls-tree --full-tree --name-only -r HEAD")
 (load custom-file 'noerror)
 
+(eshell)
+(with-current-buffer "*eshell*" (setq pcomplete-cycle-completions nil))
+(set-face-foreground 'eshell-prompt "#2075c7")
+
+(require 'gnus)
+(setq nnml-directory "~/gmail")
+(setq message-directory "~/gmail")
+(setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\”]\”[#’()]")
+
+(setq gnus-secondary-select-methods
+      '((nnimap "home"
+                (nnimap-address "imap.server1.com")
+                (nnimap-server-port 993)
+                (nnimap-stream ssl)
+                (nnimap-authinfo-file "~/.authinfo"))
+        (nnimap "work"
+                (nnimap-address "imap.server2.com")
+                (nnimap-server-port 993)
+                (nnimap-stream ssl)
+                (nnimap-authinfo-file "~/.authinfo"))))
