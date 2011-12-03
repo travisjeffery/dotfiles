@@ -3,8 +3,6 @@
   '(progn
      (add-hook 'js-mode-hook 'flymake-jslint-load)))
 
-
-
 ;; ;; MMM submode regions in html
 ;; (eval-after-load "mmm-vars"
 ;;   `(progn
@@ -34,11 +32,10 @@
 
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
 (eval-after-load "coffee-mode"
-  `(setq coffee-js-mode preferred-javascript-mode
-         coffee-tab-width preferred-javascript-indent-level))
+  `(setq coffee-js-mode 'js3-mode
+         coffee-tab-width 2))
 
 (add-hook 'coffee-mode-hook 'flymake-coffee-load)
-
 
 (setq inferior-js-program-command "js")
 (defun add-inferior-js-keys ()
