@@ -515,3 +515,12 @@ and the point, not include the isearch word."
                 (nnimap-stream ssl)
                 (nnimap-authinfo-file "~/.authinfo"))))
 
+
+(defun convert-markdown-to-textfile ()
+  (interactive)
+  (let ((markdown-file-name (buffer-file-name))
+        (textile-file-name (concat (file-name-sans-extension (buffer-file-name)) ".textile")))
+    (shell-command (format "pandoc -s %s -o %s"  markdown-file-name textile-file-name))
+    (find-file textile-file-name)))
+
+
