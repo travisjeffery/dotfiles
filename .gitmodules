@@ -25,9 +25,6 @@
 [submodule ".zsh/completions"]
 	path = .zsh/completions
 	url = git://github.com/zsh-users/zsh-completions.git
-[submodule ".emacs.d/site-lisp/solarized"]
-	path = .emacs.d/site-lisp/solarized
-	url = https://github.com/sellout/emacs-color-theme-solarized.git
 [submodule ".emacs.d/site-lisp/twittering-mode"]
 	path = .emacs.d/site-lisp/twittering-mode
 	url = https://github.com/hayamiz/twittering-mode.git
@@ -46,3 +43,18 @@
 [submodule ".emacs.d/site-lisp/zencoding"]
 	path = .emacs.d/site-lisp/zencoding
 	url = https://github.com/rooney/zencoding.git
+[submodule ".emacs.d/site-lisp/ac-slime"]
+	path = .emacs.d/site-lisp/ac-slime
+	url = https://github.com/purcell/ac-slime.git
+[submodule ".emacs.d/site-lisp/hippie-expand-slime"]
+	path = .emacs.d/site-lisp/hippie-expand-slime
+	url = https://github.com/purcell/hippie-expand-slime.git
+[submodule ".emacs.d/site-lisp/elisp-slime-nav"]
+	path = .emacs.d/site-lisp/elisp-slime-nav
+	url = https://github.com/purcell/elisp-slime-nav.git
+[submodule ".emacs.d/site-lisp/hl-sexp"]
+	path = .emacs.d/site-lisp/hl-sexp
+	url = https://github.com/emacsmirror/hl-sexp.git
+[submodule ".emacs.d/site-lisp/solarized"]
+	path = .emacs.d/site-lisp/solarized
+	url = https://github.com/bbatsov/solarized-emacs.git
