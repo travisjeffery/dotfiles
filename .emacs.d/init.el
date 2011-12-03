@@ -305,9 +305,12 @@ and the point, not include the isearch word."
 (global-unset-key (kbd "C-x m"))
 
 (set-default 'autopair-dont-activate #'(lambda () (eq major-mode 'sldb-mode)))
-(add-hook 'js-mode '(lambda ()
-                      (paredit-mode -1)
-                      (autopair-mode 1)))
+(add-hook 'js-mode-hook '(lambda ()
+                           (paredit-mode -1)
+                           (autopair-mode 1)))
+(add-hook 'coffee-mode-hook '(lambda ()
+                               (paredit-mode -1)
+                               (autopair-mode 1)))
 
 (require 'init-javascript)
 (require 'init-rails)
