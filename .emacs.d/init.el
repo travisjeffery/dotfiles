@@ -130,6 +130,7 @@
       ediff-split-window-function 'split-window-vertically
       zencoding-preview-default 0
       linum-format " %d "
+      use-dialog-box 0
       )
 
 (defun duplicate-line ()
