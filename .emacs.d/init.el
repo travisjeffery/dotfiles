@@ -278,6 +278,8 @@ and the point, not include the isearch word."
 (eval-after-load "anything"
   '(require 'anything-match-plugin))
 
+(global-set-key (kbd "C-\\")  'comment-or-uncomment-region-or-line)
+
 (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml")
 
 (eval-after-load "dired"
