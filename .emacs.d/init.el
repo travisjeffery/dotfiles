@@ -1,6 +1,17 @@
 (require 'cl)
 
 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/slime")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/swank-js")
+(require 'slime)
+(slime-setup '(slime-repl slime-js))
+
+(global-set-key [f5] 'slime-js-reload)
+(add-hook 'js3-mode-hook
+          (lambda ()
+            (slime-js-minor-mode 1)))
+
+
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -17,9 +28,17 @@
                       starter-kit-ruby
                       starter-kit-js
                       starter-kit-eshell
+                      slime
                       scpaste
+                      slime-fuzzy
+                      slime-repl
                       clojure-mode
                       clojure-test-mode
+                      eldoc-eval
+                      durendal
+                      move-text
+                      diminish
+                      whole-line-or-region
                       markdown-mode
                       yaml-mode
                       marmalade
@@ -38,7 +57,6 @@
                       js2-mode
                       ace-jump-mode
                       autopair
-                      color-theme-sanityinc-solarized
                       tumble
                       iy-go-to-char
                       )
@@ -58,9 +76,9 @@
          "/bin" ":"))
 
 (setq exec-path
-      '((expand-file-name "~/bin") 
-        "/usr/local/bin" 
-        "/usr/bin" 
+      '((expand-file-name "~/bin")
+        "/usr/local/bin"
+        "/usr/bin"
         "/bin"))
 
 (let ((plist (expand-file-name "~/.MacOSX/environment.plist")))
@@ -95,7 +113,7 @@
       auto-mode-alist (cons '("\\.markdown" . markdown-mode) auto-mode-alist)
       auto-mode-alist (cons '("\\.md" . markdown-mode) auto-mode-alist)
       auto-mode-alist (cons '("\\.ronn?" . markdown-mode) auto-mode-alist)
-      auto-mode-alist (cons '("\\.js$" . js-mode) auto-mode-alist)
+      auto-mode-alist (cons '("\\.js$" . js3-mode) auto-mode-alist)
       coffee-tab-width 2
       ack-prompt-for-directory 1
       erc-nick "travisjeffery"
@@ -122,6 +140,8 @@
       cua-enable-cua-keys 0
       ediff-split-window-function 'split-window-vertically
       zencoding-preview-default 0
+      linum-format " %d "
+      use-dialog-box 0
       )
 
 (defun duplicate-line ()
@@ -136,6 +156,26 @@
 
 (global-set-key (kbd "C-c p") 'duplicate-line)
 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/ac-slime")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/hippie-expand-slime")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/elisp-slime-nav")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/hl-sexp")
+(require 'hl-sexp)
+(require 'elisp-slime-nav)
+(require 'hippie-expand-slime)
+(require 'ac-slime)
+(add-to-list 'load-path "~/.emacs.d/")
+
+(defun backward-up-sexp (arg)
+  (interactive "p")
+  (let ((ppss (syntax-ppss)))
+    (cond ((elt ppss 3)
+           (goto-char (elt ppss 8))
+           (backward-up-sexp (1- arg)))
+          ((backward-up-list arg)))))
+
+(global-set-key [remap backward-up-list] 'backward-up-sexp)
+
 (add-to-list 'load-path "~/.emacs.d/site-lisp/js3-mode")
 (autoload 'js3-mode "js3" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js3-mode))
@@ -147,17 +187,15 @@
 (require 'autopair)
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/twittering-mode")
-(add-to-list 'load-path "~/.emacs.d/")
 (require 'twittering-mode)
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/jade-mode")
 (require 'sws-mode)
-(require 'jade-mode)    
+(require 'jade-mode)
 (add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
 (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
 (add-to-list 'auto-mode-alist '("\\.html$" . nxml-mode))
-(require 'init-auto-complete)
-(global-auto-complete-mode)
+
 (require 'init-clojure)
 (require 'init-flyspell)
 
@@ -205,8 +243,8 @@ and the point, not include the isearch word."
 (defun dos2unix ()
   (interactive)
   (beginning-of-buffer)
-  (while 
-      (search-forward "\r") 
+  (while
+      (search-forward "\r")
     (replace-match "")))
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/key-chord")
@@ -218,6 +256,9 @@ and the point, not include the isearch word."
 (setq windmove-wrap-around t)
 (setq x-select-enable-clipboard t)
 
+(require 'init-editing-utils)
+(require 'init-utils)
+(require 'init-slime)
 
 (defvar anything-c-source-occur
   '((name . "Occur")
@@ -249,6 +290,8 @@ and the point, not include the isearch word."
 (eval-after-load "anything"
   '(require 'anything-match-plugin))
 
+(global-set-key (kbd "C-\\")  'comment-or-uncomment-region-or-line)
+
 (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml")
 
 (eval-after-load "dired"
@@ -274,9 +317,12 @@ and the point, not include the isearch word."
 (global-unset-key (kbd "C-x m"))
 
 (set-default 'autopair-dont-activate #'(lambda () (eq major-mode 'sldb-mode)))
-(add-hook 'js-mode '(lambda ()
-                      (paredit-mode -1)
-                      (autopair-mode 1)))
+(add-hook 'js3-mode-hook '(lambda ()
+                           (paredit-mode -1)
+                           (autopair-mode 1)))
+(add-hook 'coffee-mode-hook '(lambda ()
+                               (paredit-mode -1)
+                               (autopair-mode 1)))
 
 (require 'init-javascript)
 (require 'init-rails)
@@ -293,7 +339,11 @@ and the point, not include the isearch word."
       (autopair-mode 1)
     (autopair-mode 0)))
 (ad-activate 'paredit-mode)
-(color-theme-sanityinc-solarized-light)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/site-lisp/solarized")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/solarized")
+(load-theme 'solarized-light 1)
+(fringe-mode 0)
+
 (textmate-mode)
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/zencoding")
@@ -315,6 +365,7 @@ and the point, not include the isearch word."
 (add-hook 'clojure-mode-hook '(lambda ()
                                 (enable-paredit-mode)
                                 (electric-layout-mode)
+                                (define-key clojure-mode-map (kbd "C-c d") 'slime-describe-symbol)
                                 (flyspell-prog-mode)))
 
 
@@ -378,7 +429,7 @@ and the point, not include the isearch word."
 (global-set-key (kbd "M-_") 'insert-emdash)
 (global-set-key (kbd "C-M-=") 'esk-indent-buffer)
 
-(add-hook 'js-mode-hook (lambda ()  
+(add-hook 'js-mode-hook (lambda ()
                           (defun js--proper-indentation (parse-status)
                             "Return the proper indentation for the current line."
                             (save-excursion
@@ -399,7 +450,7 @@ and the point, not include the isearch word."
 
                                           ((re-search-backward "\\<\\([^:=\n\t ]+\\)[ \t]*\\(:\\|=\\)" (point-min) t)
                                            (current-column))
-                                          (t 
+                                          (t
                                            nil)))))
                                   (if spos
                                       (- spos 2)
@@ -457,6 +508,12 @@ and the point, not include the isearch word."
 (with-current-buffer "*eshell*" (setq pcomplete-cycle-completions nil))
 (set-face-foreground 'eshell-prompt "#2075c7")
 
+(global-set-key (kbd "C-c s") 'mark-sexp)
+(global-set-key (kbd "M-@") 'mark-sexp)
+
+(require 'init-auto-complete)
+(global-auto-complete-mode)
+(require 'init-lisp)
 (require 'gnus)
 (setq nnml-directory "~/gmail")
 (setq message-directory "~/gmail")
@@ -473,4 +530,15 @@ and the point, not include the isearch word."
                 (nnimap-server-port 993)
                 (nnimap-stream ssl)
                 (nnimap-authinfo-file "~/.authinfo"))))
+
+(defun convert-markdown-to-textfile ()
+  "Convert the markdown file that you're current editing into a textile file. Note: requires `pandoc` to be installed."
+  (interactive)
+  (let ((markdown-file-name (buffer-file-name))
+        (textile-file-name (concat (file-name-sans-extension (buffer-file-name)) ".textile")))
+    (if (executable-find "pandoc")
+        (progn
+          (shell-command (format "pandoc -s %s -o %s"  markdown-file-name textile-file-name))
+          (find-file textile-file-name))
+      (error "%s" "The pandoc executable is required and either can't be found or is not installed"))))
 
