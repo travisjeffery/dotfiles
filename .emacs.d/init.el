@@ -53,7 +53,6 @@
                       browse-url
                       anything
                       anything-match-plugin
-                      auto-complete
                       js2-mode
                       ace-jump-mode
                       autopair
@@ -500,6 +499,9 @@ and the point, not include the isearch word."
 (defun goto-config ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete")
+(require 'auto-complete)
 
 (setq textmate-find-files-command "git ls-tree --full-tree --name-only -r HEAD")
 (load custom-file 'noerror)

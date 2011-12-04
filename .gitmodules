@@ -64,3 +64,6 @@
 [submodule ".emacs.d/site-lisp/slime"]
 	path = .emacs.d/site-lisp/slime
 	url = http://sbcl.boinkor.net/git/slime.git
+[submodule ".emacs.d/site-lisp/auto-complete"]
+	path = .emacs.d/site-lisp/auto-complete
+	url = https://github.com/m2ym/auto-complete.git
