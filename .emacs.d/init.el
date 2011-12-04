@@ -520,12 +520,14 @@ and the point, not include the isearch word."
                 (nnimap-stream ssl)
                 (nnimap-authinfo-file "~/.authinfo"))))
 
-
 (defun convert-markdown-to-textfile ()
+  "Convert the markdown file that you're current editing into a textile file. Note: requires `pandoc` to be installed."
   (interactive)
   (let ((markdown-file-name (buffer-file-name))
         (textile-file-name (concat (file-name-sans-extension (buffer-file-name)) ".textile")))
-    (shell-command (format "pandoc -s %s -o %s"  markdown-file-name textile-file-name))
-    (find-file textile-file-name)))
-
+    (if (executable-find "pandoc")
+        (progn
+          (shell-command (format "pandoc -s %s -o %s"  markdown-file-name textile-file-name))
+          (find-file textile-file-name))
+      (error "%s" "The pandoc executable is required and either can't be found or is not installed"))))
 
