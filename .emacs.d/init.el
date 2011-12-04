@@ -1,6 +1,17 @@
 (require 'cl)
 
 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/slime")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/swank-js")
+(require 'slime)
+(slime-setup '(slime-repl slime-js))
+
+(global-set-key [f5] 'slime-js-reload)
+(add-hook 'js3-mode-hook
+          (lambda ()
+            (slime-js-minor-mode 1)))
+
+
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -17,9 +28,9 @@
                       starter-kit-ruby
                       starter-kit-js
                       starter-kit-eshell
+                      slime
                       scpaste
                       slime-fuzzy
-                      slime
                       slime-repl
                       clojure-mode
                       clojure-test-mode
@@ -102,7 +113,7 @@
       auto-mode-alist (cons '("\\.markdown" . markdown-mode) auto-mode-alist)
       auto-mode-alist (cons '("\\.md" . markdown-mode) auto-mode-alist)
       auto-mode-alist (cons '("\\.ronn?" . markdown-mode) auto-mode-alist)
-      auto-mode-alist (cons '("\\.js$" . js-mode) auto-mode-alist)
+      auto-mode-alist (cons '("\\.js$" . js3-mode) auto-mode-alist)
       coffee-tab-width 2
       ack-prompt-for-directory 1
       erc-nick "travisjeffery"
@@ -306,7 +317,7 @@ and the point, not include the isearch word."
 (global-unset-key (kbd "C-x m"))
 
 (set-default 'autopair-dont-activate #'(lambda () (eq major-mode 'sldb-mode)))
-(add-hook 'js-mode-hook '(lambda ()
+(add-hook 'js3-mode-hook '(lambda ()
                            (paredit-mode -1)
                            (autopair-mode 1)))
 (add-hook 'coffee-mode-hook '(lambda ()

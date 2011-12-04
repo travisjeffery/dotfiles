@@ -58,3 +58,9 @@
 [submodule ".emacs.d/site-lisp/solarized"]
 	path = .emacs.d/site-lisp/solarized
 	url = https://github.com/bbatsov/solarized-emacs.git
+[submodule ".emacs.d/site-lisp/swank-js"]
+	path = .emacs.d/site-lisp/swank-js
+	url = https://github.com/ivan4th/swank-js.git
+[submodule ".emacs.d/site-lisp/slime"]
+	path = .emacs.d/site-lisp/slime
+	url = http://sbcl.boinkor.net/git/slime.git
