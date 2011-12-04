@@ -354,6 +354,7 @@ and the point, not include the isearch word."
 (add-hook 'clojure-mode-hook '(lambda ()
                                 (enable-paredit-mode)
                                 (electric-layout-mode)
+                                (define-key clojure-mode-map (kbd "C-c d") 'slime-describe-symbol)
                                 (flyspell-prog-mode)))
 
 
