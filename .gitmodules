@@ -67,3 +67,12 @@
 [submodule ".emacs.d/site-lisp/auto-complete"]
 	path = .emacs.d/site-lisp/auto-complete
 	url = https://github.com/m2ym/auto-complete.git
+[submodule ".emacs.d/site-lisp/eproject"]
+	path = .emacs.d/site-lisp/eproject
+	url = https://github.com/jrockway/eproject.git
+[submodule ".emacs.d/site-lisp/gist.el"]
+	path = .emacs.d/site-lisp/gist.el
+	url = https://github.com/legumbre/gist.el.git
+[submodule ".emacs.d/site-lisp/find-file-in-project"]
+	path = .emacs.d/site-lisp/find-file-in-project
+	url = https://github.com/dburger/find-file-in-project.git
