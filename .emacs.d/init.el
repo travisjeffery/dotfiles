@@ -502,8 +502,6 @@ and the point, not include the isearch word."
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete")
 (require 'auto-complete)
-(add-to-list 'load-path "~/.emacs.d/site-lisp/nterm")
-(require 'nterm)
 
 (setq textmate-find-files-command "git ls-tree --full-tree --name-only -r HEAD")
 (load custom-file 'noerror)
@@ -678,8 +676,9 @@ and the point, not include the isearch word."
 (my-key "M-H" backward-word)
 (my-key "M-L" forward-word)
 
-(add-hook 'paredit-mode-hook '(lambda ()
-                                ())))
+(require 'paredit)
+(define-key paredit-mode-map (kbd "C-M-S-j") 'paredit-join-sexps)
+(define-key paredit-mode-map (kbd "M-J") 'forward-paragraph)
 (my-key "M-J" forward-paragraph)
 (my-key "M-K" backward-paragraph)
 
