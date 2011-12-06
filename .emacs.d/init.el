@@ -47,7 +47,6 @@
                       full-ack
                       wrap-region
                       magit
-                      gist
                       coffee-mode
                       rinari
                       browse-url
@@ -141,6 +140,7 @@
       zencoding-preview-default 0
       linum-format " %d "
       use-dialog-box 0
+      js3-consistent-level-indent-inner-bracket 1
       )
 
 (defun duplicate-line ()
@@ -513,6 +513,9 @@ and the point, not include the isearch word."
 (global-set-key (kbd "C-c s") 'mark-sexp)
 (global-set-key (kbd "M-@") 'mark-sexp)
 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/gist.el")
+(require 'gist)
+
 (require 'init-auto-complete)
 (global-auto-complete-mode)
 (require 'init-lisp)
@@ -533,6 +536,11 @@ and the point, not include the isearch word."
                 (nnimap-stream ssl)
                 (nnimap-authinfo-file "~/.authinfo"))))
 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/find-file-in-project")
+(require 'find-file-in-project)
+(setq ffip-try-tags 0)
+(setq ido-work-directory-list-ignore-regexps '("\\.git$"))
+
 (defun convert-markdown-to-textfile ()
   "Convert the markdown file that you're current editing into a textile file. Note: requires `pandoc` to be installed."
   (interactive)
@@ -544,3 +552,203 @@ and the point, not include the isearch word."
           (find-file textile-file-name))
       (error "%s" "The pandoc executable is required and either can't be found or is not installed"))))
 
+
+;; ----------
+;; -- Keybindings
+;; ----------
+
+;; -- Setup
+
+(defvar my-keymap (make-keymap)
+  "A keymap containing my custom keybindings.")
+
+(define-minor-mode my-keys-mode
+  "A minor mode that encapsulates my custom keybindings."
+  :init-value t
+  :keymap my-keymap)
+
+(defmacro my-with-keymap (keymap &rest body)
+  "Within BODY, `my-key' defines keys on KEYMAP by default."
+  (declare (indent 1))
+  `(let ((my-keymap ,keymap)) ,@body))
+
+(defmacro my-key (key fn &optional map)
+  `(define-key ,(or map 'my-keymap) (kbd ,key) ',fn))
+
+(defmacro my-map (key name)
+  (let ((varname (intern (concat (symbol-name name) "-map"))))
+  `(progn
+     (define-prefix-command ',name ',varname)
+     (define-key my-keymap (kbd ,key) ,varname))))
+
+(defmacro my-unset (key)
+  `(global-unset-key (kbd ,key)))
+
+(defmacro my-strong-unset (key)
+  `(my-key ,key keyboard-quit))
+
+;; -- Terminal hacks
+;;
+;; The input standard for terminals, having evolved in a time before graphical
+;; interfaces, doesn't have nearly the same level of support for modifier keys
+;; as X does. Since I use all sorts of modifier keys, often in combination with
+;; one another, this presents a problem. How do I get bindings involving two or
+;; more of control, meta, and shift to work?
+;;
+;; Luckily, the X toolkit and xterm (which uses it) are vastly customizable.
+;; Through the Xresources config file, which is fed to xrdb, I can tell xterm
+;; that any key event (involving as many modifiers as I want) should produce
+;; any arbitrary string. In addition, Emacs has low-level but lisp-accessible
+;; facilities for saying that a particular string of characters should translate
+;; to a particular key sequence.
+
+(setf (cddr key-translation-map)
+      (eval-when-compile
+        (let ((chars (string-to-list "qwertyuiop]\\asdfghjklzxcvbnm"))
+              (meta (string-to-char (kbd "ESC"))))
+          (flet ((add-prefix (prefix char)
+                             (read-kbd-macro (concat prefix "-" (char-to-string char))))
+                 (make-bindings (binding-prefix)
+                                (mapcar
+                                 (lambda (char)
+                                   (cons (string-to-char (add-prefix "C" char))
+                                         (add-prefix binding-prefix char)))
+                                 chars)))
+            ;; C-M-S- bindings are a slightly weird case. None of them work by
+            ;; default, so we have to bind them en masse. In addition, they're
+            ;; actually included in two of the subdivisions below. The A keymap
+            ;; is the "correct" keymap for them, but they also appear in the S
+            ;; keymap. This is because, since we emit the S prefix for *all*
+            ;; C-S- characters, typing C-S-M (in that order) will generate the S
+            ;; prefix before generating the full prefix. Thus we have to process
+            ;; the A prefix *after* processing the S sequence.
+            (let ((cms-bindings
+                   `(,meta keymap ,@(make-bindings "C-M-S")
+                           (?: . ,(kbd "C-M-:"))
+                           (?\s . ,(kbd "C-M-S-SPC")))))
+              ;; I reserve the prefix M-& for my translation map, because it's a
+              ;; pain to reach anyway.
+              `((,meta keymap
+                       (?& keymap
+                           ;; The C keymap handles C-M- bindings. There are only
+                           ;; a couple of these, since C-M- works without issue
+                           ;; for alphabetic characters.
+                           (?C keymap
+                               (?\; . ,(kbd "C-M-;"))
+                               (?. . ,(kbd "C-M-.")))
+                           ;; The M keymap handles M-S- bindings. There's only
+                           ;; one of these, since M-S- works almost all the time.
+                           (?M keymap
+                               (?\s . ,(kbd "M-S-SPC")))
+                           ;; The S keymap handles C-S- and (sometimes) C-M-S
+                           ;; bindings. All C-S- bindings we care about don't
+                           ;; work, so we bind them en masse.
+                           (?S keymap
+                               (,meta keymap (?& keymap (?A keymap ,cms-bindings)))
+                               ,@(make-bindings "C-S"))
+                           ;; The A keymap (sometimes) handles C-M-S- bindings.
+                           (?A keymap
+                               ,cms-bindings)))))))))
+
+(define-key isearch-mode-map (kbd "M-n") 'isearch-delete-char)
+(define-key isearch-mode-map (kbd "M-O") 'isearch-ring-advance)
+(define-key isearch-mode-map (kbd "M-I") 'isearch-ring-retreat)
+
+(defun x-clipboard-only-yank ()
+  "Insert the clipboard contents (but never killed text) at the mark"
+  (interactive)
+  (insert (x-get-clipboard)))
+
+;; -- Actual Bindings
+
+(my-unset "C-x C-z")
+(my-unset "C-x p")
+(my-unset "C-]")
+(my-unset "M-&") ;; Necessary for terminal hacks
+
+;; Ergonomic keybindings inspired by http://xahlee.org/emacs/ergonomic_emacs_keybinding.html
+
+(my-key "M-h" backward-char)
+(my-key "M-l" forward-char)
+(my-key "M-j" next-line)
+(my-key "M-k" previous-line)
+
+(my-key "M-H" backward-word)
+(my-key "M-L" forward-word)
+
+(require 'paredit)
+(define-key paredit-mode-map (kbd "C-M-S-j") 'paredit-join-sexps)
+(define-key paredit-mode-map (kbd "M-J") 'forward-paragraph)
+(my-key "M-J" forward-paragraph)
+(my-key "M-K" backward-paragraph)
+
+(my-key "M-u" beginning-of-line)
+(my-key "M-p" end-of-line)
+(my-key "M-P" end-of-buffer)
+(my-key "M-U" beginning-of-buffer)
+
+(my-with-keymap global-map
+  (my-key "C-M-l" forward-sexp)
+  (my-key "C-M-h" backward-sexp)
+  (my-key "C-M-j" down-list)
+  (my-key "C-M-k" backward-up-list)
+  (my-key "C-M-o" beginning-of-defun)
+  (my-key "M-TAB" end-of-defun))
+
+(my-with-keymap emacs-lisp-mode-map
+  (my-key "M-TAB" end-of-defun)
+  (my-key "M-<tab>" lisp-complete-symbol))
+
+(my-key "M-n" delete-backward-char)
+(my-key "M-." delete-char)
+(my-key "M-m" kill-whole-line)
+(my-key "M-," kill-whole-line-up)
+
+(my-key "M-N" backward-kill-word)
+(my-key "M->" kill-word)
+(my-key "M-M" kill-paragraph)
+(my-key "M-<" backward-kill-paragraph)
+
+(my-key "C-M-n" backward-kill-sexp)
+(my-key "C-M-." kill-sexp)
+
+(my-key "C-M-S-h" windmove-left)
+(my-key "C-M-S-l" windmove-right)
+(my-key "C-M-S-j" windmove-down)
+(my-key "C-M-S-k" windmove-up)
+
+(my-key "M-o" pager-page-up)
+(my-key "M-i" pager-page-down)
+
+(my-with-keymap minibuffer-local-map
+  (my-key "M-O" previous-history-element)
+  (my-key "M-I" next-history-element))
+
+(my-key "M-RET" my-comment-indent-new-line)
+(my-key "C-v" x-clipboard-only-yank)
+(my-key "C-z" clipboard-kill-region)
+
+(my-key "M-SPC" set-mark-command)
+(my-key "C-M-SPC" kill-region)
+(my-key "C-M-@" kill-region)
+(my-key "M-S-SPC" yank)
+(my-key "C-M-S-SPC" yank-pop)
+
+(my-key "M-'" execute-extended-command)
+(my-key "M-/" hippie-expand)
+(my-key "M-?" undo)
+
+(my-key "M-\"" back-to-indentation)
+
+(my-key "M-a" my-find-tag)
+(my-key "M-A" my-tag-search)
+
+(my-key "<M-S-return>" my-magit-status)
+
+;; Cold Turkey
+
+(my-unset "C-w")
+(my-unset "C-y")
+(my-unset "C-_")
+(my-unset "M-y")
+(my-unset "M-x")
