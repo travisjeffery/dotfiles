@@ -141,6 +141,7 @@
       zencoding-preview-default 0
       linum-format " %d "
       use-dialog-box 0
+      js3-consistent-level-indent-inner-bracket 1
       )
 
 (defun duplicate-line ()
