@@ -669,4 +669,11 @@ and the point, not include the isearch word."
 (add-to-list 'load-path "~/.emacs.d/site-lisp/ergoemacs-keybindings")
 (setenv "ERGOEMACS_KEYBOARD_LAYOUT" "us")
 (load "~/.emacs.d/site-lisp/ergoemacs-keybindings/ergoemacs-mode")
-(ergoemacs-mode 1)
+;; (ergoemacs-mode 1)
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/evil")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/surround")
+(require 'evil)
+(require 'surround)
+(global-surround-mode 1)
+(evil-mode 1)

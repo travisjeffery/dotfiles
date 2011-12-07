@@ -76,3 +76,9 @@
 [submodule ".emacs.d/site-lisp/find-file-in-project"]
 	path = .emacs.d/site-lisp/find-file-in-project
 	url = https://github.com/dburger/find-file-in-project.git
+[submodule ".emacs.d/site-lisp/evil"]
+	path = .emacs.d/site-lisp/evil
+	url = git://gitorious.org/evil/evil.git
+[submodule ".emacs.d/site-lisp/surround"]
+	path = .emacs.d/site-lisp/surround
+	url = https://github.com/timcharper/evil-surround.git
