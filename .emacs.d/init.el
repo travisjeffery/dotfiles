@@ -587,6 +587,16 @@ and the point, not include the isearch word."
 (defmacro my-strong-unset (key)
   `(my-key ,key keyboard-quit))
 
+(defun site-lisp (library)
+  (let* ((file (symbol-name library))
+         (normal (concat "~/.emacs.d/site-lisp/" file))
+         (normal-file (concat "~/.emacs.d/site-lisp/" file ".el"))
+         )
+    (cond
+     ((file-directory-p normal) (add-to-list 'load-path normal) (require library))
+     ((file-directory-p normal-file) (add-to-list 'load-path normal-file) (require library))
+     ((file-directory-p normal-file) (require library)))))
+
 ;; -- Terminal hacks
 ;;
 ;; The input standard for terminals, having evolved in a time before graphical
