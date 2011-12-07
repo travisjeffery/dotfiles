@@ -1,0 +1,88 @@
+-*- coding: utf-8; mode: org -*-
+
+# when viewing this file in emacs, press Shift+Tab 3 times to expand all headings.
+
+* INSTALLATION INSTRUCTIONS
+
+** 1. Unzip the folder.
+If you downloaded a file named “ergoemacs-keybindings-5.3.9.zip”, unzip it.
+
+On Windows, you can right click the file name and choose “Extract All...”.
+
+On Mac OS X, you can double click to unzip.
+
+On Linux (and Mac OS X), you can type “unzip ergoemacs-keybindings-5.3.9.zip” on a command console.
+
+Now you should have a folder named “ergoemacs-keybindings-5.3.9”.
+
+** 2. Place the folder in your emacs load path.
+
+For examples:
+
+On Windows:
+%HOMEPATH%\.emacs.d\ergoemacs-keybindings-5.3.9
+
+On Mac OS X or Linux:
+~/.emacs.d/ergoemacs-keybindings-5.3.9
+
+If the folder “.emacs.d” doesn't exist, you can go ahead and create it.
+
+** 3. Specify your keyboard layout.
+
+Place ONE of the following line in your emacs init file (~/.emacs):
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "us") ; US
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "dv") ; US Dvorak (Ergonomic)
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb") ; UK
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "gb-dv") ; UK Dvorak
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "sp") ; Spanish (Spain) (aka “Spanish (International sort)”)
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "it") ; Italian
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "sv") ; Swedish
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "da") ; Danish
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "pt-nativo") ; (Ergonomic) PT-Nativo from http://tecladobrasileiro.com.br
+
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "colemak") ; (Ergonomic) Colemak http://colemak.com/
+
+** 4. Make Emacs load the file, and turn on the mode.
+
+Place the following lines in your emacs init file.
+
+;; load ErgoEmacs keybinding
+(load "~/.emacs.d/ergoemacs-keybindings-5.3.9/ergoemacs-mode")
+
+;; turn on minor mode ergoemacs-mode
+(ergoemacs-mode 1)
+
+These lines should be placed below your keyboard layout in step 3.
+
+Make sure that the path points to your file is correct.
+
+You do not need to have the file path end in “.el”.
+
+** 5. Restart emacs.
+
+After you restart emacs, you will be using the new keybinding. The keyboard shortcut for emacs's “M-x” (execute-extended-command) is now “Alt+a”.
+
+To turn off the mode, type “Alt+a” then “ergoemacs-mode”. After that, your keybinding is the same as GNU Emacs's default keybinding.
+
+The command “ergoemacs-mode” toggles the minor mode.
+
+* Byte Compile Elisp Files (Optional)
+
+If you like, you can byte-compile the elisp files. To byte compile them, call the command “byte-compile-file”, then the elisp file name. Once you do that, emacs will create a file with “.elc” ending, and will automatically load byte compiled file if there is one.
+
+You can byte compile the whole directory. To do so, run the following in command line console. Here's a bash example on OS X's Terminal:
+
+emacs -batch -f batch-byte-compile ~/.emacs.d/ergoemacs-keybindings-5.3.9/*.el
+
+Byte compiled files makes loading and running programs about 5 or more times faster, but for small elisp files, the speed increase is probably not noticeable.
+
+You do not need to change any lines in the emacs initialization given above.

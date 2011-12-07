@@ -677,3 +677,7 @@ and the point, not include the isearch word."
 (require 'surround)
 (global-surround-mode 1)
 (evil-mode 1)
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/undo-tree")
+(require 'undo-tree)
+(global-undo-tree-mode 1)

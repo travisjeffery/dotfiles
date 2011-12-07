@@ -82,3 +82,6 @@
 [submodule ".emacs.d/site-lisp/surround"]
 	path = .emacs.d/site-lisp/surround
 	url = https://github.com/timcharper/evil-surround.git
+[submodule ".emacs.d/site-lisp/undo-tree"]
+	path = .emacs.d/site-lisp/undo-tree
+	url = http://www.dr-qubit.org/git/undo-tree.git
