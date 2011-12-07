@@ -35,7 +35,6 @@ if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
   if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
   if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
 
-  if [ -d "$HOME/.rbenv/bin" ]; then PATH="$HOME/.rbenv/bin:$PATH"; eval "$(rbenv init -)"; fi
 
   if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
   if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi

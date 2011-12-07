@@ -139,6 +139,7 @@
       zencoding-preview-default 0
       linum-format " %d "
       use-dialog-box 0
+      js3-consistent-level-indent-inner-bracket 1
       )
 
 (defun duplicate-line ()
@@ -507,8 +508,6 @@ and the point, not include the isearch word."
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete")
 (require 'auto-complete)
-(add-to-list 'load-path "~/.emacs.d/site-lisp/nterm")
-(require 'nterm)
 
 (setq textmate-find-files-command "git ls-tree --full-tree --name-only -r HEAD")
 (load custom-file 'noerror)
