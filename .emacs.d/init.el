@@ -11,7 +11,6 @@
           (lambda ()
             (slime-js-minor-mode 1)))
 
-
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -248,6 +247,13 @@ and the point, not include the isearch word."
 (add-to-list 'load-path "~/.emacs.d/site-lisp/key-chord")
 (require 'key-chord)
 (key-chord-mode 1)
+
+(defun new-line-above-current ()
+  (interactive)
+  (previous-line 1)
+  (end-of-line)
+  (newline-and-indent))
+(global-set-key (kbd "C-o") 'new-line-above-current)
 
 (global-auto-revert-mode 1)
 (windmove-default-keybindings 'meta)
@@ -654,101 +660,14 @@ and the point, not include the isearch word."
 (define-key isearch-mode-map (kbd "M-n") 'isearch-delete-char)
 (define-key isearch-mode-map (kbd "M-O") 'isearch-ring-advance)
 (define-key isearch-mode-map (kbd "M-I") 'isearch-ring-retreat)
-
+  (setq mac-command-modifier 'meta)
+  (setq mac-option-modifier 'none)
 (defun x-clipboard-only-yank ()
   "Insert the clipboard contents (but never killed text) at the mark"
   (interactive)
   (insert (x-get-clipboard)))
 
-;; -- Actual Bindings
-
-(my-unset "C-x C-z")
-(my-unset "C-x p")
-(my-unset "C-]")
-(my-unset "M-&") ;; Necessary for terminal hacks
-
-;; Ergonomic keybindings inspired by http://xahlee.org/emacs/ergonomic_emacs_keybinding.html
-
-(my-key "M-h" backward-char)
-(my-key "M-l" forward-char)
-(my-key "M-j" next-line)
-(my-key "M-k" previous-line)
-
-(my-key "M-H" backward-word)
-(my-key "M-L" forward-word)
-
-(add-hook 'paredit-mode-hook '(lambda ()
-                                ())))
-(my-key "M-J" forward-paragraph)
-(my-key "M-K" backward-paragraph)
-
-(my-key "M-u" beginning-of-line)
-(my-key "M-p" end-of-line)
-(my-key "M-P" end-of-buffer)
-(my-key "M-U" beginning-of-buffer)
-
-(my-with-keymap global-map
-  (my-key "C-M-l" forward-sexp)
-  (my-key "C-M-h" backward-sexp)
-  (my-key "C-M-j" down-list)
-  (my-key "C-M-k" backward-up-list)
-  (my-key "C-M-o" beginning-of-defun)
-  (my-key "M-TAB" end-of-defun))
-
-(my-with-keymap emacs-lisp-mode-map
-  (my-key "M-TAB" end-of-defun)
-  (my-key "M-<tab>" lisp-complete-symbol))
-
-(my-key "M-n" delete-backward-char)
-(my-key "M-." delete-char)
-(my-key "M-m" kill-whole-line)
-(my-key "M-," kill-whole-line-up)
-
-(my-key "M-N" backward-kill-word)
-(my-key "M->" kill-word)
-(my-key "M-M" kill-paragraph)
-(my-key "M-<" backward-kill-paragraph)
-
-(my-key "C-M-n" backward-kill-sexp)
-(my-key "C-M-." kill-sexp)
-
-(my-key "C-M-S-h" windmove-left)
-(my-key "C-M-S-l" windmove-right)
-(my-key "C-M-S-j" windmove-down)
-(my-key "C-M-S-k" windmove-up)
-
-(my-key "M-o" pager-page-up)
-(my-key "M-i" pager-page-down)
-
-(my-with-keymap minibuffer-local-map
-  (my-key "M-O" previous-history-element)
-  (my-key "M-I" next-history-element))
-
-(my-key "M-RET" my-comment-indent-new-line)
-(my-key "C-v" x-clipboard-only-yank)
-(my-key "C-z" clipboard-kill-region)
-
-(my-key "M-SPC" set-mark-command)
-(my-key "C-M-SPC" kill-region)
-(my-key "C-M-@" kill-region)
-(my-key "M-S-SPC" yank)
-(my-key "C-M-S-SPC" yank-pop)
-
-(my-key "M-'" execute-extended-command)
-(my-key "M-/" hippie-expand)
-(my-key "M-?" undo)
-
-(my-key "M-\"" back-to-indentation)
-
-(my-key "M-a" my-find-tag)
-(my-key "M-A" my-tag-search)
-
-(my-key "<M-S-return>" my-magit-status)
-
-;; Cold Turkey
-
-(my-unset "C-w")
-(my-unset "C-y")
-(my-unset "C-_")
-(my-unset "M-y")
-(my-unset "M-x")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/ergoemacs-keybindings")
+(setenv "ERGOEMACS_KEYBOARD_LAYOUT" "us")
+(load "~/.emacs.d/site-lisp/ergoemacs-keybindings/ergoemacs-mode")
+(ergoemacs-mode 1)
