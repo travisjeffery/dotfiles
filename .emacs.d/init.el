@@ -63,6 +63,18 @@
   (when (not (package-installed-p p))
     (package-install p)))
 
+(defun site-lisp (library)
+  (interactive)
+  (let* ((file (symbol-name library))
+         (normal (concat "~/.emacs.d/site-lisp/" file))
+         (normal-file (concat "~/.emacs.d/site-lisp/" file ".el"))
+         )
+    (cond
+     ((file-directory-p normal) (add-to-list 'load-path normal) (require library))
+     ((file-directory-p normal-file) (add-to-list 'load-path normal-file) (require library))
+     ((file-directory-p normal-file) (require library)))))
+
+
 (setq-default save-place 1)
 
 (setenv "PATH"
@@ -157,7 +169,9 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/ac-slime")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/hippie-expand-slime")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/elisp-slime-nav")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/hl-sexp")
+(global-set-key (kbd "M-'") 'comment-add)
+;; (add-to-list 'Load-path "~/.emacs.d/site-lisp/hl-sexp") 
+(site-lisp 'hl-sexp)
 (require 'hl-sexp)
 (require 'elisp-slime-nav)
 (require 'hippie-expand-slime)
@@ -593,15 +607,6 @@ and the point, not include the isearch word."
 (defmacro my-strong-unset (key)
   `(my-key ,key keyboard-quit))
 
-(defun site-lisp (library)
-  (let* ((file (symbol-name library))
-         (normal (concat "~/.emacs.d/site-lisp/" file))
-         (normal-file (concat "~/.emacs.d/site-lisp/" file ".el"))
-         )
-    (cond
-     ((file-directory-p normal) (add-to-list 'load-path normal) (require library))
-     ((file-directory-p normal-file) (add-to-list 'load-path normal-file) (require library))
-     ((file-directory-p normal-file) (require library)))))
 
 ;; -- Terminal hacks
 ;;
@@ -670,7 +675,7 @@ and the point, not include the isearch word."
 (define-key isearch-mode-map (kbd "M-O") 'isearch-ring-advance)
 (define-key isearch-mode-map (kbd "M-I") 'isearch-ring-retreat)
   (setq mac-command-modifier 'meta)
-  (setq mac-option-modifier 'none)
+  (setq mac-option-modifier 'meta)
 (defun x-clipboard-only-yank ()
   "Insert the clipboard contents (but never killed text) at the mark"
   (interactive)
@@ -686,8 +691,17 @@ and the point, not include the isearch word."
 (require 'evil)
 (require 'surround)
 (global-surround-mode 1)
-(evil-mode 1)
+;; (evil-mode 1)
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/undo-tree")
 (require 'undo-tree)
 (global-undo-tree-mode 1)
+
+
+(define-key ergoemacs-keymap (kbd "M-/") nil)
+(define-key ergoemacs-keymap (kbd "M-/") 'hippie-expand)
+(defun new-line-below-current ()
+  (interactive)
+  (end-of-line)
+  (newline-and-indent))
+(define-key ergoemacs-keymap (kbd "M-RET") 'new-line-below-current)
