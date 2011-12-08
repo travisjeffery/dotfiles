@@ -8,6 +8,7 @@ filetype off
  call vundle#rc('~/.bundle')
 " set rtp+=~/.vim/bundle/Bundle/
 " call neobundle#rc(expand('~/.bundle'))
+Bundle 'https://github.com/tyru/current-func-info.vim.git'
 Bundle 'https://github.com/digitaltoad/vim-jade.git'
 Bundle 'https://github.com/juvenn/mustache.vim.git'
 Bundle 'https://github.com/tpope/vim-markdown.git'
@@ -346,10 +347,12 @@ if &term =~ "^screen"
   " workaround for freeze when using mouse on GNU screen.
   set ttymouse=xterm2
 endif
+call cfi#load()
 set statusline=%f
 set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 set statusline+=%{exists('g:loaded_rvm')?rvm#statusline():''}
 set statusline+=%#warningmsg#
+set statusline+=%{(cfi#get_func_name()!='')?'['.cfi#get_func_name().']':''}
 set statusline+=%{&ff!='unix'?'['.&ff.']':''}
 set statusline+=%*
 set statusline+=%#warningmsg#
