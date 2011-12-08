@@ -32,6 +32,7 @@
                       slime-fuzzy
                       slime-repl
                       clojure-mode
+                      ruby-electric
                       clojure-test-mode
                       eldoc-eval
                       durendal
@@ -376,10 +377,12 @@ and the point, not include the isearch word."
                                (esk-paredit-nonlisp)
                                (electric-layout-mode)
                                (flyspell-prog-mode)))
+(require 'ruby-electric)
 (add-hook 'ruby-mode-hook '(lambda ()
                              (textmate-mode)
                              (esk-paredit-nonlisp)
                              (electric-layout-mode)
+                             (ruby-electric-mode)
                              (flyspell-prog-mode)))
 (add-hook 'clojure-mode-hook '(lambda ()
                                 (enable-paredit-mode)
@@ -696,7 +699,6 @@ and the point, not include the isearch word."
 (add-to-list 'load-path "~/.emacs.d/site-lisp/undo-tree")
 (require 'undo-tree)
 (global-undo-tree-mode 1)
-
 
 (define-key ergoemacs-keymap (kbd "M-/") nil)
 (define-key ergoemacs-keymap (kbd "M-/") 'hippie-expand)
