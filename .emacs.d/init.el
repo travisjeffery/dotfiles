@@ -328,7 +328,7 @@ and the point, not include the isearch word."
 (global-set-key (kbd "M-i") 'textmate-goto-symbol)
 (global-set-key (kbd "A-F") 'ack)
 (global-set-key (kbd "C-TAB") 'other-window)
-(global-set-key (kbd "M-o") 'other-window)
+;; (global-set-key (kbd "M-o") 'other-window)
 (global-set-key (kbd "M-n") 'next-error)
 (global-set-key (kbd "M-p") 'previous-error)
 (global-set-key (kbd "C-*") 'isearch-forward-at-point)
