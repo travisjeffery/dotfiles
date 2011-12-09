@@ -11,4 +11,5 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(clojure-double-quote ((t nil)))
- '(clojure-keyword ((t nil))))
+ '(clojure-keyword ((t nil)))
+ '(clojure-special ((t (:foreground "#9933CC")))))
