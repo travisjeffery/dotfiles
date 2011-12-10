@@ -264,12 +264,6 @@ and the point, not include the isearch word."
 (require 'key-chord)
 (key-chord-mode 1)
 
-(defun new-line-above-current ()
-  (interactive)
-  (previous-line 1)
-  (end-of-line)
-  (newline-and-indent))
-(global-set-key (kbd "C-o") 'new-line-above-current)
 
 (global-auto-revert-mode 1)
 (windmove-default-keybindings 'meta)
@@ -338,8 +332,8 @@ and the point, not include the isearch word."
 
 (set-default 'autopair-dont-activate #'(lambda () (eq major-mode 'sldb-mode)))
 (add-hook 'js3-mode-hook '(lambda ()
-                           (paredit-mode -1)
-                           (autopair-mode 1)))
+                            (paredit-mode -1)
+                            (autopair-mode 1)))
 (add-hook 'coffee-mode-hook '(lambda ()
                                (paredit-mode -1)
                                (autopair-mode 1)))
@@ -447,8 +441,8 @@ and the point, not include the isearch word."
 (defun insert-emdash ()
   (interactive)
   (insert "—"))
+(global-set-key (kbd "C-M-_") 'insert-emdash)
 
-(global-set-key (kbd "M-_") 'insert-emdash)
 (global-set-key (kbd "C-M-=") 'esk-indent-buffer)
 
 (add-hook 'js-mode-hook (lambda ()
@@ -600,9 +594,9 @@ and the point, not include the isearch word."
 
 (defmacro my-map (key name)
   (let ((varname (intern (concat (symbol-name name) "-map"))))
-  `(progn
-     (define-prefix-command ',name ',varname)
-     (define-key my-keymap (kbd ,key) ,varname))))
+    `(progn
+       (define-prefix-command ',name ',varname)
+       (define-key my-keymap (kbd ,key) ,varname))))
 
 (defmacro my-unset (key)
   `(global-unset-key (kbd ,key)))
@@ -677,8 +671,8 @@ and the point, not include the isearch word."
 (define-key isearch-mode-map (kbd "M-n") 'isearch-delete-char)
 (define-key isearch-mode-map (kbd "M-O") 'isearch-ring-advance)
 (define-key isearch-mode-map (kbd "M-I") 'isearch-ring-retreat)
-  (setq mac-command-modifier 'meta)
-  (setq mac-option-modifier 'meta)
+(setq mac-command-modifier 'meta)
+(setq mac-option-modifier 'meta)
 (defun x-clipboard-only-yank ()
   "Insert the clipboard contents (but never killed text) at the mark"
   (interactive)
@@ -707,3 +701,11 @@ and the point, not include the isearch word."
   (end-of-line)
   (newline-and-indent))
 (define-key ergoemacs-keymap (kbd "M-RET") 'new-line-below-current)
+
+
+(defun new-line-above-current ()
+  (interactive)
+  (previous-line 1)
+  (end-of-line)
+  (newline-and-indent))
+(define-key ergoemacs-keymap [(control return)] 'new-line-above-current)
