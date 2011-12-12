@@ -88,3 +88,6 @@
 [submodule ".emacs.d/site-lisp/haskell-emacs"]
 	path = .emacs.d/site-lisp/haskell-emacs
 	url = https://github.com/chrisdone/haskell-emacs.git
+[submodule ".emacs.d/site-lisp/expand-region"]
+	path = .emacs.d/site-lisp/expand-region
+	url = https://github.com/magnars/expand-region.el.git

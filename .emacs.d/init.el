@@ -535,6 +535,10 @@ and the point, not include the isearch word."
 (setq textmate-find-files-command "git ls-tree --full-tree --name-only -r HEAD")
 (load custom-file 'noerror)
 
+(site-lisp 'expand-region)
+(require 'expand-region)
+(global-set-key (kbd "C-@") 'er/expand-region)
+
 (eshell)
 (with-current-buffer "*eshell*" (setq pcomplete-cycle-completions nil))
 (set-face-foreground 'eshell-prompt "#2075c7")
@@ -713,7 +717,6 @@ and the point, not include the isearch word."
   (end-of-line)
   (newline-and-indent))
 (define-key ergoemacs-keymap (kbd "M-RET") 'new-line-below-current)
-
 
 (defun new-line-above-current ()
   (interactive)
