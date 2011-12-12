@@ -171,7 +171,7 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/hippie-expand-slime")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/elisp-slime-nav")
 (global-set-key (kbd "M-'") 'comment-add)
-;; (add-to-list 'Load-path "~/.emacs.d/site-lisp/hl-sexp") 
+;; (add-to-list 'Load-path "~/.emacs.d/site-lisp/hl-sexp")
 (site-lisp 'hl-sexp)
 (require 'hl-sexp)
 (require 'elisp-slime-nav)
@@ -337,6 +337,18 @@ and the point, not include the isearch word."
 (add-hook 'coffee-mode-hook '(lambda ()
                                (paredit-mode -1)
                                (autopair-mode 1)))
+
+(require 'peg)
+(add-to-list 'load-path "~/.emacs.d/site-lisp/haskell-emacs/src")
+(require 'hs)
+(add-hook 'hs-mode-hook '(lambda ()
+                                (paredit-mode -1)
+                                (autopair-mode 1)))
+
+;; Setup associations with file types.
+(add-to-list 'auto-mode-alist (cons "\\.hs\\'" 'hs-mode))
+(add-to-list 'auto-mode-alist (cons "\\.cabal\\'" 'hs-cabal-mode))
+(add-to-list 'auto-mode-alist '("\\.hcr\\'" . hs-core-mode))
 
 (require 'init-javascript)
 (require 'init-rails)

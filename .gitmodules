@@ -85,3 +85,6 @@
 [submodule ".emacs.d/site-lisp/undo-tree"]
 	path = .emacs.d/site-lisp/undo-tree
 	url = http://www.dr-qubit.org/git/undo-tree.git
+[submodule ".emacs.d/site-lisp/haskell-emacs"]
+	path = .emacs.d/site-lisp/haskell-emacs
+	url = https://github.com/chrisdone/haskell-emacs.git
