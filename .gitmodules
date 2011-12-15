@@ -91,3 +91,6 @@
 [submodule ".emacs.d/site-lisp/expand-region"]
 	path = .emacs.d/site-lisp/expand-region
 	url = https://github.com/magnars/expand-region.el.git
+[submodule ".emacs.d/site-lisp/ghc-mod"]
+	path = .emacs.d/site-lisp/ghc-mod
+	url = https://github.com/kazu-yamamoto/ghc-mod.git
