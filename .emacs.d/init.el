@@ -340,15 +340,17 @@ and the point, not include the isearch word."
 
 (require 'peg)
 (add-to-list 'load-path "~/.emacs.d/site-lisp/haskell-emacs/src")
-(require 'hs)
-(add-hook 'hs-mode-hook '(lambda ()
+;; (require 'hs)
+(require 'haskell-indent)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+(add-hook 'haskell-mode-hook '(lambda ()
                                 (paredit-mode -1)
                                 (autopair-mode 1)))
 
 ;; Setup associations with file types.
-(add-to-list 'auto-mode-alist (cons "\\.hs\\'" 'hs-mode))
-(add-to-list 'auto-mode-alist (cons "\\.cabal\\'" 'hs-cabal-mode))
-(add-to-list 'auto-mode-alist '("\\.hcr\\'" . hs-core-mode))
+(add-to-list 'auto-mode-alist (cons "\\.hs\\'" 'haskell-mode))
+;; (add-to-list 'auto-mode-alist (cons "\\.cabal\\'" 'hs-cabal-mode))
+;; (add-to-list 'auto-mode-alist '("\\.hcr\\'" . hs-core-mode))
 
 (require 'init-javascript)
 (require 'init-rails)
