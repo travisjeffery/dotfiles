@@ -714,6 +714,9 @@ and the point, not include the isearch word."
 
 (define-key ergoemacs-keymap (kbd "M-/") nil)
 (define-key ergoemacs-keymap (kbd "M-/") 'hippie-expand)
+
+(define-key ergoemacs-keymap [C-tab] 'paredit-splice-sexp)
+
 (defun new-line-below-current ()
   (interactive)
   (end-of-line)
