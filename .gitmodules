@@ -94,3 +94,6 @@
 [submodule ".emacs.d/site-lisp/ghc-mod"]
 	path = .emacs.d/site-lisp/ghc-mod
 	url = https://github.com/kazu-yamamoto/ghc-mod.git
+[submodule ".emacs.d/site-lisp/yaml-mode"]
+	path = .emacs.d/site-lisp/yaml-mode
+	url = https://github.com/yoshiki/yaml-mode.git

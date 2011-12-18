@@ -40,7 +40,6 @@
                       diminish
                       whole-line-or-region
                       markdown-mode
-                      yaml-mode
                       marmalade
                       browse-kill-ring
                       textmate
@@ -188,6 +187,13 @@
           ((backward-up-list arg)))))
 
 (global-set-key [remap backward-up-list] 'backward-up-sexp)
+
+(site-lisp 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/eproject")
+(require 'eproject)
+;; (eproject-maybe-turn-on)
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/js3-mode")
 (autoload 'js3-mode "js3" nil t)
