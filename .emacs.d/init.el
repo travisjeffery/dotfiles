@@ -347,11 +347,12 @@ and the point, not include the isearch word."
 (require 'peg)
 (add-to-list 'load-path "~/.emacs.d/site-lisp/haskell-emacs/src")
 (require 'hs)
-(require 'haskell-indent)
+;; (require 'haskell-indent)
 ;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;; (add-hook 'hs-mode-hook 'hs-mode-start-hook)
 (add-hook 'hs-mode-hook '(lambda ()
-                                (paredit-mode -1)
-                                (autopair-mode 1)))
+                           (paredit-mode -1)
+                           (autopair-mode 1)))
 
 ;; Setup associations with file types.
 (add-to-list 'auto-mode-alist (cons "\\.hs\\'" 'hs-mode))
@@ -735,3 +736,22 @@ and the point, not include the isearch word."
   (end-of-line)
   (newline-and-indent))
 (define-key ergoemacs-keymap [(control return)] 'new-line-above-current)
+
+(defun rails-calculate-file-type ()
+  "File type for current buffer."
+  (interactive)
+                                        ; TODO: make filename relative to root of project
+  (if (buffer-file-name)
+      (let ((filename (buffer-file-name)))
+        (cond
+         (or
+          (string-match-p "_controller\.rb$" filename)
+                                        ; TODO: after making filename to root of project, match to beginning of filename
+          (string-match-p "app/controllers/,*\.rb$" file name)
+          )
+         )
+        )))
+
+(define-key ergoemacs-keymap (kbd "M-t") 'textmate-goto-symbol)
+(define-key ergoemacs-keymap (kbd "M-T") 'textmate-goto-file)
+
