@@ -1,6 +1,5 @@
 (require 'cl)
 
-
 (add-to-list 'load-path "~/.emacs.d/site-lisp/slime")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/swank-js")
 (require 'slime)
@@ -74,6 +73,9 @@
      ((file-directory-p normal-file) (add-to-list 'load-path normal-file) (require library))
      ((file-directory-p normal-file) (require library)))))
 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete")
+(require 'auto-complete-config)
+(require 'auto-complete)
 
 (setq-default save-place 1)
 
@@ -198,6 +200,9 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/js3-mode")
 (autoload 'js3-mode "js3" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js3-mode))
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/flymake-coffee")
+(site-lisp 'flymake-coffee)
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/git-emacs")
 (require 'git-emacs)
@@ -399,10 +404,10 @@ and the point, not include the isearch word."
                              (electric-layout-mode)
                              (ruby-electric-mode)
                              (flyspell-prog-mode)))
-(add-hook 'clojure-mode-hook '(lambda ()
+(add-hook 'emacs-lisp-mode-hook '(lambda ()
                                 (enable-paredit-mode)
                                 (electric-layout-mode)
-                                (define-key clojure-mode-map (kbd "C-c d") 'slime-describe-symbol)
+                             
                                 (flyspell-prog-mode)))
 
 
@@ -538,8 +543,6 @@ and the point, not include the isearch word."
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 
-(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete")
-(require 'auto-complete)
 
 (setq textmate-find-files-command "git ls-tree --full-tree --name-only -r HEAD")
 (load custom-file 'noerror)
@@ -558,7 +561,7 @@ and the point, not include the isearch word."
 (add-to-list 'load-path "~/.emacs.d/site-lisp/gist.el")
 (require 'gist)
 
-(require 'init-auto-complete)
+;; (require 'init-auto-complete)
 (global-auto-complete-mode)
 (require 'init-lisp)
 (require 'gnus)

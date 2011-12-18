@@ -97,3 +97,6 @@
 [submodule ".emacs.d/site-lisp/yaml-mode"]
 	path = .emacs.d/site-lisp/yaml-mode
 	url = https://github.com/yoshiki/yaml-mode.git
+[submodule ".emacs.d/site-lisp/flymake-coffee"]
+	path = .emacs.d/site-lisp/flymake-coffee
+	url = https://github.com/purcell/flymake-coffee.git
