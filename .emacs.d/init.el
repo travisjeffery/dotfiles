@@ -561,7 +561,7 @@ and the point, not include the isearch word."
 (add-to-list 'load-path "~/.emacs.d/site-lisp/gist.el")
 (require 'gist)
 
-;; (require 'init-auto-complete)
+(require 'init-auto-complete)
 (global-auto-complete-mode)
 (require 'init-lisp)
 (require 'gnus)
