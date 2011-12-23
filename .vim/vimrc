@@ -1005,6 +1005,8 @@ nnoremap <silent> [Space]re :<C-u>registers<CR>
 nnoremap <silent> [Space]ya :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
 nnoremap <silent> [Space]y% :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
 
+nmap [Space]r <SID>(command-line-enter)<C-u>QuickRun<CR>
+
 nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 
 " Copy current buffer's path to clipboard{{{2
