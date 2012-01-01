@@ -747,3 +747,6 @@ and the point, not include the isearch word."
 (define-key ergoemacs-keymap (kbd "M-t") 'textmate-goto-symbol)
 (define-key ergoemacs-keymap (kbd "M-T") 'textmate-goto-file)
 
+(defun titlecase ()
+  (interactive)
+  (shell-command-on-region (region-beginning) (region-end) "toTitleCase " (quote (4)) (quote (4)) nil t))
