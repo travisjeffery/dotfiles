@@ -352,6 +352,7 @@ and the point, not include the isearch word."
 (require 'peg)
 (add-to-list 'load-path "~/.emacs.d/site-lisp/haskell-emacs/src")
 (require 'hs)
+(site-lisp 'haskell-mode)
 (require 'haskell-mode)
 (require 'haskell-indent)
 ;; (add-hook 'hs-mode-hook 'hs-mode-start-hook)
