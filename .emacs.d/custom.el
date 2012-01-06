@@ -5,6 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes (quote ("1f392dc4316da3e648c6dc0f4aad1a87d4be556c" "1d2126921f639e9e3b9275617555729583578ded" "2b1bb3493a73ddf9da5785479170a402b1c949ac" default)))
  '(fill-column 79)
+ '(ns-antialias-text nil)
  '(reb-re-syntax (quote string)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
