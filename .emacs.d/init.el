@@ -108,7 +108,7 @@
               (add-to-list 'exec-path path))
           (nreverse (split-string (getenv "PATH") ":")))))
 
-(set-default-font "Inconsolata-14")
+(set-default-font "Monaco-10")
 
 (setq browse-url-browser-function 'browse-url-default-macosx-browser
       custom-file (expand-file-name "~/.emacs.d/custom.el")
