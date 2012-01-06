@@ -130,12 +130,5 @@ export GZIP='--best --name --verbose'
   #   fi
   # fi
 
-  # Last resort  #{{{1
-  # RVM: Ruby Version Manager  #{{{2
-  if [ -d "$HOME/.rvm" ]; then
-    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-  fi
-  #}}}
-
   # __END__  #{{{1
   # vim: filetype=sh foldmethod=marker
