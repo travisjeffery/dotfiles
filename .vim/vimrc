@@ -10,6 +10,7 @@ filetype off
 " call neobundle#rc(expand('~/.bundle'))
 Bundle 'https://github.com/groenewege/vim-less.git'
 Bundle 'https://github.com/drewolson/ruby_focused_unit_test_vim.git'
+Bundle 'https://github.com/Lokaltog/vim-powerline.git'
 Bundle 'https://github.com/tpope/vim-eunuch.git'
 Bundle 'https://github.com/tyru/current-func-info.vim.git'
 Bundle 'https://github.com/digitaltoad/vim-jade.git'
@@ -440,6 +441,9 @@ augroup vimrc-scratch-buffer
 augroup END"}}}2
 "}}}1
 " Section: Plugins {{{1
+" powerline {{{2
+let g:Powerline_symbols = 'fancy'
+"}}}
 " open-browser{{{2
 let g:netrw_nogx = 1 " disable netrw's gx mapping.
 nmap gx <Plug>(openbrowser-smart-search)
@@ -1011,6 +1015,9 @@ nnoremap <silent> [Space]y% :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
 nmap [Space]r <SID>(command-line-enter)<C-u>QuickRun<CR>
 
 nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
+
+" Ruby block to yo face
+nmap <silent> [Space]b <Plug>BlockToggle
 
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
