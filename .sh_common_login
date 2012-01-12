@@ -35,7 +35,7 @@ if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
   if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
   if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
 
-
+  if [ -d "$HOME/Library/Haskell/bin" ]; then PATH="$HOME/Library/Haskell/bin:$PATH"; fi
   if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
   if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
   if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi
@@ -129,13 +129,6 @@ export GZIP='--best --name --verbose'
   #     xset fp rehash
   #   fi
   # fi
-
-  # Last resort  #{{{1
-  # RVM: Ruby Version Manager  #{{{2
-  if [ -d "$HOME/.rvm" ]; then
-    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-  fi
-  #}}}
 
   # __END__  #{{{1
   # vim: filetype=sh foldmethod=marker

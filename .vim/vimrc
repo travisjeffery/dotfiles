@@ -1574,6 +1574,8 @@ else
   nmap [Space]] <Plug>(exjumplist-next-buffer)
 endif
 
+iabbrev em; —
+
 function! YRRunAfterMaps()
   nnoremap Y   :<C-U>YRYankCount 'y$'<CR>
 endfunction
