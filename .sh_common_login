@@ -31,11 +31,22 @@ export ENV_ACCESS="$ENV_WORKING"
 
 export PATH MANPATH INFOPATH
 
+PATH=""
+
 if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
+  if [ -d "/bin" ]; then PATH="/bin:$PATH"; fi
+  if [ -d "/sbin" ]; then PATH="/sbin:$PATH"; fi
+
+  if [ -d "/usr/bin" ]; then PATH="/usr/bin:$PATH"; fi
+  if [ -d "/usr/man" ]; then MANPATH="/usr/man:$MANPATH"; fi
+  if [ -d "/usr/share/man" ]; then MANPATH="/usr/share/man:$MANPATH"; fi
+  if [ -d "/usr/info" ]; then INFOPATH="/usr/info:$INFOPATH"; fi
+
   if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
   if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
 
   if [ -d "$HOME/Library/Haskell/bin" ]; then PATH="$HOME/Library/Haskell/bin:$PATH"; fi
+
   if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
   if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
   if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi

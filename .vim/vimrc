@@ -8,6 +8,8 @@ filetype off
  call vundle#rc('~/.bundle')
 " set rtp+=~/.vim/bundle/Bundle/
 " call neobundle#rc(expand('~/.bundle'))
+Bundle 'https://github.com/groenewege/vim-less.git'
+Bundle 'https://github.com/drewolson/ruby_focused_unit_test_vim.git'
 Bundle 'https://github.com/tpope/vim-eunuch.git'
 Bundle 'https://github.com/tyru/current-func-info.vim.git'
 Bundle 'https://github.com/digitaltoad/vim-jade.git'
@@ -890,8 +892,8 @@ autocmd User Bundler
       \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 autocmd FileType ruby
       \ compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" 
-autocmd User Bundler
-      \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
+" autocmd User Bundler
+"       \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 let g:do_filetype = 0
