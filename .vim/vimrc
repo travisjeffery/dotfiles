@@ -10,7 +10,7 @@ filetype off
 " call neobundle#rc(expand('~/.bundle'))
 Bundle 'https://github.com/groenewege/vim-less.git'
 Bundle 'https://github.com/drewolson/ruby_focused_unit_test_vim.git'
-Bundle 'https://github.com/Lokaltog/vim-powerline.git'
+" Bundle 'https://github.com/Lokaltog/vim-powerline.git'
 Bundle 'https://github.com/tpope/vim-eunuch.git'
 Bundle 'https://github.com/tyru/current-func-info.vim.git'
 Bundle 'https://github.com/digitaltoad/vim-jade.git'
@@ -175,8 +175,8 @@ set wildmenu
 set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
 set virtualedit=block
 set matchpairs+=<:>
+set autoread
 if v:version >= 600
-  set autoread
   set foldenable
   set foldlevelstart=1
   set foldlevel=1
@@ -881,7 +881,12 @@ autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType c set omnifunc=ccomplete#Complete
-autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+autocmd FileType ruby,eruby 
+      \ set omnifunc=rubycomplete#Complete |
+      \ set foldmethod=expr | 
+      \ set foldexpr=getline(v:lnum)=~'^\\s*#' |
+      \ exe "normal zM``" 
+      " \ set foldlevel=1 | 
 autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
 autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
 autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
