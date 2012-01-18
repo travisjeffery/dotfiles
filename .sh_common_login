@@ -31,9 +31,7 @@ export ENV_ACCESS="$ENV_WORKING"
 
 export PATH MANPATH INFOPATH
 
-PATH=""
-
-if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
+# if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
   if [ -d "/bin" ]; then PATH="/bin:$PATH"; fi
   if [ -d "/sbin" ]; then PATH="/sbin:$PATH"; fi
 
@@ -56,7 +54,7 @@ if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
   if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
   if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
   if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
-fi
+# fi
 
 
 
