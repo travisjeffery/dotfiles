@@ -26,38 +26,44 @@ export ENV_ACCESS="$ENV_WORKING"
 
 
 
-
 # PATH  #{{{1
 
 export PATH MANPATH INFOPATH
 
-# if [ "${PATH/$HOME/}" = "$PATH" ]; then  # if $HOME/bin is not in $PATH ...
-  if [ -d "/bin" ]; then PATH="/bin:$PATH"; fi
-  if [ -d "/sbin" ]; then PATH="/sbin:$PATH"; fi
+OLD_PATH=$PATH
+PATH=""
 
-  if [ -d "/usr/bin" ]; then PATH="/usr/bin:$PATH"; fi
-  if [ -d "/usr/man" ]; then MANPATH="/usr/man:$MANPATH"; fi
-  if [ -d "/usr/share/man" ]; then MANPATH="/usr/share/man:$MANPATH"; fi
-  if [ -d "/usr/info" ]; then INFOPATH="/usr/info:$INFOPATH"; fi
+if [ -d "/bin" ]; then PATH="/bin:$PATH"; fi
+if [ -d "/sbin" ]; then PATH="/sbin:$PATH"; fi
 
-  if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
-  if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
+if [ -d "/usr/bin" ]; then PATH="/usr/bin:$PATH"; fi
+if [ -d "/usr/man" ]; then MANPATH="/usr/man:$MANPATH"; fi
+if [ -d "/usr/share/man" ]; then MANPATH="/usr/share/man:$MANPATH"; fi
+if [ -d "/usr/info" ]; then INFOPATH="/usr/info:$INFOPATH"; fi
 
-  if [ -d "$HOME/Library/Haskell/bin" ]; then PATH="$HOME/Library/Haskell/bin:$PATH"; fi
+if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
+if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
 
-  if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
-  if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
-  if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi
-  if [ -d "/usr/local/info" ]; then INFOPATH="/usr/local/info:$INFOPATH"; fi
+if [ -d "$HOME/Library/Haskell/bin" ]; then PATH="$HOME/Library/Haskell/bin:$PATH"; fi
 
-  if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
-  if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
-  if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
-  if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
-# fi
+if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
+if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
+if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi
+if [ -d "/usr/local/info" ]; then INFOPATH="/usr/local/info:$INFOPATH"; fi
 
+if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
+if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
+if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
+if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 
+if [ -d "$HOME/.rbenv" ]; then
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  eval "$(rbenv init -)"
+elif [ -d "$HOME/.rvm" ]; then
+  [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+fi
 
+PATH="$PATH:$OLD_PATH"
 
 # Misc.  #{{{1
 # Common stuffs  #{{{2
