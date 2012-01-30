@@ -1,4 +1,5 @@
 # -*- mode: ruby -*- vim:set ft=ruby:
+require 'pry-editline' 
 
 Pry.config.editor = "vim"
 Pry.config.commands.import Pry::ExtendedCommands::Experimental
