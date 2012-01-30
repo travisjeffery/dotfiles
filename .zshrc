@@ -89,6 +89,8 @@ esac
 [[ -x "`whence mplayer`" ]] && alias mplayer="`whence mplayer` -softvol"
 # [[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
 
+alias rake="noglob rake"
+alias irb="pry"
 alias ll="ls -l"
 alias lz="ll -Z"
 alias df="df -h"
@@ -114,7 +116,7 @@ TMUX_PROG="`whence tmux`"
 # Set prompt
 #
 PROMPT="[%~]
-[%n@%M]%# "
+$ "
 
 # ulimit -c unlimited
 umask 072
@@ -226,10 +228,11 @@ BUNDLED_COMMANDS=(cap
 capify
 cucumber
 foreman
+guard
 haml
 heroku
 html2haml
-guard
+jekyll
 rackup
 rails
 rake
