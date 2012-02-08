@@ -9,6 +9,7 @@ filetype off
 " set rtp+=~/.vim/bundle/Bundle/
 " call neobundle#rc(expand('~/.bundle'))
 " Bundle 'https://github.com/robgleeson/hammer.vim.git'
+Bundle 'https://github.com/Raimondi/delimitMate.git'
 Bundle 'https://github.com/tangledhelix/vim-octopress.git'
 Bundle 'https://github.com/othree/html5.vim.git'
 Bundle 'https://github.com/Raimondi/vim_search_objects.git'
@@ -1047,6 +1048,12 @@ nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 " Ruby block to yo face
 nmap <silent> [Space]b <Plug>BlockToggle
 
+autocmd FileType * imap <unique><C-b> <Plug>delimitMateC-Left
+autocmd FileType * imap <unique><C-f> <Plug>delimitMateC-Right
+
+imap <unique><C-b> <Plug>delimitMateC-Left
+imap <unique><C-f> <Plug>delimitMateC-Right
+
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
 function! s:copy_path()
@@ -1102,9 +1109,9 @@ inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
 " inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
-inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
+" inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
-inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
+" inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 
 "{{{2
 
@@ -1335,8 +1342,8 @@ nmap <Leader>- i<space><esc>vs-2lxi
 nmap <Leader>+ :<C-u>cd %:p:h<bar>new<Space>
 imap <C-e> <esc>$a
 imap <C-a> <esc>0i
-imap <C-b> <esc>ha
-imap <C-f> <esc>la
+" imap <C-b> <esc>ha
+" imap <C-f> <esc>la
 imap <C-d> <right><bs>
 imap <silent> <C-BS> <esc>bvec
 cmap <C-BS> <c-w>
