@@ -92,6 +92,12 @@ esac
 
 alias rake="noglob rake"
 alias irb="pry"
+alias pryr="pry -r ./config/environment -r rails/console/app -r rails/console/helpers"
+alias railsc="pryrc"
+alias g="git"
+alias c="clear"
+alias l="ls -la"
+alias gg="git grep"
 alias ll="ls -l"
 alias lz="ll -Z"
 alias df="df -h"
@@ -234,6 +240,7 @@ haml
 heroku
 html2haml
 jekyll
+pry
 rackup
 rails
 rake
