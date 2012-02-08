@@ -895,6 +895,7 @@ autocmd FileType ruby,eruby
       " \ exe "normal zM``" 
       " \ set foldlevel=1 | 
 autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
+autocmd BufNewFile,BufRead *.txt set ft=markdown
 autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
 autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
 autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
@@ -967,8 +968,20 @@ function! JSBeautify()
 endfunction
 "}}}1
 " Section: Abbreviations{{{1
+cabbrev Ack Ggrep
 cabbrev E e
+cabbrev gg; Ggrep
+
+" rails cabbrevs
+cabbrev rm; Rmodel
+cabbrev rc; Rcontroller
+cabbrev rv; Rview 
+cabbrev ru; Runittest
+cabbrev rf; Rfunctional
+cabbrev rs; Rschema
+
 cabbrev RModel Rmodel
+
 " cabbrev git Git
 cabbrev ~? ~/
 iabbrev Utitlies Utilities
@@ -1303,6 +1316,8 @@ nnoremap <Leader>v : <C-u>vsplit<CR><C-w><C-w>
 nnoremap <Leader>s :<C-u>split<CR><C-w><C-w>
 nnoremap <Leader>\ :<C-u>%! fmt -w 79<CR>
 nnoremap <Leader>\ :<C-u>!fmt -w 79<CR>
+xnoremap <Leader>\ :!fmt -w 79<CR>
+vnoremap <Leader>\ :!fmt -w 79<CR>
 nnoremap <Leader>` :<C-u>%s/\s*$//ge<CR>
 nnoremap <Leader>cd :<C-u>cd %:p:h<CR>
 nnoremap <silent> <Leader>y :YRShow<CR>
