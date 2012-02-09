@@ -56,7 +56,7 @@ if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
 if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
 if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 
-if [ -d "$HOME/.rbenv" ]; then
+if [ -d "$HOME/.rbenv" ] && [ -x "rbenv" ]; then
   export PATH="$HOME/.rbenv/bin:$PATH"
   eval "$(rbenv init -)"
 elif [ -d "$HOME/.rvm" ]; then
