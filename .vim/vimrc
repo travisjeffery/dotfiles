@@ -9,6 +9,7 @@ filetype off
 " set rtp+=~/.vim/bundle/Bundle/
 " call neobundle#rc(expand('~/.bundle'))
 " Bundle 'https://github.com/robgleeson/hammer.vim.git'
+Bundle 'https://github.com/sunaku/vim-ruby-shoulda-context.git'
 Bundle 'https://github.com/Raimondi/delimitMate.git'
 Bundle 'https://github.com/tangledhelix/vim-octopress.git'
 Bundle 'https://github.com/othree/html5.vim.git'
@@ -18,7 +19,7 @@ Bundle 'https://github.com/kana/vim-gf-user.git'
 Bundle 'https://github.com/kana/vim-textobj-line.git'
 Bundle 'https://github.com/groenewege/vim-less.git'
 Bundle 'https://github.com/drewolson/ruby_focused_unit_test_vim.git'
-Bundle 'https://github.com/Lokaltog/vim-powerline.git'
+" Bundle 'https://github.com/Lokaltog/vim-powerline.git'
 Bundle 'https://github.com/tpope/vim-eunuch.git'
 Bundle 'https://github.com/tyru/current-func-info.vim.git'
 Bundle 'https://github.com/digitaltoad/vim-jade.git'
@@ -1048,11 +1049,11 @@ nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 " Ruby block to yo face
 nmap <silent> [Space]b <Plug>BlockToggle
 
-autocmd FileType * imap <unique><C-b> <Plug>delimitMateC-Left
-autocmd FileType * imap <unique><C-f> <Plug>delimitMateC-Right
+autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
+autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
 
-imap <unique><C-b> <Plug>delimitMateC-Left
-imap <unique><C-f> <Plug>delimitMateC-Right
+imap <C-b> <Plug>delimitMateC-Left
+imap <C-f> <Plug>delimitMateC-Right
 
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
