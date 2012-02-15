@@ -9,6 +9,7 @@ filetype off
 " set rtp+=~/.vim/bundle/Bundle/
 " call neobundle#rc(expand('~/.bundle'))
 " Bundle 'https://github.com/robgleeson/hammer.vim.git'
+Bundle 'https://github.com/ecomba/vim-ruby-refactoring.git'
 Bundle 'https://github.com/sunaku/vim-ruby-shoulda-context.git'
 Bundle 'https://github.com/Raimondi/delimitMate.git'
 Bundle 'https://github.com/tangledhelix/vim-octopress.git'
