@@ -2,16 +2,27 @@
 set nocompatible
 
 let s:iswin = has('win32') || has('win64')
-" Bundle/Vundle {{{2
 filetype off
  set rtp+=~/.vim/bundle/vundle/
  call vundle#rc('~/.bundle')
 " set rtp+=~/.vim/bundle/Bundle/
-" call neobundle#rc(expand('~/.bundle'))
+" Bundle/Vundle {{{2
+" Bundle 'https://github.com/Shougo/neocomplcache.git'
+" Bundle 'https://github.com/thinca/vim-poslist.git'
+" Bundle 'git@github.com:travisjeffery/vim-rails-fork.git'
+" Bundle 'https://github.com/godlygeek/csapprox.git'
+" Bundle 'https://github.com/roman/golden-ratio.git'
+" Bundle 'https://github.com/jiangmiao/auto-pairs.git'
+" Bundle 'https://github.com/Lokaltog/vim-powerline.git'
+" Bundle 'https://github.com/Raimondi/delimitMate.git'
 " Bundle 'https://github.com/robgleeson/hammer.vim.git'
+" call neobundle#rc(expand('~/.bundle'))
+" Bundle 'git@github.com:travisjeffery/vim-testee.git'
+Bundle 'https://github.com/kikijump/tslime.vim.git'
+Bundle 'https://github.com/jgdavey/vim-turbux.git'
+Bundle 'https://github.com/kana/vim-smartpunc.git'
 Bundle 'https://github.com/ecomba/vim-ruby-refactoring.git'
 Bundle 'https://github.com/sunaku/vim-ruby-shoulda-context.git'
-Bundle 'https://github.com/Raimondi/delimitMate.git'
 Bundle 'https://github.com/tangledhelix/vim-octopress.git'
 Bundle 'https://github.com/othree/html5.vim.git'
 Bundle 'https://github.com/Raimondi/vim_search_objects.git'
@@ -19,8 +30,7 @@ Bundle 'https://github.com/kana/vim-gf-diff.git'
 Bundle 'https://github.com/kana/vim-gf-user.git'
 Bundle 'https://github.com/kana/vim-textobj-line.git'
 Bundle 'https://github.com/groenewege/vim-less.git'
-Bundle 'https://github.com/drewolson/ruby_focused_unit_test_vim.git'
-" Bundle 'https://github.com/Lokaltog/vim-powerline.git'
+" Bundle 'https://github.com/drewolson/ruby_focused_unit_test_vim.git'
 Bundle 'https://github.com/tpope/vim-eunuch.git'
 Bundle 'https://github.com/tyru/current-func-info.vim.git'
 Bundle 'https://github.com/digitaltoad/vim-jade.git'
@@ -34,7 +44,6 @@ Bundle 'https://github.com/mattn/lisper-vim.git'
 Bundle 'https://github.com/tpope/vim-rvm.git'
 Bundle 'https://github.com/thinca/vim-ref.git'
 Bundle 'https://github.com/ujihisa/quicklearn.git'
-" Bundle 'https://github.com/jiangmiao/auto-pairs.git'
 Bundle 'https://github.com/vim-scripts/ReplaceWithRegister.git'
 Bundle 'https://github.com/timcharper/textile.vim.git'
 Bundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
@@ -44,7 +53,6 @@ Bundle 'https://github.com/tsukkee/unite-tag.git'
 Bundle 'https://github.com/majutsushi/tagbar.git'
 Bundle 'https://github.com/ujihisa/vital.vim.git'
 Bundle 'git@github.com:travisjeffery/vim-extradite.git'
-" Bundle 'https://github.com/roman/golden-ratio.git'
 Bundle 'https://github.com/kchmck/vim-coffee-script.git'
 Bundle 'git://github.com/Shougo/vim-vcs.git'
 Bundle 'https://github.com/vim-scripts/VimClojure.git'
@@ -64,13 +72,11 @@ Bundle 'https://github.com/mileszs/ack.vim.git'
 Bundle 'https://github.com/vim-scripts/bufkill.vim.git'
 Bundle 'https://github.com/duff/vim-bufonly.git'
 Bundle 'git://git.wincent.com/command-t.git '
-" Bundle 'https://github.com/godlygeek/csapprox.git'
 Bundle 'https://github.com/tpope/vim-fugitive.git'
 Bundle 'https://github.com/sjl/gundo.vim.git'
 Bundle 'https://github.com/travisjeffery/vim-help'
 Bundle 'https://github.com/tpope/vim-ragtag.git'
 Bundle 'git@github.com:travisjeffery/vim-rails.git'
-" Bundle 'git@github.com:travisjeffery/vim-rails-fork.git'
 Bundle 'https://github.com/tpope/vim-repeat.git'
 Bundle 'https://github.com/csexton/rvm.vim.git'
 Bundle 'https://github.com/tpope/vim-surround.git'
@@ -83,7 +89,7 @@ Bundle 'https://github.com/nelstrom/vim-textobj-rubyblock.git'
 Bundle 'https://github.com/kana/vim-textobj-user.git'
 Bundle 'https://github.com/kana/vim-smartword.git'
 Bundle 'git@github.com:travisjeffery/vim-unimpaired.git'
-Bundle 'https://github.com/Shougo/vimfiler.git'
+" Bundle 'https://github.com/Shougo/vimfiler.git'
 Bundle 'http://github.com/mattn/zencoding-vim/'
 Bundle 'https://github.com/vim-scripts/ZoomWin.git'
 Bundle 'https://github.com/gregsexton/gitv.git'
@@ -100,11 +106,9 @@ Bundle 'https://github.com/tpope/vim-rake.git'
 Bundle 'https://github.com/tpope/vim-bundler.git'
 Bundle 'https://github.com/altercation/vim-colors-solarized.git'
 Bundle 'https://github.com/thinca/vim-quickrun.git'
-" Bundle 'https://github.com/thinca/vim-poslist.git'
 Bundle 'https://github.com/kana/vim-exjumplist.git'
 Bundle 'https://github.com/thinca/vim-unite-history.git'
 Bundle 'https://github.com/Shougo/echodoc.git'
-" Bundle 'https://github.com/Shougo/neocomplcache.git'
 Bundle 'https://github.com/kana/vim-altercmd.git'
 Bundle 'https://github.com/mattn/gist-vim.git'
 Bundle 'https://github.com/kana/vim-scratch.git'
@@ -497,18 +501,18 @@ let g:syntastic_auto_loc_list=1
 let g:syntastic_quiet_warnings=1
 "}}}2
 " QuickRun {{{2
-" let g:quickrun_direction = 'rightbelow horizontal'
-" let g:quickrun_config = {}
+let g:quickrun_direction = 'rightbelow horizontal'
+let g:quickrun_config = {}
 " let g:quickrun_config['ruby'] = {'command': 'testdrb', 'exec': '%c -Itest %s'}
-" let g:quickrun_config['*'] = {
-"       \ 'runner/vimproc/updatetime' : 100,
-"       \ 'split': 'vertical rightbelow',
-"       \ 'targets' : ['quickfix', 'buffer'],
-"       \ 'outputter' : 'buffer',
-"       \ 'runner' : 'vimproc',
-"       \ 'into' : 0,
-"       \ 'runmode' : 'async:remote:vimproc'
-"       \}
+let g:quickrun_config['*'] = {
+      \ 'runner/vimproc/updatetime' : 100,
+      \ 'split': 'vertical rightbelow',
+      \ 'targets' : ['quickfix', 'buffer'],
+      \ 'outputter' : 'buffer',
+      \ 'runner' : 'vimproc',
+      \ 'into' : 0,
+      \ 'runmode' : 'async:remote:vimproc'
+      \}
 "}}}2
 " CtrlP {{{2
 let g:ctrlp_working_path_mode = 0
@@ -973,7 +977,7 @@ endfunction
 " Section: Abbreviations{{{1
 cabbrev Ack Ggrep
 cabbrev E e
-cabbrev gg; Ggrep
+cabbrev gg; Ggrep -P
 
 " rails cabbrevs
 cabbrev rm; Rmodel
