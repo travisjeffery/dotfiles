@@ -18,6 +18,7 @@ filetype off
 " Bundle 'https://github.com/robgleeson/hammer.vim.git'
 " call neobundle#rc(expand('~/.bundle'))
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
+Bundle 'https://github.com/mattsa/vim-fuzzee.git'
 Bundle 'https://github.com/kikijump/tslime.vim.git'
 Bundle 'https://github.com/jgdavey/vim-turbux.git'
 Bundle 'https://github.com/kana/vim-smartpunc.git'
@@ -577,7 +578,8 @@ call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#converter_default#use(['converter_relative_abbr'])
 call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
-nnoremap <C-B> :<C-u>Unite buffer<CR>
+" nnoremap <C-B> :<C-u>Unite buffer<CR>
+nnoremap <C-B> :<C-u>CommandTBuffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
 "}}}2
 " echodoc {{{2
@@ -1054,8 +1056,10 @@ nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 " Ruby block to yo face
 nmap <silent> [Space]b <Plug>BlockToggle
 
-autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
-autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
+if exists('g:loaded_delimitMate') && g:loaded_delimitMate == 1
+  autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
+  autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
+endif
 
 imap <C-b> <Plug>delimitMateC-Left
 imap <C-f> <Plug>delimitMateC-Right
@@ -1325,12 +1329,13 @@ xnoremap <silent> [Space]a :Alignta<Space>
 nnoremap <Leader>m :TagbarToggle<CR>
 nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
-nnoremap <Leader>v : <C-u>vsplit<CR><C-w><C-w>
+nnoremap <Leader>v :<C-u>vsplit<CR><C-w><C-w>
 nnoremap <Leader>s :<C-u>split<CR><C-w><C-w>
-nnoremap <Leader>\ :<C-u>%! fmt -w 79<CR>
-nnoremap <Leader>\ :<C-u>!fmt -w 79<CR>
+
+nnoremap <Leader>\ :%!fmt -w 79<CR>
 xnoremap <Leader>\ :!fmt -w 79<CR>
 vnoremap <Leader>\ :!fmt -w 79<CR>
+
 nnoremap <Leader>` :<C-u>%s/\s*$//ge<CR>
 nnoremap <Leader>cd :<C-u>cd %:p:h<CR>
 nnoremap <silent> <Leader>y :YRShow<CR>
@@ -1780,6 +1785,26 @@ function! s:cmd_SuspendWithAutomticCD()
     suspend
   endif
 endfunction
+
+function! GrepPartial(partial)
+  if (a:partial)
+    let pattern = "partial.*" . partial
+  else
+    let path = substitute(expand("%:h"), "app/views/", "", "")
+    let action = substitute(expand("%:t:r:r"), "^_", "", "")
+    let pattern = "partial.*" . path . "/" . action 
+  endif
+
+  if (g:loaded_fugitive == 1)
+    execute "Ggrep -P " . '"' . pattern . '\b"'
+  elseif (g:ackprg)
+    execute "Ack " . '"' . pattern . '\b"'
+  else
+    execute "vimgrep " . '"' . pattern . '\>" */**'
+  endif
+endfunction
+command! -nargs=? GrepPartial
+      \ call GrepPartial(<q-args>)
 
 function! s:activate_terminal()  "{{{2
   if !has('gui_running')
