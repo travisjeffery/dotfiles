@@ -1783,6 +1783,26 @@ function! s:cmd_SuspendWithAutomticCD()
   endif
 endfunction
 
+function! GrepPartial(partial)
+  if (a:partial)
+    let pattern = "partial.*" . partial
+  else
+    let path = substitute(expand("%:h"), "app/views/", "", "")
+    let action = substitute(expand("%:t:r:r"), "^_", "", "")
+    let pattern = "partial.*" . path . "/" . action 
+  endif
+
+  if (g:loaded_fugitive == 1)
+    execute "Ggrep -P " . '"' . pattern . '\b"'
+  elseif (g:ackprg)
+    execute "Ack " . '"' . pattern . '\b"'
+  else
+    execute "vimgrep " . '"' . pattern . '\> */**"
+  endif
+endfunction
+command! -nargs=? GrepPartial
+      \ call GrepPartial(<q-args>)
+
 function! s:activate_terminal()  "{{{2
   if !has('gui_running')
     return
