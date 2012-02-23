@@ -1056,8 +1056,10 @@ nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 " Ruby block to yo face
 nmap <silent> [Space]b <Plug>BlockToggle
 
-autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
-autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
+if exists('g:loaded_delimitMate') && g:loaded_delimitMate == 1
+  autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
+  autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
+endif
 
 imap <C-b> <Plug>delimitMateC-Left
 imap <C-f> <Plug>delimitMateC-Right
