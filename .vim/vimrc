@@ -1059,10 +1059,10 @@ nmap <silent> [Space]b <Plug>BlockToggle
 if exists('g:loaded_delimitMate') && g:loaded_delimitMate == 1
   autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
   autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
-endif
 
-imap <C-b> <Plug>delimitMateC-Left
-imap <C-f> <Plug>delimitMateC-Right
+  imap <C-b> <Plug>delimitMateC-Left
+  imap <C-f> <Plug>delimitMateC-Right
+endif
 
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
