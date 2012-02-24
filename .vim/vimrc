@@ -462,6 +462,8 @@ let g:Powerline_symbols = 'fancy'
 "}}}
 " open-browser{{{2
 let g:netrw_nogx = 1 " disable netrw's gx mapping.
+
+let g:netrw_liststyle = 3
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 "}}}
@@ -578,8 +580,8 @@ call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#converter_default#use(['converter_relative_abbr'])
 call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
-" nnoremap <C-B> :<C-u>Unite buffer<CR>
-nnoremap <C-B> :<C-u>CommandTBuffer<CR>
+nnoremap <C-B> :<C-u>Unite buffer<CR>
+" nnoremap <C-B> :<C-u>CommandTBuffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
 "}}}2
 " echodoc {{{2
@@ -1059,10 +1061,10 @@ nmap <silent> [Space]b <Plug>BlockToggle
 if exists('g:loaded_delimitMate') && g:loaded_delimitMate == 1
   autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
   autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
-endif
 
-imap <C-b> <Plug>delimitMateC-Left
-imap <C-f> <Plug>delimitMateC-Right
+  imap <C-b> <Plug>delimitMateC-Left
+  imap <C-f> <Plug>delimitMateC-Right
+endif
 
 " Copy current buffer's path to clipboard{{{2
 nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
@@ -1250,7 +1252,7 @@ nmap    s [Window]
 nnoremap <silent> [Window]p  :<C-u>call <SID>split_nicely()<CR>
 nnoremap <silent> [Window]v  :<C-u>vsplit<CR>
 nnoremap <silent> [Window]c  :<C-u>call <sid>smart_close()<CR>
-nnoremap <silent> -  :<C-u>call <sid>smart_close()<CR>
+" nnoremap <silent> -  :<C-u>call <sid>smart_close()<CR>
 nnoremap <silent> [Window]o  :<C-u>only<CR>
 nnoremap <silent> [Window]<Space>  :<C-u>call <SID>ToggleSplit()<CR>
 
