@@ -68,7 +68,7 @@ Bundle 'https://github.com/kien/ctrlp.vim.git'
 Bundle 'https://github.com/tpope/vim-endwise.git'
 Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
-Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
+" Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
 Bundle 'https://github.com/mileszs/ack.vim.git'
 Bundle 'https://github.com/vim-scripts/bufkill.vim.git'
 Bundle 'https://github.com/duff/vim-bufonly.git'
@@ -1051,6 +1051,17 @@ nnoremap <silent> [Space]re :<C-u>registers<CR>
 nnoremap <silent> [Space]ya :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
 nnoremap <silent> [Space]y% :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
 
+function! s:SID() "{{{
+    return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
+endfunction "}}}
+function! s:SNR(map) "{{{
+    return printf("<SNR>%d_%s", s:SID(), a:map)
+endfunction "}}}
+
+nmap : q:
+nmap / q/
+nmap ? q?
+
 nmap [Space]r <SID>(command-line-enter)<C-u>QuickRun<CR>
 
 nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
@@ -1310,7 +1321,7 @@ nnoremap <sid>(command-buffer-norange) q:<C-u>
 autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
 function! s:init_cmdwin()
   nnoremap <buffer><silent> q :<C-u>quit<CR>
-  inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>"
+  inoremap <buffer><expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-p>"
   startinsert!
 endfunction
 "}}}
@@ -1407,6 +1418,8 @@ nmap <S-left> g;
 " nmap <left>  <Plug>(jump-x2-to-previous)
 " nmap <right>  <Plug>(jump-x2-to-next)
 cnoremap <c-x> <c-r>=<SID>PasteEscaped()<cr>
+" cnoremap <expr> <Tab> "\<Up>"
+
 function! s:PasteEscaped()
   echo "\\".getcmdline()."\""
   let char = getchar()
