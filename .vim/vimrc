@@ -1339,9 +1339,10 @@ xmap <silent> W <Plug>CamelCaseMotion_w
 nmap <silent> B <Plug>CamelCaseMotion_b
 xmap <silent> W <Plug>CamelCaseMotion_b
 "}}}2
-nnoremap <silent> [Space]a :<C-u>Alignta<Space>
-vnoremap <silent> [Space]a :Alignta<Space>
-xnoremap <silent> [Space]a :Alignta<Space>
+
+vnoremap <silent> [Space]a :Alignta =>/=<Cr>
+xnoremap <silent> [Space]a  :Alignta =>\=<CR>
+
 nnoremap <Leader>m :TagbarToggle<CR>
 nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
@@ -1390,11 +1391,40 @@ nmap \/ /\<\><Left><Left>
 
 " nmap <Leader>a= :Tabularize /=<CR>
 " vmap <Leader>a= :Tabularize /=<CR>
-nmap <Leader>a: :Tabularize /:\zs<CR>
-vmap <Leader>a: :Tabularize /:\zs<CR>
-nmap <Leader>a :Tabularize /
-vmap <Leader>a :Tabularize /
+" nmap <Leader>a: :Tabularize /:\zs<CR>
+" vmap <Leader>a: :Tabularize /:\zs<CR>
+" nmap <Leader>a :Tabularize /
+" vmap <Leader>a :Tabularize /
+
+command! -nargs=? -range Align <line1>,<line2>call AlignSection('<args>')
+vnoremap <silent> <Leader>a :Align<CR>
+function! AlignSection(regex) range
+  let extra = 1
+  let sep = empty(a:regex) ? '=' : a:regex
+  let maxpos = 0
+  let section = getline(a:firstline, a:lastline)
+  for line in section
+    let pos = match(line, ' *'.sep)
+    if maxpos < pos
+      let maxpos = pos
+    endif
+  endfor
+  call map(section, 'AlignLine(v:val, sep, maxpos, extra)')
+  call setline(a:firstline, section)
+endfunction
+
+function! AlignLine(line, sep, maxpos, extra)
+  let m = matchlist(a:line, '\(.\{-}\) \{-}\('.a:sep.'.*\)')
+  if empty(m)
+    return a:line
+  endif
+  let spaces = repeat(' ', a:maxpos - strlen(m[1]) + a:extra)
+  return m[1] . spaces . m[2]
+endfunction
+
+nnoremap =p m`=ap``
 nmap <Leader>= maG=gg`a
+
 nmap <Leader>h :help <c-r>=expand("<cword>")<CR><CR>
 vmap <Leader>h "ry:help<space><c-r>r<CR>
 nmap <C-cr> <esc>yyp
