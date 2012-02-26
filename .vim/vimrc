@@ -1797,16 +1797,18 @@ function! GrepPartial(partial)
     let pattern = "partial.*" . path . "/" . action 
   endif
 
-  if (g:loaded_fugitive == 1)
-    execute "Ggrep -P " . '"' . pattern . '\b"'
-  elseif (g:ackprg)
-    execute "Ack " . '"' . pattern . '\b"'
+  if (exists('g:loaded_fugitive'))
+    execute "Ggrep -P " . '"' . pattern . '\b" app/views'
+  elseif (exists('g:ackprg'))
+    execute "Ack " . '"' . pattern . '\b" app/views'
   else
-    execute "vimgrep " . '"' . pattern . '\>" */**'
+    " seriously? use git grep or ack! 
+    execute "vimgrep " . '"' . pattern . '\>" app/views/*/**'
   endif
 endfunction
 command! -nargs=? GrepPartial
       \ call GrepPartial(<q-args>)
+
 
 function! s:activate_terminal()  "{{{2
   if !has('gui_running')
