@@ -68,7 +68,7 @@ Bundle 'https://github.com/kien/ctrlp.vim.git'
 Bundle 'https://github.com/tpope/vim-endwise.git'
 Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
-" Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
+Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
 Bundle 'https://github.com/mileszs/ack.vim.git'
 Bundle 'https://github.com/vim-scripts/bufkill.vim.git'
 Bundle 'https://github.com/duff/vim-bufonly.git'
@@ -1058,6 +1058,14 @@ function! s:SNR(map) "{{{
     return printf("<SNR>%d_%s", s:SID(), a:map)
 endfunction "}}}
 
+if (exists("g:indexed_search_plugin"))
+  nunmap /
+  nnoremap <silent>n :let v:errmsg=''<CR>:silent! norm! nzv<CR>:<C-u>ShowSearchIndex<CR>
+  nnoremap <silent>N :let v:errmsg=''<CR>:silent! norm! Nzv<CR>:<C-u>ShowSearchIndex<CR>
+  nnoremap <silent>* :let v:errmsg=''<CR>:silent! norm! *zv<CR>:<C-u>ShowSearchIndex<CR>
+  nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
+endif
+
 nmap : q:
 nmap / q/
 nmap ? q?
@@ -1289,11 +1297,6 @@ endfunction
 " Move search word and fold open"{{{2
 " nnoremap N  Nzv
 " nnoremap n  nzv
-nnoremap <silent>n :let v:errmsg=''<CR>:silent! norm! nzv<CR>:<C-u>ShowSearchIndex<CR>
-nnoremap <silent>N :let v:errmsg=''<CR>:silent! norm! Nzv<CR>:<C-u>ShowSearchIndex<CR>
-nnoremap <silent>* :let v:errmsg=''<CR>:silent! norm! *zv<CR>:<C-u>ShowSearchIndex<CR>
-nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
-nnoremap #  #zv
 nnoremap g*  g*zv
 nnoremap g#  g#zv
 "}}}2
