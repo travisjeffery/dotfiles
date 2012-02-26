@@ -17,8 +17,15 @@ zstyle ':completion::complete:*' use-cache 1
 
 setopt EXTENDED_GLOB AUTO_PUSHD LISTPACKED \
        AUTOREMOVESLASH HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS \
-       SHARE_HISTORY APPEND_HISTORY
+       SHARE_HISTORY APPEND_HISTORY 
 setopt NO_BEEP
+
+setopt promptsubst
+
+autoload -U promptinit
+promptinit
+
+prompt wunjo
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE="10000"
@@ -122,8 +129,8 @@ TMUX_PROG="`whence tmux`"
 #
 # Set prompt
 #
-PROMPT="[%~]
-$ "
+# PROMPT="[%~]
+# $ "
 
 # ulimit -c unlimited
 umask 072
