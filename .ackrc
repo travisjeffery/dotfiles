@@ -10,3 +10,5 @@
 # add types ack doesn't know about
 --type-set=MARKDOWN=md,mkd,markdown
 --type-set=RDOC=rdoc'
+
+--smart-case
