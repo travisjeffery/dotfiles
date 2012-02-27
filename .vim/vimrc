@@ -1083,6 +1083,9 @@ if exists('g:loaded_delimitMate') && g:loaded_delimitMate == 1
 
   imap <C-b> <Plug>delimitMateC-Left
   imap <C-f> <Plug>delimitMateC-Right
+else
+  inoremap <silent> <C-B> <C-R>=getline('.')=~'^\s*$'&&col('.')>strlen(getline('.'))?"0\<Lt>C-D>\<Lt>Esc>kJs":"\<Lt>Left>"<CR>
+  inoremap <silent> <C-F> <C-R>=col('.')>strlen(getline('.'))?"\<Lt>C-F>":"\<Lt>Right>"<CR>
 endif
 
 " Copy current buffer's path to clipboard{{{2
