@@ -580,8 +580,8 @@ call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#converter_default#use(['converter_relative_abbr'])
 call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
-nnoremap <C-B> :<C-u>Unite buffer<CR>
-" nnoremap <C-B> :<C-u>CommandTBuffer<CR>
+" nnoremap <C-B> :<C-u>Unite buffer<CR>
+nnoremap <C-B> :<C-u>CommandTBuffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
 "}}}2
 " echodoc {{{2
