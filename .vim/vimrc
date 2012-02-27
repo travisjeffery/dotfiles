@@ -1089,7 +1089,15 @@ else
 endif
 
 " Copy current buffer's path to clipboard{{{2
-nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
+nnoremap <Leader>% :<C-u>call <SID>copy_ruby_path()<CR>
+function! s:copy_ruby_path()
+  let @*="ruby -Ilib:test ".expand('%')
+  let @"="ruby -Ilib:test ".expand('%')
+  let @+="ruby -Ilib:test ".expand('%')
+endfunction"}}}2
+
+" Copy current buffer's path to clipboard{{{2
+nnoremap [Space]% :<C-u>call <SID>copy_path()<CR>
 function! s:copy_path()
   let @*=expand('%')
   let @"=expand('%')
