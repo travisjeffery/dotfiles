@@ -68,7 +68,7 @@ Bundle 'https://github.com/kien/ctrlp.vim.git'
 Bundle 'https://github.com/tpope/vim-endwise.git'
 Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
-" Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
+Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
 Bundle 'https://github.com/mileszs/ack.vim.git'
 Bundle 'https://github.com/vim-scripts/bufkill.vim.git'
 Bundle 'https://github.com/duff/vim-bufonly.git'
@@ -979,7 +979,7 @@ function! JSBeautify()
 endfunction
 "}}}1
 " Section: Abbreviations{{{1
-" cabbrev Ack Ggrep
+cabbrev Ack Ggrep
 cabbrev E e
 cabbrev gg; Ggrep -P
 
