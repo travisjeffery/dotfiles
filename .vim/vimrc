@@ -991,6 +991,9 @@ cabbrev ru; Runittest
 cabbrev rf; Rfunctional
 cabbrev rs; Rschema
 
+command! Ctags
+      \ execute "!ctags --extra=+f --exclude=.git --exclude=log -R *"
+
 cabbrev RModel Rmodel
 
 " cabbrev git Git

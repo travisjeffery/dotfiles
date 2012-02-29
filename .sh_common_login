@@ -47,6 +47,7 @@ if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
 if [ -d "$HOME/Library/Haskell/bin" ]; then PATH="$HOME/Library/Haskell/bin:$PATH"; fi
 
 if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
+if [ -d "/usr/local/sbin" ]; then PATH="/usr/local/sbin:$PATH"; fi
 if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
 if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi
 if [ -d "/usr/local/info" ]; then INFOPATH="/usr/local/info:$INFOPATH"; fi
@@ -56,15 +57,14 @@ if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
 if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
 if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 
-RBENV_PATH=$(which rbenv)
-if [ -d "$HOME/.rbenv" ] && [ -x "$RBENV_PATH" ]; then
-  export PATH="$HOME/.rbenv/bin:$PATH"
-  eval "$(rbenv init -)"
+[[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
+
+if [ -d "$HOME/.rbenv" ]; then
+  export PATH="$HOME/.rbenv/bin:$PATH" && eval "$(rbenv init -)"
 elif [ -d "$HOME/.rvm" ]; then
   [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 fi
 
-[[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
 
 PATH="$PATH:$OLD_PATH"
 
