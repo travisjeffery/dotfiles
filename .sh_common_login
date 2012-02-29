@@ -60,7 +60,10 @@ if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 [[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
 
 if [ -d "$HOME/.rbenv" ]; then
-  export PATH="$HOME/.rbenv/bin:$PATH" && eval "$(rbenv init -)"
+  export PATH="$HOME/.rbenv/bin:$PATH" 
+  if [ -x "rbenv" ]; then
+    eval "$(rbenv init -)"
+  fi
 elif [ -d "$HOME/.rvm" ]; then
   [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 fi
