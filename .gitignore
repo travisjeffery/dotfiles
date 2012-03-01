@@ -18,3 +18,4 @@
 .authinfo
 .emacs.d/ac-comphist.dat
 .emacs.d/tramp
+.rbenv-version
