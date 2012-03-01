@@ -1,0 +1,3 @@
+TMUX_CURRENT_DIR=`pwd`
+tmux split-window $1
+tmux send-keys "cd $TMUX_CURRENT_DIR;clear" C-m
