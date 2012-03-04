@@ -581,7 +581,8 @@ call unite#filters#converter_default#use(['converter_relative_abbr'])
 call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
 " nnoremap <C-B> :<C-u>Unite buffer<CR>
-nnoremap <C-B> :<C-u>CommandTBuffer<CR>
+" nnoremap <C-B> :<C-u>CommandTBuffer<CR>
+nnoremap <C-B> :<C-u>CtrlPBuffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
 "}}}2
 " echodoc {{{2
@@ -1732,7 +1733,9 @@ nnoremap <silent> <Leader>gs :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT public/s
 nnoremap <silent> <Leader>gS :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT spec<CR>
 nnoremap <silent> <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
 nnoremap <silent> <Leader>gf :<C-u>CommandT %%/<CR>
-nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
+nnoremap <silent> <Leader>, :<C-u>CommandT<CR>
+nnoremap <silent> <Leader>! :<C-u>CommandTFlush<CR>
+" nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
 nnoremap <silent> <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
 " Delete the content of the current line (not the line itself).
 nnoremap dl  0d$
