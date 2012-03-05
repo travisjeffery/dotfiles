@@ -1070,9 +1070,9 @@ if (exists("g:indexed_search_plugin"))
   nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
 endif
 
-nmap : q:
-nmap / q/
-nmap ? q?
+" nmap : q:
+" nmap / q/
+" nmap ? q?
 
 nmap [Space]r <SID>(command-line-enter)<C-u>QuickRun<CR>
 
