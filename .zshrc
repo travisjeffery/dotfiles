@@ -168,7 +168,7 @@ if is-at-least 4.3.10; then
     zstyle ':auto-fu:var' postdisplay ''
     zstyle ':auto-fu:var' track-keymap-skip opp
     zstyle ':auto-fu:var' autoable-function/skiplbuffers \
-      'rake *' 'gem *'
+      'rake *' 'gem *' 'git log *'
 
     function afu+cancel () {
         afu-clearing-maybe
