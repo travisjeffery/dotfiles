@@ -979,7 +979,6 @@ function! JSBeautify()
 endfunction
 "}}}1
 " Section: Abbreviations{{{1
-cabbrev Ack Ggrep
 cabbrev E e
 cabbrev gg; Ggrep -P
 
