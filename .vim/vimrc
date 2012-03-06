@@ -18,6 +18,7 @@ filetype off
 " Bundle 'https://github.com/robgleeson/hammer.vim.git'
 " call neobundle#rc(expand('~/.bundle'))
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
+Bundle 'git@github.com:travisjeffery/vim-rails-find-partial.git'
 Bundle 'https://github.com/mattsa/vim-fuzzee.git'
 Bundle 'https://github.com/kikijump/tslime.vim.git'
 Bundle 'https://github.com/jgdavey/vim-turbux.git'
@@ -1850,28 +1851,6 @@ function! s:cmd_SuspendWithAutomticCD()
     suspend
   endif
 endfunction
-
-function! GrepPartial(partial)
-  if (a:partial)
-    let pattern = "partial.*" . partial
-  else
-    let path = substitute(expand("%:h"), "app/views/", "", "")
-    let action = substitute(expand("%:t:r:r"), "^_", "", "")
-    let pattern = "partial.*" . path . "/" . action 
-  endif
-
-  if (exists('g:loaded_fugitive'))
-    execute "Ggrep -P " . '"' . pattern . '\b" app/views'
-  elseif (exists('g:ackprg'))
-    execute "Ack " . '"' . pattern . '\b" app/views'
-  else
-    " seriously? use git grep or ack! 
-    execute "vimgrep " . '"' . pattern . '\>" app/views/*/**'
-  endif
-endfunction
-command! -nargs=? GrepPartial
-      \ call GrepPartial(<q-args>)
-
 
 function! s:activate_terminal()  "{{{2
   if !has('gui_running')
