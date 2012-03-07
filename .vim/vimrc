@@ -981,7 +981,6 @@ function! JSBeautify()
 endfunction
 "}}}1
 " Section: Abbreviations{{{1
-cabbrev Ack Ggrep
 cabbrev E e
 cabbrev gg; Ggrep -P
 
@@ -1064,7 +1063,6 @@ function! s:SNR(map) "{{{
 endfunction "}}}
 
 if (exists("g:indexed_search_plugin"))
-  nunmap /
   nnoremap <silent>n :let v:errmsg=''<CR>:silent! norm! nzv<CR>:<C-u>ShowSearchIndex<CR>
   nnoremap <silent>N :let v:errmsg=''<CR>:silent! norm! Nzv<CR>:<C-u>ShowSearchIndex<CR>
   nnoremap <silent>* :let v:errmsg=''<CR>:silent! norm! *zv<CR>:<C-u>ShowSearchIndex<CR>
