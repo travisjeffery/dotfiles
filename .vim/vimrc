@@ -526,10 +526,17 @@ let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_jump_to_buffer = 1
 let g:ctrlp_use_caching = 1
-let g:ctrlp_mruf_max = 1000
+let g:ctrlp_mruf_max = 10000
 let g:ctrlp_max_files = 0 
 let g:ctrlp_extensions = ['tag', 'qfx']
 let g:ctrlp_split_window = 0
+let g:ctrlp_user_command = {
+    \ 'types': {
+      \ 1: ['.git/', 'cd %s && git ls-files'],
+      \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
+      \ },
+    \ 'fallback': 'find %s -type f'
+    \ }
 "}}}2
 "Fugitive & Gitv {{{2
 nnoremap [Space]gd :<C-u>Gdiff<CR>
@@ -558,10 +565,13 @@ let g:snips_author = "Travis Jeffery"
 let g:user_zen_leader_key = '<c-e>'
 let g:use_zen_complete_tag = 1
 let g:ragtag_global_maps = 1
+" let g:user_zen_settings = {
+"       \  'indentation' : '  ',
+"       \   'markdown' : { 'extends' : 'html' }
+"       \}
 let g:user_zen_settings = {
-      \  'indentation' : '  ',
-      \   'markdown' : { 'extends' : 'html' }
-      \}
+\  'indentation' : ' '
+\}
 " Unite {{{2
 let g:unite_source_history_yank_enable = 1
 let g:unite_enable_split_vertically = 1
@@ -982,6 +992,7 @@ endfunction
 "}}}1
 " Section: Abbreviations{{{1
 cabbrev E e
+cabbrev BUndle Bundle
 cabbrev gg; Ggrep -P
 
 " rails cabbrevs
