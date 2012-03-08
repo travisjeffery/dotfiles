@@ -247,7 +247,7 @@ haml
 heroku
 html2haml
 jekyll
-pry
+#pry
 rackup
 rails
 rake
