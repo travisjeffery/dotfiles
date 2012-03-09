@@ -403,6 +403,49 @@ autocmd MyAutoCmd FileType * setl formatoptions-=ro | setl formatoptions+=mM
 autocmd MyAutoCmd BufWritePost vimrc source $MYVIMRC
 autocmd MyAutoCmd BufWritePost .vimrc source $MYVIMRC
 
+function! Buffers()
+  let tablist = []
+  for i in range(tabpagenr('$'))
+    call extend(tablist, tabpagebuflist(i + 1))
+  endfor
+  return tablist
+endfunction
+
+function! BufferNames()
+  let buffers = []
+  for i in range(tabpagenr('$'))
+    call extend(buffers, tabpagebuflist(i + 1))
+  endfor
+
+  let buffer_names = []
+  for i in buffers
+    let buffer_names = buffer_names + [bufname(i)]
+  endfor
+  return buffer_names
+endfunction
+
+function! GrepBuffers(pattern)
+  let last_bufno = bufnr("$")
+
+  let i = 1
+  let filenames = ""
+
+  while i <= last_bufno
+    if bufexists(i) && buflisted(i)
+      let filenames = filenames . " " . bufname(i)
+    endif
+    let i = i + 1
+  endwhile
+
+  " No buffers
+  if filenames == ""
+    return
+  endif
+
+  execute "vimgrep /" . a:pattern . "/ "  . filenames . " | cw"
+endfunction
+command! -nargs=1 GrepBuffers call GrepBuffers(<q-args>)
+
 " Close help and git window by pressing q.
 autocmd FileType fugitiveblame,help,git-status,git-log,qf,gitcommit,quickrun,qfreplace,ref,simpletap-summary,vcs-commit,vcs-status
       \ nnoremap <buffer><silent> q :<C-u>call <sid>smart_close()<CR>
@@ -2066,6 +2109,7 @@ if !has('gui_running')
   " endif
 endif
 "}}}1
+
 
 set secure
 
