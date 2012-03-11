@@ -57,6 +57,9 @@ if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
 if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
 if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 
+if [ -d "$(brew --prefix coreutils)/libexec/gnubin" ]; then PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"; fi
+
+
 [[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
 
 if [ -d "$HOME/.rbenv" ] && $(hash rbenv 2>&-); then
