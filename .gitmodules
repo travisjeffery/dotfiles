@@ -106,3 +106,6 @@
 [submodule "zsh/zsh-completions"]
 	path = zsh/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
+[submodule "code/tmux-macosx-pasteboard"]
+	path = code/tmux-macosx-pasteboard
+	url = https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git
