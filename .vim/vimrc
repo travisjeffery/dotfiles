@@ -18,7 +18,8 @@ filetype off
 " Bundle 'https://github.com/robgleeson/hammer.vim.git'
 " call neobundle#rc(expand('~/.bundle'))
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
-Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
+" Bundle "https://github.com/SirVer/ultisnips.git"
+" Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
 Bundle 'git@github.com:travisjeffery/vim-rails-find-partial.git'
 Bundle 'https://github.com/mattsa/vim-fuzzee.git'
 Bundle 'https://github.com/kikijump/tslime.vim.git'
@@ -316,7 +317,7 @@ set complete-=k
 set complete-=i
 set fileformats=unix,dos,mac
 set cursorline
-set number
+set relativenumber
 set timeoutlen=1000
 set ttimeoutlen=50
 set laststatus=2
@@ -347,6 +348,7 @@ set t_ti=
 set t_te=
 set shortmess=filtIoOA
 set report=0
+set grepprg=ack
 if has("mac")
   set clipboard=unnamed
   let g:gist_clip_command = 'pbcopy'
@@ -403,6 +405,33 @@ endfunction
 autocmd MyAutoCmd FileType * setl formatoptions-=ro | setl formatoptions+=mM
 autocmd MyAutoCmd BufWritePost vimrc source $MYVIMRC
 autocmd MyAutoCmd BufWritePost .vimrc source $MYVIMRC
+
+function! AddInstanceVariablesForArguments()
+  let @a = ""
+  execute 'normal! "ayib'
+  if @a == ""
+    " handle method definitions without parenthsis
+    execute 'normal! 02wv$h"ay'
+  end
+
+  let argsstr = @a
+  let argsstr = substitute(argsstr, "^def \k*", "", "g")
+  let argsstr = substitute(argsstr, " ", "", "g")
+
+  let argslist = split(argsstr, ",")
+
+  let l = line('.')
+
+  let argslist = map(argslist, '"@" . argslist[v:key] . " = " . argslist[v:key]')
+
+  call append(l, argslist)  
+
+  execute "normal jV" . len(argslist) . "j="
+endfunction
+
+autocmd FileType ruby,eruby 
+      \ nnoremap <leader>rg :<c-u>call AddInstanceVariablesForArguments()<cr>
+
 
 function! Buffers()
   let tablist = []
@@ -1051,6 +1080,11 @@ command! Ctags
       \ execute "!ctags --extra=+f --exclude=.git --exclude=log -R *"
 
 cabbrev RModel Rmodel
+
+autocmd FileType ruby,eruby
+      \ iabbrev <buffer> rw; attr_accessor| 
+      \ iabbrev <buffer> rr; attr_reader|
+      \ iabbrev <buffer> ww; attr_writer
 
 " cabbrev git Git
 cabbrev ~? ~/

@@ -291,8 +291,6 @@ run-with-bundler()
   fi
 }
 
-# if [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
-  for CMD in $BUNDLED_COMMANDS; do
-    alias $CMD="run-with-bundler $CMD"
-  done
-# fi
+for CMD in $BUNDLED_COMMANDS; do
+  alias $CMD="run-with-bundler $CMD"
+done
