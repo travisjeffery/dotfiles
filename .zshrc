@@ -1,6 +1,6 @@
 source $HOME/.sh_common_login
 
-autoload -U compinit
+autoload -U compinit && compinit
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
@@ -11,14 +11,38 @@ bindkey "^N" history-beginning-search-forward-end
 
 fpath=("$HOME/.zsh/completions" "$HOME/.zsh/zsh-completions" $fpath)
 
-compinit
-
 zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion:*'          insert-tab pending
+zstyle ':completion:*'          matcher-list 'm:{[:lower:]}={[:upper:]}'
+zstyle ':completion:*'          special-dirs true
+zstyle ':completion:*:cd:*'     ignore-parents parent pwd
+zstyle ':completion:*:warnings' format "zsh: no matches found."
 
 setopt EXTENDED_GLOB AUTO_PUSHD LISTPACKED \
        AUTOREMOVESLASH HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS \
        SHARE_HISTORY APPEND_HISTORY 
 setopt NO_BEEP
+
+setopt correct
+setopt interactivecomments
+setopt longlistjobs
+setopt nobeep
+setopt noclobber
+setopt notify
+
+setopt appendhistory
+setopt extendedhistory
+setopt histexpiredupsfirst
+setopt histignoredups
+setopt histreduceblanks
+setopt histverify
+setopt incappendhistory
+
+setopt autopushd
+setopt pushdignoredups
+
+setopt combiningchars
+setopt noautomenu
 
 setopt promptsubst
 
@@ -98,7 +122,7 @@ esac
 # [[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
 
 alias rake="noglob rake"
-alias irb="pry"
+# alias irb="pry"
 alias pryr="pry -r ./config/environment -r rails/console/app -r rails/console/helpers"
 alias railsc="pryrc"
 alias g="git"
@@ -232,6 +256,8 @@ EOT
     afu-ad-delete-unambiguous-prefix afu+accept-line-and-down-history
     afu-ad-delete-unambiguous-prefix afu+accept-and-hold
 fi
+
+autoload -U url-quote-magic && zle -N self-insert url-quote-magic
 
 
 if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
