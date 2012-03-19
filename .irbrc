@@ -1,8 +1,8 @@
 # Auto indenting
 IRB.conf[:AUTO_INDENT]=true
 
-# Tab completion
-require 'irb/completion'
+require 'rubygems'
+require 'irbtools'
 
 # Remove the annoying irb(main):001:0 and replace with >>
 IRB.conf[:PROMPT_MODE]  = :SIMPLE
@@ -26,9 +26,3 @@ if defined?(::Bundler)
   rescue
   end
 end
-
-# # Use Pry everywhere
-# require "rubygems"
-# require 'pry'
-# Pry.start
-# exit
