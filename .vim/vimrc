@@ -412,7 +412,7 @@ function! AddInstanceVariablesForArguments()
   execute 'normal! "ayib'
   if @a == ""
     " handle method definitions without parenthsis
-    execute 'normal! 02wv$h"ay'
+    execute 'normal! ^2wv$h"ay'
   end
 
   let argsstr = @a
