@@ -12,6 +12,7 @@ bindkey "^N" history-beginning-search-forward-end
 fpath=("$HOME/.zsh/completions" "$HOME/.zsh/zsh-completions" $fpath)
 
 zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion:*'          list-colors ''
 zstyle ':completion:*'          insert-tab pending
 zstyle ':completion:*'          matcher-list 'm:{[:lower:]}={[:upper:]}'
 zstyle ':completion:*'          special-dirs true
@@ -257,9 +258,6 @@ EOT
     afu-ad-delete-unambiguous-prefix afu+accept-and-hold
 fi
 
-autoload -U url-quote-magic && zle -N self-insert url-quote-magic
-
-
 if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
   eval `dircolors $HOME/.dir_colors`
 fi
@@ -320,3 +318,38 @@ run-with-bundler()
 for CMD in $BUNDLED_COMMANDS; do
   alias $CMD="run-with-bundler $CMD"
 done
+
+autoload smart-insert-last-word
+zle -N insert-last-word smart-insert-last-word
+zstyle :insert-last-word match \
+    '*([^[:space:]][:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
+bindkey '^]' insert-last-word
+
+autoload -U modify-current-argument
+_quote-previous-word-in-single() {
+    modify-current-argument '${(qq)${(Q)ARG}}'
+    zle vi-forward-blank-word
+}
+zle -N _quote-previous-word-in-single
+bindkey '^[s' _quote-previous-word-in-single
+
+_quote-previous-word-in-double() {
+    modify-current-argument '${(qqq)${(Q)ARG}}'
+    zle vi-forward-blank-word
+}
+zle -N _quote-previous-word-in-double
+bindkey '^[d' _quote-previous-word-in-double
+
+
+source $HOME/.zsh/auto-fu.zsh/auto-fu.zsh
+zle-line-init () {auto-fu-init;}; zle -N zle-line-init
+zstyle ':completion:*' completer _oldlist _complete
+zle -N zle-keymap-select auto-fu-zle-keymap-select
+
+zstyle ':auto-fu:highlight' input bold
+zstyle ':auto-fu:highlight' completion fg=white,dim
+zstyle ':auto-fu:highlight' completion/one fg=blue,dim
+zstyle ':auto-fu:var' postdisplay ''
+zstyle ':auto-fu:var' track-keymap-skip opp
+zstyle ':auto-fu:var' autoable-function/skiplbuffers \
+'rake *' 'gem *' 'git log *'
