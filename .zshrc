@@ -174,7 +174,86 @@ zstyle ':filter-select' max-lines -10
 zstyle ':filter-select' case-insensitive yes
 zstyle ':filter-select' extended-search yes
 
-if is-at-least 4.3.10; then
+if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
+  eval `dircolors $HOME/.dir_colors`
+fi
+
+BUNDLED_COMMANDS=(cap
+capify
+cucumber
+foreman
+guard
+haml
+heroku
+html2haml
+jekyll
+#pry
+rackup
+rails
+rake
+rake2thor
+rspec
+sass
+sass-convert
+serve
+shotgun
+spec
+spork
+thin
+thor
+tilt
+tt
+unicorn
+unicorn_rails)
+
+is-bundler-installed()
+{
+  which bundle > /dev/null 2>&1
+}
+
+is-within-bundled-project()
+{
+  local dir="$(pwd)"
+  while [ "$(dirname $dir)" != "/" ]; do
+    [ -f "$dir/Gemfile" ] && return
+    dir="$(dirname $dir)"
+  done
+  false
+}
+
+run-with-bundler()
+{
+  if is-bundler-installed && is-within-bundled-project; then
+    bundle exec $@
+  else
+    $@
+  fi
+}
+
+for CMD in $BUNDLED_COMMANDS; do
+  alias $CMD="run-with-bundler $CMD"
+done
+
+autoload smart-insert-last-word
+zle -N insert-last-word smart-insert-last-word
+zstyle :insert-last-word match \
+    '*([^[:space:]][:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
+bindkey '^]' insert-last-word
+
+autoload -U modify-current-argument
+_quote-previous-word-in-single() {
+    modify-current-argument '${(qq)${(Q)ARG}}'
+    zle vi-forward-blank-word
+}
+zle -N _quote-previous-word-in-single
+
+_quote-previous-word-in-double() {
+    modify-current-argument '${(qqq)${(Q)ARG}}'
+    zle vi-forward-blank-word
+}
+zle -N _quote-previous-word-in-double
+
+
     function () { # precompile
         local A
         A=~/.zsh/auto-fu.zsh/auto-fu.zsh
@@ -256,100 +335,3 @@ EOT
     afu-ad-delete-unambiguous-prefix afu+accept-line
     afu-ad-delete-unambiguous-prefix afu+accept-line-and-down-history
     afu-ad-delete-unambiguous-prefix afu+accept-and-hold
-fi
-
-if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
-  eval `dircolors $HOME/.dir_colors`
-fi
-
-BUNDLED_COMMANDS=(cap
-capify
-cucumber
-foreman
-guard
-haml
-heroku
-html2haml
-jekyll
-#pry
-rackup
-rails
-rake
-rake2thor
-rspec
-ruby
-sass
-sass-convert
-serve
-shotgun
-spec
-spork
-thin
-thor
-tilt
-tt
-unicorn
-unicorn_rails)
-
-is-bundler-installed()
-{
-  which bundle > /dev/null 2>&1
-}
-
-is-within-bundled-project()
-{
-  local dir="$(pwd)"
-  while [ "$(dirname $dir)" != "/" ]; do
-    [ -f "$dir/Gemfile" ] && return
-    dir="$(dirname $dir)"
-  done
-  false
-}
-
-run-with-bundler()
-{
-  if is-bundler-installed && is-within-bundled-project; then
-    bundle exec $@
-  else
-    $@
-  fi
-}
-
-for CMD in $BUNDLED_COMMANDS; do
-  alias $CMD="run-with-bundler $CMD"
-done
-
-autoload smart-insert-last-word
-zle -N insert-last-word smart-insert-last-word
-zstyle :insert-last-word match \
-    '*([^[:space:]][:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
-bindkey '^]' insert-last-word
-
-autoload -U modify-current-argument
-_quote-previous-word-in-single() {
-    modify-current-argument '${(qq)${(Q)ARG}}'
-    zle vi-forward-blank-word
-}
-zle -N _quote-previous-word-in-single
-bindkey '^[s' _quote-previous-word-in-single
-
-_quote-previous-word-in-double() {
-    modify-current-argument '${(qqq)${(Q)ARG}}'
-    zle vi-forward-blank-word
-}
-zle -N _quote-previous-word-in-double
-bindkey '^[d' _quote-previous-word-in-double
-
-
-source $HOME/.zsh/auto-fu.zsh/auto-fu.zsh
-zle-line-init () {auto-fu-init;}; zle -N zle-line-init
-zstyle ':completion:*' completer _oldlist _complete
-zle -N zle-keymap-select auto-fu-zle-keymap-select
-
-zstyle ':auto-fu:highlight' input bold
-zstyle ':auto-fu:highlight' completion fg=white,dim
-zstyle ':auto-fu:highlight' completion/one fg=blue,dim
-zstyle ':auto-fu:var' postdisplay ''
-zstyle ':auto-fu:var' track-keymap-skip opp
-zstyle ':auto-fu:var' autoable-function/skiplbuffers \
-'rake *' 'gem *' 'git log *'
