@@ -604,7 +604,7 @@ let g:ctrlp_jump_to_buffer = 1
 let g:ctrlp_use_caching = 1
 let g:ctrlp_mruf_max = 10000
 let g:ctrlp_max_files = 0 
-let g:ctrlp_extensions = ['tag', 'qfx']
+let g:ctrlp_extensions = ['tag', 'quickfix', 'dir', 'buffertag', 'line', 'change', 'undo']
 let g:ctrlp_split_window = 0
 let g:ctrlp_user_command = {
     \ 'types': {
@@ -863,6 +863,7 @@ let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
 let g:CommandTMatchWindowAtTop = 0
+  let g:CommandTCancelMap=['<C-x>', '<C-c>']
 "}}}2
 " neocomplcache{{{2
 let g:neocomplcache_enable_at_startup = 1
@@ -1164,6 +1165,11 @@ if (exists("g:indexed_search_plugin"))
   nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
 endif
 
+nmap <leader>b <SID>(command-line-enter)<C-u>CtrlPBufTagAll<CR>
+nmap <leader>d <SID>(command-line-enter)<C-u>CtrlPDir<CR>
+nmap <leader>q <SID>(command-line-enter)<C-u>CtrlPQuickfix<CR>
+nmap <leader>l <SID>(command-line-enter)<C-u>CtrlPLine<CR>
+
 " nmap : q:
 " nmap / q/
 " nmap ? q?
@@ -1453,7 +1459,7 @@ vnoremap <silent> [Space]a :Alignta =>/=<Cr>
 xnoremap <silent> [Space]a  :Alignta =>\=<CR>
 
 nnoremap <Leader>m :TagbarToggle<CR>
-nnoremap <Leader>d :TagbarOpenAutoClose<CR>
+" nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
 nnoremap <Leader>v :<C-u>vsplit<CR><C-w><C-w>
 nnoremap <Leader>s :<C-u>split<CR><C-w><C-w>
