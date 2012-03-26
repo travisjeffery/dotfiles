@@ -26,7 +26,8 @@ Bundle 'git@github.com:travisjeffery/vim-rails-find-partial.git'
 Bundle 'https://github.com/mattsa/vim-fuzzee.git'
 Bundle 'https://github.com/kikijump/tslime.vim.git'
 Bundle 'https://github.com/jgdavey/vim-turbux.git'
-Bundle 'https://github.com/kana/vim-smartinput.git'
+" Bundle 'https://github.com/kana/vim-smartinput.git'
+Bundle 'https://github.com/jiangmiao/auto-pairs.git'
 Bundle 'https://github.com/ecomba/vim-ruby-refactoring.git'
 Bundle 'https://github.com/sunaku/vim-ruby-shoulda-context.git'
 Bundle 'https://github.com/tangledhelix/vim-octopress.git'
@@ -192,7 +193,7 @@ set expandtab
 set autoindent
 set wildmode=list:longest
 set wildmenu
-set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc
+set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp
 set virtualedit=block
 set matchpairs+=<:>
 set autoread
@@ -603,7 +604,7 @@ let g:ctrlp_jump_to_buffer = 1
 let g:ctrlp_use_caching = 1
 let g:ctrlp_mruf_max = 10000
 let g:ctrlp_max_files = 0 
-let g:ctrlp_extensions = ['tag', 'qfx']
+let g:ctrlp_extensions = ['tag', 'quickfix', 'dir', 'buffertag', 'line', 'change', 'undo']
 let g:ctrlp_split_window = 0
 let g:ctrlp_user_command = {
     \ 'types': {
@@ -862,6 +863,7 @@ let g:CommandTMaxHeight           = 10
 let g:CommandTMaxFiles            = 30000
 let g:CommandTScanDotDirectories  = 1
 let g:CommandTMatchWindowAtTop = 0
+  let g:CommandTCancelMap=['<C-x>', '<C-c>']
 "}}}2
 " neocomplcache{{{2
 let g:neocomplcache_enable_at_startup = 1
@@ -1163,6 +1165,11 @@ if (exists("g:indexed_search_plugin"))
   nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
 endif
 
+nmap <leader>b <SID>(command-line-enter)<C-u>CtrlPBufTagAll<CR>
+nmap <leader>d <SID>(command-line-enter)<C-u>CtrlPDir<CR>
+nmap <leader>q <SID>(command-line-enter)<C-u>CtrlPQuickfix<CR>
+nmap <leader>l <SID>(command-line-enter)<C-u>CtrlPLine<CR>
+
 " nmap : q:
 " nmap / q/
 " nmap ? q?
@@ -1452,7 +1459,7 @@ vnoremap <silent> [Space]a :Alignta =>/=<Cr>
 xnoremap <silent> [Space]a  :Alignta =>\=<CR>
 
 nnoremap <Leader>m :TagbarToggle<CR>
-nnoremap <Leader>d :TagbarOpenAutoClose<CR>
+" nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
 nnoremap <Leader>v :<C-u>vsplit<CR><C-w><C-w>
 nnoremap <Leader>s :<C-u>split<CR><C-w><C-w>
@@ -1905,6 +1912,61 @@ command! -nargs=* Fvmap  call s:cmd_Fmap('v', '', [<f-args>])
 command! -nargs=* Fxmap  call s:cmd_Fmap('x', '', [<f-args>])
 command! -nargs=* Fallmap  call s:cmd_Fmap('All', '', [<f-args>])
 command! -nargs=* Fobjmap  call s:cmd_Fmap('Obj', '', [<f-args>])
+
+function! RunTests(filename)
+    " Write the file and run tests for the given filename
+    :w
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    if match(a:filename, '\.feature$') != -1
+        exec ":!script/features " . a:filename
+    else
+        if filereadable("script/test")
+            exec ":!script/test " . a:filename
+        elseif filereadable("Gemfile")
+            exec ":!bundle exec rspec --color " . a:filename
+        else
+            exec ":!rspec --color " . a:filename
+        end
+    end
+endfunction
+
+function! SetTestFile()
+    " Set the spec file that tests will be run for.
+    let t:grb_test_file=@%
+endfunction
+
+function! RunTestFile(...)
+    if a:0
+        let command_suffix = a:1
+    else
+        let command_suffix = ""
+    endif
+
+    " Run the tests for the previously-marked file.
+    let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\)$') != -1
+    if in_test_file
+        call SetTestFile()
+    elseif !exists("t:grb_test_file")
+        return
+    end
+    call RunTests(t:grb_test_file . command_suffix)
+endfunction
+
+function! RunNearestTest()
+    let spec_line_number = line('.')
+    call RunTestFile(":" . spec_line_number . " -b")
+endfunction
+
+map <leader>t :call RunTestFile()<cr>
+map <leader>T :call RunNearestTest()<cr>
+map <leader>a :call RunTests('')<cr>
+map <leader>c :w\|:!script/features<cr>
+map <leader>w :w\|:!script/features --profile wip<cr>
 
 Allnoremap <C-z>  <Nop>
 Cnmap <C-z>  SuspendWithAutomticCD
