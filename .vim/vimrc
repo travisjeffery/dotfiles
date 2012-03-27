@@ -20,6 +20,8 @@ filetype off
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
 " Bundle "https://github.com/SirVer/ultisnips.git"
 " Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
+Bundle 'https://github.com/michaeljsmith/vim-indent-object.git'
+Bundle 'https://github.com/bbommarito/vim-slim.git'
 Bundle 'https://github.com/the-isz/MinYankRing.vim.git', {'v': 'events'}
 Bundle "https://github.com/mattn/vdbi-vim"
 Bundle 'git@github.com:travisjeffery/vim-rails-find-partial.git'
