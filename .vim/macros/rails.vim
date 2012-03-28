@@ -11,7 +11,7 @@ command! -nargs=0 Rb :find blueprints.rb
 command! -nargs=0 RSb :find blueprints.rb
 
 Rnavcommand sass public/stylesheets/sass -suffix=.sass
-Rnavcommand presenter app/presenters -suffix=.rb
 
-Rnavcommand jstest spec/javascripts -suffix=.js
+Rnavcommand presenter app/presenters -suffix=.rb
 Rnavcommand jasmine spec/javascripts -suffix=.js
+Rnavcommand jstest spec/javascripts -suffix=.js
