@@ -121,11 +121,8 @@ Bundle 'https://github.com/Shougo/echodoc.git'
 Bundle 'https://github.com/kana/vim-altercmd.git'
 Bundle 'https://github.com/mattn/gist-vim.git'
 Bundle 'https://github.com/kana/vim-scratch.git'
+Bundle 'https://github.com/scrooloose/syntastic.git'
 
-if &diff
-else
-  Bundle 'https://github.com/scrooloose/syntastic.git'
-endif
 "}}}
 
 filetype plugin indent on
@@ -581,6 +578,8 @@ let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_quiet_warnings=1
+let g:syntastic_javascript_checker = 'jshint'
+" let g:syntastic_javascript_jslint_conf = "--white --lastsemic --eqeqeq --undef --nomen --regexp --plusplus --bitwise --newcap --sloppy --vars --es5=false"
 "}}}2
 " QuickRun {{{2
 let g:quickrun_direction = 'rightbelow horizontal'
