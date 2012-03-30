@@ -278,7 +278,7 @@ zle -N _quote-previous-word-in-double
     zstyle ':auto-fu:var' postdisplay ''
     zstyle ':auto-fu:var' track-keymap-skip opp
     zstyle ':auto-fu:var' autoable-function/skiplbuffers \
-      'rake *' 'gem *' 'git log *'
+      'rake *' 'gem *' 'git log *' 'npm*'
 
     function afu+cancel () {
         afu-clearing-maybe
