@@ -1,0 +1,19 @@
+{
+    "multistr": true
+,   "strict": false
+,   "eqeqeq": false
+,   "plusplus": true
+,   "regexp": true
+,   "boss": true
+,   "trailing": true
+,   "nonew": true
+,   "noarg": true
+,   "newcap": true
+,   "latedef": true
+,   "immed": true
+,   "asi": true
+,   "bitwise": true
+,   "forin": true
+,   "noempty": true
+,   "curly": true
+}
