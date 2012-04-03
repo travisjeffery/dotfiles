@@ -20,8 +20,7 @@ zstyle ':completion:*:cd:*'     ignore-parents parent pwd
 zstyle ':completion:*:warnings' format "zsh: no matches found."
 
 # Fuzzy matching of completions for when you mistype them
-zstyle ':completion:*' matcher-list '+m:{a-z}={A-Z} r:|[._-]=** r:|=**' '' '' \
-    '+m:{a-z}={A-Z} r:|[._-]=** r:|=**'
+zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
