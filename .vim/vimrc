@@ -194,7 +194,7 @@ set expandtab
 set autoindent
 set wildmode=list:longest
 set wildmenu
-set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp
+set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp,public
 set virtualedit=block
 set matchpairs+=<:>
 set autoread
