@@ -12,7 +12,6 @@
 ,   "latedef": true
 ,   "immed": true
 ,   "asi": true
-,   "undef": true
 ,   "bitwise": true
 ,   "forin": true
 ,   "noempty": true
