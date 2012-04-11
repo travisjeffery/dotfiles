@@ -127,6 +127,7 @@ esac
 [[ -x "`whence mplayer`" ]] && alias mplayer="`whence mplayer` -softvol"
 # [[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
 
+eval "$(hub alias -s)"
 alias rake="noglob rake"
 # alias irb="pry"
 alias pryr="pry -r ./config/environment -r rails/console/app -r rails/console/helpers"
