@@ -21,6 +21,7 @@ Bundle 'https://github.com/teramako/jscomplete-vim.git'
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
 " Bundle "https://github.com/SirVer/ultisnips.git"
 " Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
+Bundle 'https://github.com/kana/vim-tabpagecd.git'
 Bundle 'https://github.com/Shougo/neocomplcache.git'
 Bundle 'https://github.com/michaeljsmith/vim-indent-object.git'
 Bundle 'https://github.com/bbommarito/vim-slim.git'
