@@ -15,7 +15,8 @@ filetype off
 " Bundle 'https://github.com/jiangmiao/auto-pairs.git'
 " Bundle 'https://github.com/Lokaltog/vim-powerline.git'
 " Bundle 'https://github.com/Raimondi/delimitMate.git'
-" Bundle 'https://github.com/robgleeson/hammer.vim.git'
+" Bundle 'https://github.com/matthias-guenther/hammer.vim.git'
+Bundle 'https://github.com/teramako/jscomplete-vim.git'
 " call neobundle#rc(expand('~/.bundle'))
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
 " Bundle "https://github.com/SirVer/ultisnips.git"
@@ -194,7 +195,7 @@ set expandtab
 set autoindent
 set wildmode=list:longest
 set wildmenu
-set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp,public
+set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp
 set virtualedit=block
 set matchpairs+=<:>
 set autoread
@@ -870,7 +871,7 @@ let g:CommandTMatchWindowAtTop = 0
   let g:CommandTCancelMap=['<C-x>', '<C-c>']
 "}}}2
 " neocomplcache{{{2
-let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_at_startup = 0
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_camel_case_completion = 1
 let g:neocomplcache_enable_underbar_completion = 1
@@ -986,6 +987,9 @@ command! -nargs=? TabpageCD
 "}}}1
 " Section: Autocommands {{{1
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType javascript
+  \ :setl omnifunc=jscomplete#CompleteJS
+let g:jscomplete_use = ['dom']
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType vim set omnifunc=syntaxcomplete#Complete
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
