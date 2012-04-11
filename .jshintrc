@@ -5,6 +5,7 @@
 ,   "plusplus": true
 ,   "regexp": true
 ,   "boss": true
+,   "laxcomma": true
 ,   "trailing": true
 ,   "nonew": true
 ,   "noarg": true
