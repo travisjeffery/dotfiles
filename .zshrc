@@ -127,7 +127,6 @@ esac
 [[ -x "`whence mplayer`" ]] && alias mplayer="`whence mplayer` -softvol"
 # [[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
 
-eval "$(hub alias -s)"
 alias rake="noglob rake"
 # alias irb="pry"
 alias pryr="pry -r ./config/environment -r rails/console/app -r rails/console/helpers"
@@ -345,3 +344,9 @@ EOT
 if [ -f `brew --prefix`/etc/autojump ]; then
   . `brew --prefix`/etc/autojump
 fi
+
+source /usr/local/etc/bash_completion.d/git-completion.bash
+source /usr/local/etc/bash_completion.d/hub.bash_completion.sh
+
+eval "$(hub alias -s)"
+
