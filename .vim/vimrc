@@ -21,6 +21,8 @@ Bundle 'https://github.com/teramako/jscomplete-vim.git'
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
 " Bundle "https://github.com/SirVer/ultisnips.git"
 " Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
+Bundle 'https://github.com/benmills/vimux.git'
+Bundle 'https://github.com/pgr0ss/vimux-ruby-test.git'
 Bundle 'https://github.com/kana/vim-tabpagecd.git'
 Bundle 'https://github.com/Shougo/neocomplcache.git'
 Bundle 'https://github.com/michaeljsmith/vim-indent-object.git'
@@ -77,7 +79,7 @@ Bundle 'https://github.com/thinca/vim-qfreplace.git'
 Bundle 'https://github.com/Shougo/vimshell.git'
 Bundle 'https://github.com/h1mesuke/vim-alignta.git'
 Bundle 'https://github.com/kien/ctrlp.vim.git'
-" Bundle 'https://github.com/tpope/vim-endwise.git'
+Bundle 'https://github.com/tpope/vim-endwise.git'
 Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
 Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
@@ -1842,9 +1844,9 @@ nnoremap <silent> <Leader>gs :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT public/s
 nnoremap <silent> <Leader>gS :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT spec<CR>
 nnoremap <silent> <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
 nnoremap <silent> <Leader>gf :<C-u>CommandT %%/<CR>
-nnoremap <silent> <Leader>, :<C-u>CommandT<CR>
+" nnoremap <silent> <Leader>, :<C-u>CommandT<CR>
 nnoremap <silent> <Leader>! :<C-u>CommandTFlush<CR>
-" nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
+nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
 nnoremap <silent> <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
 " Delete the content of the current line (not the line itself).
 nnoremap dl  0d$
