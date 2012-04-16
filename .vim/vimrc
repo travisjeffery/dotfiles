@@ -7,7 +7,6 @@ filetype off
  call vundle#rc('~/.bundle')
 " set rtp+=~/.vim/bundle/Bundle/
 " Bundle/Vundle {{{2
-" Bundle 'https://github.com/Shougo/neocomplcache.git'
 " Bundle 'https://github.com/thinca/vim-poslist.git'
 " Bundle 'git@github.com:travisjeffery/vim-rails-fork.git'
 " Bundle 'https://github.com/godlygeek/csapprox.git'
@@ -21,6 +20,8 @@ Bundle 'https://github.com/teramako/jscomplete-vim.git'
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
 " Bundle "https://github.com/SirVer/ultisnips.git"
 " Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
+Bundle 'https://github.com/nono/vim-handlebars.git'
+Bundle 'https://github.com/sjl/vitality.vim.git'
 Bundle 'https://github.com/benmills/vimux.git'
 Bundle 'https://github.com/pgr0ss/vimux-ruby-test.git'
 Bundle 'https://github.com/kana/vim-tabpagecd.git'
@@ -579,6 +580,15 @@ let g:rails_menu=0
 let g:rails_installed_menu=0
 let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_rails = 1
+autocmd User Rails/app/presenters/*.*
+    \ let b:rails_alternate = substitute(rails#buffer().path(), 'app/','test/unit/','')
+autocmd User Rails/app/assets/javascripts/*.*
+    \ let b:rails_alternate = fnamemodify(rails#buffer().path(),
+    \ ":s?app/assets/?spec/?:r"). "_spec." . 
+    \ fnamemodify(rails#buffer().path(), ":e")
+autocmd User Rails/spec/javascripts/*.*
+    \ let b:rails_alternate = fnamemodify(rails#buffer().path(),
+    \ ":s?spec/?app/assets/?:s?_spec??") 
 "}}}2
 " Syntastic {{{2
 let g:syntastic_enable_signs=1
@@ -874,7 +884,7 @@ let g:CommandTMatchWindowAtTop = 0
   let g:CommandTCancelMap=['<C-x>', '<C-c>']
 "}}}2
 " neocomplcache{{{2
-let g:neocomplcache_enable_at_startup = 0
+let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_camel_case_completion = 1
 let g:neocomplcache_enable_underbar_completion = 1
