@@ -20,6 +20,7 @@ Bundle 'https://github.com/teramako/jscomplete-vim.git'
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
 " Bundle "https://github.com/SirVer/ultisnips.git"
 " Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
+Bundle 'https://github.com/Lokaltog/vim-easymotion.git'
 Bundle 'https://github.com/nono/vim-handlebars.git'
 Bundle 'https://github.com/sjl/vitality.vim.git'
 Bundle 'https://github.com/benmills/vimux.git'
@@ -541,6 +542,9 @@ augroup vimrc-scratch-buffer
 augroup END"}}}2
 "}}}1
 " Section: Plugins {{{1
+" EasyMotion {{{1
+let g:EasyMotion_leader_key = '<Space><Space>'
+"}}}
 " powerline {{{2
 let g:Powerline_symbols = 'fancy'
 "}}}
@@ -686,8 +690,8 @@ call unite#filters#converter_default#use(['converter_relative_abbr'])
 call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
 " nnoremap <C-B> :<C-u>Unite buffer<CR>
-" nnoremap <C-B> :<C-u>CommandTBuffer<CR>
-nnoremap <C-B> :<C-u>CtrlPBuffer<CR>
+nnoremap <C-B> :<C-u>CommandTBuffer<CR>
+" nnoremap <C-B> :<C-u>CtrlPBuffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
 "}}}2
 " echodoc {{{2
@@ -884,7 +888,7 @@ let g:CommandTMatchWindowAtTop = 0
   let g:CommandTCancelMap=['<C-x>', '<C-c>']
 "}}}2
 " neocomplcache{{{2
-let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_at_startup = 0
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_camel_case_completion = 1
 let g:neocomplcache_enable_underbar_completion = 1
@@ -1275,9 +1279,9 @@ inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
 
 " inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 " inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
 " inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
 
 "{{{2
@@ -1983,9 +1987,13 @@ function! RunNearestTest()
     call RunTestFile(":" . spec_line_number . " -b")
 endfunction
 
-map <leader>t :call RunTestFile()<cr>
-map <leader>T :call RunNearestTest()<cr>
-map <leader>a :call RunTests('')<cr>
+nnoremap <leader>T :RunAllRubyTests<CR>
+" nnoremap <leader>T :RunRubyFocusedTest<CR>
+" nnoremap <leader>t RunRubyFocusedContext :call s:RunRubyFocusedContext()
+
+" map <leader>t :call RunTestFile()<cr>
+" map <leader>T :call RunNearestTest()<cr>
+" map <leader>a :call RunTests('')<cr>
 map <leader>c :w\|:!script/features<cr>
 map <leader>w :w\|:!script/features --profile wip<cr>
 
