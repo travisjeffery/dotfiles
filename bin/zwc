@@ -1,0 +1,206 @@
+#!/bin/zsh
+#
+# $File: ${ZDOTDIR}/zwc.sh
+# $Date: 2011-09-25T06:40:30+0900$
+# vim:filetype=zsh:tabstop=2:shiftwidth=2:fdm=marker:
+
+cmdname=`basename $0`
+is_keep_extention="FALSE"
+is_check_ostype="false"
+is_load_source="false"
+
+main() {
+  check_opt $@
+  if [ -n "$source_files" ] && [ -n $subcmd ]; then
+    case $subcmd in
+      add)
+        zwc_add
+        ;;
+      rm)
+        zwc_rm
+        ;;
+    esac
+  fi
+}
+
+zwc_add() {
+  for file in "${source_files[@]}";
+  do
+    $is_check_ostype && ! $(check_ostype ${file}) && continue
+    ! check_filetype ${file} && continue
+    if $is_keep_extension; then
+      local target_file="${${target_dir:-${file%/*}}%/}/${suffix}${file##*/}"
+    else
+      local target_file="${${target_dir:-${file%/*}}%/}/${suffix}${${file##*/}%.*}"
+    fi
+    if [ "${file}" -nt "${target_file}" ] || [ ! -e ${target_file} ] && \
+      ([ -n "${target_dir}" ] || [ -n "${suffix}" ]); then
+      cp ${file} ${target_file}
+      #echo "cp $file $target_file"
+    fi
+    if [ -f "${target_file}" ] && \
+      ([ ! -e "${target_file}.zwc" ] || [ "${target_file}" -nt "${target_file}.zwc" ]); then
+      zcompile "${target_file}"
+      #echo "zcompile ${target_file}"
+    fi
+    $is_load_source && source ${target_file}
+  done
+}
+
+zwc_rm() {
+  for file in "${source_files[@]}";
+  do
+    $is_check_ostype && ! $(check_ostype ${file}) && continue
+    ! check_filetype ${file} && continue
+    if $is_keep_extension; then
+      local target_file="${${target_dir:-${file%/*}}%/}/${suffix}${file##*/}"
+    else
+      local target_file="${${target_dir:-${file%/*}}%/}/${suffix}${${file##*/}%.*}"
+    fi
+    if [ -f "${target_file}" ] && \
+      ([ -n "${target_dir}" ] || [ -n "${suffix}" ]); then
+      rm -f "${target_file}"
+      #echo "rm -f ${target_file}"
+    fi
+    if [ -f "${target_file}.zwc" ]; then
+      rm -f "${target_file}.zwc"
+      #echo "rm -f ${target_file}.zwc"
+    fi
+  done
+}
+
+check_filetype() {
+  [ -z "$1" ] && return 1
+  case "$1" in
+    *.zwc)
+      return 1
+      ;;
+    *)
+      [ -d "$1" ] && return 1
+      return 0
+  esac
+}
+
+check_opt() {
+  if [ "$#" -ge 1 ]; then
+    case "$1" in
+      add)
+        subcmd="add"
+        ;;
+      rm)
+        subcmd="rm"
+        ;;
+      -h*|*help*)
+        usage
+        ;;
+      *)
+        error "$cmdname: '$1' is not a $cmdname command. See '$cmdname --help'."
+        ;;
+    esac
+    shift
+  else
+    usage
+  fi
+  if [ "$#" -ge 1 ]; then
+    while [ "$#" -gt 0 ];
+    do
+      case "$1" in
+        --extention) is_keep_extension="TRUE" ;;
+        --load) is_load_source="TRUE" ;;
+        --ostype) is_check_ostype="TRUE" ;;
+        --suffix) suffix=$2 && shift ;;
+        --*)
+          error "${cmdname} ${subcmd}: illegal option -- ${1##*-}"
+          ;;
+        -*)
+          while getopts os: opt
+          do
+            case "${opt}" in
+              e)
+                is_keep_extension="TRUE"
+                ;;
+              l)
+                is_load_source="TRUE"
+                ;;
+              o)
+                is_check_ostype="TRUE"
+                ;;
+              s)
+                case "${OPTARG}" in
+                  */*)
+                    error "${cmdname} ${subcmd} -s: illegal snuffix -- ${OPTARG}"
+                    ;;
+                  *)
+                    suffix=${OPTARG}
+                    shift
+                    ;;
+                esac
+                ;;
+            esac
+          done
+          ;;
+        *)
+          if [ -f "$1" ] && [ -z "$target_dir" ]; then
+            source_files=( $source_files $1 )
+          elif [ -d "$1" ] && [ "$#" -eq 1 ] && [ -n "$source_files" ]; then
+            target_dir=$1
+          else
+            error "${cmdname} ${subcmd}: $1: No such file or directory"
+          fi
+      esac
+      shift
+    done
+  fi
+  [ -z "${source_files}" ] && usage
+  return 0
+}
+
+
+check_ostype() {
+  [ -z "$1" ] && return 1
+  case $1 in
+    *linux*)
+      [[ ${OSTYPE} == linux* ]] && return 0
+      return 1
+      ;;
+    *solaris*)
+    [[ ${OSTYPE} == solaris* ]] && return 0
+      return 1
+      ;;
+    *darwin*|*osx*|*mac*)
+      [[ ${OSTYPE} == darwin* ]] && return 0
+      return 1
+      ;;
+    *cygwin*|*win*)
+      [[ ${OSTYPE} == cygwin* ]] && return 0
+      return 1
+      ;;
+    *)
+      return 0
+      ;;
+  esac
+}
+
+error() {
+  echo "$1">&2 && exit 1
+}
+
+usage() {
+  echo "Usage: ${cmdname} ${subcmd:-"<command>"} [options] <source_file1> [<source_file2>] ... <target_dir>"
+  if [ -z "${subcmd}" ]; then
+  echo "Command:"
+  echo "   add        make the zcompiled files from 'source_files' into 'target_dir'"
+  echo "   rm         remove the zcompiled files in 'target_dir'"
+  fi
+  echo "Options:"
+  echo "    -e, --extension                        Keep extension on source_file name"
+  if [[ ${subcmd} == "add" ]] || [ -z ${subcmd} ]; then
+  echo "    -l, --load                             Load source_file after doing zcompile"
+  fi
+  echo "    -o, --ostype                           Check the OSTYPE specific by source_file name. e.g.,\`hoge.darwin.zsh\`"
+  echo "    -s <suffix>, --suffix <suffix>         Addd suffix source_file name"
+  exit 1
+}
+
+
+main $@
