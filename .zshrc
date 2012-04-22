@@ -267,7 +267,7 @@ zle -N _quote-previous-word-in-double
     }
 
     source $HOME/.zsh/auto-fu.zsh/auto-fu.zsh
-    zle-line-init () {auto-fu-init;}; zle -N zle-line-init
+    # zle-line-init () {auto-fu-init;}; zle -N zle-line-init
     zstyle ':completion:*' completer _oldlist _complete
     zle -N zle-keymap-select auto-fu-zle-keymap-select
 
