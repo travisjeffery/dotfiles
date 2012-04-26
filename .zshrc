@@ -352,3 +352,5 @@ source /usr/local/etc/bash_completion.d/hub.bash_completion.sh
 
 eval "$(hub alias -s)"
 
+[ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
+
