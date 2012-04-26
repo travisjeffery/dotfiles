@@ -64,9 +64,6 @@ fi
 
 [[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
 
-[ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
-
-
 if [ -d "$HOME/.rbenv" ] && $(hash rbenv 2>&-); then
   export PATH="$HOME/.rbenv/bin:$PATH" 
   eval "$(rbenv init -)"
