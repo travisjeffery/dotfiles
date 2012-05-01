@@ -197,6 +197,7 @@ rackup
 rails
 rake
 rake2thor
+puma
 rspec
 sass
 sass-convert
