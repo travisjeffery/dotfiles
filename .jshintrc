@@ -16,5 +16,5 @@
 ,   "bitwise": true
 ,   "forin": true
 ,   "noempty": true
-,   "curly": true
+,   "curly": false
 }
