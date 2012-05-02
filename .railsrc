@@ -34,6 +34,8 @@ class Class
 end
 
 # https://github.com/cldwalker/hirb/issues/46#issuecomment-1870823
+require 'rubygems'
+require 'hirb'
 Pry.config.print = proc do |output, value|
   Hirb::View.view_or_page_output(value) || Pry::DEFAULT_PRINT.call(output, value)
 end

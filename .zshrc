@@ -355,3 +355,5 @@ eval "$(hub alias -s)"
 
 [ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
 
+
+[ -s "/home/travis/.scm_breeze/scm_breeze.sh" ] && source "/home/travis/.scm_breeze/scm_breeze.sh"
