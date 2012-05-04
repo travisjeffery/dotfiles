@@ -6,8 +6,9 @@ zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^[[A" history-beginning-search-backward-end
 bindkey "^[[B" history-beginning-search-forward-end
-bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end
+
+# bindkey "^P" history-beginning-search-backward-end
+# bindkey "^N" history-beginning-search-forward-end
 
 bindkey -v                                          # Use vi key bindings
 
@@ -17,6 +18,11 @@ bindkey -s '\e.' '..\n'                             # [Esc-.] - run command: .. 
 bindkey '^r' history-incremental-search-backward    # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
 bindkey '^[[5~' up-line-or-history                  # [PageUp] - Up a line of history
 bindkey '^[[6~' down-line-or-history                # [PageDown] - Down a line of history
+
+bindkey "\e[Z" reverse-menu-complete # Shift+Tab
+
+bindkey "^P" reverse-menu-complete
+bindkey "^N" menu-complete
 
 bindkey '^[[A' up-line-or-search                    # start typing + [Up-Arrow] - fuzzy find history forward
 bindkey '^[[B' down-line-or-search                  # start typing + [Down-Arrow] - fuzzy find history backward
