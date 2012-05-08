@@ -10,8 +10,6 @@ bindkey "^[[B" history-beginning-search-forward-end
 # bindkey "^P" history-beginning-search-backward-end
 # bindkey "^N" history-beginning-search-forward-end
 
-bindkey -v                                          # Use vi key bindings
-
 bindkey '\ew' kill-region                           # [Esc-w] - Kill from the cursor to the mark
 bindkey -s '\el' 'ls\n'                             # [Esc-l] - run command: ls
 bindkey -s '\e.' '..\n'                             # [Esc-.] - run command: .. (up directory)
@@ -56,7 +54,7 @@ LBUFFER+="$(eval $history[$((HISTCMD-1))])"
 zle -N insert-last-command-output
 bindkey "^X^L" insert-last-command-output
 
-fpath=("$HOME/.zsh/completions" "$HOME/.zsh/zsh-completions" $fpath)
+fpath=("$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
 
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion:*'          list-colors ''
@@ -110,7 +108,7 @@ SAVEHIST="10000"
 
 NULL="/dev/null"
 
-# bindkey -e
+bindkey -e
 
 #[[ -e "/etc/zsh/zprofile" ]] && source /etc/zsh/zprofile
 
