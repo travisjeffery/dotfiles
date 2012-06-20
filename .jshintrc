@@ -1,8 +1,9 @@
 {
     "multistr": true
 ,   "strict": false
-,   "eqeqeq": false
-,   "plusplus": true
+,   "undef": false
+,   "eqeqeq": true
+,   "plusplus": false
 ,   "regexp": true
 ,   "boss": true
 ,   "laxcomma": true
@@ -11,7 +12,7 @@
 ,   "noarg": true
 ,   "newcap": true
 ,   "latedef": true
-,   "immed": true
+,   "immed": false
 ,   "asi": true
 ,   "bitwise": true
 ,   "forin": true
