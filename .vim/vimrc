@@ -20,6 +20,7 @@ Bundle 'https://github.com/teramako/jscomplete-vim.git'
 " Bundle 'git@github.com:travisjeffery/vim-testee.git'
 " Bundle "https://github.com/SirVer/ultisnips.git"
 " Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
+Bundle 'git://github.com/myusuf3/numbers.vim.git'
 Bundle 'https://github.com/Lokaltog/vim-easymotion.git'
 Bundle 'https://github.com/nono/vim-handlebars.git'
 Bundle 'https://github.com/sjl/vitality.vim.git'
@@ -205,6 +206,8 @@ set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp
 set virtualedit=block
 set matchpairs+=<:>
 set autoread
+set iskeyword+=-
+set iskeyword+=_
 if v:version >= 600
   set foldenable
   set foldlevelstart=1
