@@ -18,7 +18,7 @@ def destination(file,sub_directory)
 end
 
 def install(file,sub_directory=nil)
-  if system("ln -nsf #{root}/#{file} #{home}/#{file}")
+  if system("ln -nsf '#{root}/#{file}' '#{home}/#{file}'")
     print "successfully installed "
   else
     print "failed to install "
