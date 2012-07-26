@@ -120,6 +120,7 @@ bindkey -e
 #    export CXX="llvm-g++"
 #fi
 
+
 if [ -x "`whence vim`" ]; then
     export EDITOR="`whence vim`"
     alias vi="`whence vim`"
@@ -223,6 +224,12 @@ zstyle ':filter-select' max-lines 10
 zstyle ':filter-select' max-lines -10
 zstyle ':filter-select' case-insensitive yes
 zstyle ':filter-select' extended-search yes
+
+source $HOME/.zsh/z/z.sh
+function precmd () {
+  _z --add "$(pwd -P)"
+}
+
 
 if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
   eval `dircolors $HOME/.dir_colors`

@@ -109,3 +109,6 @@
 [submodule "code/tmux-macosx-pasteboard"]
 	path = code/tmux-macosx-pasteboard
 	url = https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git
+[submodule ".zsh/z"]
+	path = .zsh/z
+	url = git://github.com/rupa/z.git
