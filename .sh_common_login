@@ -79,7 +79,7 @@ PATH="$PATH:$OLD_PATH"
 export EDITOR=vim
 export PAGER=less
 export SHELL=$(which zsh)
-export TZ=EDT
+export TZ=EST
 
 case "$ENV_ACCESS" in
   summer)
