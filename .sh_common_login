@@ -61,11 +61,15 @@ if [ -x "brew" ]; then
   if [ -d "$(brew --prefix coreutils)/libexec/gnubin" ]; then PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"; fi
 fi
 
+export PATH="/usr/local/Cellar/ruby/1.9.3-p194/bin:$PATH"
 
 [[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
 
+export PATH="/usr/local/share/python:$PATH"
+
+export PATH="$HOME/.rbenv/bin:$PATH" 
+
 if [ -d "$HOME/.rbenv" ] && $(hash rbenv 2>&-); then
-  export PATH="$HOME/.rbenv/bin:$PATH" 
   eval "$(rbenv init -)"
 elif [ -d "$HOME/.rvm" ]; then
   [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
