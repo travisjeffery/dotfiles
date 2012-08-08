@@ -178,6 +178,7 @@ alias rake="noglob rake"
 alias pryr="pry -r ./config/environment -r rails/console/app -r rails/console/helpers"
 alias railsc="pryrc"
 alias g="git"
+compdef g=git
 alias c="clear"
 alias l="ls -la"
 alias gg="git g"
