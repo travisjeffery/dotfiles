@@ -21,3 +21,4 @@
 .rbenv-version
 .githubconfig
 *.orig
+.ssh
