@@ -22,3 +22,4 @@
 .githubconfig
 *.orig
 .ssh
+.zsh_history
