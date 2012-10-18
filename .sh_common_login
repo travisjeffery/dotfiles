@@ -75,6 +75,7 @@ elif [ -d "$HOME/.rvm" ]; then
   [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 fi
 
+PATH="/Applications/Postgres.app/Contents/MacOS/bin:$PATH"
 
 PATH="$PATH:$OLD_PATH"
 
