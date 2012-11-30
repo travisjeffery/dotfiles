@@ -406,8 +406,6 @@ source /usr/local/etc/bash_completion.d/hub.bash_completion.sh
 eval "$(hub alias -s)"
 
 [ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
-
-
-[ -s "/home/travis/.scm_breeze/scm_breeze.sh" ] && source "/home/travis/.scm_breeze/scm_breeze.sh"
+[ -s "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh" 
 
 compdef g=git

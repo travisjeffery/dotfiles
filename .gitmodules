@@ -22,9 +22,9 @@
 [submodule ".vim/bundle/neobundle"]
 	path = .vim/bundle/neobundle
 	url = https://github.com/Shougo/neobundle.vim.git
-[submodule ".zsh/completions"]
-	path = .zsh/completions
-	url = git://github.com/zsh-users/zsh-completions.git
+;[submodule ".zsh/completions"]
+;	path = .zsh/completions
+;	url = git://github.com/zsh-users/zsh-completions.git
 [submodule ".emacs.d/site-lisp/twittering-mode"]
 	path = .emacs.d/site-lisp/twittering-mode
 	url = https://github.com/hayamiz/twittering-mode.git
@@ -112,3 +112,6 @@
 [submodule ".zsh/z"]
 	path = .zsh/z
 	url = git://github.com/rupa/z.git
+[submodule ".zsh/syntax-highlighting"]
+	path = .zsh/syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
