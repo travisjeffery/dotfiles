@@ -65,18 +65,23 @@ fi
 
 export PATH="/usr/local/share/python:$PATH"
 
-export RBENV_ROOT="/usr/local/opt/rbenv"
+export PATH="/usr/local/mysql/bin:$PATH"
+
+export RBENV_ROOT="$HOME/.rbenv"
 export PATH="$RBENV_ROOT/bin:$RBENV_ROOT/libexec:$PATH"
 
-if [ -d "$HOME/.rbenv" ] && $(hash rbenv 2>&-); then
-  if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+if which rbenv > /dev/null; then
+ eval "$(rbenv init -)"; 
 elif [ -d "$HOME/.rvm" ]; then
   [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 fi
 
 PATH="/Applications/Postgres.app/Contents/MacOS/bin:$PATH"
+PATH="/usr/local/Cellar/ruby/1.9.3-p194/bin/:$PATH"
 
 PATH="$PATH:$OLD_PATH"
+
+eval "$(hub alias -s)"
 
 # Misc.  #{{{1
 # Common stuffs  #{{{2
