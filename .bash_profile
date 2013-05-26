@@ -33,3 +33,6 @@ unset -f _check_then_source
 
 # __END__
 # vim: filetype=sh
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"

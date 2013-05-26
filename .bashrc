@@ -239,3 +239,5 @@ complete -C ~/.bash.d/svk-completion.pl -o default svk
 # __END__
 # vim: filetype=sh foldmethod=marker
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting

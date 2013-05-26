@@ -1,11 +1,14 @@
 source $HOME/.sh_common_login
 
+skip_global_compinit=true
+
 autoload -U compinit && compinit
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^[[A" history-beginning-search-backward-end
 bindkey "^[[B" history-beginning-search-forward-end
+
 
 # bindkey "^P" history-beginning-search-backward-end
 # bindkey "^N" history-beginning-search-forward-end
@@ -71,7 +74,7 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
 setopt EXTENDED_GLOB AUTO_PUSHD LISTPACKED \
        AUTOREMOVESLASH HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS \
-       SHARE_HISTORY APPEND_HISTORY 
+       SHARE_HISTORY APPEND_HISTORY
 setopt NO_BEEP
 
 setopt correct
@@ -95,16 +98,80 @@ setopt pushdignoredups
 setopt combiningchars
 setopt noautomenu
 
-setopt promptsubst
+# setopt promptsubst
 
-autoload -U promptinit
-promptinit
+# autoload -U promptinit
+# promptinit
 
-prompt wunjo
+# prompt wunjo
+
+# Pure
+# by Sindre Sorhus
+# https://github.com/sindresorhus/pure
+# MIT License
+
+
+# Change this to your own username
+DEFAULT_USERNAME='sindresorhus'
+
+# Threshold (sec) for showing cmd exec time
+CMD_MAX_EXEC_TIME=5
+
+
+# For my own and others sanity
+# git:
+# %b => current branch
+# %a => current action (rebase/merge)
+# prompt:
+# %F => color dict
+# %f => reset color
+# %~ => current path
+# %* => time
+# %n => username
+# %m => shortname host
+# %(?..) => prompt conditional - %(condition.true.false)
+
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git # You can add hg too if needed: `git hg`
+zstyle ':vcs_info:git*' formats ' %b'
+zstyle ':vcs_info:git*' actionformats ' %b|%a'
+
+# Only show username if not default
+[ $USER != $DEFAULT_USERNAME ] && local username='%n@%m '
+
+# Fastest possible way to check if repo is dirty
+git_dirty() {
+    git diff --quiet --ignore-submodules HEAD 2>/dev/null; [ $? -eq 1 ] && echo '*'
+}
+
+# Displays the exec time of the last command if set threshold was exceeded
+cmd_exec_time() {
+    local stop=`date +%s`
+    local start=${cmd_timestamp:-$stop}
+    let local elapsed=$stop-$start
+    [ $elapsed -gt $CMD_MAX_EXEC_TIME ] && echo ${elapsed}s
+}
+
+preexec() {
+    cmd_timestamp=`date +%s`
+}
+
+precmd() {
+    vcs_info
+    # Add `%*` to display the time
+    print -P '\n%F{blue}%~%F{236}$vcs_info_msg_0_`git_dirty` $username%f %F{yellow}`cmd_exec_time`%f'
+    # Reset value since `preexec` isn't always triggered
+    unset cmd_timestamp
+}
+
+# Prompt turns red if the previous command didn't exit with 0
+PROMPT='%(?.%F{magenta}.%F{red})❯%f '
+# Can be disabled:
+# PROMPT='%F{magenta}❯%f '
 
 HISTFILE="$HOME/.zsh_history"
-HISTSIZE="10000"
-SAVEHIST="10000"
+HISTSIZE="100"
+SAVEHIST="100"
 
 NULL="/dev/null"
 
@@ -177,7 +244,6 @@ alias rake="noglob rake"
 # alias irb="pry"
 alias pryr="pry -r ./config/environment -r rails/console/app -r rails/console/helpers"
 alias railsc="pryrc"
-alias g="git"
 alias c="clear"
 alias l="ls -la"
 alias gg="git g"
@@ -192,6 +258,15 @@ alias emacs="emacs -nw"
 # alias yaourt="yaourt --tmp /home/tmp"
 alias display="display -geometry +0+0"
 alias rhino="rlwrap java -jar /usr/share/java/js.jar"
+
+function g {
+  if [[ $# > 0 ]]; then
+    git $@
+  else
+    git status
+  fi
+}
+compdef g=git
 
 PROG="`whence virtualenv`"
 [ -x "$PROG" ] && alias virtualenv="$PROG --no-site-packages"
@@ -400,9 +475,27 @@ if [ -x "brew" ]; then
   fi
 fi
 
-eval "$(hub alias -s)"
+# eval "$(  alias -s)"
 
 [ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
-[ -s "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh" 
+[ -s "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh"
 
-compdef g=git
+
+backward-delete-to-slash() {
+  integer pos=$CURSOR
+  while (( pos > 1 )); do
+    if [[ $LBUFFER[--pos] = / ]]; then
+      LBUFFER=${LBUFFER[1,pos]}
+      return 0
+    fi
+  done
+  return 1
+}
+
+zle -N backward-delete-to-slash
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
