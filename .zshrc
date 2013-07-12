@@ -1,5 +1,7 @@
 source $HOME/.sh_common_login
 
+. .zsh/pure/prompt.zsh
+
 skip_global_compinit=true
 
 autoload -U compinit && compinit
@@ -98,76 +100,15 @@ setopt pushdignoredups
 setopt combiningchars
 setopt noautomenu
 
-# setopt promptsubst
-
-# autoload -U promptinit
-# promptinit
-
-# prompt wunjo
-
-# Pure
-# by Sindre Sorhus
-# https://github.com/sindresorhus/pure
-# MIT License
-
-
-# Change this to your own username
-DEFAULT_USERNAME='sindresorhus'
+DEFAULT_USERNAME='tj'
 
 # Threshold (sec) for showing cmd exec time
 CMD_MAX_EXEC_TIME=5
-
-
-# For my own and others sanity
-# git:
-# %b => current branch
-# %a => current action (rebase/merge)
-# prompt:
-# %F => color dict
-# %f => reset color
-# %~ => current path
-# %* => time
-# %n => username
-# %m => shortname host
-# %(?..) => prompt conditional - %(condition.true.false)
-
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' enable git # You can add hg too if needed: `git hg`
-zstyle ':vcs_info:git*' formats ' %b'
-zstyle ':vcs_info:git*' actionformats ' %b|%a'
-
-# Only show username if not default
-[ $USER != $DEFAULT_USERNAME ] && local username='%n@%m '
 
 # Fastest possible way to check if repo is dirty
 git_dirty() {
     git diff --quiet --ignore-submodules HEAD 2>/dev/null; [ $? -eq 1 ] && echo '*'
 }
-
-# Displays the exec time of the last command if set threshold was exceeded
-cmd_exec_time() {
-    local stop=`date +%s`
-    local start=${cmd_timestamp:-$stop}
-    let local elapsed=$stop-$start
-    [ $elapsed -gt $CMD_MAX_EXEC_TIME ] && echo ${elapsed}s
-}
-
-preexec() {
-    cmd_timestamp=`date +%s`
-}
-
-precmd() {
-    vcs_info
-    # Add `%*` to display the time
-    print -P '\n%F{blue}%~%F{236}$vcs_info_msg_0_`git_dirty` $username%f %F{yellow}`cmd_exec_time`%f'
-    # Reset value since `preexec` isn't always triggered
-    unset cmd_timestamp
-}
-
-# Prompt turns red if the previous command didn't exit with 0
-PROMPT='%(?.%F{magenta}.%F{red})❯%f '
-# Can be disabled:
-# PROMPT='%F{magenta}❯%f '
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE="100"
@@ -176,17 +117,6 @@ SAVEHIST="100"
 NULL="/dev/null"
 
 bindkey -e
-
-#[[ -e "/etc/zsh/zprofile" ]] && source /etc/zsh/zprofile
-
-#
-# Set environment variables
-
-#if [ -x "`whence llvm-gcc`" ]; then
-#    export CC="llvm-gcc"
-#    export CXX="llvm-g++"
-#fi
-
 
 if [ -x "`whence vim`" ]; then
     export EDITOR="`whence vim`"
@@ -229,17 +159,13 @@ case "$OSTYPE" in
 	;;
 esac
 
-# if [ -x "`whence mvn`" ]; then
-    # alias mvn="`whence mvn` -DarchetypeGroupId=org.naniyueni -DarchetypeArtifactId=template -DarchetypeVersion=1.0 -DgroupId=org.naniyueni"
-# fi
-
-
 [[ -x "`whence gmcs`" ]] && alias gmcs="gmcs -out:a.out" mcs=gmcs
 [[ -x "`whence powerpill`" ]] && alias pacman="`whence powerpill` --nomessages"
 [[ -x "`whence rascut`" ]] && alias rascut="_JAVA_OPTIONS=-Duser.language=en `whence rascut`"
 [[ -x "`whence mplayer`" ]] && alias mplayer="`whence mplayer` -softvol"
 # [[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
 
+alias o=open
 alias rake="noglob rake"
 # alias irb="pry"
 alias pryr="pry -r ./config/environment -r rails/console/app -r rails/console/helpers"
@@ -266,6 +192,7 @@ function g {
     git status
   fi
 }
+
 compdef g=git
 
 PROG="`whence virtualenv`"
@@ -277,20 +204,8 @@ SCREEN_PROG="`whence screen`"
 TMUX_PROG="`whence tmux`"
 [ -x "$TMUX_PROG" ] && [ -n "$TMUX" ] && alias exit="$TMUX_PROG detach"
 
-#
-# Set prompt
-#
-# PROMPT="[%~]
-# $ "
-
 # ulimit -c unlimited
 umask 072
-
-# if [ "$PS1" -a `uname -s` = "Linux" ]; then
-#     mkdir -p -m 0700 /dev/cgroup/cpu/user/$$ > /dev/null 2>&1
-#     echo $$ > /dev/cgroup/cpu/user/$$/tasks
-#     echo 1 > /dev/cgroup/cpu/user/$$/notify_on_release
-# fi
 
 source $HOME/.zsh/zaw/zaw.zsh
 bindkey '^R' zaw-history
@@ -301,14 +216,11 @@ zstyle ':filter-select' case-insensitive yes
 zstyle ':filter-select' extended-search yes
 
 source $HOME/.zsh/z/z.sh
-function precmd () {
-  _z --add "$(pwd -P)"
-}
-
 
 if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
   eval `dircolors $HOME/.dir_colors`
 fi
+
 
 BUNDLED_COMMANDS=(cap
 capify
@@ -475,8 +387,6 @@ if [ -x "brew" ]; then
   fi
 fi
 
-# eval "$(  alias -s)"
-
 [ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
 [ -s "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh"
 
@@ -498,4 +408,8 @@ zle -N backward-delete-to-slash
 export PATH="/usr/local/heroku/bin:$PATH"
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
+eval "$(rbenv init - --no-rehash)"
+eval "$(rbenv init - --no-rehash)"
+eval "$(rbenv init - --no-rehash)"
 
