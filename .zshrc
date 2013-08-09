@@ -411,6 +411,4 @@ export PATH="/usr/local/heroku/bin:$PATH"
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 eval "$(rbenv init - --no-rehash)"
-eval "$(rbenv init - --no-rehash)"
-eval "$(rbenv init - --no-rehash)"
 
