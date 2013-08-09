@@ -267,14 +267,20 @@ is-within-bundled-project()
   false
 }
 
-run-with-bundler()
-{
+kill-to-slash() { 
+  local WORDCHARS="${WORDCHARS:s,/,}"; 
+  zle backward-kill-word; 
+}; 
+zle -N kill-to-slash; 
+bindkey '^w' kill-to-slash;
+
+run-with-bundler() {
   if is-bundler-installed && is-within-bundled-project; then
     bundle exec $@
   else
     $@
   fi
-}
+};
 
 for CMD in $BUNDLED_COMMANDS; do
   alias $CMD="run-with-bundler $CMD"
