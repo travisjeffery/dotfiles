@@ -1,6 +1,8 @@
 source $HOME/.sh_common_login
 
-. .zsh/pure/prompt.zsh
+DEFAULT_USERNAME='tj'
+
+. ~/.zsh/pure/prompt.zsh
 
 skip_global_compinit=true
 
@@ -100,7 +102,6 @@ setopt pushdignoredups
 setopt combiningchars
 setopt noautomenu
 
-DEFAULT_USERNAME='tj'
 
 # Threshold (sec) for showing cmd exec time
 CMD_MAX_EXEC_TIME=5
