@@ -268,12 +268,12 @@ is-within-bundled-project()
   false
 }
 
-kill-to-slash() { 
-  local WORDCHARS="${WORDCHARS:s,/,}"; 
-  zle backward-kill-word; 
-}; 
-zle -N kill-to-slash; 
-bindkey '^w' kill-to-slash;
+tj-backward-kill() {
+  local WORDCHARS='*?_~=&;!#$%^(){}'
+  zle backward-kill-word;
+};
+zle -N tj-backward-kill;
+bindkey '^w' tj-backward-kill;
 
 run-with-bundler() {
   if is-bundler-installed && is-within-bundled-project; then
@@ -417,5 +417,4 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
-eval "$(rbenv init - --no-rehash)"
 
