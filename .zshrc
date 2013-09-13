@@ -112,8 +112,8 @@ git_dirty() {
 }
 
 HISTFILE="$HOME/.zsh_history"
-HISTSIZE="100"
-SAVEHIST="100"
+HISTSIZE="9999"
+SAVEHIST="9999"
 
 NULL="/dev/null"
 
