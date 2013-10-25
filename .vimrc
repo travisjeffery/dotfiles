@@ -3,28 +3,15 @@ set nocompatible
 
 let s:iswin = has('win32') || has('win64')
 filetype off
- set rtp+=~/.vim/bundle/vundle/
- call vundle#rc('~/.bundle')
-" set rtp+=~/.vim/bundle/Bundle/
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc('~/.vundle')
 " Bundle/Vundle {{{2
-" Bundle 'https://github.com/thinca/vim-poslist.git'
-" Bundle 'git@github.com:travisjeffery/vim-rails-fork.git'
-" Bundle 'https://github.com/godlygeek/csapprox.git'
-" Bundle 'https://github.com/roman/golden-ratio.git'
-" Bundle 'https://github.com/jiangmiao/auto-pairs.git'
-" Bundle 'https://github.com/Lokaltog/vim-powerline.git'
-" Bundle 'https://github.com/Raimondi/delimitMate.git'
-" Bundle 'https://github.com/matthias-guenther/hammer.vim.git'
 Bundle 'git://github.com/tyru/operator-camelize.vim.git'
 Bundle 'https://github.com/teramako/jscomplete-vim.git'
-" call neobundle#rc(expand('~/.bundle'))
-" Bundle 'git@github.com:travisjeffery/vim-testee.git'
-" Bundle "https://github.com/SirVer/ultisnips.git"
-" Bundle 'https://github.com/vim-scripts/cmdline-completion.git'
 Bundle 'git://github.com/myusuf3/numbers.vim.git'
 Bundle 'https://github.com/Lokaltog/vim-easymotion.git'
 Bundle 'https://github.com/nono/vim-handlebars.git'
-" Bundle 'https://github.com/sjl/vitality.vim.git'
+Bundle 'https://github.com/sjl/vitality.vim.git'
 Bundle 'https://github.com/benmills/vimux.git'
 Bundle 'https://github.com/pgr0ss/vimux-ruby-test.git'
 Bundle 'https://github.com/kana/vim-tabpagecd.git'
@@ -34,22 +21,16 @@ Bundle 'https://github.com/bbommarito/vim-slim.git'
 Bundle 'https://github.com/the-isz/MinYankRing.vim.git', {'v': 'events'}
 Bundle "https://github.com/mattn/vdbi-vim"
 Bundle 'git@github.com:travisjeffery/vim-rails-find-partial.git'
-Bundle 'https://github.com/mattsa/vim-fuzzee.git'
 Bundle 'https://github.com/kikijump/tslime.vim.git'
-" Bundle 'https://github.com/jgdavey/vim-turbux.git'
-" Bundle 'https://github.com/kana/vim-smartinput.git'
-" Bundle 'https://github.com/jiangmiao/auto-pairs.git'
 Bundle 'https://github.com/kana/vim-smartinput.git'
 Bundle 'https://github.com/ecomba/vim-ruby-refactoring.git'
 Bundle 'https://github.com/sunaku/vim-ruby-shoulda-context.git'
 Bundle 'https://github.com/tangledhelix/vim-octopress.git'
-" Bundle 'https://github.com/othree/html5.vim.git'
 Bundle 'https://github.com/Raimondi/vim_search_objects.git'
 Bundle 'https://github.com/kana/vim-gf-diff.git'
 Bundle 'https://github.com/kana/vim-gf-user.git'
 Bundle 'https://github.com/kana/vim-textobj-line.git'
 Bundle 'https://github.com/groenewege/vim-less.git'
-" Bundle 'https://github.com/drewolson/ruby_focused_unit_test_vim.git'
 Bundle 'https://github.com/tpope/vim-eunuch.git'
 Bundle 'https://github.com/tyru/current-func-info.vim.git'
 Bundle 'https://github.com/digitaltoad/vim-jade.git'
@@ -66,11 +47,11 @@ Bundle 'https://github.com/ujihisa/quicklearn.git'
 Bundle 'https://github.com/vim-scripts/ReplaceWithRegister.git'
 Bundle 'https://github.com/timcharper/textile.vim.git'
 Bundle 'https://github.com/vim-scripts/AnsiEsc.vim.git'
-" Bundle 'https://github.com/Shougo/unite-build.git'
-" Bundle 'https://github.com/h1mesuke/unite-outline.git'
-" Bundle 'https://github.com/tsukkee/unite-tag.git'
+Bundle 'https://github.com/Shougo/unite-build.git'
+Bundle 'https://github.com/h1mesuke/unite-outline.git'
+Bundle 'https://github.com/tsukkee/unite-tag.git'
 Bundle 'https://github.com/majutsushi/tagbar.git'
-" Bundle 'https://github.com/ujihisa/vital.vim.git'
+Bundle 'https://github.com/ujihisa/vital.vim.git'
 Bundle 'git@github.com:travisjeffery/vim-extradite.git'
 Bundle 'https://github.com/kchmck/vim-coffee-script.git'
 Bundle 'git://github.com/Shougo/vim-vcs.git'
@@ -81,10 +62,8 @@ Bundle 'https://github.com/thinca/vim-github.git'
 Bundle 'https://github.com/lukaszb/vim-web-indent.git'
 Bundle 'https://github.com/pangloss/vim-javascript.git'
 Bundle 'https://github.com/thinca/vim-qfreplace.git'
-Bundle 'https://github.com/Shougo/vimshell.git'
 Bundle 'https://github.com/h1mesuke/vim-alignta.git'
 Bundle 'https://github.com/kien/ctrlp.vim.git'
-" Bundle 'https://github.com/tpope/vim-endwise.git'
 Bundle 'https://github.com/gmarik/vundle.git'
 Bundle 'https://github.com/kana/vim-altr.git'
 Bundle 'git@github.com:travisjeffery/IndexedSearch.git'
@@ -109,7 +88,6 @@ Bundle 'https://github.com/nelstrom/vim-textobj-rubyblock.git'
 Bundle 'https://github.com/kana/vim-textobj-user.git'
 Bundle 'https://github.com/kana/vim-smartword.git'
 Bundle 'git@github.com:travisjeffery/vim-unimpaired.git'
-" Bundle 'https://github.com/Shougo/vimfiler.git'
 Bundle 'http://github.com/mattn/zencoding-vim/'
 Bundle 'https://github.com/vim-scripts/ZoomWin.git'
 Bundle 'https://github.com/gregsexton/gitv.git'
@@ -119,15 +97,14 @@ Bundle 'https://github.com/kana/vim-grex.git'
 Bundle 'https://github.com/kana/vim-operator-user.git'
 Bundle 'https://github.com/kana/vim-operator-replace.git'
 Bundle 'https://github.com/tpope/vim-commentary.git'
-Bundle 'https://github.com/Shougo/vimproc.git'
-" Bundle 'https://github.com/Shougo/unite.vim.git'
+Bundle 'https://github.com/Shougo/unite.vim.git'
 Bundle 'https://github.com/vim-ruby/vim-ruby.git'
 Bundle 'https://github.com/tpope/vim-rake.git'
 Bundle 'https://github.com/tpope/vim-bundler.git'
 Bundle 'https://github.com/altercation/vim-colors-solarized.git'
 Bundle 'https://github.com/thinca/vim-quickrun.git'
 Bundle 'https://github.com/kana/vim-exjumplist.git'
-" Bundle 'https://github.com/thinca/vim-unite-history.git'
+Bundle 'https://github.com/thinca/vim-unite-history.git'
 Bundle 'https://github.com/Shougo/echodoc.git'
 Bundle 'https://github.com/kana/vim-altercmd.git'
 Bundle 'https://github.com/mattn/gist-vim.git'
@@ -572,7 +549,8 @@ let g:solarized_termcolor=256
 let g:solarized_visibility="high" 
 let g:solarized_contrast="high" 
 set background=light
-colorscheme solarized
+colorscheme Tomorrow
+" colorscheme solarized
 "}}}2
 " netrw {{{2
 let g:netrw_list_hide= '*.swp'
@@ -633,13 +611,13 @@ let g:ctrlp_mruf_max = 10000
 let g:ctrlp_max_files = 0 
 let g:ctrlp_extensions = ['tag', 'quickfix', 'dir', 'buffertag', 'line', 'change', 'undo']
 let g:ctrlp_split_window = 0
-let g:ctrlp_user_command = {
-    \ 'types': {
-      \ 1: ['.git/', 'cd %s && git ls-files'],
-      \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
-      \ },
-    \ 'fallback': 'find %s -type f'
-    \ }
+" let g:ctrlp_user_command = {
+"     \ 'types': {
+"       \ 1: ['.git/', 'cd %s && git ls-files'],
+"       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
+"       \ },
+"     \ 'fallback': 'find %s -type f'
+"     \ }
 "}}}2
 "Fugitive & Gitv {{{2
 nnoremap [Space]gd :<C-u>Gdiff<CR>
@@ -695,7 +673,8 @@ call unite#filters#converter_default#use(['converter_relative_abbr'])
 call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
       \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
 " nnoremap <C-B> :<C-u>Unite buffer<CR>
-nnoremap <C-B> :<C-u>CommandTBuffer<CR>
+" nnoremap <C-B> :<C-u>CommandTBuffer<CR>
+nnoremap <C-B> :<C-u>CtrlPBuffer<CR>
 " nnoremap <C-B> :<C-u>CtrlPBuffer<CR>
 nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
 "}}}2
@@ -760,11 +739,11 @@ else
   " Use zsh history.
   let g:vimshell_external_history_path = expand('~/.zsh-history')
 
-  call vimshell#set_execute_file('bmp,jpg,png,gif', 'gexe eog')
-  call vimshell#set_execute_file('mp3,m4a,ogg', 'gexe amarok')
-  let g:vimshell_execute_file_list['zip'] = 'zipinfo'
-  call vimshell#set_execute_file('tgz,gz', 'gzcat')
-  call vimshell#set_execute_file('tbz,bz2', 'bzcat')
+  " call vimshell#set_execute_file('bmp,jpg,png,gif', 'gexe eog')
+  " call vimshell#set_execute_file('mp3,m4a,ogg', 'gexe amarok')
+  " let g:vimshell_execute_file_list['zip'] = 'zipinfo'
+  " call vimshell#set_execute_file('tgz,gz', 'gzcat')
+  " call vimshell#set_execute_file('tbz,bz2', 'bzcat')
 
   " Use gnome-terminal.
   let g:vimshell_use_terminal_command = 'gnome-terminal -e'
@@ -772,11 +751,11 @@ endif
 
 " Initialize execute file list.
 let g:vimshell_execute_file_list = {}
-call vimshell#set_execute_file('txt,vim,c,h,cpp,d,xml,java', 'vim')
+" call vimshell#set_execute_file('txt,vim,c,h,cpp,d,xml,java', 'vim')
 let g:vimshell_execute_file_list['rb'] = 'ruby'
 let g:vimshell_execute_file_list['pl'] = 'perl'
 let g:vimshell_execute_file_list['py'] = 'python'
-call vimshell#set_execute_file('html,xhtml', 'gexe firefox')
+" call vimshell#set_execute_file('html,xhtml', 'gexe firefox')
 
 
 autocmd MyAutoCmd FileType vimshell call s:vimshell_settings()
@@ -1029,6 +1008,7 @@ autocmd BufNewFile,BufRead *.txt set ft=markdown
 autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
 autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
 autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
+autocmd BufNewFile,BufRead Podfile set ft=ruby sw=2 sts=2
 autocmd FileType vimperator set ft=vim
 autocmd filetype svn,*commit*,markdown set spell
 autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
@@ -1537,6 +1517,8 @@ nmap \# /^ *#<CR>
 nnoremap gs <Nop>
 nmap gs :vimgrep /^ *\(context\<Bar>test\<Bar>def\<Bar>should\<Bar>class\)/ %<CR><Bar>:cw<CR>
 nmap \/ /\<\><Left><Left>
+
+nnoremap gqq vapgq
 
 " nmap <Leader>a= :Tabularize /=<CR>
 " vmap <Leader>a= :Tabularize /=<CR>
