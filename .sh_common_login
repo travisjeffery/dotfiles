@@ -77,7 +77,6 @@ elif [ -d "$HOME/.rvm" ]; then
 fi
 
 PATH="/Applications/Postgres.app/Contents/MacOS/bin:$PATH"
-PATH="/usr/local/Cellar/ruby/1.9.3-p194/bin/:$PATH"
 
 PATH="$PATH:$OLD_PATH"
 
