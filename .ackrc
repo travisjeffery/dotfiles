@@ -12,4 +12,6 @@
 --type-set=coffee=.coffee
 --type-set=RDOC=rdoc
 
+--ignore-dir=node_modules
+
 --smart-case
