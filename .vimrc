@@ -4,7 +4,7 @@ set nocompatible
 let s:iswin = has('win32') || has('win64')
 filetype off
 set rtp+=~/.vim/bundle/vundle/
-call vundle#rc('~/.vundle')
+call vundle#rc('~/.vim/bundle')
 " Bundle/Vundle {{{2
 Bundle 'git://github.com/tyru/operator-camelize.vim.git'
 Bundle 'https://github.com/teramako/jscomplete-vim.git'
