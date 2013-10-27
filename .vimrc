@@ -110,6 +110,7 @@ Bundle 'https://github.com/kana/vim-altercmd.git'
 Bundle 'https://github.com/mattn/gist-vim.git'
 Bundle 'https://github.com/kana/vim-scratch.git'
 Bundle 'https://github.com/scrooloose/syntastic.git'
+Bundle 'https://github.com/Valloric/YouCompleteMe.git'
 
 "}}}
 
