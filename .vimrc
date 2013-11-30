@@ -1299,7 +1299,8 @@ function! s:cd_buffer_dir()"{{{
 endfunction"}}}2
 nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
 
-nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
+" nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
+
 nmap R <Nop>
 nmap R <SID>(command-line-enter)%s//
 nnoremap <C-y> 5<C-y>
