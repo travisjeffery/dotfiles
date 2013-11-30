@@ -13,5 +13,6 @@
 --type-set=RDOC=rdoc
 
 --ignore-dir=node_modules
+--ignore-dir=.idea
 
 --smart-case
