@@ -386,3 +386,5 @@ backward-delete-to-slash() {
 
 zle -N backward-delete-to-slash
 
+zstyle ':completion:*:*:git:*' user-commands author:'show author info'
+
