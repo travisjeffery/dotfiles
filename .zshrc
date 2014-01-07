@@ -1,4 +1,4 @@
-source $HOME/.sh_common_login
+source $HOME/.shrc
 
 skip_global_compinit=true
 

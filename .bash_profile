@@ -1,6 +1,6 @@
 # My .bash_profile
 
-source ~/.sh_common_login
+source ~/.shrc
 
 
 
@@ -36,3 +36,4 @@ unset -f _check_then_source
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
