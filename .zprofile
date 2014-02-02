@@ -1,6 +1,6 @@
 # My zprofile.
 
-source ~/.sh_common_login
+source ~/.shrc
 
 # __END__
 # vim: filetype=zsh
