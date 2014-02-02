@@ -4,8 +4,6 @@ skip_global_compinit=true
 
 DEFAULT_USERNAME='tj'
 
-. ~/.zsh/pure/prompt.zsh
-
 autoload -U compinit && compinit
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
@@ -47,7 +45,11 @@ LBUFFER+="$(eval $history[$((HISTCMD-1))])"
 zle -N insert-last-command-output
 bindkey "^X^L" insert-last-command-output
 
-fpath=("$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
+fpath=("$HOME/.zsh/pure" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
+
+autoload -U promptinit && promptinit
+
+prompt pure
 
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion:*'          list-colors ''
