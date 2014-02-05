@@ -50,3 +50,4 @@ DerivedData
 build/
 tags
 xcuserdata
+.gitconfig
