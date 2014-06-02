@@ -38,6 +38,7 @@ PATH="/Applications/Postgres.app/Contents/MacOS/bin:$PATH"
 PATH="$PATH:$OLD_PATH"
 
 eval "$(hub alias -s)"
+. ~/dev/segmentio/dotfiles/index.sh
 
 export EDITOR=vim
 export PAGER=less
