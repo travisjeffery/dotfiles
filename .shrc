@@ -15,6 +15,8 @@ if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
 if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
 
 if [ -d "$HOME/Library/Haskell/bin" ]; then PATH="$HOME/Library/Haskell/bin:$PATH"; fi
+if [ -d "$HOME/dev/go/bin" ]; then PATH="$HOME/dev/go/bin:$PATH"; fi
+PATH="/usr/local/opt/go/libexec/bin:$PATH"
 
 if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
 if [ -d "/usr/local/sbin" ]; then PATH="/usr/local/sbin:$PATH"; fi
@@ -45,6 +47,7 @@ export PAGER=less
 export SHELL=$(which zsh)
 export TZ=EST
 export TERM=xterm-256color
+export GOPATH=$HOME/dev/go
 
 export GZIP='--best --name --verbose'
 
