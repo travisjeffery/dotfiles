@@ -390,3 +390,4 @@ zle -N backward-delete-to-slash
 
 zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 
+. `brew --prefix`/etc/profile.d/z.sh
