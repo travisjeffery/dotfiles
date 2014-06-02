@@ -9,4 +9,4 @@
 - http://gems.github.com
 :update_sources: true
 :verbose: true
-gem: --no-rdoc --no-ri
+gem: --no-rdoc --no-ri --no-document
