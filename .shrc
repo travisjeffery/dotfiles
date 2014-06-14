@@ -47,13 +47,13 @@ export SHELL=$(which zsh)
 export TZ=EST
 export TERM=xterm-256color
 export GOPATH=$HOME/dev/go
+export VIMRUNTIME=/usr/local/share/vim/vim74
 
 export GZIP='--best --name --verbose'
 
 # To use pbcopy/pbpaste with UTF-8 encoding.
 export __CF_USER_TEXT_ENCODING=${__CF_USER_TEXT_ENCODING/:*:/:0x08000100:}
 
-# vim: filetype=sh foldmethod=marker
-
 eval "$(gh alias -s)"
 
+# vim: filetype=sh foldmethod=marker
