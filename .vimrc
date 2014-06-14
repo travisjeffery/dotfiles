@@ -335,9 +335,9 @@ if has("gui") && has("mac")
   set fuopt+=maxhorz
   set macmeta
   set antialias
-  set guifont=Inconsolata:h14
+  set guifont=Monaco:h10
 else
-  set guifont=Inconsolata\ 12
+  set guifont=Monaco\ 10
 endif
 if &term =~ "^screen"
   augroup MyAutoCmd
