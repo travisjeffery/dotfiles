@@ -122,7 +122,7 @@ elif [ -x "`whence less`" ]; then
     export LESS="-isR"
     alias lv="less"
 else
-    export PAGER="/bin/more"
+    # export PAGER="/bin/more"
 fi
 
 alias e='emacsclient -t'
