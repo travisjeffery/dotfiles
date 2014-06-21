@@ -104,7 +104,9 @@ augroup END
 
 filetype on
 syntax on
+set noantialias
 set lazyredraw
+set number
 set autowrite
 set autowriteall
 set cmdheight=2
@@ -163,7 +165,7 @@ set expandtab
 set autoindent
 set wildmode=list:longest
 set wildmenu
-set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp
+set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp,node_modules
 set virtualedit=block
 set matchpairs+=<:>
 set autoread
@@ -564,9 +566,8 @@ autocmd User Rails/spec/javascripts/*.*
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=0
 let g:syntastic_auto_loc_list=1
-let g:syntastic_quiet_warnings=1
-let g:syntastic_javascript_checker = 'jshint'
-" let g:syntastic_javascript_jslint_conf = "--white --lastsemic --eqeqeq --undef --nomen --regexp --plusplus --bitwise --newcap --sloppy --vars --es5=false"
+let g:syntastic_js_checkers = 'jshint'
+let g:syntastic_javascript_jslint_conf = "--white --lastsemic --eqeqeq --undef --nomen --regexp --plusplus --bitwise --newcap --sloppy --vars --es5=false"
 "}}}2
 " QuickRun {{{2
 let g:quickrun_direction = 'rightbelow horizontal'
@@ -626,7 +627,7 @@ nmap gy  <SID>(command-line-enter)<C-u>Grey<CR>
 autocmd MyAutoCmd FileType qf nnoremap <buffer> r :<C-u>Qfreplace<CR>
 " Misc {{{2
 let g:snips_author = "Travis Jeffery"
-let g:user_zen_leader_key = '<c-e>'
+let g:user_zen_leader_key = '<c-q>'
 let g:use_zen_complete_tag = 1
 let g:ragtag_global_maps = 1
 " let g:user_zen_settings = {
@@ -970,10 +971,10 @@ command! -nargs=? TabpageCD
       \ | let t:cwd = getcwd()
 "}}}1
 " Section: Autocommands {{{1
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType javascript
-  \ :setl omnifunc=jscomplete#CompleteJS
-let g:jscomplete_use = ['dom']
+" autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+" autocmd FileType javascript
+"   \ :setl omnifunc=jscomplete#CompleteJS
+" let g:jscomplete_use = ['dom']
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType vim set omnifunc=syntaxcomplete#Complete
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
@@ -1066,6 +1067,8 @@ cabbrev ack grep
 cabbrev BUndle Bundle
 cabbrev gg; Ggrep -P
 
+iabbrev <expr> ddate strftime("%Y-%m-%d")
+
 " rails cabbrevs
 cabbrev rm; Rmodel
 cabbrev rc; Rcontroller
@@ -1073,6 +1076,28 @@ cabbrev rv; Rview
 cabbrev ru; Runittest
 cabbrev rf; Rfunctional
 cabbrev rs; Rschema
+
+iabbrev mmit; The MIT License (MIT)
+      \<CR>
+      \<CR>Copyright (c) <year> <copyright holders>
+      \<CR>
+      \<CR>Permission is hereby granted, free of charge, to any person obtaining a copy
+      \<CR>of this software and associated documentation files (the "Software"), to deal
+      \<CR>in the Software without restriction, including without limitation the rights
+      \<CR>to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+      \<CR>copies of the Software, and to permit persons to whom the Software is
+      \<CR>furnished to do so, subject to the following conditions:
+      \<CR>
+      \<CR>The above copyright notice and this permission notice shall be included in
+      \<CR>all copies or substantial portions of the Software.
+      \<CR>
+      \<CR>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+      \<CR>IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+      \<CR>FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+      \<CR>AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+      \<CR>LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+      \<CR>OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+      \<CR>THE SOFTWARE.
 
 command! Ctags
       \ execute "!ctags --extra=+f --exclude=.git --exclude=log -R *"
@@ -1122,20 +1147,20 @@ xmap  <Space>   [Space]
 nnoremap  [Space]   <Nop>
 xnoremap  [Space]   <Nop>
 
-nnoremap ; <Nop>
-xnoremap ;  <Nop>
+" nnoremap ; <Nop>
+" xnoremap ;  <Nop>
 nnoremap : <Nop>
 xnoremap :  <Nop>
 
 nnoremap <SID>(command-line-enter) :
 xnoremap <SID>(command-line-enter) :
-nmap ; <SID>(command-line-enter)
-xmap ; <SID>(command-line-enter)
+" nmap ; <SID>(command-line-enter)
+" xmap ; <SID>(command-line-enter)
 nmap : <SID>(command-line-enter)
 xmap : <SID>(command-line-enter)
 
-nnoremap ' <Nop>
-nnoremap ' ;
+" nnoremap ' <Nop>
+" nnoremap ' ;
 
 nnoremap <silent> [Space]; :<C-u>normal!<Space>;<CR>
 nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
@@ -1190,11 +1215,11 @@ endif
 map [Space]c <Plug>(operator-camelize-toggle)
 
 " Copy current buffer's path to clipboard{{{2
-nnoremap <Leader>% :<C-u>call <SID>copy_ruby_path()<CR>
-function! s:copy_ruby_path()
-  let @*="ruby -Ilib:test ".expand('%')
-  let @"="ruby -Ilib:test ".expand('%')
-  let @+="ruby -Ilib:test ".expand('%')
+nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
+function! s:copy_path()
+  let @*=expand('%')
+  let @"=expand('%')
+  let @+=expand('%')
 endfunction"}}}2
 
 " Copy current buffer's path to clipboard{{{2
@@ -1282,7 +1307,7 @@ function! s:cd_buffer_dir()"{{{
 endfunction"}}}2
 nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
 
-" nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
+nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
 
 nmap R <Nop>
 nmap R <SID>(command-line-enter)%s//
