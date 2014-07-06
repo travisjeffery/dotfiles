@@ -1,5 +1,6 @@
 {
     "multistr": true
+,   "esnext": true
 ,   "strict": false
 ,   "undef": false
 ,   "eqeqeq": true
@@ -7,11 +8,12 @@
 ,   "regexp": true
 ,   "boss": true
 ,   "laxcomma": true
+,   "laxbreak": true
 ,   "trailing": true
 ,   "nonew": true
 ,   "noarg": true
-,   "newcap": true
-,   "latedef": true
+,   "newcap": false
+,   "latedef": "nofunc"
 ,   "immed": false
 ,   "asi": true
 ,   "bitwise": true
