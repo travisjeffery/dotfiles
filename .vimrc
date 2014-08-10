@@ -534,8 +534,9 @@ let g:solarized_termcolor=256
 let g:solarized_visibility="high" 
 let g:solarized_contrast="high" 
 set background=light
-colorscheme Tomorrow
-" colorscheme solarized
+" colorscheme default
+" colorscheme Tomorrow
+colorscheme solarized
 "}}}2
 " netrw {{{2
 let g:netrw_list_hide= '*.swp'
