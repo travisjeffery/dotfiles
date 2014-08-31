@@ -296,6 +296,7 @@ set fileformats=unix,dos,mac
 set cursorline
 set relativenumber
 au BufReadPost * set relativenumber
+au BufEnter /private/tmp/crontab.* setl backupcopy=yes
 set timeoutlen=1000
 set ttimeoutlen=50
 set laststatus=2
