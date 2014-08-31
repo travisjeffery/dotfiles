@@ -990,6 +990,7 @@ autocmd FileType ruby,eruby
       " \ exe "normal zM``" 
       " \ set foldlevel=1 | 
 autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
+autocmd BufNewFile,BufRead *.bats set ft=sh sw=2 sts=2
 autocmd BufNewFile,BufRead *.txt set ft=markdown
 autocmd BufNewFile,BufRead *.css set ft=css sw=2 sts=2
 autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
