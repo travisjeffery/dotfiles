@@ -6,8 +6,11 @@ DEFAULT_USERNAME='tj'
 
 autoload -U compinit && compinit
 autoload history-search-end
+autoload -U url-quote-magic
+
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
+zle -N self-insert url-quote-magic
 
 bindkey "^[[A" history-beginning-search-backward-end
 bindkey "^[[B" history-beginning-search-forward-end
