@@ -259,7 +259,16 @@ is-within-bundled-project() {
 }
 
 dev () {
-  cd "$HOME/dev/$@"
+  local dev="$HOME/dev"
+  local dir="$dev/$@"
+
+  if [ -d "$dir" ]; then
+    cd "$dir"
+  else
+    cd "$dev"
+    git clone "git@github.com:travisjeffery/$@.git" &> /dev/null || { read "?clone url: " url && git clone "$url" }
+    cd "$@"
+  fi
 }
 
 tj-backward-kill() {
