@@ -327,7 +327,7 @@ set t_ti=
 set t_te=
 set shortmess=filtIoOA
 set report=0
-set grepprg=ack
+set grepprg=ag
 if has("mac")
   set clipboard=unnamed
   let g:gist_clip_command = 'pbcopy'
