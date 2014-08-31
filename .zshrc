@@ -255,6 +255,10 @@ is-within-bundled-project() {
   false
 }
 
+dev () {
+  cd "$HOME/dev/$@"
+}
+
 tj-backward-kill() {
   local WORDCHARS='*?_~=&;!#$%^(){}'
   zle backward-kill-word;
