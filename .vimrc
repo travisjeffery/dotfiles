@@ -8,6 +8,7 @@ call vundle#begin()
 " Bundle/Vundle {{{2
 Plugin 'gmarik/Vundle.vim'
 Plugin 'fatih/vim-go'
+Plugin 'mattn/emmet-vim'
 Plugin 'https://github.com/myhere/vim-nodejs-complete.git'
 Plugin 'https://github.com/Valloric/YouCompleteMe.git'
 Plugin 'https://github.com/b4winckler/vim-objc.git'
@@ -629,7 +630,9 @@ nmap gy  <SID>(command-line-enter)<C-u>Grey<CR>
 autocmd MyAutoCmd FileType qf nnoremap <buffer> r :<C-u>Qfreplace<CR>
 " Misc {{{2
 let g:snips_author = "Travis Jeffery"
-let g:user_zen_leader_key = '<c-q>'
+let g:user_emmet_install_global = 0
+autocmd FileType html,css,markdown EmmetInstall
+let g:user_zen_leader_key = '<c-t>'
 let g:use_zen_complete_tag = 1
 let g:ragtag_global_maps = 1
 " let g:user_zen_settings = {
