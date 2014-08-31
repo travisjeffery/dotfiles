@@ -41,14 +41,14 @@ PATH="$PATH:$OLD_PATH"
 
 . ~/dev/segmentio/dotfiles/index.sh
 
-export EDITOR="emacsclient -c -a="
+# export EDITOR="emacsclient -nw"
+export EDITOR=vim
 export PAGER=less
 export SHELL=$(which zsh)
 export TZ=EST
 export TERM=xterm-256color
 export GOPATH=$HOME/dev/go
-export VIMRUNTIME=/usr/local/share/vim/vim74
-
+export VIMRUNTIME=/usr/local/Cellar/macvim/HEAD/MacVim.app/Contents/Resources/vim/runtime
 export GZIP='--best --name --verbose'
 
 # To use pbcopy/pbpaste with UTF-8 encoding.
