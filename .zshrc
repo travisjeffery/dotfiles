@@ -259,7 +259,7 @@ is-within-bundled-project() {
 }
 
 dev () {
-  local dev="$HOME/dev"
+  local dev="$HOME/dev/travisjeffery"
   local dir="$dev/$@"
 
   if [ -d "$dir" ]; then
