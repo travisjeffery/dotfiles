@@ -180,6 +180,8 @@ alias display="display -geometry +0+0"
 alias rhino="rlwrap java -jar /usr/share/java/js.jar"
 alias e='subl . &'
 alias node="env NODE_NO_READLINE=1 rlwrap node"
+alias curl="noglob curl"
+alias wget="noglob wget"
 
 function g {
   if [[ $# > 0 ]]; then
