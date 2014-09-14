@@ -325,6 +325,7 @@ zle -N zle-keymap-select auto-fu-zle-keymap-select
 zstyle ':auto-fu:highlight' input bold
 zstyle ':auto-fu:highlight' completion fg=white,dim
 zstyle ':auto-fu:highlight' completion/one fg=blue,dim
+# zstyle ':auto-fu:var' enable all
 zstyle ':auto-fu:var' postdisplay ''
 zstyle ':auto-fu:var' track-keymap-skip opp
 zstyle ':auto-fu:var' autoable-function/skiplbuffers \
@@ -410,5 +411,7 @@ backward-delete-to-slash() {
 zle -N backward-delete-to-slash
 
 zstyle ':completion:*:*:git:*' user-commands author:'show author info'
+
+export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
 
 . `brew --prefix`/etc/profile.d/z.sh
