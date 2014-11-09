@@ -41,7 +41,7 @@ PATH="$PATH:$OLD_PATH"
 
 . ~/dev/segmentio/dotfiles/index.sh
 
-export EDITOR="emacsclient -t"
+export EDITOR="emacsclient"
 # export EDITOR=vim
 export PAGER=less
 export SHELL=$(which zsh)
