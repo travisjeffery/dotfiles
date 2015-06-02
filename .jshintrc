@@ -1,5 +1,6 @@
 {
     "multistr": true
+,   "node": true
 ,   "esnext": true
 ,   "strict": false
 ,   "undef": false
