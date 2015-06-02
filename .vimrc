@@ -9,12 +9,18 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 Plugin 'fatih/vim-go'
 Plugin 'mattn/emmet-vim'
+Plugin 'xolox/vim-misc'
+Plugin 'xolox/vim-easytags'
+Plugin 'marijnh/tern_for_vim'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
+Plugin 'travisjeffery/vim-auto-mkdir'
 Plugin 'https://github.com/myhere/vim-nodejs-complete.git'
 Plugin 'https://github.com/Valloric/YouCompleteMe.git'
 Plugin 'https://github.com/b4winckler/vim-objc.git'
 Plugin 'https://github.com/altercation/vim-colors-solarized.git'
 Plugin 'git://github.com/tyru/operator-camelize.vim.git'
-Plugin 'git://github.com/myusuf3/numbers.vim.git'
+" Plugin 'git://github.com/myusuf3/numbers.vim.git'
 Plugin 'https://github.com/Lokaltog/vim-easymotion.git'
 Plugin 'https://github.com/nono/vim-handlebars.git'
 Plugin 'https://github.com/sjl/vitality.vim.git'
@@ -96,7 +102,6 @@ call vundle#end()
 
 "}}}
 
-
 filetype plugin indent on
 
 augroup MyAutoCmd
@@ -104,7 +109,7 @@ augroup MyAutoCmd
 augroup END
 
 filetype on
-syntax on
+syntax off
 set noantialias
 set lazyredraw
 set number
@@ -273,17 +278,17 @@ function! s:reinventing_scrolloff()
 endfunction
 "}}}2
 " Automatically mkdir when writing file in non-existant directory{{{2
-augroup vimrc-auto-mkdir
-  autocmd!
-  autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
-  function! s:auto_mkdir(dir, force)
-    if !isdirectory(a:dir)
-          \   && (a:force
-          \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
-      call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-    endif
-  endfunction
-augroup END"}}}2
+" augroup vimrc-auto-mkdir
+"   autocmd!
+"   autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+"   function! s:auto_mkdir(dir, force)
+"     if !isdirectory(a:dir)
+"           \   && (a:force
+"           \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
+"       call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+"     endif
+"   endfunction
+" augroup END"}}}2
 set mouse=a
 set ttymouse=xterm2
 set t_Co=256
@@ -295,8 +300,9 @@ set complete-=k
 set complete-=i
 set fileformats=unix,dos,mac
 set cursorline
-set relativenumber
-au BufReadPost * set relativenumber
+set nonumber
+" set relativenumber
+" au BufReadPost * set norelativenumber
 au BufEnter /private/tmp/crontab.* setl backupcopy=yes
 set timeoutlen=1000
 set ttimeoutlen=50
@@ -385,6 +391,8 @@ endfunction
 autocmd MyAutoCmd FileType * setl formatoptions-=ro | setl formatoptions+=mM
 autocmd MyAutoCmd BufWritePost vimrc source $MYVIMRC
 autocmd MyAutoCmd BufWritePost .vimrc source $MYVIMRC
+
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 
 function! AddInstanceVariablesForArguments()
   let @a = ""
@@ -513,6 +521,36 @@ augroup END"}}}2
 " Section: Plugins {{{1
 " EasyMotion {{{1
 let g:EasyMotion_leader_key = '<Space><Space>'
+"}}}
+" ultisnips }}}2
+function! g:UltiSnips_Complete()
+    call UltiSnips#ExpandSnippet()
+    if g:ulti_expand_res == 0
+        if pumvisible()
+            return "\<C-n>"
+        else
+            call UltiSnips#JumpForwards()
+            if g:ulti_jump_forwards_res == 0
+               return "\<TAB>"
+            endif
+        endif
+    endif
+    return ""
+endfunction
+
+au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsListSnippets="<c-e>"
+" this mapping Enter key to <C-y> to chose the current highlight item 
+" and close the selection list, same as other IDEs.
+" CONFLICT with some plugins like tpope/Endwise
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+"}}}
+" easytags {{{2
+let g:easytags_async = 1
+" let g:easytags_events = ['BufWritePost']
 "}}}
 " powerline {{{2
 let g:Powerline_symbols = 'fancy'
@@ -1018,6 +1056,7 @@ let g:do_filetype = 0
 au GUIEnter,BufAdd * if expand('<afile>') == "" | let g:do_filetype = 1 | endif
 au BufEnter * if g:do_filetype | setf markdown | let g:do_filetype = 0 | endif
 au BufNewFile,BufRead,BufWinEnter * if search("diff --git", 'cp', 1) | set filetype=git | endif
+autocmd BufNewFile,BufRead * syntax off
 
 command! OpenChangedFiles :call OpenChangedFiles()
 function! OpenChangedFiles()
@@ -1124,7 +1163,7 @@ iabbrev innit init
 iabbrev innitialize initialize
 iabbrev seperate separate
 iabbrev teh the
-iabbrev ;; =>
+" iabbrev ;; =>
 iabbrev shuold should
 iabbrev shulod should
 iabbrev PgTOols PgTools
@@ -1241,6 +1280,7 @@ autocmd MyAutoCmd FileType clojure call altr#define('src/*/%.clj', 'test/*/%.clj
 autocmd FileType ruby call altr#define('lib/%/*.rb', 'lib/%.rb', 'test/%_*.rb', 'test/%.rb')
 autocmd FileType coffee call altr#define('src/%/*.coffee', 'src/%.coffee', 'test/%_*.coffee', 'test/%.coffee')
 autocmd FileType * command! -buffer A call altr#forward()
+autocmd FileType * command! -buffer B call altr#back()
 "}}}2
 " To keep legacy surround mapping{{{2
 let g:surround_no_mappings=1
@@ -1488,6 +1528,40 @@ vnoremap <silent> [Space]a :Alignta =>/=<Cr>
 xnoremap <silent> [Space]a  :Alignta =>\=<CR>
 
 nnoremap <Leader>m :TagbarToggle<CR>
+" add a definition for Objective-C to tagbar
+let g:tagbar_type_objc = {
+    \ 'ctagstype' : 'ObjectiveC',
+    \ 'kinds'     : [
+        \ 'i:interface',
+        \ 'I:implementation',
+        \ 'p:Protocol',
+        \ 'm:Object_method',
+        \ 'c:Class_method',
+        \ 'v:Global_variable',
+        \ 'F:Object field',
+        \ 'f:function',
+        \ 'p:property',
+        \ 't:type_alias',
+        \ 's:type_structure',
+        \ 'e:enumeration',
+        \ 'M:preprocessor_macro',
+    \ ],
+    \ 'sro'        : ' ',
+    \ 'kind2scope' : {
+        \ 'i' : 'interface',
+        \ 'I' : 'implementation',
+        \ 'p' : 'Protocol',
+        \ 's' : 'type_structure',
+        \ 'e' : 'enumeration'
+    \ },
+    \ 'scope2kind' : {
+        \ 'interface'      : 'i',
+        \ 'implementation' : 'I',
+        \ 'Protocol'       : 'p',
+        \ 'type_structure' : 's',
+        \ 'enumeration'    : 'e'
+    \ }
+\ }
 " nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
 nnoremap <Leader>v :<C-u>vsplit<CR><C-w><C-w>
