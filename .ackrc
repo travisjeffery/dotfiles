@@ -3,7 +3,6 @@
 
 --type-add=ruby=rake,haml
 --type-add=vim=vimrc
---type-add=js=json
 --type-add=html=haml
 --type-add=css=sass,scss,less
 
