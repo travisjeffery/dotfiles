@@ -53,3 +53,4 @@ xcuserdata
 .gitconfig
 .config/gh
 .config/gh-update
+*.test
