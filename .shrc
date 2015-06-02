@@ -29,6 +29,7 @@ if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
 if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
 if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 
+export PATH="/usr/local/go/bin:$PATH"
 export PATH="/usr/local/mysql/bin:$PATH"
 export RBENV_ROOT="$HOME/.rbenv"
 export PATH="$RBENV_ROOT/bin:$RBENV_ROOT/libexec:$PATH"
@@ -37,25 +38,38 @@ export PATH="$RBENV_ROOT/bin:$RBENV_ROOT/libexec:$PATH"
 
 PATH="/Applications/Postgres.app/Contents/MacOS/bin:$PATH"
 
-PATH="$PATH:$OLD_PATH"
-
-. ~/dev/segmentio/dotfiles/index.sh
-
 export EDITOR="emacsclient"
 # export EDITOR=vim
 export PAGER=less
 export SHELL=$(which zsh)
 export TZ=EST
 export TERM=xterm-256color
-export GOPATH=$HOME/dev/go
 export VIMRUNTIME=/usr/local/Cellar/macvim/HEAD/MacVim.app/Contents/Resources/vim/runtime
 export GZIP='--best --name --verbose'
 # export TERM=xterm-16color
 export GITHUB_USERNAME=travisjeffery
+export JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
+export GOPATH=$HOME/dev
+export ROBO_PATH=commands/commands
+export ROBO_HOST=bastion
+
+PATH="$JAVA_HOME/bin:$PATH"
+
+PATH="$PATH:$OLD_PATH"
+
+. ~/dev/segmentio/dotfiles/index.sh
 
 # To use pbcopy/pbpaste with UTF-8 encoding.
 export __CF_USER_TEXT_ENCODING=${__CF_USER_TEXT_ENCODING/:*:/:0x08000100:}
 
+export DOCKER_CERT_PATH=/Users/tj/.boot2docker/certs/boot2docker-vm
+export DOCKER_TLS_VERIFY=1
+export DOCKER_HOST=tcp://192.168.59.103:2376
+alias vm="cd $GOPATH/src/github.com/segmentio/docker-vm && make ssh"
+
 eval "$(gh alias -s)"
 
+eval "$(rbenv init -)"
+
 # vim: filetype=sh foldmethod=marker
+
