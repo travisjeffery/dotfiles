@@ -130,6 +130,7 @@ fi
 
 alias e='emacsclient -t'
 alias ec='emacsclient -c'
+alias pr='git pull-request'
 
 # export GREP_OPTIONS='-rIPs --exclude-dir=.[a-zA-Z0-9]* --exclude=.* --exclude=*~ --color=auto'
 #
@@ -367,6 +368,14 @@ bindkey-advice-before "^G" afu+cancel
 bindkey-advice-before "^[" afu+cancel
 bindkey-advice-before "^J" afu+cancel afu+accept-line
 
+function release() {
+  local version=$(bump patch | xargs | cut -f4 -d' ' | sed -r "s:\x1B\[[0-9;]*[mK]::g")
+  git changelog --tag "$version"
+  git pull
+  git-release $version
+}
+
+
 function afu+delete-unambiguous-prefix () {
     afu-clearing-maybe
     local buf; buf="$BUFFER"
@@ -413,5 +422,7 @@ zle -N backward-delete-to-slash
 zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
+
+export GOPATH="$HOME/dev"
 
 . `brew --prefix`/etc/profile.d/z.sh
