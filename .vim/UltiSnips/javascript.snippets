@@ -1,0 +1,45 @@
+snippet f
+function $1($2) {
+  $0
+});
+endsnippet
+
+snippet desc
+describe('$1', function () {
+  $0
+});
+endsnippet
+  
+snippet it 
+it('should $1', function (${2:done}) {
+  $0
+});
+endsnippet
+
+snippet after
+after(function () {
+  $0
+});
+endsnippet
+
+snippet before
+before(function () {
+  $0
+});
+endsnippet
+
+snippet beforeEach
+beforeEach(function () {
+  $0
+});
+endsnippet
+
+snippet afterEach
+afterEach(function () {
+  $0
+});
+endsnippet
+
+snippet log
+console.log('$1');
+endsnippet
