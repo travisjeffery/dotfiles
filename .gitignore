@@ -1,4 +1,5 @@
 *.LinkFileList
+*.test
 *.dat
 *.dep
 *.hmap
