@@ -1,9 +1,0 @@
-tags
-*~
-*.swp
-.VimballRecord
-undofiles/*
-projects/*
-.netrwhist
-.svn
-doc
