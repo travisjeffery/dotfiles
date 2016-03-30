@@ -4,5 +4,3 @@
 # source $HOME/.shrc
 export GOPATH=$HOME/dev
 
-eval "$(/Users/tj/dev/segmentio/tron/bin/tron init -)"
-eval "$(/Users/tj/dev/travisjeffery/bubo/bin/bubo init -)"
