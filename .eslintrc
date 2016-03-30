@@ -1,0 +1,22 @@
+{
+  "ecmaFeatures": {
+    "blockBindings": true,
+    "forOf": true,
+    "jsx": true,
+    "modules": true,
+    "destructuring": true,    
+  },
+  "rules": {
+    "semi": [1, "never"],
+    "quotes": 0,
+    "no-use-before-define": 0,
+    "curly": 0,
+    "eqeqeq": 0,
+    "no-underscore-dangle": 0,
+    "new-cap": 0
+  },
+  "env": {
+    "node": true,
+    "es6": true
+  }
+}
