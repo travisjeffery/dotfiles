@@ -48,7 +48,7 @@ LBUFFER+="$(eval $history[$((HISTCMD-1))])"
 zle -N insert-last-command-output
 bindkey "^X^L" insert-last-command-output
 
-fpath=("$HOME/.zsh/pure" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
+fpath=("$HOME/.zsh/functions" "$HOME/.zsh/pure" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
 
 autoload -U promptinit && promptinit
 
@@ -77,7 +77,12 @@ setopt interactivecomments
 setopt longlistjobs
 setopt nobeep
 setopt noclobber
+setopt AUTO_CD
+setopt RM_STAR_WAIT
 setopt notify
+setopt AUTO_NAME_DIRS
+setopt PUSHD_MINUS
+
 
 setopt appendhistory
 setopt extendedhistory
@@ -93,6 +98,8 @@ setopt pushdignoredups
 setopt combiningchars
 setopt noautomenu
 
+autoload -U select-word-style
+select-word-style bash
 
 # Threshold (sec) for showing cmd exec time
 CMD_MAX_EXEC_TIME=5
@@ -179,7 +186,6 @@ alias emacs="emacs -nw"
 # alias yaourt="yaourt --tmp /home/tmp"
 alias display="display -geometry +0+0"
 alias rhino="rlwrap java -jar /usr/share/java/js.jar"
-alias e='subl . &'
 alias node="env NODE_NO_READLINE=1 rlwrap node"
 alias curl="noglob curl"
 alias wget="noglob wget"
@@ -281,6 +287,21 @@ tj-backward-kill() {
 zle -N tj-backward-kill;
 bindkey '^w' tj-backward-kill;
 
+
+tj-backward-word() {
+  local WORDCHARS='*?_~=&;!#$%^(){}'
+  zle backward-word;
+};
+zle -N tj-backward-word;
+bindkey '^b' tj-backward-word;
+
+tj-forward-word() {
+  local WORDCHARS='*?_~=&;!#$%^(){}'
+  zle forward-word;
+};
+zle -N tj-forward-word;
+bindkey '^f' tj-forward-word;
+
 run-with-bundler() {
   if is-bundler-installed && is-within-bundled-project; then
     bundle exec $@
@@ -369,12 +390,12 @@ bindkey-advice-before "^[" afu+cancel
 bindkey-advice-before "^J" afu+cancel afu+accept-line
 
 function release() {
-  local version=$(bump patch | xargs | cut -f4 -d' ' | sed -r "s:\x1B\[[0-9;]*[mK]::g")
+  local version=$1
   git changelog --tag "$version"
   git pull
+  git add -A
   git-release $version
 }
-
 
 function afu+delete-unambiguous-prefix () {
     afu-clearing-maybe
@@ -402,9 +423,30 @@ function afu-ad-delete-unambiguous-prefix () {
     eval "function $afufun () { zle afu+delete-unambiguous-prefix; $code }"
 }
 
+function ec2-ip () {
+  aws ec2 describe-instances --filter Name=instance-id,Values=$1 | jq '.Reservations[0].Instances[0].PrivateIpAddress' | tr -d '"'
+}
+
+function ec2-ssh () {
+  ssh $(ec2-ip $1)
+}
+
 afu-ad-delete-unambiguous-prefix afu+accept-line
 afu-ad-delete-unambiguous-prefix afu+accept-line-and-down-history
 afu-ad-delete-unambiguous-prefix afu+accept-and-hold
+
+alias npm='npm --no-progress'
+
+wrap-docker-machine() {
+  config="$1"
+  shift
+  docker $(docker-machine config "$config") $@
+}
+alias dmc="wrap-docker-machine"
+alias dm="docker-machine"
+alias d=docker
+alias dc="docker-compose"
+alias trash="rmtrash"
 
 backward-delete-to-slash() {
   integer pos=$CURSOR
@@ -417,12 +459,19 @@ backward-delete-to-slash() {
   return 1
 }
 
+function mongo-date() {
+  mongo --eval "ObjectId('$1').getTimestamp()"
+}
+
+function git-ignore() {
+  local lang=$1
+  curl https://raw.githubusercontent.com/github/gitignore/master/$lang.gitignore > .gitignore
+}
+
 zle -N backward-delete-to-slash
 
 zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
-
-export GOPATH="$HOME/dev"
 
 . `brew --prefix`/etc/profile.d/z.sh
