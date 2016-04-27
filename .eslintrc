@@ -1,15 +1,27 @@
 {
-  "ecmaFeatures": {
-    "blockBindings": true,
-    "forOf": true,
-    "jsx": true,
-    "modules": true,
-    "destructuring": true,    
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "classes": true,
+      "blockBindings": true,
+      "forOf": true,
+      "jsx": true,
+      "modules": true,
+      "destructuring": true,
+    }
   },
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "plugins": [
+    "react"
+  ],
   "rules": {
-    "semi": [1, "never"],
+    "semi": [
+      0,
+      "never"
+    ],
     "quotes": 0,
-    "no-use-before-define": 0,
+    "no-use-before-define": 2,
+    "no-unused-vars": [2, {"vars": "local"}],    
     "curly": 0,
     "eqeqeq": 0,
     "no-underscore-dangle": 0,
