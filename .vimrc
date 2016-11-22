@@ -1,106 +1,87 @@
 " Section: Options {{{1
-set nocompatible
+" set nocompatible
 
-let s:iswin = has('win32') || has('win64')
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" Bundle/Vundle {{{2
-Plugin 'gmarik/Vundle.vim'
-Plugin 'fatih/vim-go'
-Plugin 'mattn/emmet-vim'
-Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-easytags'
-Plugin 'marijnh/tern_for_vim'
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'travisjeffery/vim-auto-mkdir'
-Plugin 'https://github.com/myhere/vim-nodejs-complete.git'
-Plugin 'https://github.com/Valloric/YouCompleteMe.git'
-Plugin 'https://github.com/b4winckler/vim-objc.git'
-Plugin 'https://github.com/altercation/vim-colors-solarized.git'
-Plugin 'git://github.com/tyru/operator-camelize.vim.git'
-" Plugin 'git://github.com/myusuf3/numbers.vim.git'
-Plugin 'https://github.com/Lokaltog/vim-easymotion.git'
-Plugin 'https://github.com/nono/vim-handlebars.git'
-Plugin 'https://github.com/sjl/vitality.vim.git'
-Plugin 'https://github.com/kana/vim-tabpagecd.git'
-Plugin 'https://github.com/michaeljsmith/vim-indent-object.git'
-Plugin 'https://github.com/the-isz/MinYankRing.vim.git', {'v': 'events'}
-Plugin 'https://github.com/kana/vim-smartinput.git'
-Plugin 'https://github.com/Raimondi/vim_search_objects.git'
-Plugin 'https://github.com/kana/vim-gf-diff.git'
-Plugin 'https://github.com/kana/vim-gf-user.git'
-Plugin 'https://github.com/kana/vim-textobj-line.git'
-Plugin 'https://github.com/groenewege/vim-less.git'
-Plugin 'https://github.com/tpope/vim-eunuch.git'
-Plugin 'https://github.com/tyru/current-func-info.vim.git'
-Plugin 'https://github.com/digitaltoad/vim-jade.git'
-Plugin 'https://github.com/juvenn/mustache.vim.git'
-Plugin 'https://github.com/tpope/vim-markdown.git'
-Plugin 'https://github.com/mattn/sonictemplate-vim.git'
-Plugin 'https://github.com/tyru/open-browser.vim.git'
-Plugin 'https://github.com/mattn/webapi-vim.git'
-Plugin 'https://github.com/gregsexton/MatchTag.git'
-Plugin 'https://github.com/thinca/vim-ref.git'
-Plugin 'https://github.com/ujihisa/quicklearn.git'
-Plugin 'https://github.com/vim-scripts/ReplaceWithRegister.git'
-Plugin 'https://github.com/timcharper/textile.vim.git'
-Plugin 'https://github.com/vim-scripts/AnsiEsc.vim.git'
-Plugin 'https://github.com/Shougo/unite-build.git'
-Plugin 'https://github.com/h1mesuke/unite-outline.git'
-Plugin 'https://github.com/tsukkee/unite-tag.git'
-Plugin 'https://github.com/majutsushi/tagbar.git'
-Plugin 'git@github.com:travisjeffery/vim-extradite.git'
-Plugin 'https://github.com/kchmck/vim-coffee-script.git'
-Plugin 'git://github.com/Shougo/vim-vcs.git'
-Plugin 'https://github.com/vim-scripts/Align.git'
-Plugin 'https://github.com/thinca/vim-github.git'
-Plugin 'https://github.com/lukaszb/vim-web-indent.git'
-Plugin 'https://github.com/pangloss/vim-javascript.git'
-Plugin 'https://github.com/thinca/vim-qfreplace.git'
-Plugin 'https://github.com/h1mesuke/vim-alignta.git'
-Plugin 'https://github.com/kien/ctrlp.vim.git'
-Plugin 'https://github.com/kana/vim-altr.git'
-Plugin 'git@github.com:travisjeffery/IndexedSearch.git'
-Plugin 'https://github.com/mileszs/ack.vim.git'
-Plugin 'https://github.com/vim-scripts/bufkill.vim.git'
-Plugin 'https://github.com/duff/vim-bufonly.git'
-Plugin 'https://github.com/tpope/vim-fugitive.git'
-Plugin 'https://github.com/sjl/gundo.vim.git'
-Plugin 'https://github.com/travisjeffery/vim-help'
-Plugin 'https://github.com/tpope/vim-ragtag.git'
-Plugin 'https://github.com/tpope/vim-repeat.git'
-Plugin 'https://github.com/tpope/vim-surround.git'
-Plugin 'https://github.com/kana/vim-textobj-entire.git'
-Plugin 'https://github.com/kana/vim-textobj-function.git'
-Plugin 'https://github.com/thinca/vim-textobj-comment.git'
-Plugin 'https://github.com/kana/vim-textobj-diff.git'
-Plugin 'https://github.com/kana/vim-textobj-lastpat.git'
-Plugin 'https://github.com/nelstrom/vim-textobj-rubyblock.git'
-Plugin 'https://github.com/kana/vim-textobj-user.git'
-Plugin 'https://github.com/kana/vim-smartword.git'
-Plugin 'git@github.com:travisjeffery/vim-unimpaired.git'
-Plugin 'https://github.com/jgdavey/vim-blockle.git'
-Plugin 'https://github.com/kana/vim-grex.git'
-Plugin 'https://github.com/kana/vim-operator-user.git'
-Plugin 'https://github.com/Shougo/unite.vim.git'
-Plugin 'https://github.com/kana/vim-altercmd.git'
-Plugin 'https://github.com/kana/vim-operator-replace.git'
-Plugin 'https://github.com/tpope/vim-commentary.git'
-Plugin 'https://github.com/vim-ruby/vim-ruby.git'
-Plugin 'https://github.com/tpope/vim-rake.git'
-Plugin 'https://github.com/tpope/vim-bundler.git'
-Plugin 'https://github.com/thinca/vim-quickrun.git'
-Plugin 'https://github.com/kana/vim-exjumplist.git'
-Plugin 'https://github.com/thinca/vim-unite-history.git'
-Plugin 'https://github.com/Shougo/echodoc.git'
-Plugin 'https://github.com/mattn/gist-vim.git'
-Plugin 'https://github.com/kana/vim-scratch.git'
-Plugin 'https://github.com/scrooloose/syntastic.git'
-call vundle#end()
+call plug#begin('~/.vim/plugged')
 
+" Plugs {{{2
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'zchee/deoplete-go', { 'do': 'make'}
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+Plug 'nathanielc/vim-tickscript'
+Plug 'mbbill/undotree'
+Plug 'junegunn/vim-peekaboo'
+Plug 'bkad/CamelCaseMotion'
+Plug 'mhinz/vim-startify'
+Plug 'junegunn/vim-easy-align'
+Plug 'fatih/vim-go'
+Plug 'benekastah/neomake'
+Plug 'mattn/emmet-vim'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'travisjeffery/vim-auto-mkdir'
+Plug 'tyru/operator-camelize.vim'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'millermedeiros/vim-esformatter'
+Plug 'nono/vim-handlebars'
+Plug 'kana/vim-tabpagecd'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'the-isz/MinYankRing.vim', {'v': 'events'}
+Plug 'Raimondi/vim_search_objects'
+Plug 'jiangmiao/auto-pairs'
+Plug 'kana/vim-gf-diff'
+Plug 'kana/vim-gf-user'
+Plug 'kana/vim-textobj-line'
+Plug 'tpope/vim-eunuch'
+Plug 'tyru/current-func-info.vim'
+Plug 'juvenn/mustache.vim'
+Plug 'tpope/vim-markdown'
+Plug 'mattn/sonictemplate-vim'
+Plug 'tyru/open-browser.vim'
+Plug 'mattn/webapi-vim'
+Plug 'gregsexton/MatchTag'
+Plug 'thinca/vim-ref'
+Plug 'ujihisa/quicklearn'
+Plug 'vim-scripts/ReplaceWithRegister'
+Plug 'vim-scripts/AnsiEsc.vim'
+Plug 'majutsushi/tagbar'
+Plug 'git@github.com:travisjeffery/vim-extradite'
+Plug 'thinca/vim-github'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'thinca/vim-qfreplace'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'kana/vim-altr'
+Plug 'git@github.com:travisjeffery/IndexedSearch'
+Plug 'vim-scripts/bufkill.vim'
+Plug 'duff/vim-bufonly'
+Plug 'tpope/vim-fugitive'
+Plug 'sjl/gundo.vim'
+Plug 'travisjeffery/vim-help'
+Plug 'tpope/vim-ragtag'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
+Plug 'kana/vim-textobj-entire'
+Plug 'kana/vim-textobj-function'
+Plug 'thinca/vim-textobj-comment'
+Plug 'kana/vim-textobj-diff'
+Plug 'kana/vim-textobj-lastpat'
+Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-smartword'
+Plug 'git@github.com:travisjeffery/vim-unimpaired'
+Plug 'kana/vim-grex'
+Plug 'kana/vim-operator-user'
+Plug 'kana/vim-altercmd'
+Plug 'kana/vim-operator-replace'
+Plug 'tpope/vim-commentary'
+Plug 'thinca/vim-quickrun'
+Plug 'kana/vim-exjumplist'
+Plug 'Shougo/echodoc'
+Plug 'mattn/gist-vim'
+
+call plug#end()
 "}}}
+
 
 filetype plugin indent on
 
@@ -110,9 +91,9 @@ augroup END
 
 filetype on
 syntax off
-set noantialias
 set lazyredraw
 set number
+set nospell
 set autowrite
 set autowriteall
 set cmdheight=2
@@ -134,7 +115,7 @@ set cscopeverbose
 set cmdwinheight=5
 set ruler
 set showcmd
-set showmode
+set noshowmode
 set incsearch
 set mousemodel=popup
 set smartcase
@@ -171,7 +152,7 @@ set expandtab
 set autoindent
 set wildmode=list:longest
 set wildmenu
-set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp,node_modules
+set wildignore=*.o,*.obj,*~,_site,.git,.svn,*.xcodeproj,*.pyc,tmp,node_modules,build
 set virtualedit=block
 set matchpairs+=<:>
 set autoread
@@ -290,7 +271,7 @@ endfunction
 "   endfunction
 " augroup END"}}}2
 set mouse=a
-set ttymouse=xterm2
+" set ttymouse=xterm2
 set t_Co=256
 set hidden
 set textwidth=79
@@ -298,10 +279,13 @@ set ignorecase
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
 set complete-=k
 set complete-=i
+" neocomplete like
+set completeopt+=noinsert
+" deoplete.nvim recommend
+set completeopt+=noselect
 set fileformats=unix,dos,mac
 set cursorline
-set nonumber
-" set relativenumber
+set relativenumber
 " au BufReadPost * set norelativenumber
 au BufEnter /private/tmp/crontab.* setl backupcopy=yes
 set timeoutlen=1000
@@ -318,18 +302,17 @@ set showmatch
 set matchtime=1
 if has('unix')
   set nofsync
-  set swapsync=
+  " set swapsync=
 endif
 set guioptions-=T
 set guioptions-=L
 set guioptions-=r
 set guioptions+=c
-set noantialias
 if has('balloon_eval')
   autocmd FileType ruby,eruby set noballooneval
   set noballooneval
 endif
-set norestorescreen
+" set norestorescreen
 set t_ti=
 set t_te=
 set shortmess=filtIoOA
@@ -356,6 +339,9 @@ if &term =~ "^screen"
 
   " workaround for freeze when using mouse on GNU screen.
   set ttymouse=xterm2
+endif
+if exists('&inccommand')
+  set inccommand=split
 endif
 call cfi#load()
 set statusline=%f
@@ -522,20 +508,23 @@ augroup END"}}}2
 " EasyMotion {{{1
 let g:EasyMotion_leader_key = '<Space><Space>'
 "}}}
-" ultisnips }}}2
+autocmd FileType swift imap <buffer> <C-k> <Plug>(autocomplete_swift_jump_to_placeholder)
+let g:syntastic_swift_checkers = ['swiftlint']
+
+" ultisnips {{{2
 function! g:UltiSnips_Complete()
-    call UltiSnips#ExpandSnippet()
-    if g:ulti_expand_res == 0
-        if pumvisible()
-            return "\<C-n>"
-        else
-            call UltiSnips#JumpForwards()
-            if g:ulti_jump_forwards_res == 0
-               return "\<TAB>"
-            endif
-        endif
+  call UltiSnips#ExpandSnippet()
+  if g:ulti_expand_res == 0
+    if pumvisible()
+      return "\<C-n>"
+    else
+      call UltiSnips#JumpForwards()
+      if g:ulti_jump_forwards_res == 0
+        return "\<TAB>"
+      endif
     endif
-    return ""
+  endif
+  return ""
 endfunction
 
 au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
@@ -544,40 +533,30 @@ let g:UltiSnipsListSnippets="<c-e>"
 " this mapping Enter key to <C-y> to chose the current highlight item 
 " and close the selection list, same as other IDEs.
 " CONFLICT with some plugins like tpope/Endwise
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? "\<C-y>" : "\<CR>"
+endfunction
 
 let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 "}}}
+" vim-easy-align {{{2
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+"}}}
 " easytags {{{2
 let g:easytags_async = 1
-" let g:easytags_events = ['BufWritePost']
-"}}}
-" powerline {{{2
-let g:Powerline_symbols = 'fancy'
+let g:easytags_auto_highlight = 0
 "}}}
 " open-browser{{{2
 let g:netrw_nogx = 1 " disable netrw's gx mapping.
-
 let g:netrw_liststyle = 3
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
-"}}}
-" Solarized{{{2
-let g:solarized_termtrans=1
-let g:solarized_degrade=0
-let g:solarized_bold=1
-let g:solarized_underline=1
-let g:solarized_italic=1
-let g:solarized_diffmode="normal"
-let g:solarized_hitrail=0
-let g:solarized_termcolor=256 
-let g:solarized_visibility="high" 
-let g:solarized_contrast="high" 
-set background=light
-colorscheme default
-" colorscheme Tomorrow
-" colorscheme solarized
-"}}}2
 " netrw {{{2
 let g:netrw_list_hide= '*.swp'
 " nnoremap <silent> <BS> :<C-u>Explore<CR>
@@ -587,28 +566,6 @@ if executable('wget')
   let g:netrw_http_cmd = 'wget'
 endif
 let g:netrw_list_hide = '^\.,^tags$'
-"}}}2
-" rails {{{2
-let g:rails_menu=0
-let g:rails_installed_menu=0
-let g:rubycomplete_buffer_loading = 1
-let g:rubycomplete_rails = 1
-autocmd User Rails/app/presenters/*.*
-    \ let b:rails_alternate = substitute(rails#buffer().path(), 'app/','test/unit/','')
-autocmd User Rails/app/assets/javascripts/*.*
-    \ let b:rails_alternate = fnamemodify(rails#buffer().path(),
-    \ ":s?app/assets/?spec/?:r"). "_spec." . 
-    \ fnamemodify(rails#buffer().path(), ":e")
-autocmd User Rails/spec/javascripts/*.*
-    \ let b:rails_alternate = fnamemodify(rails#buffer().path(),
-    \ ":s?spec/?app/assets/?:s?_spec??") 
-"}}}2
-" Syntastic {{{2
-let g:syntastic_enable_signs=1
-let g:syntastic_auto_jump=0
-let g:syntastic_auto_loc_list=1
-let g:syntastic_js_checkers = 'jshint'
-let g:syntastic_javascript_jslint_conf = "--white --lastsemic --eqeqeq --undef --nomen --regexp --plusplus --bitwise --newcap --sloppy --vars --es5=false"
 "}}}2
 " QuickRun {{{2
 let g:quickrun_direction = 'rightbelow horizontal'
@@ -624,26 +581,6 @@ let g:quickrun_config['*'] = {
       \ 'runmode' : 'async:remote:vimproc'
       \}
 "}}}2
-" CtrlP {{{2
-let g:ctrlp_working_path_mode = 0
-let g:ctrlp_persistent_input = 0
-let g:ctrlp_open_new_file = 0
-let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_match_window_bottom = 1
-let g:ctrlp_jump_to_buffer = 1
-let g:ctrlp_use_caching = 1
-let g:ctrlp_mruf_max = 10000
-let g:ctrlp_max_files = 0 
-let g:ctrlp_extensions = ['tag', 'quickfix', 'dir', 'buffertag', 'line', 'change', 'undo']
-let g:ctrlp_split_window = 0
-" let g:ctrlp_user_command = {
-"     \ 'types': {
-"       \ 1: ['.git/', 'cd %s && git ls-files'],
-"       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
-"       \ },
-"     \ 'fallback': 'find %s -type f'
-"     \ }
-"}}}2
 "Fugitive & Gitv {{{2
 nnoremap [Space]gd :<C-u>Gdiff<CR>
 nnoremap [Space]gs :<C-u>Gstatus<CR>
@@ -655,11 +592,6 @@ nnoremap [Space]gr :<C-u>Gread<CR>
 nnoremap [Space]gw :<C-u>Gwrite<CR>
 nnoremap [Space]gv :<C-u>Gitv<CR>
 "}}}2
-" Testee {{{2
-" noremap <leader>rt <Plug>(testee-test-case)
-" noremap <leader>rf <Plug>(testee-test-file)
-" noremap <leader>rl <Plug>(testee-test-last)
-"}}}2
 " grex {{{2
 nmap gD  <SID>(command-line-enter)<C-u>Gred<CR>
 nmap gy  <SID>(command-line-enter)<C-u>Grey<CR>
@@ -669,53 +601,19 @@ autocmd MyAutoCmd FileType qf nnoremap <buffer> r :<C-u>Qfreplace<CR>
 " Misc {{{2
 let g:snips_author = "Travis Jeffery"
 let g:user_emmet_install_global = 0
-autocmd FileType html,css,markdown EmmetInstall
-let g:user_zen_leader_key = '<c-t>'
-let g:use_zen_complete_tag = 1
+autocmd FileType javascript,html,css,markdown EmmetInstall
+ 
+  let g:user_emmet_settings = {
+  \    'html' : {
+  \        'indentation' : '  '
+  \    },
+  \}
+
 let g:ragtag_global_maps = 1
-" let g:user_zen_settings = {
-"       \  'indentation' : '  ',
-"       \   'markdown' : { 'extends' : 'html' }
-"       \}
-let g:user_zen_settings = {
-\  'indentation' : ' '
-\}
-" Unite {{{2
-let g:unite_source_history_yank_enable = 1
-let g:unite_enable_split_vertically = 1
-let g:unite_kind_file_cd_command = 'TabpageCD'
-let g:unite_kind_file_lcd_command = 'TabpageCD'
-let g:unite_update_time = 50
-let g:unite_winheight = 20
-let g:unite_enable_start_insert = 1
-let g:unite_cursor_line_highlight = 'TabLineSel'
-let g:unite_abbr_highlight = 'TabLine'
-let g:unite_source_file_mru_time_format = ''
-let g:unite_source_file_mru_filename_format = ':~:.'
-let g:unite_source_file_mru_limit = 300
-let g:unite_source_directory_mru_time_format = ''
-let g:unite_source_directory_mru_limit = 300
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#converter_default#use(['converter_relative_abbr'])
-call unite#custom_filters('file,buffer,file_rec,file_rec/async,outline',
-      \ ['converter_relative_abbr', 'converter_relative_word', 'matcher_fuzzy', 'sorter_default', 'converter_default'])
-" nnoremap <C-B> :<C-u>Unite buffer<CR>
-" nnoremap <C-B> :<C-u>CommandTBuffer<CR>
-nnoremap <C-B> :<C-u>CtrlPBuffer<CR>
-" nnoremap <C-B> :<C-u>CtrlPBuffer<CR>
-nnoremap <silent> [Space]:  :<C-u>Unite history/command command<CR>
-"}}}2
+
 " echodoc {{{2
 let g:echodoc_enable_at_startup = 1
-"}}}2
-" delimitmate {{{2
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
-let delimitMate_matchpairs = "(:),[:],{:}"
-let delimitMate_balance_matchpairs = 1
-let delimitMate_smart_quotes = 1
-let delimitMate_smart_matchpairs = 1
-let delimitMate_autoclose = 1
+
 "}}}2
 " YankRing {{{2
 let g:yankring_max_history = 1000
@@ -738,227 +636,18 @@ let g:surround_{char2nr('s')} = " \r"
 let g:surround_{char2nr('^')} = "/^\r$/"
 let g:surround_indent = 1
 "}}}2
+" deoplete {{{2
+let g:python3_host_prog  = '/usr/local/bin/python3'
+let g:python3_host_skip_check = 1
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
+let g:deoplete#sources#go#gocode_binary = '/Users/tj/dev/bin/gocode'
+"}}}2
 " vimfiler {{{2
-let g:vimfiler_as_default_explorer = 1
-let g:vimfiler_safe_mode_by_default = 0
-let g:vimfiler_enable_clipboard = 0
-" vimshell.vim"{{{
-"let g:vimshell_user_prompt = "3\ngetcwd()"
-"let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
-"let g:vimshell_user_prompt = 'printf("%s  %50s", fnamemodify(getcwd(), ":~"), vimshell#vcs#info("(%s)-[%b]"))'
-let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
-let g:vimshell_right_prompt = 'vcs#info("(%s)-[%b]%p", "(%s)-[%b|%a]%p")'
-let g:vimshell_prompt = '% '
-"let g:vimshell_environment_term = 'xterm'
-" let g:vimshell_cd_command = 'TabpageCD'
-let g:vimshell_split_command = ''
-
-if s:iswin
-  " Display user name on Windows.
-  "let g:vimshell_prompt = $USERNAME."% "
-
-  " Use ckw.
-  let g:vimshell_use_terminal_command = 'ckw -e'
-else
-  " Display user name on Linux.
-  "let g:vimshell_prompt = $USER."% "
-
-  " Use zsh history.
-  let g:vimshell_external_history_path = expand('~/.zsh-history')
-
-  " call vimshell#set_execute_file('bmp,jpg,png,gif', 'gexe eog')
-  " call vimshell#set_execute_file('mp3,m4a,ogg', 'gexe amarok')
-  " let g:vimshell_execute_file_list['zip'] = 'zipinfo'
-  " call vimshell#set_execute_file('tgz,gz', 'gzcat')
-  " call vimshell#set_execute_file('tbz,bz2', 'bzcat')
-
-  " Use gnome-terminal.
-  let g:vimshell_use_terminal_command = 'gnome-terminal -e'
-endif
-
-" Initialize execute file list.
-let g:vimshell_execute_file_list = {}
-" call vimshell#set_execute_file('txt,vim,c,h,cpp,d,xml,java', 'vim')
-let g:vimshell_execute_file_list['rb'] = 'ruby'
-let g:vimshell_execute_file_list['pl'] = 'perl'
-let g:vimshell_execute_file_list['py'] = 'python'
-" call vimshell#set_execute_file('html,xhtml', 'gexe firefox')
-
-
-autocmd MyAutoCmd FileType vimshell call s:vimshell_settings()
-function! s:vimshell_settings()
-  imap <buffer><silent> &  <C-o>:call vimshell#mappings#push_and_execute('cd ..')<CR>
-
-  inoremap <buffer><expr>'  pumvisible() ? "\<C-y>" : "'"
-  imap <buffer><BS>  <Plug>(vimshell_another_delete_backward_char)
-  imap <buffer><C-h>  <Plug>(vimshell_another_delete_backward_char)
-  inoremap <silent><expr><buffer><C-r>  unite#sources#vimshell_history#start_complete(!0)
-
-  call vimshell#altercmd#define('g', 'git')
-  call vimshell#altercmd#define('i', 'iexe')
-  call vimshell#altercmd#define('t', 'texe')
-  call vimshell#set_alias('l.', 'ls -d .*')
-  call vimshell#set_galias('L', 'ls -l')
-  call vimshell#hook#add('chpwd', 'my_chpwd', s:vimshell_hooks.chpwd)
-  call vimshell#hook#add('emptycmd', 'my_emptycmd', s:vimshell_hooks.emptycmd)
-  call vimshell#hook#add('preprompt', 'my_preprompt', s:vimshell_hooks.preprompt)
-  call vimshell#hook#add('preexec', 'my_preexec', s:vimshell_hooks.preexec)
-  " call vimshell#hook#set('preexec', [s:SID_PREFIX() . 'vimshell_hooks_preexec'])
-endfunction
-
-autocmd MyAutoCmd FileType int-* call s:interactive_settings()
-function! s:interactive_settings()
-  call vimshell#hook#set('input', [s:vimshell_hooks.input])
-endfunction
-
-autocmd MyAutoCmd FileType term-* call s:terminal_settings()
-function! s:terminal_settings()
-  inoremap <silent><buffer><expr> <Plug>(vimshell_term_send_semicolon) vimshell#term_mappings#send_key(';')
-  inoremap <silent><buffer><expr> j<Space> vimshell#term_mappings#send_key('j')
-  "inoremap <silent><buffer><expr> <Up> vimshell#term_mappings#send_keys("\<ESC>[A")
-
-  " Sticky key.
-  imap <buffer><expr> ;  <SID>texe_sticky_func()
-
-  " Escape key.
-  iunmap <buffer> <ESC><ESC>
-  imap <buffer> <ESC>         <Plug>(vimshell_term_send_escape)
-endfunction
-function! s:texe_sticky_func()
-  let sticky_table = {
-        \',' : '<', '.' : '>', '/' : '?',
-        \'1' : '!', '2' : '@', '3' : '#', '4' : '$', '5' : '%',
-        \'6' : '^', '7' : '&', '8' : '*', '9' : '(', '0' : ')', '-' : '_', '=' : '+',
-        \';' : ':', '[' : '{', ']' : '}', '`' : '~', "'" : "\"", '\' : '|',
-        \}
-  let special_table = {
-        \"\<ESC>" : "\<ESC>", "\<Space>" : "\<Plug>(vimshell_term_send_semicolon)", "\<CR>" : ";\<CR>"
-        \}
-
-  if mode() !~# '^c'
-    echo 'Input sticky key: '
-  endif
-  let char = ''
-
-  while char == ''
-    let char = nr2char(getchar())
-  endwhile
-
-  if char =~ '\l'
-    return toupper(char)
-  elseif has_key(sticky_table, char)
-    return sticky_table[char]
-  elseif has_key(special_table, char)
-    return special_table[char]
-  else
-    return ''
-  endif
-endfunction
-
-let s:vimshell_hooks = {}
-function! s:vimshell_hooks.chpwd(args, context)
-  if len(split(glob('*'), '\n')) < 100
-    call vimshell#execute('ls')
-  endif
-endfunction
-function! s:vimshell_hooks.emptycmd(cmdline, context)
-  call vimshell#set_prompt_command('ls')
-  return 'ls'
-endfunction
-function! s:vimshell_hooks.preprompt(args, context)
-  " call vimshell#execute('echo "preprompt"')
-endfunction
-function! s:vimshell_hooks.preexec(cmdline, context)
-  " call vimshell#execute('echo "preexec"')
-
-  let args = vimproc#parser#split_args(a:cmdline)
-  if len(args) > 0 && args[0] ==# 'diff'
-    call vimshell#set_syntax('diff')
-  endif
-
-  return a:cmdline
-endfunction
-function! s:vimshell_hooks.input(input, context)
-  " echomsg 'input'
-  return a:input
-endfunction
-command! -nargs=0 VF :VimFiler
-nnoremap <silent>   [Space]v   :<C-u>VimFiler<CR>
-nmap    [Space]h   :<C-u>edit %:h<CR>
-"}}}2
-" SuperTab {{{2
-let g:SuperTabLongestEnhanced = 1
-let g:SuperTabDefaultCompletionType = "context"
-"}}}2
-" CommandT {{{2
-let g:CommandTMatchWindowReverse  = 1
-let g:CommandTMaxHeight           = 10
-let g:CommandTMaxFiles            = 30000
-let g:CommandTScanDotDirectories  = 1
-let g:CommandTMatchWindowAtTop = 0
-  let g:CommandTCancelMap=['<C-x>', '<C-c>']
-"}}}2
-" neocomplcache{{{2
-let g:neocomplcache_enable_at_startup = 0
-let g:neocomplcache_enable_smart_case = 1
-let g:neocomplcache_enable_camel_case_completion = 1
-let g:neocomplcache_enable_underbar_completion = 1
-let g:neocomplcache_min_syntax_length = 4
-let g:neocomplcache_manual_completion_start_length = 0
-let g:neocomplcache_min_keyword_length = 4
-let g:neocomplcache_enable_auto_select = 1
-let g:neocomplcache_enable_auto_delimiter = 1
-let g:neocomplcache_disable_auto_select_buffer_name_pattern = '\[Command Line\]'
-let g:neocomplcache_cursor_hold_i_time = 50
-let g:neocomplcache_auto_completion_start_length = 4
-let g:neocomplcache_max_list = 100
-let g:neocomplcache_force_overwrite_completefunc = 1
-let g:neocomplcache_enable_cursor_hold_i = v:version > 703 ||
-      \ v:version == 703 && has('patch289')
-let g:neocomplcache_dictionary_filetype_lists = {
-      \ 'default' : '',
-      \ 'ruby' : expand('$DOTVIM/dict/ruby.dict'),
-      \ }
-let g:neocomplcache_omni_functions = {
-      \ 'python' : 'pythoncomplete#Complete',
-      \ 'ruby' : 'rubycomplete#Complete',
-      \ }
-" let g:neocomplcache_cursor_hold_i_time = 300
-if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-let g:neocomplcache_snippets_dir = $HOME . '/snippets'
-" if !exists('g:neocomplcache_omni_patterns')
-"     let g:neocomplcache_omni_patterns = {}
-" endif
-" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*<Bar>\h\w*::'
-" if !exists('g:neocomplcache_same_filetype_lists')
-"   let g:neocomplcache_same_filetype_lists = {}
-" endif
-let g:neocomplcache_source_look_dictionary_path = ''
-let g:neocomplcache_vim_completefuncs = {
-      \ 'Ref' : 'ref#complete',
-      \ 'Unite' : 'unite#complete_source',
-      \ 'VimShellExecute' : 'vimshell#complete#vimshell_execute_complete#completefunc',
-      \ 'VimShellInteractive' : 'vimshell#complete#vimshell_execute_complete#completefunc',
-      \ 'VimShellTerminal' : 'vimshell#complete#vimshell_execute_complete#completefunc',
-      \ 'VimFiler' : 'vimfiler#complete',
-      \}
-if !exists('g:neocomplcache_plugin_completion_length')
-  let g:neocomplcache_plugin_completion_length = {
-        \ 'look' : 4,
-        \ }
-endif
-"}}}2
-" Clojure {{{2
-let g:vimclojure#HighlightBuiltins=1
-let vimclojure#FuzzyIndent = 1
-"}}}2
+let g:jsx_ext_required = 0
 let g:template_vim_template_dir = $HOME.'.vim/template'
 let g:AutoPairs = {'(':')', '[':']', '{':'}','"':'"'}
 let g:indexed_search_shortmess=1
-let g:HammerQuiet=1
 let g:CSApprox_verbose_level=0
 if filereadable("/usr/local/bin/ctags")
   let g:tagbar_ctags_bin="/usr/local/bin/ctags"
@@ -971,7 +660,6 @@ endif
 if filereadable($HOME . "/.passwords")
   source $HOME/.passwords
 endif
-"}}}1
 " Section: Commands {{{1
 call altercmd#load()
 command! -nargs=* -bang W :w<bang> <args>
@@ -1028,8 +716,8 @@ autocmd FileType ruby,eruby
       \ set omnifunc=rubycomplete#Complete |
       \ set foldmethod=expr | 
       \ set foldexpr=getline(v:lnum)=~'^\\s*#' 
-      " \ exe "normal zM``" 
-      " \ set foldlevel=1 | 
+" \ exe "normal zM``" 
+" \ set foldlevel=1 | 
 autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
 autocmd BufNewFile,BufRead *.bats set ft=sh sw=2 sts=2
 autocmd BufNewFile,BufRead *.txt set ft=markdown
@@ -1038,7 +726,7 @@ autocmd BufNewFile,BufRead *.json set ft=javascript sw=2 sts=2
 autocmd BufNewFile,BufRead *.rb set ft=ruby sw=2 sts=2
 autocmd BufNewFile,BufRead Podfile set ft=ruby sw=2 sts=2
 autocmd FileType vimperator set ft=vim
-autocmd filetype svn,*commit*,markdown set spell
+" autocmd filetype svn,*commit*,markdown set spell
 autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
 autocmd FileType python
       \   setl makeprg=python\ \"%:p\" 
@@ -1154,7 +842,6 @@ autocmd FileType ruby,eruby
       \ iabbrev <buffer> rr; attr_reader|
       \ iabbrev <buffer> ww; attr_writer
 
-" cabbrev git Git
 cabbrev ~? ~/
 iabbrev Utitlies Utilities
 iabbrev utitlies utilities
@@ -1163,7 +850,6 @@ iabbrev innit init
 iabbrev innitialize initialize
 iabbrev seperate separate
 iabbrev teh the
-" iabbrev ;; =>
 iabbrev shuold should
 iabbrev shulod should
 iabbrev PgTOols PgTools
@@ -1217,10 +903,10 @@ nnoremap <silent> [Space]ya :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
 nnoremap <silent> [Space]y% :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
 
 function! s:SID() "{{{
-    return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
+  return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
 endfunction "}}}
 function! s:SNR(map) "{{{
-    return printf("<SNR>%d_%s", s:SID(), a:map)
+  return printf("<SNR>%d_%s", s:SID(), a:map)
 endfunction "}}}
 
 if (exists("g:indexed_search_plugin"))
@@ -1230,10 +916,7 @@ if (exists("g:indexed_search_plugin"))
   nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
 endif
 
-nmap <leader>b <SID>(command-line-enter)<C-u>CtrlPBufTagAll<CR>
-nmap <leader>d <SID>(command-line-enter)<C-u>CtrlPDir<CR>
-nmap <leader>q <SID>(command-line-enter)<C-u>CtrlPQuickfix<CR>
-nmap <leader>l <SID>(command-line-enter)<C-u>CtrlPLine<CR>
+nnoremap <silent><C-p> :FZF<CR>
 
 " nmap : q:
 " nmap / q/
@@ -1245,6 +928,7 @@ nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 
 " Ruby block to yo face
 nmap <silent> [Space]b <Plug>BlockToggle
+
 
 if exists('g:loaded_delimitMate') && g:loaded_delimitMate == 1
   autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
@@ -1276,9 +960,6 @@ function! s:copy_path()
 endfunction"}}}2
 " Altr {{{2
 autocmd MyAutoCmd FileType vim call altr#define('autoload/%.vim', 'doc/%.txt', 'doc/%.jax', 'plugin/%.vim')
-autocmd MyAutoCmd FileType clojure call altr#define('src/*/%.clj', 'test/*/%.clj', 'test/*/test/%.clj')
-autocmd FileType ruby call altr#define('lib/%/*.rb', 'lib/%.rb', 'test/%_*.rb', 'test/%.rb')
-autocmd FileType coffee call altr#define('src/%/*.coffee', 'src/%.coffee', 'test/%_*.coffee', 'test/%.coffee')
 autocmd FileType * command! -buffer A call altr#forward()
 autocmd FileType * command! -buffer B call altr#back()
 "}}}2
@@ -1300,35 +981,6 @@ imap      <C-G>s <Plug>Isurround
 imap      <C-G>S <Plug>ISurround
 vmap s <Plug>VSurround
 xmap s <Plug>VSurround
-" neocomplcache {{{2
-" inoremap <expr> <C-x><C-f> neocomplcache#manual_filename_complete()
-" nnoremap <silent> <expr> <CR> &bt == "" ? ":nohlsearch<CR>" : "\<CR>" 
-" imap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
-
-" function! s:CrInInsertModeBetterWay()
-"   return pumvisible() ? "\<C-r>=neocomplcache#cancel_popup()"  : "\<Cr>"
-" endfunction
-
-" inoremap <expr><C-b>  pumvisible() ? "\<PageUp>"   :
-"     \neocomplcache#sources#completefunc_complete#call_completefunc('googlesuggest_complete#completefunc')
-" inoremap <expr><C-y>  pumvisible() ? neocomplcache#close_popup() :  "\<C-r>"
-" inoremap <expr><C-e>  pumvisible() ? neocomplcache#cancel_popup() : "\<End>"
-" imap <C-k>  <Plug>(neocomplcache_start_unite_complete)
-" inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-" inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr> <C-l> pumvisible() ? "\<C-p>" : "\<C-p>"
-" inoremap <expr><C-l>  pumvisible() ? neocomplcache#close_popup():  "\<C-p>"
-" inoremap <expr><Space>  pumvisible() ? neocomplcache#cancel_popup()."\<Space>" :  "\<Space>"
-
-" inoremap <expr><C-n>  pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>\<Down>"
-inoremap <expr><C-p>  pumvisible() ? "\<C-p>" : "\<C-p>\<C-n>"
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
-" inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : "\<C-x>\<C-u>\<C-p>\<Down>"
-" inoremap <expr><C-f>  pumvisible() ? "\<PageDown>" : "\<Right>"
-
-"{{{2
-
 " Useful save mappings{{{2
 nnoremap <silent> [Space]w  :<C-u>update<CR>
 nnoremap <silent> [Space]fw  :<C-u>write!<CR>
@@ -1373,10 +1025,6 @@ xnoremap [Space]k z-<C-b>z.
 nnoremap [Space]ev :<C-u>edit $MYVIMRC<CR>
 nnoremap [Space]sv :<C-u>source $MYVIMRC<CR>
 
-" q commands "{{{2
-nnoremap Q  gq
-vnoremap Q  gq
-"}}}
 " Tags {{{2
 nnoremap [Space]tt <C-]>
 nnoremap [Space]tn :<C-u>tn<CR>
@@ -1394,8 +1042,9 @@ nnoremap [Space]tsN :<C-u>split<CR><Bar>:<C-u>tl<CR>
 " q: Quickfix  "{{{
 
 " The prefix key.
+nnoremap Q q
 nnoremap [Quickfix]   <Nop>
-" nmap    q  [Quickfix]
+nmap    q  [Quickfix]
 " Disable Ex-mode.
 
 " For quickfix list  "{{{
@@ -1522,46 +1171,83 @@ nmap <silent> W <Plug>CamelCaseMotion_w
 xmap <silent> W <Plug>CamelCaseMotion_w
 nmap <silent> B <Plug>CamelCaseMotion_b
 xmap <silent> W <Plug>CamelCaseMotion_b
+
+omap <silent> iw <Plug>CamelCaseMotion_iw
+xmap <silent> iw <Plug>CamelCaseMotion_iw
+omap <silent> ib <Plug>CamelCaseMotion_ib
+xmap <silent> ib <Plug>CamelCaseMotion_ib
+omap <silent> ie <Plug>CamelCaseMotion_ie
+xmap <silent> ie <Plug>CamelCaseMotion_ie
 "}}}2
 
-vnoremap <silent> [Space]a :Alignta =>/=<Cr>
-xnoremap <silent> [Space]a  :Alignta =>\=<CR>
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
 
 nnoremap <Leader>m :TagbarToggle<CR>
-" add a definition for Objective-C to tagbar
-let g:tagbar_type_objc = {
-    \ 'ctagstype' : 'ObjectiveC',
+nnoremap <Leader>t :Tagbar<CR>
+
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
     \ 'kinds'     : [
-        \ 'i:interface',
-        \ 'I:implementation',
-        \ 'p:Protocol',
-        \ 'm:Object_method',
-        \ 'c:Class_method',
-        \ 'v:Global_variable',
-        \ 'F:Object field',
-        \ 'f:function',
-        \ 'p:property',
-        \ 't:type_alias',
-        \ 's:type_structure',
-        \ 'e:enumeration',
-        \ 'M:preprocessor_macro',
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
     \ ],
-    \ 'sro'        : ' ',
+    \ 'sro' : '.',
     \ 'kind2scope' : {
-        \ 'i' : 'interface',
-        \ 'I' : 'implementation',
-        \ 'p' : 'Protocol',
-        \ 's' : 'type_structure',
-        \ 'e' : 'enumeration'
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
     \ },
     \ 'scope2kind' : {
-        \ 'interface'      : 'i',
-        \ 'implementation' : 'I',
-        \ 'Protocol'       : 'p',
-        \ 'type_structure' : 's',
-        \ 'enumeration'    : 'e'
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
     \ }
-\ }
+
+" add a definition for Objective-C to tagbar
+let g:tagbar_type_objc = {
+      \ 'ctagstype' : 'ObjectiveC',
+      \ 'kinds'     : [
+      \ 'i:interface',
+      \ 'I:implementation',
+      \ 'p:Protocol',
+      \ 'm:Object_method',
+      \ 'c:Class_method',
+      \ 'v:Global_variable',
+      \ 'F:Object field',
+      \ 'f:function',
+      \ 'p:property',
+      \ 't:type_alias',
+      \ 's:type_structure',
+      \ 'e:enumeration',
+      \ 'M:preprocessor_macro',
+      \ ],
+      \ 'sro'        : ' ',
+      \ 'kind2scope' : {
+      \ 'i' : 'interface',
+      \ 'I' : 'implementation',
+      \ 'p' : 'Protocol',
+      \ 's' : 'type_structure',
+      \ 'e' : 'enumeration'
+      \ },
+      \ 'scope2kind' : {
+      \ 'interface'      : 'i',
+      \ 'implementation' : 'I',
+      \ 'Protocol'       : 'p',
+      \ 'type_structure' : 's',
+      \ 'enumeration'    : 'e'
+      \ }
+      \ }
 " nnoremap <Leader>d :TagbarOpenAutoClose<CR>
 nmap <silent> <Leader>z <SID>(command-line-enter)<C-u>ZoomWin<CR>
 nnoremap <Leader>v :<C-u>vsplit<CR><C-w><C-w>
@@ -1615,32 +1301,6 @@ nnoremap gqq vapgq
 " vmap <Leader>a: :Tabularize /:\zs<CR>
 " nmap <Leader>a :Tabularize /
 " vmap <Leader>a :Tabularize /
-
-command! -nargs=? -range Align <line1>,<line2>call AlignSection('<args>')
-vnoremap <silent> <Leader>a :Align<CR>
-function! AlignSection(regex) range
-  let extra = 1
-  let sep = empty(a:regex) ? '=' : a:regex
-  let maxpos = 0
-  let section = getline(a:firstline, a:lastline)
-  for line in section
-    let pos = match(line, ' *'.sep)
-    if maxpos < pos
-      let maxpos = pos
-    endif
-  endfor
-  call map(section, 'AlignLine(v:val, sep, maxpos, extra)')
-  call setline(a:firstline, section)
-endfunction
-
-function! AlignLine(line, sep, maxpos, extra)
-  let m = matchlist(a:line, '\(.\{-}\) \{-}\('.a:sep.'.*\)')
-  if empty(m)
-    return a:line
-  endif
-  let spaces = repeat(' ', a:maxpos - strlen(m[1]) + a:extra)
-  return m[1] . spaces . m[2]
-endfunction
 
 nnoremap =p m`=ap``
 nmap <Leader>= maG=gg`a
@@ -1925,23 +1585,7 @@ function! ShowRoutes()
 endfunction
 nnoremap <Leader>gR :call ShowRoutes()<CR>
 
-nnoremap <silent> <Leader>gv :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/views<CR>
-nnoremap <silent> <Leader>gc :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/controllers<CR>
-nnoremap <silent> <Leader>gu :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test/unit<CR>
-nnoremap <silent> <Leader>gF :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test/functional<CR>
-nnoremap <silent> <Leader>gt :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT test<CR>
-nnoremap <silent> <Leader>gm :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/models<CR>
-nnoremap <silent> <Leader>gh :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT app/helpers<CR>
-nnoremap <silent> <Leader>gl :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT lib<CR>
-nnoremap <silent> <Leader>gp :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT public<CR>
-nnoremap <silent> <Leader>gs :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT public/stylesheets<CR>
-nnoremap <silent> <Leader>gS :<C-u>CommandTFlush<CR><Bar>:<C-u>CommandT spec<CR>
 nnoremap <silent> <Leader>gg :<C-u>topleft 100 :split Gemfile<CR>
-nnoremap <silent> <Leader>gf :<C-u>CommandT %%/<CR>
-" nnoremap <silent> <Leader>, :<C-u>CommandT<CR>
-nnoremap <silent> <Leader>! :<C-u>CommandTFlush<CR>
-nnoremap <silent> <Leader>, :<C-u>CommandTFlush<CR>:<C-u>CommandT<CR>
-nnoremap <silent> <Leader> :<C-u>CommandTFlush<CR>:<C-u>CommandTBuffer<CR>
 " Delete the content of the current line (not the line itself).
 nnoremap dl  0d$
 
@@ -2019,52 +1663,52 @@ command! -nargs=* Fallmap  call s:cmd_Fmap('All', '', [<f-args>])
 command! -nargs=* Fobjmap  call s:cmd_Fmap('Obj', '', [<f-args>])
 
 function! RunTests(filename)
-    " Write the file and run tests for the given filename
-    :w
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    if match(a:filename, '\.feature$') != -1
-        exec ":!script/features " . a:filename
+  " Write the file and run tests for the given filename
+  :w
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+  if match(a:filename, '\.feature$') != -1
+    exec ":!script/features " . a:filename
+  else
+    if filereadable("script/test")
+      exec ":!script/test " . a:filename
+    elseif filereadable("Gemfile")
+      exec ":!bundle exec rspec --color " . a:filename
     else
-        if filereadable("script/test")
-            exec ":!script/test " . a:filename
-        elseif filereadable("Gemfile")
-            exec ":!bundle exec rspec --color " . a:filename
-        else
-            exec ":!rspec --color " . a:filename
-        end
+      exec ":!rspec --color " . a:filename
     end
+  end
 endfunction
 
 function! SetTestFile()
-    " Set the spec file that tests will be run for.
-    let t:grb_test_file=@%
+  " Set the spec file that tests will be run for.
+  let t:grb_test_file=@%
 endfunction
 
 function! RunTestFile(...)
-    if a:0
-        let command_suffix = a:1
-    else
-        let command_suffix = ""
-    endif
+  if a:0
+    let command_suffix = a:1
+  else
+    let command_suffix = ""
+  endif
 
-    " Run the tests for the previously-marked file.
-    let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\)$') != -1
-    if in_test_file
-        call SetTestFile()
-    elseif !exists("t:grb_test_file")
-        return
-    end
-    call RunTests(t:grb_test_file . command_suffix)
+  " Run the tests for the previously-marked file.
+  let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\)$') != -1
+  if in_test_file
+    call SetTestFile()
+  elseif !exists("t:grb_test_file")
+    return
+  end
+  call RunTests(t:grb_test_file . command_suffix)
 endfunction
 
 function! RunNearestTest()
-    let spec_line_number = line('.')
-    call RunTestFile(":" . spec_line_number . " -b")
+  let spec_line_number = line('.')
+  call RunTestFile(":" . spec_line_number . " -b")
 endfunction
 
 nnoremap <leader>T :RunAllRubyTests<CR>
@@ -2267,9 +1911,8 @@ if exists('$WINDIR')
   " Cygwin.
 
   " Use bash.
-  set shell=bash
+  set shell=sh
 else
-  " Use zsh.
   set shell=sh
 endif
 
@@ -2321,6 +1964,12 @@ if !has('gui_running')
 endif
 "}}}1
 
+au BufNewFile,BufRead *.go setlocal noet ts=4 sw=4 sts=4
+let g:go_fmt_command = "goimports"
+autocmd! BufWritePost *.go Neomake
+autocmd! BufWritePost *.js Neomake
+
+set path +=~/dev/src/**
 
 set secure
 
