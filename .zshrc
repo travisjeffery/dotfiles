@@ -117,11 +117,11 @@ NULL="/dev/null"
 
 bindkey -e
 
-if [ -x "`whence vim`" ]; then
-    export EDITOR="`whence vim`"
-    alias vi="`whence vim`"
+if [ -x "`whence nvim`" ]; then
+    export EDITOR="`whence nvim`"
+    alias vi="`whence nvim`"
 else
-    export EDITOR="`whence vi`"
+    export EDITOR="`whence nvim`"
 fi
 
 if [ -x "`whence lv`" ]; then
@@ -135,9 +135,13 @@ else
     # export PAGER="/bin/more"
 fi
 
-alias e='emacsclient -t'
-alias ec='emacsclient -c'
+alias e='emacsclient -nt'
+alias ec='emacsclient -nc'
+alias a='atom-beta'
 alias pr='git pull-request'
+alias vim=nvim
+
+# export EDITOR="emacsclient -nc"
 
 # export GREP_OPTIONS='-rIPs --exclude-dir=.[a-zA-Z0-9]* --exclude=.* --exclude=*~ --color=auto'
 #
@@ -445,6 +449,7 @@ wrap-docker-machine() {
 alias dmc="wrap-docker-machine"
 alias dm="docker-machine"
 alias d=docker
+alias k=kubectl
 alias dc="docker-compose"
 alias trash="rmtrash"
 
@@ -475,3 +480,13 @@ zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
 
 . `brew --prefix`/etc/profile.d/z.sh
+
+# The next line updates PATH for the Google Cloud SDK.
+source '/Users/tj/Downloads/google-cloud-sdk/path.zsh.inc'
+
+# The next line enables shell command completion for gcloud.
+source '/Users/tj/Downloads/google-cloud-sdk/completion.zsh.inc'
+
+export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
