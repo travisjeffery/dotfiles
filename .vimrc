@@ -9,7 +9,7 @@ Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 Plug 'nathanielc/vim-tickscript'
 Plug 'mbbill/undotree'
-Plug 'junegunn/vim-peekaboo'
+" Plug 'junegunn/vim-peekaboo'
 Plug 'bkad/CamelCaseMotion'
 Plug 'mhinz/vim-startify'
 Plug 'junegunn/vim-easy-align'
