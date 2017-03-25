@@ -1,0 +1,201 @@
+#!/usr/bin/env zsh 
+#
+# /usr/bin/fizsh
+#
+# -------------------------------------------------------------------------------------------------
+# Copyright (c) 2011 - 2014 Guido van Steen
+# All rights reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without modification, are permitted
+# provided that the following conditions are met:
+#
+#  * Redistributions of source code must retain the above copyright notice, this list of conditions
+#    and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright notice, this list of
+#    conditions and the following disclaimer in the documentation and/or other materials provided
+#    with the distribution.
+#  * Neither the name of the FIZSH nor the names of its contributors may be used to endorse or
+#    promote products derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+# FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+# OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# -------------------------------------------------------------------------------------------------
+# -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+# vim: ft=zsh sw=2 ts=2 et
+
+################################################
+#
+# Define a portable function _fizsh_cp_u which should implement
+# a portable version of cp -u (from the gnu coreutils)
+#
+function _fizsh_cp_u () {
+  if [[ ! -f $2 || $1 -nt $2 ]] then;
+    cp -p $1 $2
+  fi
+}
+
+################################################
+#
+# Set the fizsh dot dir, the bin dir and the sysconf (etc) dir
+#
+export _fizsh_F_DOT_DIR=$HOME/.fizsh
+
+export _fizsh_F_FIZSH=fizsh
+
+export _fizsh_F_EXEC_DIR=$(dirname "$0")
+[[ $_fizsh_F_EXEC_DIR == "." ]] && export _fizsh_F_EXEC_DIR=$(pwd) # if we happen to be in $_fizsh_F_EXEC_DIR
+
+
+_fizsh_F_FIZSH_INSTALLED_AND_ON_PATH=$(type $_fizsh_F_FIZSH)
+if [[ "$?" -ne 0 ]]; then
+  export PATH=$_fizsh_F_EXEC_DIR:$PATH
+  _fizsh_F_FIZSH_INSTALLED_AND_ON_PATH=$(type $_fizsh_F_FIZSH)
+  if [[ "$?" -ne 0 ]]; then # actually, this should never happen
+    echo "_fizsh: Make sure that fizsh is installed correctly and that your path is set accordingly"
+    exit 1
+  fi
+fi
+
+export _fizsh_F_FIZSH_FULL_PATH=$(which $_fizsh_F_FIZSH)
+export _fizsh_F_BIN_DIR=$(echo $_fizsh_F_FIZSH_FULL_PATH | sed -e "s/\/$_fizsh_F_FIZSH//")
+export _fizsh_F_ETC_DIR=$(echo $_fizsh_F_BIN_DIR | sed -e "s/bin/etc/")/$_fizsh_F_FIZSH
+[[ $_fizsh_F_ETC_DIR == "/usr/etc/$_fizsh_F_FIZSH" ]] && export _fizsh_F_ETC_DIR="/etc/$_fizsh_F_FIZSH" # needed on systems like Debian
+
+################################################
+#
+# Set the other environment variables
+#
+export _fizsh_F_SYNTAX=zsh-syntax-highlighting.zsh
+export _fizsh_F_HIGHLIGHTERS_DIR=highlighters
+export _fizsh_F_SEARCH=zsh-history-substring-search.zsh
+export _fizsh_F_PROMPT=fizsh-prompt.zsh
+export _fizsh_F_FIZSHRC=fizshrc.zsh
+export _fizsh_F_MISC=fizsh-miscellaneous.zsh
+export _fizsh_F_VERSION_FILE=.fizsh-version
+
+################################################
+#
+# Set the version number
+#
+export _fizsh_F_CENTRAL_VERSION=1.0.8
+if [[ ! -f $_fizsh_F_DOT_DIR/$_fizsh_F_VERSION_FILE ]]; then
+  mkdir -p $_fizsh_F_DOT_DIR
+  touch $_fizsh_F_DOT_DIR/$_fizsh_F_VERSION_FILE
+fi
+export _fizsh_F_LOCAL_VERSION=$(cat $_fizsh_F_DOT_DIR/$_fizsh_F_VERSION_FILE)
+
+################################################
+#
+# If a new central version is detected (for the first time) the old config files are removed
+#
+if [[ $_fizsh_F_LOCAL_VERSION != $_fizsh_F_CENTRAL_VERSION ]]; then 
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_PROMPT
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_SEARCH
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_SYNTAX
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/brackets/brackets-highlighter.zsh
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/cursor/cursor-highlighter.zsh
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/main/main-highlighter.zsh
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/pattern/pattern-highlighter.zsh
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/root/root-highlighter.zsh
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_MISC
+  rm -rf $_fizsh_F_DOT_DIR/$_fizsh_F_FIZSH
+  rm -rf $_fizsh_F_DOT_DIR/.zshrc
+  export _fizsh_F_LOCAL_VERSION=$_fizsh_F_CENTRAL_VERSION
+  echo $_fizsh_F_LOCAL_VERSION > $_fizsh_F_DOT_DIR/$_fizsh_F_VERSION_FILE
+fi 
+
+################################################
+#
+# Print the welcome message
+#
+function _fizsh-welcome-message () {
+  echo 'welcome to fizsh, the friendly interactive zshell'
+  echo -e 'type \033[03;32mman fizsh\033[00m for instructions on how to use fizsh'
+}
+
+################################################
+#
+# Print the usage message
+#
+function _fizsh-usage-message () {
+  echo "Usage: fizsh [<options>] [<argument> ...]"
+  echo "  -h, --help          show this message, then exit"
+  echo "  -l, --login         start a login shell"
+  echo "  -v, --version       show fizsh version number, then exit"
+  echo ""
+  echo "fizsh is a interactive front end to zsh. Options and"
+  echo "arguments not mentioned here cause fizsh to revert to zsh."
+}
+
+################################################
+#
+# Print the goodbye message
+#
+function _fizsh-goodbye-message () {
+  echo ''
+  echo 'Goodbye'
+}
+
+################################################
+#
+# Fizsh can be called with two optons: "-v"/"--version", "-h"/"--help".
+#
+#
+# Fizsh can be called with three optons: "-v"/"--version", "-h"/"--help" and "-l"/"--login".
+#
+if [[ ( $@ == "--version" ) || ( $@ == "-v" ) ]]; then
+  echo "fizsh, version "$_fizsh_F_LOCAL_VERSION
+elif [[ ( $@ == "--help" ) || ( $@ == "-h" ) ]]; then
+  _fizsh-usage-message
+elif [[ ( $@ == "--login" ) || ( $@ == "-l" ) || ( $@ == "" ) ]]; then
+  [[ $+ZDOTDIR -eq 1 ]] && export _fizsh_F_OLD_ZDOTDIR=$ZDOTDIR
+  mkdir -p $_fizsh_F_DOT_DIR
+  mkdir -p $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/brackets
+  mkdir -p $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/cursor
+  mkdir -p $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/main
+  mkdir -p $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/pattern
+  mkdir -p $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/root
+  if [[ ( ! -f $_fizsh_F_DOT_DIR/.fizshrc ) ]]; then
+    touch $_fizsh_F_DOT_DIR/.fizshrc
+    chmod +x $_fizsh_F_DOT_DIR/.fizshrc
+  fi
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/$_fizsh_F_PROMPT $_fizsh_F_DOT_DIR/$_fizsh_F_PROMPT
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/$_fizsh_F_SEARCH $_fizsh_F_DOT_DIR/$_fizsh_F_SEARCH
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/$_fizsh_F_SYNTAX $_fizsh_F_DOT_DIR/$_fizsh_F_SYNTAX
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/brackets-highlighter.zsh $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/brackets/brackets-highlighter.zsh
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/cursor-highlighter.zsh $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/cursor/cursor-highlighter.zsh
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/main-highlighter.zsh $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/main/main-highlighter.zsh
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/pattern-highlighter.zsh $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/pattern/pattern-highlighter.zsh
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/root-highlighter.zsh $_fizsh_F_DOT_DIR/$_fizsh_F_HIGHLIGHTERS_DIR/root/root-highlighter.zsh
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/$_fizsh_F_MISC $_fizsh_F_DOT_DIR/$_fizsh_F_MISC
+  _fizsh_cp_u $_fizsh_F_BIN_DIR/$_fizsh_F_FIZSH $_fizsh_F_DOT_DIR/$_fizsh_F_FIZSH
+  _fizsh_cp_u $_fizsh_F_ETC_DIR/$_fizsh_F_FIZSHRC $_fizsh_F_DOT_DIR/.zshrc
+  export ZDOTDIR=$_fizsh_F_DOT_DIR
+  if [[ ( $@ == "--login" ) || ( $@ == "-l" ) ]]; then
+    export _fizsh_F_LOGIN_FLAG_SET=1
+  else 
+    export _fizsh_F_LOGIN_FLAG_SET=0
+  fi 
+  # not that $_fizsh_F_LOGIN_FLAG_SET will be unset later in "fizshrc.zsh", 
+  # after it has been copied locally to $_fizsh_F_LOCAL_LOGIN_FLAG_SET 
+  _fizsh-welcome-message
+  if [[ ( $SHLVL -eq 1 ) || ( $_fizsh_F_LOGIN_FLAG_SET -eq 1 ) ]]; then # note that the following calls to zsh will increase $SHLVL by 1. 
+    zsh -l 
+  else
+    zsh 
+  fi 
+  _fizsh-goodbye-message
+  [[ $+_fizsh_F_OLD_ZDOTDIR -eq 0 ]] && unset ZDOTDIR
+  [[ $+_fizsh_F_OLD_ZDOTDIR -eq 1 ]] && ZDOTDIR=$_fizsh_F_OLD_ZDOTDIR
+  unset _fizsh_F_OLD_ZDOTDIR
+  unset _fizsh_F_LOGIN_FLAG_SET
+else
+  zsh $@ # this makes sure that fizsh also works with ssh, sftp and so on.
+fi
