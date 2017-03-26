@@ -47,7 +47,7 @@ Plug 'majutsushi/tagbar'
 Plug 'git@github.com:travisjeffery/vim-extradite'
 Plug 'thinca/vim-github'
 Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
+Plug 'chemzqm/vim-jsx-improve'
 Plug 'thinca/vim-qfreplace'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'kana/vim-altr'
@@ -91,6 +91,7 @@ augroup END
 
 filetype on
 syntax off
+set autochdir
 set lazyredraw
 set number
 set nospell
@@ -379,6 +380,8 @@ autocmd MyAutoCmd BufWritePost vimrc source $MYVIMRC
 autocmd MyAutoCmd BufWritePost .vimrc source $MYVIMRC
 
 let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+
+let g:go_list_type = "quickfix"
 
 function! AddInstanceVariablesForArguments()
   let @a = ""
@@ -960,6 +963,7 @@ function! s:copy_path()
 endfunction"}}}2
 " Altr {{{2
 autocmd MyAutoCmd FileType vim call altr#define('autoload/%.vim', 'doc/%.txt', 'doc/%.jax', 'plugin/%.vim')
+autocmd MyAutoCmd FileType go call altr#define('%.go', '%_test.go')
 autocmd FileType * command! -buffer A call altr#forward()
 autocmd FileType * command! -buffer B call altr#back()
 "}}}2
@@ -1893,6 +1897,7 @@ vmap <Leader>t :call Titlecase()<CR>
 
 inoremap <C-O> <C-X><C-O>
 nmap <Leader>x <SID>(command-line-enter)<C-u>sp <C-R>=expand("%:h")<CR>/
+nmap <Leader>e <SID>(command-line-enter)<C-u>e <C-R>=expand("%:h")<CR>/
 
 inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
 inoremap <S-Tab> <c-n>
@@ -1964,12 +1969,36 @@ if !has('gui_running')
 endif
 "}}}1
 
+function! s:buflist()
+  redir => ls
+  silent ls
+  redir END
+  return split(ls, '\n')
+endfunction
+
+function! s:bufopen(e)
+  execute 'buffer' matchstr(a:e, '^[ 0-9]*')
+endfunction
+
+nnoremap <silent> <c-b> :call fzf#run({
+\   'source':  reverse(<sid>buflist()),
+\   'sink':    function('<sid>bufopen'),
+\   'options': '+m',
+\   'down':    len(<sid>buflist()) + 2
+\ })<CR>
+
 au BufNewFile,BufRead *.go setlocal noet ts=4 sw=4 sts=4
 let g:go_fmt_command = "goimports"
 autocmd! BufWritePost *.go Neomake
 autocmd! BufWritePost *.js Neomake
 
 set path +=~/dev/src/**
+
+command! FZFMru call fzf#run({
+\  'source':  v:oldfiles,
+\  'sink':    'e',
+\  'options': '-m -x +s',
+\  'down':    '40%'})
 
 set secure
 
