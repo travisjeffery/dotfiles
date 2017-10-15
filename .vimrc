@@ -535,8 +535,6 @@ augroup END"}}}2
 " EasyMotion {{{1
 let g:EasyMotion_leader_key = '<Space><Space>'
 "}}}
-autocmd FileType swift imap <buffer> <C-k> <Plug>(autocomplete_swift_jump_to_placeholder)
-let g:syntastic_swift_checkers = ['swiftlint']
 
 " ultisnips {{{2
 function! g:UltiSnips_Complete()
@@ -677,7 +675,6 @@ let g:deoplete#keyword_patterns = {}
 let g:deoplete#keyword_patterns['default'] = '\h\w*'
 let g:deoplete#omni#input_patterns = {}
 let g:deoplete#sources#go#align_class = 1
-
 
 "}}}2
 " vimfiler {{{2
@@ -920,20 +917,13 @@ xmap  <Space>   [Space]
 nnoremap  [Space]   <Nop>
 xnoremap  [Space]   <Nop>
 
-" nnoremap ; <Nop>
-" xnoremap ;  <Nop>
 nnoremap : <Nop>
 xnoremap :  <Nop>
 
 nnoremap <SID>(command-line-enter) :
 xnoremap <SID>(command-line-enter) :
-" nmap ; <SID>(command-line-enter)
-" xmap ; <SID>(command-line-enter)
 nmap : <SID>(command-line-enter)
 xmap : <SID>(command-line-enter)
-
-" nnoremap ' <Nop>
-" nnoremap ' ;
 
 nnoremap <silent> [Space]; :<C-u>normal!<Space>;<CR>
 nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
@@ -960,10 +950,6 @@ endif
 
 nnoremap <silent><C-p> :FZF<CR>
 nnoremap <silent><C-p> :FZF<CR>
-
-" nmap : q:
-" nmap / q/
-" nmap ? q?
 
 nmap [Space]r <SID>(command-line-enter)<C-u>QuickRun<CR>
 
@@ -1082,66 +1068,6 @@ nnoremap [Space]tsn :<C-u>split<CR><Bar>:<C-u>tn<CR>
 nnoremap [Space]tsp :<C-u>split<CR><Bar>:<C-u>tp<CR>
 nnoremap [Space]tsP :<C-u>split<CR><Bar>:<C-u>tf<CR>
 nnoremap [Space]tsN :<C-u>split<CR><Bar>:<C-u>tl<CR>
-"}}}2
-" q: Quickfix  "{{{
-
-" The prefix key.
-
-" nnoremap Q q
-" nnoremap [Quickfix]   <Nop>
-" nmap    q  [Quickfix]
-
-" Disable Ex-mode.
-
-" For quickfix list  "{{{
-nnoremap <silent> [Quickfix]n  :<C-u>cnext<CR>
-nnoremap <silent> [Quickfix]p  :<C-u>cprevious<CR>
-nnoremap <silent> [Quickfix]r  :<C-u>crewind<CR>
-nnoremap <silent> [Quickfix]N  :<C-u>cfirst<CR>
-nnoremap <silent> [Quickfix]P  :<C-u>clast<CR>
-nnoremap <silent> [Quickfix]fn :<C-u>cnfile<CR>
-nnoremap <silent> [Quickfix]fp :<C-u>cpfile<CR>
-nnoremap <silent> [Quickfix]l  :<C-u>clist<CR>
-nnoremap <silent> [Quickfix]q  :<C-u>cc<CR>
-nnoremap <silent> [Quickfix]o  :<C-u>copen<CR>
-nnoremap <silent> [Quickfix]c  :<C-u>cclose<CR>
-nnoremap <silent> [Quickfix]en :<C-u>cnewer<CR>
-nnoremap <silent> [Quickfix]ep :<C-u>colder<CR>
-nnoremap <silent> [Quickfix]m  :<C-u>make<CR>
-nnoremap [Quickfix]M  q:make<Space>
-nnoremap [Quickfix]g  q:grep<Space>
-" Toggle quickfix window.
-nnoremap <silent> [Quickfix]<Space> :<C-u>call <SID>toggle_quickfix_window()<CR>
-function! s:toggle_quickfix_window()
-  let _ = winnr('$')
-  cclose
-  if _ == winnr('$')
-    copen
-    setlocal nowrap
-    setlocal whichwrap=b,s
-  endif
-endfunction
-"}}}
-
-" For location list (mnemonic: Quickfix list for the current Window)  "{{{
-nnoremap <silent> [Quickfix]wn  :<C-u>lnext<CR>
-nnoremap <silent> [Quickfix]wp  :<C-u>lprevious<CR>
-nnoremap <silent> [Quickfix]wr  :<C-u>lrewind<CR>
-nnoremap <silent> [Quickfix]wP  :<C-u>lfirst<CR>
-nnoremap <silent> [Quickfix]wN  :<C-u>llast<CR>
-nnoremap <silent> [Quickfix]wfn :<C-u>lnfile<CR>
-nnoremap <silent> [Quickfix]wfp :<C-u>lpfile<CR>
-nnoremap <silent> [Quickfix]wl  :<C-u>llist<CR>
-nnoremap <silent> [Quickfix]wq  :<C-u>ll<CR>
-nnoremap <silent> [Quickfix]wo  :<C-u>lopen<CR>
-nnoremap <silent> [Quickfix]wc  :<C-u>lclose<CR>
-nnoremap <silent> [Quickfix]wep :<C-u>lolder<CR>
-nnoremap <silent> [Quickfix]wen :<C-u>lnewer<CR>
-nnoremap <silent> [Quickfix]wm  :<C-u>lmake<CR>
-nnoremap [Quickfix]wM  q:lmake<Space>
-nnoremap [Quickfix]w<Space>  q:lmake<Space>
-nnoremap [Quickfix]wg  q:lgrep<Space>
-"}}}
 "}}}2
 " s: Windows and buffers(High priority) "{{{2
 " The prefix key.
@@ -2158,7 +2084,6 @@ Fomap <silent> ]]  <SID>jump_section_o(']]')
 Fomap <silent> ][  <SID>jump_section_o('][')
 Fomap <silent> [[  <SID>jump_section_o('[[')
 Fomap <silent> []  <SID>jump_section_o('[]')
-
 
 function! s:search_the_selected_text_literaly(search_command)
   let reg_0 = [@0, getregtype('0')]
