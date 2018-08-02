@@ -118,10 +118,7 @@ NULL="/dev/null"
 bindkey -e
 
 if [ -x "`whence nvim`" ]; then
-    export EDITOR="`whence nvim`"
-    alias vi="`whence nvim`"
-else
-    export EDITOR="`whence nvim`"
+    alias vim="`whence nvim`"
 fi
 
 if [ -x "`whence lv`" ]; then
@@ -139,9 +136,8 @@ alias e='emacsclient -nt'
 alias ec='emacsclient -nc'
 alias a='atom-beta'
 alias pr='git pull-request'
-alias vim=nvim
 
-# export EDITOR="emacsclient -nc"
+export EDITOR="emacsclient -nc"
 
 # export GREP_OPTIONS='-rIPs --exclude-dir=.[a-zA-Z0-9]* --exclude=.* --exclude=*~ --color=auto'
 #
@@ -297,14 +293,12 @@ tj-backward-word() {
   zle backward-word;
 };
 zle -N tj-backward-word;
-bindkey '^b' tj-backward-word;
 
 tj-forward-word() {
   local WORDCHARS='*?_~=&;!#$%^(){}'
   zle forward-word;
 };
 zle -N tj-forward-word;
-bindkey '^f' tj-forward-word;
 
 run-with-bundler() {
   if is-bundler-installed && is-within-bundled-project; then
@@ -476,16 +470,6 @@ function git-ignore() {
 zle -N backward-delete-to-slash
 
 zstyle ':completion:*:*:git:*' user-commands author:'show author info'
-
-export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
-
-. `brew --prefix`/etc/profile.d/z.sh
-
-# The next line updates PATH for the Google Cloud SDK.
-source '/Users/tj/Downloads/google-cloud-sdk/path.zsh.inc'
-
-# The next line enables shell command completion for gcloud.
-source '/Users/tj/Downloads/google-cloud-sdk/completion.zsh.inc'
 
 export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
 
