@@ -2,8 +2,10 @@
 --sort-files
 
 --type-add=ruby=rake,haml
+--type-add=tf=tf
 --type-add=vim=vimrc
 --type-add=html=haml
+--type-add=proto=proto
 --type-add=css=sass,scss,less
 
 # add types ack doesn't know about
@@ -12,6 +14,7 @@
 --type-set=RDOC=rdoc
 
 --ignore-dir=node_modules
+--ignore-dir=vendor
 --ignore-dir=.idea
 
 --smart-case
