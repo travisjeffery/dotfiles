@@ -3,95 +3,85 @@
 
 call plug#begin('~/.vim/plugged')
 
-" Plugs {{{2
-
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-rhubarb'
-Plug 'mpyatishev/vim-sqlformat'
-Plug 'airblade/vim-rooter'
-Plug 'hashivim/vim-terraform'
-Plug 'thinca/vim-poslist'
-Plug 'junegunn/fzf.vim'
-Plug 'kana/vim-arpeggio'
-Plug'buoto/gotests-vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-go', { 'do': 'make'}
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-Plug 'nathanielc/vim-tickscript'
-Plug 'mbbill/undotree'
-" Plug 'junegunn/vim-peekaboo'
-Plug 'bkad/CamelCaseMotion'
-Plug 'mhinz/vim-startify'
-Plug 'junegunn/vim-easy-align'
+Plug '~/.fzf'
+Plug 'junegunn/fzf.vim'
 Plug 'fatih/vim-go'
-Plug 'benekastah/neomake'
-Plug 'mattn/emmet-vim'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'travisjeffery/vim-auto-mkdir'
-Plug 'tyru/operator-camelize.vim'
 Plug 'Lokaltog/vim-easymotion'
-Plug 'millermedeiros/vim-esformatter'
-Plug 'nono/vim-handlebars'
-Plug 'kana/vim-tabpagecd'
-Plug 'michaeljsmith/vim-indent-object'
-Plug 'the-isz/MinYankRing.vim', {'v': 'events'}
 Plug 'Raimondi/vim_search_objects'
+Plug 'Shougo/echodoc'
+Plug 'Shougo/neopairs.vim'
+Plug 'airblade/vim-rooter'
+Plug 'benekastah/neomake'
+Plug 'bkad/CamelCaseMotion'
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+Plug 'duff/vim-bufonly'
+Plug 'gregsexton/MatchTag'
+Plug 'hashivim/vim-terraform'
+Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
+Plug 'junegunn/vim-easy-align'
+Plug 'juvenn/mustache.vim'
+Plug 'kana/vim-altercmd'
+Plug 'kana/vim-altr'
+" Plug 'kana/vim-arpeggio'
+Plug 'kana/vim-exjumplist'
 Plug 'kana/vim-gf-diff'
 Plug 'kana/vim-gf-user'
-Plug 'kana/vim-textobj-line'
-Plug 'tpope/vim-eunuch'
-Plug 'tyru/current-func-info.vim'
-Plug 'juvenn/mustache.vim'
-Plug 'tpope/vim-markdown'
-Plug 'mattn/sonictemplate-vim'
-Plug 'tyru/open-browser.vim'
-Plug 'mattn/webapi-vim'
-Plug 'gregsexton/MatchTag'
-Plug 'thinca/vim-ref'
-Plug 'ujihisa/quicklearn'
-Plug 'vim-scripts/ReplaceWithRegister'
-Plug 'vim-scripts/AnsiEsc.vim'
-Plug 'majutsushi/tagbar'
-Plug 'git@github.com:travisjeffery/vim-extradite'
-Plug 'thinca/vim-github'
-Plug 'pangloss/vim-javascript'
-Plug 'chemzqm/vim-jsx-improve'
-Plug 'thinca/vim-qfreplace'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'kana/vim-altr'
-Plug 'git@github.com:travisjeffery/IndexedSearch'
-Plug 'vim-scripts/bufkill.vim'
-Plug 'duff/vim-bufonly'
-Plug 'tpope/vim-fugitive'
-Plug 'sjl/gundo.vim'
-Plug 'travisjeffery/vim-help'
-Plug 'tpope/vim-ragtag'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
+Plug 'kana/vim-grex'
+Plug 'kana/vim-operator-replace'
+Plug 'kana/vim-operator-user'
+Plug 'kana/vim-smartword'
+Plug 'kana/vim-tabpagecd'
+Plug 'kana/vim-textobj-diff'
 Plug 'kana/vim-textobj-entire'
 Plug 'kana/vim-textobj-function'
-Plug 'thinca/vim-textobj-comment'
-Plug 'kana/vim-textobj-diff'
 Plug 'kana/vim-textobj-lastpat'
-Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'kana/vim-textobj-line'
 Plug 'kana/vim-textobj-user'
-Plug 'kana/vim-smartword'
-Plug 'git@github.com:travisjeffery/vim-unimpaired'
-Plug 'kana/vim-grex'
-Plug 'kana/vim-operator-user'
-Plug 'kana/vim-altercmd'
-Plug 'kana/vim-operator-replace'
-Plug 'tpope/vim-commentary'
-Plug 'thinca/vim-quickrun'
-Plug 'kana/vim-exjumplist'
-Plug 'Shougo/echodoc'
+Plug 'majutsushi/tagbar'
+Plug 'mattn/emmet-vim'
 Plug 'mattn/gist-vim'
+Plug 'mattn/sonictemplate-vim'
+Plug 'mattn/webapi-vim'
+Plug 'mbbill/undotree'
+Plug 'mhinz/vim-startify'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'millermedeiros/vim-esformatter'
+Plug 'mxw/vim-jsx'
+Plug 'nathanielc/vim-tickscript'
+Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'pangloss/vim-javascript'
+Plug 'the-isz/MinYankRing.vim', {'v': 'events'}
+Plug 'thinca/vim-github'
+Plug 'thinca/vim-poslist'
+Plug 'thinca/vim-qfreplace'
+Plug 'thinca/vim-quickrun'
+Plug 'thinca/vim-ref'
+Plug 'thinca/vim-textobj-comment'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-ragtag'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'travisjeffery/vim-auto-mkdir'
+Plug 'travisjeffery/vim-help'
+Plug 'tyru/open-browser.vim'
+Plug 'tyru/operator-camelize.vim'
+Plug 'vim-scripts/AnsiEsc.vim'
+Plug 'vim-scripts/ReplaceWithRegister'
+Plug 'vim-scripts/bufkill.vim'
+Plug'buoto/gotests-vim'
 
 call plug#end()
-"}}}
-
 
 filetype plugin indent on
 
@@ -143,10 +133,6 @@ endif
 if exists('+macmeta')
   set macmeta
 endif
-" set winwidth=84
-" set winheight=5
-" set winminheight=5
-" set winheight=999
 set undodir=~/.tmp
 set undofile
 set undolevels=1000
@@ -239,7 +225,7 @@ endfunction"}}}2
 " scroll "{{{2
 set scroll=5
 set scrolloff=0
-let g:scrolloff = 15 
+let g:scrolloff = 15
 autocmd MyAutoCmd CursorMoved * call s:reinventing_scrolloff()
 
 let s:last_lnum = -1
@@ -282,17 +268,14 @@ endfunction
 "   endfunction
 " augroup END"}}}2
 set mouse=a
-" set ttymouse=xterm2
 set t_Co=256
 set hidden
 set textwidth=79
 set ignorecase
 set dictionary-=/usr/share/dict/words dictionary+=/usr/share/dict/words
-
 set complete-=i
 set complete-=k
 set complete-=i
-" set complete-=.
 set complete-=u
 set complete-=b
 set complete-=w
@@ -336,13 +319,15 @@ set t_ti=
 set t_te=
 set shortmess=filtIoOA
 set report=0
-set grepprg=ag
+set grepprg=ack
+
 if has("mac")
   set clipboard=unnamed
   let g:gist_clip_command = 'pbcopy'
 else
   let g:gist_clip_command = 'xclip -selection clipboard'
 endif
+
 if has("gui") && has("mac")
   set fuopt+=maxhorz
   set macmeta
@@ -362,12 +347,8 @@ endif
 if exists('&inccommand')
   set inccommand=split
 endif
-call cfi#load()
 set statusline=%f
-set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
-set statusline+=%{exists('g:loaded_rvm')?rvm#statusline():''}
 set statusline+=%#warningmsg#
-set statusline+=%{(cfi#get_func_name()!='')?'['.cfi#get_func_name().']':''}
 set statusline+=%{&ff!='unix'?'['.&ff.']':''}
 set statusline+=%*
 set statusline+=%#warningmsg#
@@ -419,12 +400,12 @@ function! AddInstanceVariablesForArguments()
 
   let argslist = map(argslist, '"@" . argslist[v:key] . " = " . argslist[v:key]')
 
-  call append(l, argslist)  
+  call append(l, argslist)
 
   execute "normal jV" . len(argslist) . "j="
 endfunction
 
-autocmd FileType ruby,eruby 
+autocmd FileType ruby,eruby
       \ nnoremap <leader>rg :<c-u>call AddInstanceVariablesForArguments()<cr>
 
 
@@ -536,42 +517,19 @@ augroup END"}}}2
 "}}}1
 " Section: Plugins {{{1
 " EasyMotion {{{1
+
+hi link EasyMotionTarget ErrorMsg
+hi link EasyMotionShade  Comment
+
+hi link EasyMotionTarget2First MatchParen
+hi link EasyMotionTarget2Second MatchParen
+
+hi link EasyMotionMoveHL Search
+hi link EasyMotionIncSearch Search
+
 let g:EasyMotion_leader_key = '<Space><Space>'
 "}}}
 
-" ultisnips {{{2
-function! g:UltiSnips_Complete()
-  call UltiSnips#ExpandSnippet()
-  if g:ulti_expand_res == 0
-    if pumvisible()
-      return "\<C-n>"
-    else
-      call UltiSnips#JumpForwards()
-      if g:ulti_jump_forwards_res == 0
-        return "\<TAB>"
-      endif
-    endif
-  endif
-  return ""
-endfunction
-
-" au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-" let g:UltiSnipsJumpForwardTrigger="<tab>"
-" let g:UltiSnipsListSnippets="<c-e>"
-" " this mapping Enter key to <C-y> to chose the current highlight item 
-" " and close the selection list, same as other IDEs.
-" " CONFLICT with some plugins like tpope/Endwise
-" " inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
-" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-" function! s:my_cr_function()
-"   return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-"   " For no inserting <CR> key.
-"   "return pumvisible() ? "\<C-y>" : "\<CR>"
-" endfunction
-
-" let g:UltiSnipsSnippetDirectories=["UltiSnips"]
-"}}}
 " vim-easy-align {{{2
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
@@ -630,7 +588,7 @@ autocmd MyAutoCmd FileType qf nnoremap <buffer> r :<C-u>Qfreplace<CR>
 let g:snips_author = "Travis Jeffery"
 let g:user_emmet_install_global = 0
 autocmd FileType javascript,html,css,markdown EmmetInstall
- 
+
   let g:user_emmet_settings = {
   \    'html' : {
   \        'indentation' : '  '
@@ -665,25 +623,42 @@ let g:surround_{char2nr('^')} = "/^\r$/"
 let g:surround_indent = 1
 "}}}2
 " deoplete {{{2
-let g:python3_host_prog  = '/usr/local/bin/python3'
-" let g:python3_host_skip_check = 1
+ let g:python3_host_prog  = '/usr/local/bin/python3'
+ let g:deoplete#enable_at_startup = 1
 
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
-let g:deoplete#sources#go#gocode_binary = '/Users/travis/dev/bin/gocode'
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_refresh_always = 1
-let g:deoplete#auto_complete_start_length = 1
-let g:deoplete#keyword_patterns = {}
-let g:deoplete#keyword_patterns['default'] = '\h\w*'
-let g:deoplete#omni#input_patterns = {}
-let g:deoplete#sources#go#align_class = 1
+ let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
+ let g:deoplete#sources#go#gocode_binary = '/Users/travis/dev/bin/gocode'
+ let g:deoplete#sources#go#min_pattern_length = 5
+ let g:deoplete#auto_complete_delay = 100
+ let g:deoplete#sources = {}
+ let g:deoplete#sources.go = ['go']
+ let g:deoplete#enable_smart_case = 1
+ let g:deoplete#keyword_patterns = {}
+ " let g:deoplete#keyword_patterns['default'] = '\h\w*'
+ call deoplete#custom#source('_', 'converters', ['converter_remove_overlap', 'converter_truncate_abbr', 'converter_truncate_menu'])
+ let g:deoplete#omni#input_patterns = {}
+ let g:deoplete#sources#go#align_class = 1
+ call deoplete#custom#source('buffer',
+       \ 'filetypes', ['go'])
+
+ " inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+ " function! s:my_cr_function() abort
+ "   return deoplete#smart_close_popup() . "\<CR>"
+ " endfunction
+
+ " inoremap <silent><expr> <TAB>
+ "       \ pumvisible() ? "\<C-n>" :
+ "       \ <SID>check_back_space() ? "\<TAB>" :
+ "       \ deoplete#mappings#manual_complete()
+
+ function! s:check_back_space() abort
+   let col = col('.') - 1
+   return !col || getline('.')[col - 1]  =~ '\s'
+ endfunction
 
 "}}}2
-" vimfiler {{{2
 let g:jsx_ext_required = 0
 let g:template_vim_template_dir = $HOME.'.vim/template'
-let g:AutoPairs = {'(':')', '[':']', '{':'}','"':'"'}
 let g:indexed_search_shortmess=1
 let g:CSApprox_verbose_level=0
 if filereadable("/usr/local/bin/ctags")
@@ -701,8 +676,8 @@ endif
 call altercmd#load()
 command! -nargs=* -bang W :w<bang> <args>
 command! -nargs=0 E :Explore
-command! -nargs=0 Whitespace :%s/\s*$// | 
-      \ nohlsearch | 
+command! -nargs=0 Whitespace :%s/\s*$// |
+      \ nohlsearch |
       \ exe "normal ``"
 command! -nargs=0 DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 command! -bar -nargs=0 SudoW   :setl nomod|silent exe 'write !sudo tee % >/dev/null'|let &mod = v:shell_error
@@ -752,12 +727,12 @@ autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType c set omnifunc=ccomplete#Complete
-autocmd FileType ruby,eruby 
+autocmd FileType ruby,eruby
       \ set omnifunc=rubycomplete#Complete |
-      \ set foldmethod=expr | 
-      \ set foldexpr=getline(v:lnum)=~'^\\s*#' 
-" \ exe "normal zM``" 
-" \ set foldlevel=1 | 
+      \ set foldmethod=expr |
+      \ set foldexpr=getline(v:lnum)=~'^\\s*#'
+" \ exe "normal zM``"
+" \ set foldlevel=1 |
 autocmd BufNewFile,BufRead *.coffee set ft=coffee sw=2 sts=2
 autocmd BufNewFile,BufRead *.bats set ft=sh sw=2 sts=2
 autocmd BufNewFile,BufRead *.txt set ft=markdown
@@ -769,13 +744,13 @@ autocmd FileType vimperator set ft=vim
 " autocmd filetype svn,*commit*,markdown set spell
 autocmd FileType cucumber compiler cucumber | setl makeprg=cucumber\ \"%:p\"
 autocmd FileType python
-      \   setl makeprg=python\ \"%:p\" 
+      \   setl makeprg=python\ \"%:p\"
 autocmd FileType clojure
-      \   setl makeprg=clj\ \"%:p\" 
+      \   setl makeprg=clj\ \"%:p\"
 autocmd User Bundler
       \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 autocmd FileType ruby
-      \ compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\" 
+      \ compiler rubyunit | setl makeprg=ruby\ -Itest\ \"%:p\"
 " autocmd User Bundler
 "       \ if &makeprg !~ 'bundle' | setl makeprg^=bundle\ exec\  | endif
 
@@ -845,7 +820,7 @@ iabbrev <expr> ddate strftime("%Y-%m-%d")
 " rails cabbrevs
 cabbrev rm; Rmodel
 cabbrev rc; Rcontroller
-cabbrev rv; Rview 
+cabbrev rv; Rview
 cabbrev ru; Runittest
 cabbrev rf; Rfunctional
 cabbrev rs; Rschema
@@ -880,7 +855,7 @@ command! Ctags
 cabbrev RModel Rmodel
 
 autocmd FileType ruby,eruby
-      \ iabbrev <buffer> rw; attr_accessor| 
+      \ iabbrev <buffer> rw; attr_accessor|
       \ iabbrev <buffer> rr; attr_reader|
       \ iabbrev <buffer> ww; attr_writer
 
@@ -928,15 +903,6 @@ xnoremap <SID>(command-line-enter) :
 nmap : <SID>(command-line-enter)
 xmap : <SID>(command-line-enter)
 
-nnoremap <silent> [Space]; :<C-u>normal!<Space>;<CR>
-nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
-
-nnoremap <silent> [Space]yh :<C-u>Unite history/yank<CR>
-nnoremap <silent> [Space]mk :<C-u>marks<CR>
-nnoremap <silent> [Space]re :<C-u>registers<CR>
-nnoremap <silent> [Space]ya :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
-nnoremap <silent> [Space]y% :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
-
 function! s:SID() "{{{
   return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
 endfunction "}}}
@@ -951,8 +917,9 @@ if (exists("g:indexed_search_plugin"))
   nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
 endif
 
-nnoremap <silent><C-p> :FZF<CR>
-nnoremap <silent><C-p> :FZF<CR>
+if executable("ag")
+    let g:CtrlSpaceGlobCommand = 'ag -l --nocolor -g ""'
+endif
 
 nmap [Space]r <SID>(command-line-enter)<C-u>QuickRun<CR>
 
@@ -961,17 +928,6 @@ nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 " Ruby block to yo face
 nmap <silent> [Space]b <Plug>BlockToggle
 
-
-if exists('g:loaded_delimitMate') && g:loaded_delimitMate == 1
-  autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
-  autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
-
-  imap <C-b> <Plug>delimitMateC-Left
-  imap <C-f> <Plug>delimitMateC-Right
-else
-  inoremap <silent> <C-B> <C-R>=getline('.')=~'^\s*$'&&col('.')>strlen(getline('.'))?"0\<Lt>C-D>\<Lt>Esc>kJs":"\<Lt>Left>"<CR>
-  inoremap <silent> <C-F> <C-R>=col('.')>strlen(getline('.'))?"\<Lt>C-F>":"\<Lt>Right>"<CR>
-endif
 
 map [Space]c <Plug>(operator-camelize-toggle)
 
@@ -1038,7 +994,7 @@ function! s:cd_buffer_dir()"{{{
 endfunction"}}}2
 nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
 
-nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
+nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>"
 
 nmap R <Nop>
 nmap R <SID>(command-line-enter)%s//
@@ -1079,9 +1035,12 @@ nmap    s [Window]
 nnoremap <silent> [Window]p  :<C-u>call <SID>split_nicely()<CR>
 nnoremap <silent> [Window]v  :<C-u>vsplit<CR>
 nnoremap <silent> [Window]c  :<C-u>call <sid>smart_close()<CR>
-" nnoremap <silent> -  :<C-u>call <sid>smart_close()<CR>
 nnoremap <silent> [Window]o  :<C-u>only<CR>
 nnoremap <silent> [Window]<Space>  :<C-u>call <SID>ToggleSplit()<CR>
+nnoremap <silent> [Window]h <C-w>h
+nnoremap <silent> [Window]l <C-w>l
+nnoremap <silent> [Window]j <C-w>j
+nnoremap <silent> [Window]k <C-w>k
 
 nnoremap <silent> [Window]s  <Plug>(golden_ratio_resize)
 function! s:MovePreviousWindow()
@@ -1249,8 +1208,8 @@ nmap <Leader>- i<space><esc>vs-2lxi
 nmap <Leader>+ :<C-u>cd %:p:h<bar>new<Space>
 imap <C-e> <esc>$a
 imap <C-a> <esc>0i
-" imap <C-b> <esc>ha
-" imap <C-f> <esc>la
+imap <C-b> <esc>ha
+imap <C-f> <esc>la
 imap <C-d> <right><bs>
 nmap <C-b> :Buffers<CR>
 imap <silent> <C-BS> <esc>bvec
@@ -1366,9 +1325,6 @@ if hasmapto('s', 'v')
 endif
 vmap s S
 xmap s S
-
-" nnoremap <silent> <Tab> :call <SID>NextWindow()<CR>
-" nnoremap <silent> <S-Tab> :call <SID>PreviousWindowOrTab()<CR>
 
 function! s:keys_to_select_the_last_changed_text()
   " It is not possible to determine whether the last operation to change text
@@ -1521,6 +1477,7 @@ noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ? 'zt' : (winline() == 1)? 
 
 " Auto escape / substitute.
 xnoremap [Space]s y:%s/<C-r>=substitute(@0, '/', '\\/', 'g')<Return>//g<Left><Left>
+
 
 iabbrev em; —
 
@@ -1704,7 +1661,7 @@ if !exists('s:GNU_SCREEN_AVAILABLE_P')
   endif
 endif
 
-function! s:Config() 
+function! s:Config()
   exec 'edit ~/.config/nvim/init.vim'
 endfunction
 command! -nargs=0 Config call s:Config()
@@ -1752,11 +1709,12 @@ cabbrev BUndle Bundle
 cabbrev gg; Ggrep -P
 
 iabbrev <expr> ddate strftime("%Y-%m-%d")
+iabbrev tt; How I tested? `make test`
 
 " rails cabbrevs
 cabbrev rm; Rmodel
 cabbrev rc; Rcontroller
-cabbrev rv; Rview 
+cabbrev rv; Rview
 cabbrev ru; Runittest
 cabbrev rf; Rfunctional
 cabbrev rs; Rschema
@@ -1789,7 +1747,7 @@ command! Ctags
 cabbrev RModel Rmodel
 
 autocmd FileType ruby,eruby
-      \ iabbrev <buffer> rw; attr_accessor| 
+      \ iabbrev <buffer> rw; attr_accessor|
       \ iabbrev <buffer> rr; attr_reader|
       \ iabbrev <buffer> ww; attr_writer
 
@@ -1844,10 +1802,9 @@ xmap : <SID>(command-line-enter)
 " nnoremap ' <Nop>
 " nnoremap ' ;
 
-nnoremap <silent> [Space]; :<C-u>normal!<Space>;<CR>
-nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
+" nnoremap <silent> [Space]; :<C-u>normal!<Space>;<CR>
+" nnoremap <silent> [Space], :<C-u>normal!<Space>,<CR>
 
-nnoremap <silent> [Space]yh :<C-u>Unite history/yank<CR>
 nnoremap <silent> [Space]mk :<C-u>marks<CR>
 nnoremap <silent> [Space]re :<C-u>registers<CR>
 nnoremap <silent> [Space]ya :<C-u>1,$y<CR><Bar>:<C-u>1,$y+<CR>
@@ -1859,15 +1816,6 @@ endfunction "}}}
 function! s:SNR(map) "{{{
   return printf("<SNR>%d_%s", s:SID(), a:map)
 endfunction "}}}
-
-if (exists("g:indexed_search_plugin"))
-  nnoremap <silent>n :let v:errmsg=''<CR>:silent! norm! nzv<CR>:<C-u>ShowSearchIndex<CR>
-  nnoremap <silent>N :let v:errmsg=''<CR>:silent! norm! Nzv<CR>:<C-u>ShowSearchIndex<CR>
-  nnoremap <silent>* :let v:errmsg=''<CR>:silent! norm! *zv<CR>:<C-u>ShowSearchIndex<CR>
-  nnoremap <silent># :let v:errmsg=''<CR>:silent! norm! #zv<CR>:<C-u>ShowSearchIndex<CR>
-endif
-
-nnoremap <silent><C-p> :FZF<CR>
 
 " nmap : q:
 " nmap / q/
@@ -1881,34 +1829,7 @@ nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
 nmap <silent> [Space]b <Plug>BlockToggle
 
 
-if exists('g:loaded_delimitMate') && g:loaded_delimitMate == 1
-  autocmd FileType * imap <C-b> <Plug>delimitMateC-Left
-  autocmd FileType * imap <C-f> <Plug>delimitMateC-Right
-
-  imap <C-b> <Plug>delimitMateC-Left
-  imap <C-f> <Plug>delimitMateC-Right
-else
-  inoremap <silent> <C-B> <C-R>=getline('.')=~'^\s*$'&&col('.')>strlen(getline('.'))?"0\<Lt>C-D>\<Lt>Esc>kJs":"\<Lt>Left>"<CR>
-  inoremap <silent> <C-F> <C-R>=col('.')>strlen(getline('.'))?"\<Lt>C-F>":"\<Lt>Right>"<CR>
-endif
-
-map [Space]c <Plug>(operator-camelize-toggle)
-
-" Copy current buffer's path to clipboard{{{2
-nnoremap <Leader>% :<C-u>call <SID>copy_path()<CR>
-function! s:copy_path()
-  let @*=expand('%')
-  let @"=expand('%')
-  let @+=expand('%')
-endfunction"}}}2
-
-" Copy current buffer's path to clipboard{{{2
-nnoremap [Space]% :<C-u>call <SID>copy_path()<CR>
-function! s:copy_path()
-  let @*=expand('%')
-  let @"=expand('%')
-  let @+=expand('%')
-endfunction"}}}2
+"}}}2
 " Altr {{{2
 autocmd MyAutoCmd FileType vim call altr#define('autoload/%.vim', 'doc/%.txt', 'doc/%.jax', 'plugin/%.vim')
 autocmd FileType * command! -buffer A call altr#forward()
@@ -1956,7 +1877,7 @@ function! s:cd_buffer_dir()"{{{
 endfunction"}}}2
 nnoremap <ESC><ESC> :redraw!<Bar>nohlsearch<CR>
 
-nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>" 
+nnoremap <silent> <expr> <CR> &bt == "" ? "/": "\<CR>"
 
 nmap R <Nop>
 nmap R <SID>(command-line-enter)%s//
@@ -2021,7 +1942,6 @@ Cnmap <count> g/  :<C-U>vimgrep /<C-R>//j %<CR><Bar>:cw<CR>
 Cvmap <count> g/  :<C-U>vimgrep /<C-R>//j %<CR><Bar>:cw<CR>
 
 nmap go <Nop>
-nmap go <SID>(command-line-enter)<C-u>Unite outline<CR>
 
 function! s:cmd_Fmap(prefix, suffix, args)
   " FIXME: This parsing may not be compatible with the original one.
@@ -2222,6 +2142,8 @@ nnoremap <silent> <c-b> :call fzf#run({
 
 au BufNewFile,BufRead *.go setlocal noet ts=4 sw=4 sts=4
 let g:go_fmt_command = "goimports"
+let g:go_metalinter_enabled = ['vet', 'golint', 'gometalinter']
+let g:go_alternate_mode = 'split'
 
 call neomake#configure#automake('w')
 let g:neomake_go_enabled_makers = [ 'go', 'gometalinter' ]
@@ -2248,6 +2170,29 @@ let g:neomake_go_gometalinter_maker = {
   \   '%W%f:%l::%tarning: %m'
   \ }
 
+command! -range FormatSQL :call FormatSQL(<line1>, <line2>)
+
+function! FormatSQL(start, end)
+python << EOF
+
+import vim
+import sqlparse
+
+start = int(vim.eval('a:start')) - 1
+end = int(vim.eval('a:end')) - 1
+buf = vim.current.buffer
+NL = '\n'
+
+try:
+    sql = NL.join(buf[start:end + 1])
+    sql_new = sqlparse.format(sql, reindent=True, keyword_case='upper')
+
+    lines = [line.encode('utf-8') for line in sql_new.split(NL)]
+    buf[:] = buf[:start] + lines + buf[end + 1:]
+except Exception, e:
+    print e
+EOF
+endfunction
 
 let g:terraform_align=1
 autocmd FileType terraform setlocal commentstring=#%s
@@ -2258,14 +2203,28 @@ nmap [Space]]  <Plug>(poslist-next-buf)
 nmap [Space]]  <Plug>(poslist-next-buf)
 let g:poslist_histsize = 1000
 
+autocmd BufWinEnter quickfix nnoremap <silent> <buffer>
+      \   q :cclose<cr>:lclose<cr>
+autocmd BufEnter * if (winnr('$') == 1 && &buftype ==# 'quickfix' ) |
+      \   bd|
+      \   q | endif
+
+let g:qf_loclist_window_bottom=0
+
 set path +=~/dev/src/**
 
-call arpeggio#load()
+" call arpeggio#load()
+" Arpeggio inoremap jk <Esc>
+" Arpeggio inoremap ;' <Right><CR>
+" Arpeggio inoremap kl <Right>
+" Arpeggio inoremap hj <Left>
+" Arpeggio cnoremap jk <Esc>
+" Arpeggio vnoremap jk <Esc>
+" Arpeggio nnoremap jk <Esc>
 
-Arpeggio inoremap jk <Esc>
-Arpeggio cnoremap jk <Esc>
-Arpeggio vnoremap jk <Esc>
-Arpeggio nnoremap jk <Esc>
+map <C-p> :FZF<CR>
+map <M-T> :FZF<CR>
+map <M-t> :GoDecls<CR>
 
 command! FZFMru call fzf#run({
 \  'source':  v:oldfiles,

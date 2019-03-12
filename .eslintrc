@@ -1,6 +1,6 @@
 {
   "parser": "babel-eslint",
-  "parserOptions": {
+ "parserOptions": {
     "ecmaFeatures": {
       "classes": true,
       "blockBindings": true,
@@ -32,3 +32,4 @@
     "es6": true
   }
 }
+ 
