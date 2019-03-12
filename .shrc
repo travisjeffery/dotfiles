@@ -34,7 +34,10 @@ if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
 
-if [ -d "$HOME/bin/extraterm" ]; then PATH="$HOME/bin/extraterm"; fi
+if [ -d "/usr/local/protoc/bin" ]; then PATH="/usr/local/protoc/bin:$PATH"; fi
+if [ -d "$HOME/ccloud-0.2.1/bin" ]; then PATH="$HOME/ccloud-0.2.1/bin:$PATH"; fi
+if [ -d "$HOME/bin/extraterm" ]; then PATH="$HOME/bin/extraterm:$PATH"; fi
+if [ -d "$HOME/bin/lectl" ]; then PATH="$HOME/bin/lectl:$PATH"; fi
 if [ -d "/snap/bin" ]; then PATH="/snap/bin:$PATH"; fi
 if [ -d "/opt/gradle/gradle-4.9/bin" ]; then PATH="/opt/gradle/gradle-4.9/bin:$PATH"; fi
 if [ -d "/opt/gradle" ]; then GRADLE_HOME="/opt/gradle/gradle-4.9"; fi
@@ -81,5 +84,9 @@ fi
 
 . ~/.zsh/z/z.sh
 
+eval "$(hub alias -s)"
+
 # To use pbcopy/pbpaste with UTF-8 encoding.
 export __CF_USER_TEXT_ENCODING=${__CF_USER_TEXT_ENCODING/:*:/:0x08000100:}
+
+export PATH=$(echo $PATH | sed 's/::/:/g')
