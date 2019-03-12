@@ -78,7 +78,7 @@ setopt longlistjobs
 setopt nobeep
 setopt noclobber
 setopt AUTO_CD
-setopt RM_STAR_WAIT
+# setopt RM_STAR_WAIT
 setopt notify
 setopt AUTO_NAME_DIRS
 setopt PUSHD_MINUS
@@ -446,6 +446,7 @@ alias d=docker
 alias k=kubectl
 alias dc="docker-compose"
 alias trash="rmtrash"
+alias magit='emacsclient -n -e \(magit-status\)'
 
 backward-delete-to-slash() {
   integer pos=$CURSOR
@@ -474,3 +475,7 @@ zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# [[ -s "/home/tj/.gvm/scripts/gvm" ]] && source "/home/tj/.gvm/scripts/gvm"
+
+export GOPATH=$HOME/dev
