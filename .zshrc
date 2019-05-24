@@ -137,8 +137,6 @@ alias ec='emacsclient -nc'
 alias a='atom-beta'
 alias pr='git pull-request'
 
-export EDITOR="emacsclient -nc"
-
 # export GREP_OPTIONS='-rIPs --exclude-dir=.[a-zA-Z0-9]* --exclude=.* --exclude=*~ --color=auto'
 #
 # Set aliases
@@ -182,14 +180,14 @@ alias du="du -h"
 alias gprof="gprof -b"
 alias cdrecord="cdrecord driveropts=burnfree"
 alias wodim="wodim driveropts=burnfree"
-alias emacs="emacs -nw"
+# alias emacs="emacs -nw"
 # alias yaourt="yaourt --tmp /home/tmp"
 alias display="display -geometry +0+0"
 alias rhino="rlwrap java -jar /usr/share/java/js.jar"
 alias node="env NODE_NO_READLINE=1 rlwrap node"
 alias curl="noglob curl"
-alias wget="noglob wget"
-
+alias wget="noglob wget
+"
 function g {
   if [[ $# > 0 ]]; then
     git $@

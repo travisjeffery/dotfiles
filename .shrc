@@ -34,7 +34,7 @@ if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
 
-if [ -d "/usr/local/protoc/bin" ]; then PATH="/usr/local/protoc/bin:$PATH"; fi
+if [ -d "/usr/local/protobuf/bin" ]; then PATH="/usr/local/protobuf/bin:$PATH"; fi
 if [ -d "$HOME/ccloud-0.2.1/bin" ]; then PATH="$HOME/ccloud-0.2.1/bin:$PATH"; fi
 if [ -d "$HOME/bin/extraterm" ]; then PATH="$HOME/bin/extraterm:$PATH"; fi
 if [ -d "$HOME/bin/lectl" ]; then PATH="$HOME/bin/lectl:$PATH"; fi
@@ -52,15 +52,16 @@ if [ -f /etc/os-release ]; then source /etc/os-release; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
 
 export EDITOR="emacsclient"
-# export EDITOR=vim
 export PAGER=less
 export SHELL=$(which zsh)
 export TZ=EST
 export TERM=xterm-256color
-export VIMRUNTIME=/usr/local/Cellar/macvim/HEAD/MacVim.app/Contents/Resources/vim/runtime
+# export VIMRUNTIME=/usr/local/Cellar/macvim/HEAD/MacVim.app/Contents/Resources/vim/runtime
 export GZIP='--best --name --verbose'
 # export TERM=xterm-16color
 export GITHUB_USERNAME=travisjeffery
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 if [ -d "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home" ]; then JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"; fi
 
