@@ -43,7 +43,7 @@ bindkey '\e[3~' delete-char
 
 zmodload -i zsh/parameter
 insert-last-command-output() {
-LBUFFER+="$(eval $history[$((HISTCMD-1))])"
+  LBUFFER+="$(eval $history[$((HISTCMD-1))])"
 }
 zle -N insert-last-command-output
 bindkey "^X^L" insert-last-command-output
@@ -71,6 +71,7 @@ setopt EXTENDED_GLOB AUTO_PUSHD LISTPACKED \
        AUTOREMOVESLASH HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS \
        SHARE_HISTORY APPEND_HISTORY
 setopt NO_BEEP
+setopt globdots
 
 setopt correct
 setopt interactivecomments
@@ -78,11 +79,10 @@ setopt longlistjobs
 setopt nobeep
 setopt noclobber
 setopt AUTO_CD
-# setopt RM_STAR_WAIT
+
 setopt notify
 setopt AUTO_NAME_DIRS
 setopt PUSHD_MINUS
-
 
 setopt appendhistory
 setopt extendedhistory
@@ -106,7 +106,7 @@ CMD_MAX_EXEC_TIME=5
 
 # Fastest possible way to check if repo is dirty
 git_dirty() {
-    git diff --quiet --ignore-submodules HEAD 2>/dev/null; [ $? -eq 1 ] && echo '*'
+  git diff --quiet --ignore-submodules HEAD 2>/dev/null; [ $? -eq 1 ] && echo '*'
 }
 
 HISTFILE="$HOME/.zsh_history"
@@ -117,19 +117,15 @@ NULL="/dev/null"
 
 bindkey -e
 
-if [ -x "`whence nvim`" ]; then
-    alias vim="`whence nvim`"
-fi
-
 if [ -x "`whence lv`" ]; then
-    export PAGER="`whence lv`"
-    export LV="-c"
+  export PAGER="`whence lv`"
+  export LV="-c"
 elif [ -x "`whence less`" ]; then
-    export PAGER="`whence less`"
-    export LESS="-isR"
-    alias lv="less"
+  export PAGER="`whence less`"
+  export LESS="-isR"
+  alias lv="less"
 else
-    # export PAGER="/bin/more"
+  # export PAGER="/bin/more"
 fi
 
 alias e='emacsclient -nt'
@@ -137,7 +133,6 @@ alias ec='emacsclient -nc'
 alias a='atom-beta'
 alias pr='git pull-request'
 
-# export GREP_OPTIONS='-rIPs --exclude-dir=.[a-zA-Z0-9]* --exclude=.* --exclude=*~ --color=auto'
 #
 # Set aliases
 #
@@ -145,19 +140,19 @@ alias pr='git pull-request'
 setopt complete_aliases
 
 case "$OSTYPE" in
-    linux*)
-	alias ls="/bin/ls -A --color=auto"
-	export LS_COLORS='no=00:fi=00:di=01;36:ln=00;35:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32:'
-	zstyle ':completion:*' list-colors 'di=01;36' 'ln=00;35' 'so=01;35' 'ex=01;32' 'bd=40;33;01' 'cd=40;33;01'
-	alias -g pg="-pg -g -static -lc_p"
-	;;
-    freebsd*)
-        alias ls="/bin/ls -AGw"
-        alias fetch="fetch -r"
-        ;;
-    *)
-	alias ls="/bin/ls -A"
-	;;
+  linux*)
+    alias ls="/bin/ls -A --color=auto"
+    export LS_COLORS='no=00:fi=00:di=01;36:ln=00;35:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32:'
+    zstyle ':completion:*' list-colors 'di=01;36' 'ln=00;35' 'so=01;35' 'ex=01;32' 'bd=40;33;01' 'cd=40;33;01'
+    alias -g pg="-pg -g -static -lc_p"
+    ;;
+  freebsd*)
+    alias ls="/bin/ls -AGw"
+    alias fetch="fetch -r"
+    ;;
+  *)
+    alias ls="/bin/ls -A"
+    ;;
 esac
 
 [[ -x "`whence gmcs`" ]] && alias gmcs="gmcs -out:a.out" mcs=gmcs
@@ -224,33 +219,33 @@ fi
 
 
 BUNDLED_COMMANDS=(cap
-capify
-cucumber
-foreman
-guard
-haml
-heroku
-html2haml
-jekyll
-#pry
-rackup
-rails
-rake
-rake2thor
-puma
-rspec
-sass
-sass-convert
-serve
-shotgun
-spec
-spork
-thin
-thor
-tilt
-tt
-unicorn
-unicorn_rails)
+                  capify
+                  cucumber
+                  foreman
+                  guard
+                  haml
+                  heroku
+                  html2haml
+                  jekyll
+                  #pry
+                  rackup
+                  rails
+                  rake
+                  rake2thor
+                  puma
+                  rspec
+                  sass
+                  sass-convert
+                  serve
+                  shotgun
+                  spec
+                  spork
+                  thin
+                  thor
+                  tilt
+                  tt
+                  unicorn
+                  unicorn_rails)
 
 is-bundler-installed() {
   which bundle > /dev/null 2>&1
@@ -313,19 +308,19 @@ done
 autoload smart-insert-last-word
 zle -N insert-last-word smart-insert-last-word
 zstyle :insert-last-word match \
-    '*([^[:space:]][:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
+       '*([^[:space:]][:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
 bindkey '^]' insert-last-word
 
 autoload -U modify-current-argument
 _quote-previous-word-in-single() {
-    modify-current-argument '${(qq)${(Q)ARG}}'
-    zle vi-forward-blank-word
+  modify-current-argument '${(qq)${(Q)ARG}}'
+  zle vi-forward-blank-word
 }
 zle -N _quote-previous-word-in-single
 
 _quote-previous-word-in-double() {
-    modify-current-argument '${(qqq)${(Q)ARG}}'
-    zle vi-forward-blank-word
+  modify-current-argument '${(qqq)${(Q)ARG}}'
+  zle vi-forward-blank-word
 }
 zle -N _quote-previous-word-in-double
 
@@ -347,7 +342,7 @@ zstyle ':auto-fu:highlight' completion/one fg=blue,dim
 zstyle ':auto-fu:var' postdisplay ''
 zstyle ':auto-fu:var' track-keymap-skip opp
 zstyle ':auto-fu:var' autoable-function/skiplbuffers \
-  'rake *' 'gem *' 'git log *' 'npm*'
+       'rake *' 'gem *' 'git log *' 'npm*'
 
 function afu+cancel () {
   afu-clearing-maybe
@@ -357,17 +352,17 @@ function afu+cancel () {
 zle -N afu+cancel
 
 function bindkey-advice-before () {
-    local key="$1"
-    local advice="$2"
-    local widget="$3"
-    [[ -z "$widget" ]] && {
-        local -a bind
-        bind=(`bindkey -M main "$key"`)
-        widget=$bind[2]
-    }
-    local fun="$advice"
-    if [[ "$widget" != "undefined-key" ]]; then
-        local code=${"$(<=(cat <<"EOT"
+  local key="$1"
+  local advice="$2"
+  local widget="$3"
+  [[ -z "$widget" ]] && {
+    local -a bind
+    bind=(`bindkey -M main "$key"`)
+    widget=$bind[2]
+  }
+  local fun="$advice"
+  if [[ "$widget" != "undefined-key" ]]; then
+    local code=${"$(<=(cat <<"EOT"
             function $advice-$widget () {
                 zle $advice
                 zle $widget
@@ -375,10 +370,10 @@ function bindkey-advice-before () {
             fun="$advice-$widget"
 EOT
         ))"}
-        eval "${${${code//\$widget/$widget}//\$key/$key}//\$advice/$advice}"
-    fi
-    zle -N "$fun"
-    bindkey -M afu "$key" "$fun"
+    eval "${${${code//\$widget/$widget}//\$key/$key}//\$advice/$advice}"
+  fi
+  zle -N "$fun"
+  bindkey -M afu "$key" "$fun"
 }
 
 bindkey-advice-before "^G" afu+cancel
@@ -394,29 +389,29 @@ function release() {
 }
 
 function afu+delete-unambiguous-prefix () {
-    afu-clearing-maybe
-    local buf; buf="$BUFFER"
-    local bufc; bufc="$buffer_cur"
-    [[ -z "$cursor_new" ]] && cursor_new=-1
-    [[ "$buf[$cursor_new]" == ' ' ]] && return
-    [[ "$buf[$cursor_new]" == '/' ]] && return
-    ((afu_in_p == 1)) && [[ "$buf" != "$bufc" ]] && {
-        # there are more than one completion candidates
-        zle afu+complete-word
-        [[ "$buf" == "$BUFFER" ]] && {
-            # the completion suffix was an unambiguous prefix
-            afu_in_p=0; buf="$bufc"
-        }
-        BUFFER="$buf"
-        buffer_cur="$bufc"
+  afu-clearing-maybe
+  local buf; buf="$BUFFER"
+  local bufc; bufc="$buffer_cur"
+  [[ -z "$cursor_new" ]] && cursor_new=-1
+  [[ "$buf[$cursor_new]" == ' ' ]] && return
+  [[ "$buf[$cursor_new]" == '/' ]] && return
+  ((afu_in_p == 1)) && [[ "$buf" != "$bufc" ]] && {
+    # there are more than one completion candidates
+    zle afu+complete-word
+    [[ "$buf" == "$BUFFER" ]] && {
+      # the completion suffix was an unambiguous prefix
+      afu_in_p=0; buf="$bufc"
     }
+    BUFFER="$buf"
+    buffer_cur="$bufc"
+  }
 }
 
 zle -N afu+delete-unambiguous-prefix
 function afu-ad-delete-unambiguous-prefix () {
-    local afufun="$1"
-    local code; code=$functions[$afufun]
-    eval "function $afufun () { zle afu+delete-unambiguous-prefix; $code }"
+  local afufun="$1"
+  local code; code=$functions[$afufun]
+  eval "function $afufun () { zle afu+delete-unambiguous-prefix; $code }"
 }
 
 function ec2-ip () {
@@ -474,6 +469,8 @@ export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# [[ -s "/home/tj/.gvm/scripts/gvm" ]] && source "/home/tj/.gvm/scripts/gvm"
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+  source /etc/profile.d/vte.sh
+fi
 
 export GOPATH=$HOME/dev
