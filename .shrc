@@ -83,8 +83,6 @@ if [ ! $(uname -s) = "Darwin" ]; then
     alias pbpaste='xsel --clipboard --output'
 fi
 
-. ~/.zsh/z/z.sh
-
 eval "$(hub alias -s)"
 
 # To use pbcopy/pbpaste with UTF-8 encoding.
