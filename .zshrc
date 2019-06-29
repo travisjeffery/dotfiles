@@ -467,6 +467,7 @@ zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 
 export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
 
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
