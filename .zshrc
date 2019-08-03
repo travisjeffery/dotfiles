@@ -473,5 +473,3 @@ export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   source /etc/profile.d/vte.sh
 fi
-
-export GOPATH=$HOME/dev

@@ -35,11 +35,13 @@ if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
 
 if [ -d "/usr/local/protobuf/bin" ]; then PATH="/usr/local/protobuf/bin:$PATH"; fi
+if [ -d "/usr/local/goland/bin" ]; then PATH="/usr/local/goland/bin:$PATH"; fi
 if [ -d "$HOME/ccloud-0.2.1/bin" ]; then PATH="$HOME/ccloud-0.2.1/bin:$PATH"; fi
 if [ -d "$HOME/bin/extraterm" ]; then PATH="$HOME/bin/extraterm:$PATH"; fi
 if [ -d "$HOME/bin/lectl" ]; then PATH="$HOME/bin/lectl:$PATH"; fi
 if [ -d "/snap/bin" ]; then PATH="/snap/bin:$PATH"; fi
 if [ -d "/opt/gradle/gradle-4.9/bin" ]; then PATH="/opt/gradle/gradle-4.9/bin:$PATH"; fi
+if [ -d "/opt/chef/bin" ]; then PATH="/opt/chef/bin:$PATH"; fi
 if [ -d "/opt/gradle" ]; then GRADLE_HOME="/opt/gradle/gradle-4.9"; fi
 
 export PATH="/usr/local/go/bin:$PATH"
@@ -60,12 +62,12 @@ export TERM=xterm-256color
 export GZIP='--best --name --verbose'
 # export TERM=xterm-16color
 export GITHUB_USERNAME=travisjeffery
-
+# export GOPROXY=https://proxy.golang.org
+# export GOPRIVATE=github.com/confluentinc/*,github.com/travisjeffery/*
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 if [ -d "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home" ]; then JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"; fi
 
-export GOPATH=$HOME/dev
 export ROBO_PATH=commands/commands
 export ROBO_HOST=bastion
 
