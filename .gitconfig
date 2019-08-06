@@ -1,0 +1,171 @@
+[alias]
+	delete-the-fucking-tag = !sh -c 'git tag -d $@ && git push origin :refs/tags/$@' -
+	current-tag = describe --tags --abbrev=0
+	patch = !sh -c 'bump patch &&
+	author = "!sh -c 'echo $(git log -1 --format=\"%an <%ae>\" $@) | tr -d \"\\n\"'" -
+	c = commit -m
+	st = status -s
+	g = !git grep --break --heading --line-number
+        sha = !git log --format=\"%H\" -1 | tr -d '\n'
+        copysha = !git log --format=\"%H\" -1 | tr -d '\n' | pbcopy
+	cm = commit
+	ci = commit
+	co = checkout
+	ticket = !sh -c 'git checkout $(git branch -r | grep $@ | cut -d/ -f2)' -
+	cp = cherry-pick
+	put = push origin HEAD
+	fix = commit --amend
+	fu =  commit --amend -C HEAD
+	fixup = !sh -c 'git commit -m \"fixup! $(git log -1 --format='\\''%s'\\'' $@)\"' -
+	squash = !sh -c 'git commit -m \"squash! $(git log -1 --format='\\''%s'\\'' $@)\"' -
+	r = !git l -20
+	ra = !git r --all
+	ri = rebase --interactive
+	br = branch
+	pruneremote = remote prune origin
+	tree = log --graph --oneline --decorate --all
+	tr = log --graph --oneline --decorate
+	di = diff --ignore-all-space
+	sta = stash
+	a = add
+	ap = add --patch
+	pu = push
+	pl = pull
+	cl = clone
+	aa = "!sh -c 'if [ $# -eq 0 ]; then git add --all; else git add --all $(git diff --name-only | ack $@ | xargs); fi' -"
+	amend = commit --amend
+	dc = diff --cached
+	head = !git l -1
+	l = log --graph --abbrev-commit --date=relative
+	h = !git head
+	pom = push origin master
+	review = !git log -p --reverse "${1:master}..HEAD" --
+	rba = rebase --abort
+	rbc = rebase --continue
+	sts = stash save
+	stp = stash pop
+	std = stash drop
+	stap = stash apply
+	smi = submodule init
+	smu = submodule update --init --recursive
+	po = push origin
+	pod = push origin dev
+	por = push origin release
+	fix-permissions = "!git diff -p | grep -E \"^(diff|old mode|new mode)\" | sed -e \"s/^old/NEW/;s/^new/old/;s/^NEW/new/\" | git apply"
+[pager]
+	log = true
+	diff = less
+[advice]
+	statusHints = false
+[core]
+	excludesfile = ~/.gitignore-common
+	editor = "emacsclient"
+	whitespace = warn
+	legacyheaders = false
+	pager = less
+[include]
+	path = ~/.githubconfig
+[help]
+	singlekey = true
+[grep]
+	lineNumber = true
+	extendRegexp = true
+[merge]
+	summary = true
+	tool = Kaleidoscope
+[merge "bundlelock"]
+	name = lock Gemfile
+	driver = bundle install
+[merge "bundle"]
+	name = bundle
+	driver = bundle
+[merge "railsschema"]
+	name = newer Rails schema version
+	driver = "ruby -e '\n\
+		system %(git), %(merge-file), %(--marker-size=%L), %(%A), %(%O), %(%B)\n\
+		b = File.read(%(%A))\n\
+		b.sub!(/^<+ .*\\nActiveRecord::Schema\\.define.:version => (\\d+). do\\n=+\\nActiveRecord::Schema\\.define.:version => (\\d+). do\\n>+ .*/) do\n\
+		%(ActiveRecord::Schema.define(:version => #{[$1, $2].max}) do)\n\
+		end\n\
+		File.open(%(%A), %(w)) {|f| f.write(b)}\n\
+		exit 1 if b.include?(%(<)*%L)'"
+[repack]
+	usedeltabaseoffset = true
+[push]
+	default = current
+	followTags = true
+[rebase]
+	autosquash = true
+[format]
+	pretty=format:%C(yellow)%h%Creset -%C(red)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset
+	numbered=auto
+[user]
+	email = tj@travisjeffery.com
+	name = Travis Jeffery
+[mergetool "my_vimdiff"]
+	trustExitCode = false
+	cmd = vimdiff $LOCAL $MERGED $REMOTE
+[mergetool "my_simple_vimdiff"]
+	trustExitCode = false
+	cmd = vimdiff $MERGED
+[mergetool]
+	keepBackup = false
+	prompt = false
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path =
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[rerere]
+	enabled = 1
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[diff]
+	tool = Kaleidoscope
+[difftool]
+	prompt = false
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+[credential]
+	helper = osxkeychain
+[merge "mergepbx"]
+        name = XCode project files merger
+        driver = mergepbx %O %A %B
+[ghi]
+	token = !security find-internet-password -a travisjeffery -s github.com -l 'ghi token' -w
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[magithub "confirm"]
+	submitPr = allow
+	preSubmitPr = allow
+	submitPrFromIssue = allow
+	prAllowMaintainersToSubmit = allow
+	submitIssue = allow
+	removeLabel = allow
+	addLabel = allow
+	createRepoAsPrivate = allow
+	initRepoAfterCreate = allow
+	fork = allow
+	forkCreateSpinoff = allow
+	forkAddMeAsRemote = allow
+	forkSetUpstreamToMe = allow
+	clone = allow
+	cloneForkSetUpstreamToParent = allow
+	cloneForkSetProxyToUpstream = allow
+	cloneOpenMagitStatus = allow
+	ciRefreshWhenOffline = allow
+	refresh = allow
+	refreshWhenAPIUnresponsive = allow
+	labelSaveCustomizedColors = allow
+	userEmail = allow
+	userEmailSelf = allow
+	assigneeAdd = allow
+	assigneeRemove = allow
+	comment = allow
+	commentEdit = allow
+	commentDelete = allow
+	reportError = allow
