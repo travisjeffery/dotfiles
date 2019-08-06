@@ -48,7 +48,9 @@ insert-last-command-output() {
 zle -N insert-last-command-output
 bindkey "^X^L" insert-last-command-output
 
-fpath=("$HOME/.zsh/functions" "$HOME/.zsh/pure" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
+fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
+fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
+
 
 autoload -U promptinit && promptinit
 
@@ -471,5 +473,5 @@ export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
-  source /etc/profile.d/vte.sh
+  [ -f "/etc/profile.d/vte.sh" ] && source /etc/profile.d/vte.sh
 fi
