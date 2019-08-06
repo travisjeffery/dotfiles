@@ -2,7 +2,7 @@
 # typeset -U fpath
 source $HOME/.shrc
 
-eval "$(/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate init -)"
+[ -d "/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate" ] && eval "$(/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate init -)"
 
 export CAAS_USER=travis
 export CC_USER=travis
@@ -23,4 +23,6 @@ case $TERM in
         ;;
 esac
 
-eval "$(goenv init -)"
+if type goenv; then
+  eval "$(goenv init -)"
+fi
