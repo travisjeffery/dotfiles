@@ -23,6 +23,6 @@ case $TERM in
         ;;
 esac
 
-if type goenv; then
+if type goenv &> /dev/null; then
   eval "$(goenv init -)"
 fi
