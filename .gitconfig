@@ -70,25 +70,6 @@
 [grep]
 	lineNumber = true
 	extendRegexp = true
-[merge]
-	summary = true
-	tool = Kaleidoscope
-[merge "bundlelock"]
-	name = lock Gemfile
-	driver = bundle install
-[merge "bundle"]
-	name = bundle
-	driver = bundle
-[merge "railsschema"]
-	name = newer Rails schema version
-	driver = "ruby -e '\n\
-		system %(git), %(merge-file), %(--marker-size=%L), %(%A), %(%O), %(%B)\n\
-		b = File.read(%(%A))\n\
-		b.sub!(/^<+ .*\\nActiveRecord::Schema\\.define.:version => (\\d+). do\\n=+\\nActiveRecord::Schema\\.define.:version => (\\d+). do\\n>+ .*/) do\n\
-		%(ActiveRecord::Schema.define(:version => #{[$1, $2].max}) do)\n\
-		end\n\
-		File.open(%(%A), %(w)) {|f| f.write(b)}\n\
-		exit 1 if b.include?(%(<)*%L)'"
 [repack]
 	usedeltabaseoffset = true
 [push]
@@ -102,36 +83,10 @@
 [user]
 	email = tj@travisjeffery.com
 	name = Travis Jeffery
-[mergetool "my_vimdiff"]
-	trustExitCode = false
-	cmd = vimdiff $LOCAL $MERGED $REMOTE
-[mergetool "my_simple_vimdiff"]
-	trustExitCode = false
-	cmd = vimdiff $MERGED
-[mergetool]
-	keepBackup = false
-	prompt = false
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path =
-[mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
 [rerere]
 	enabled = 1
-[difftool "Kaleidoscope"]
-	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
-[diff]
-	tool = Kaleidoscope
-[difftool]
-	prompt = false
-[mergetool "Kaleidoscope"]
-	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
 [credential]
 	helper = osxkeychain
-[merge "mergepbx"]
-        name = XCode project files merger
-        driver = mergepbx %O %A %B
 [ghi]
 	token = !security find-internet-password -a travisjeffery -s github.com -l 'ghi token' -w
 [filter "lfs"]

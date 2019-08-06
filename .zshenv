@@ -2,7 +2,9 @@
 # typeset -U fpath
 source $HOME/.shrc
 
-[ -d "/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate" ] && eval "$(/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate init -)"
+if [[ -d /home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin ]]; then
+  eval "$(/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate init -)"
+fi
 
 export CAAS_USER=travis
 export CC_USER=travis
