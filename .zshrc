@@ -469,6 +469,9 @@ zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 
 export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
 
+if type kubectl &> /dev/null; then
+  source <(kubectl completion zsh)
+fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
