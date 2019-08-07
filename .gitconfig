@@ -7,7 +7,7 @@
 	st = status -s
 	g = !git grep --break --heading --line-number
         sha = !git log --format=\"%H\" -1 | tr -d '\n'
-        copysha = !git log --format=\"%H\" -1 | tr -d '\n' | pbcopy
+        copysha = !git log --format=\"%H\" -1 | tr -d '\n' | xsel --clipboard --input
 	cm = commit
 	ci = commit
 	co = checkout
