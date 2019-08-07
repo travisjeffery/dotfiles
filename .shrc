@@ -66,6 +66,7 @@ export GITHUB_USERNAME=travisjeffery
 # export GOPRIVATE=github.com/confluentinc/*,github.com/travisjeffery/*
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
+
 if [ -d "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home" ]; then JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"; fi
 
 export ROBO_PATH=commands/commands
@@ -74,11 +75,6 @@ export ROBO_HOST=bastion
 PATH="$JAVA_HOME/bin:$PATH"
 
 PATH="$PATH:$OLD_PATH"
-
-if [ -d "$HOME/dev/src/github.com/confluentinc/cc-dotfiles" ]; then
-  export CAAS_USER=travis
-  . $HOME/dev/src/github.com/confluentinc/cc-dotfiles/caas.sh;
-fi
 
 if [ ! $(uname -s) = "Darwin" ]; then
     alias pbcopy='xsel --clipboard --input'

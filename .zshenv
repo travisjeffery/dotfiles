@@ -1,11 +1,6 @@
 source $HOME/.shrc
+source $HOME/work.sh
 
-if [[ -d /home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin ]]; then
-  eval "$(/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate init -)"
-fi
-
-export CAAS_USER=travis
-export CC_USER=travis
 export GOPATH=$HOME/dev
 export GOENV_ROOT=$HOME/.goenv
 export PATH="$GOENV_ROOT/bin:$PATH"
