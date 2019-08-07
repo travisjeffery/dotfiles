@@ -6,7 +6,7 @@ export GOENV_ROOT=$HOME/.goenv
 export PATH="$GOENV_ROOT/bin:$PATH"
 export PATH="$GOPATH/bin:$PATH"
 
-[ -d ~/.zsh/z ] && . ~/.zsh/z/z.sh
+[ -d ~/.zsh/z ] && . ~/.zsh/z/zsh-z.plugin.zsh
 
 # for emacs vterm.el
 HOSTNAME=$(uname -n)
