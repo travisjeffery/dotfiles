@@ -1,0 +1,4 @@
+*.zwc
+.*.swp
+._zplugin/
+zsdoc/data
