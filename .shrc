@@ -48,6 +48,7 @@ export PATH="/usr/local/go/bin:$PATH"
 export PATH="/usr/local/mysql/bin:$PATH"
 export RBENV_ROOT="$HOME/.rbenv"
 export PATH="$RBENV_ROOT/bin:$RBENV_ROOT/libexec:$PATH"
+export PATH="$HOME/code/leiningen:$PATH"
 
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
