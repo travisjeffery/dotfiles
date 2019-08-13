@@ -1,0 +1,316 @@
+zsh-z.plugin.zsh(1)
+===================
+:compat-mode!:
+
+NAME
+----
+zsh-z.plugin.zsh - a shell script
+
+SYNOPSIS
+--------
+
+ZSH-z - jump around with ZSH - A native ZSH version of z without awk, sort,
+date, or sed
+
+https://github.com/agkozak/zsh-z
+
+
+FUNCTIONS
+---------
+
+ zshz
+ _zshz_add_path
+ _zshz_find_common_root
+ _zshz_find_matches
+ _zshz_legacy_complete
+ _zshz_output
+ _zshz_remove_path
+ _zshz_update_datafile
+ _zshz_usage
+AUTOLOAD add-zsh-hook
+AUTOLOAD is-at-least
+CHPWD-HOOK _zshz_chpwd
+PRECMD-HOOK _zshz_precmd
+
+ENVIRONMENT VARIABLES
+---------------------
+[width="80%",cols="4,10"]
+|======
+|ZSHZ_CMD|name of command (default: z)
+|ZSHZ_COMPLETION|completion method (default: 'frecent'; 'legacy' for alphabetic sorting)
+|ZSHZ_DATA|name of datafile (default: ~/.z)
+|ZSHZ_EXCLUDE_DIRS|array of directories to exclude from your database
+|ZSHZ_NO_RESOLVE_SYMLINKS|'1' prevents symlink resolution
+|ZSHZ_OWNER|your username (if you want use ZSH-z while using sudo -s) 
+|======
+
+DETAILS
+-------
+
+Script Body
+~~~~~~~~~~~
+
+Has 27 line(s). Calls functions:
+
+ Script-Body
+ |-- add-zsh-hook
+ `-- is-at-least
+
+Uses feature(s): _alias_, _autoload_, _zmodload_
+
+zshz
+~~~~
+
+____
+ 
+ The ZSH-z Command
+ 
+ Arguments:
+ $* Command options and arguments
+____
+
+Has 84 line(s). Calls functions:
+
+ zshz
+ |-- _zshz_add_path
+ |   `-- _zshz_update_datafile
+ |-- _zshz_find_matches
+ |   `-- _zshz_output
+ |       `-- _zshz_find_common_root
+ |-- _zshz_legacy_complete
+ |-- _zshz_remove_path
+ `-- _zshz_usage
+
+Uses feature(s): _read_, _zparseopts_
+
+Called by:
+
+ _zshz_precmd
+
+_zshz_add_path
+~~~~~~~~~~~~~~
+
+____
+ 
+ Add a path to the datafile
+ 
+ Arguments:
+ $1 Path to be added
+____
+
+Has 42 line(s). Calls functions:
+
+ _zshz_add_path
+ `-- _zshz_update_datafile
+
+Called by:
+
+ zshz
+
+_zshz_chpwd
+~~~~~~~~~~~
+
+____
+ 
+ When the $PWD is removed from the datafile with z -x,
+ ZSH-z refrains from adding it again until the user has
+ left the directory.
+____
+
+Has 1 line(s). *Is a chpwd hook*. Doesn't call other functions.
+
+Not called by script or any function (may be e.g. a hook, a Zle widget, etc.).
+
+_zshz_find_common_root
+~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ If matches share a common root, find it, and put it on the
+ editing buffer stack for _zshz_output to use.
+ 
+ Arguments:
+ $1 Name of associative array of matches and ranks
+____
+
+Has 20 line(s). Doesn't call other functions.
+
+Called by:
+
+ _zshz_output
+
+_zshz_find_matches
+~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Load the datafile, and match a pattern by rank, time, or a
+ combination of the two, and output the results as
+ completions, a list, or a best match.
+ 
+ Arguments:
+ #1 Pattern to match
+ $2 Matching method (rank, time, or [default] frecency)
+ $3 Output format (completion, list, or [default] print
+ to editing buffer stack)
+____
+
+Has 65 line(s). Calls functions:
+
+ _zshz_find_matches
+ `-- _zshz_output
+     `-- _zshz_find_common_root
+
+Called by:
+
+ zshz
+
+_zshz_legacy_complete
+~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ The original tab completion method
+ 
+ String processing is smartcase -- case-insensitive if the
+ search string is lowercase, case-sensitive if there are
+ any uppercase letters. Spaces in the search string are
+ treated as *'s in globbing. Read the contents of the
+ datafile and print matches to STDOUT.
+ 
+ Arguments:
+ $1 The string to be completed
+____
+
+Has 19 line(s). Doesn't call other functions.
+
+Called by:
+
+ zshz
+
+_zshz_output
+~~~~~~~~~~~~
+
+____
+ 
+ Fetch the common root path from the editing buffer stack.
+ Then either
+ 
+ 1) Print a list of completions in frecent order;
+ 2) List them (z -l) to STDOUT; or
+ 3) Put a common root or best match onto the editing
+ buffer stack.
+ 
+ Arguments:
+ $1 Name of an associative array of matches and ranks
+ $2 The best match or best case-insensitive match
+ $3 Whether to produce a completion, a list, or a root or
+ match
+____
+
+Has 48 line(s). Calls functions:
+
+ _zshz_output
+ `-- _zshz_find_common_root
+
+Uses feature(s): _read_
+
+Called by:
+
+ _zshz_find_matches
+
+_zshz_precmd
+~~~~~~~~~~~~
+
+____
+ 
+ Add the $PWD to the datafile, unless $ZSHZ[directory removed] shows it to have been
+ recently removed with z -x
+   
+____
+
+Has 4 line(s). *Is a precmd hook*. Calls functions:
+
+ _zshz_precmd
+ `-- zshz
+     |-- _zshz_add_path
+     |   `-- _zshz_update_datafile
+     |-- _zshz_find_matches
+     |   `-- _zshz_output
+     |       `-- _zshz_find_common_root
+     |-- _zshz_legacy_complete
+     |-- _zshz_remove_path
+     `-- _zshz_usage
+
+Not called by script or any function (may be e.g. a hook, a Zle widget, etc.).
+
+_zshz_remove_path
+~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Remove path from datafile
+ 
+ Arguments:
+ $1 Path to be removed
+____
+
+Has 24 line(s). Doesn't call other functions.
+
+Called by:
+
+ zshz
+
+_zshz_update_datafile
+~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Read the curent datafile contents, update them, "age" them
+ when the total rank gets high enough, and print the new
+ contents to STDOUT.
+ 
+ Arguments:
+ $1 Path to be added to datafile
+____
+
+Has 40 line(s). Doesn't call other functions.
+
+Called by:
+
+ _zshz_add_path
+
+_zshz_usage
+~~~~~~~~~~~
+
+____
+ 
+ The help message
+____
+
+Has 12 line(s). Doesn't call other functions.
+
+Called by:
+
+ zshz
+
+add-zsh-hook
+~~~~~~~~~~~~
+
+Has 93 line(s). Doesn't call other functions.
+
+Uses feature(s): _autoload_, _getopts_
+
+Called by:
+
+ Script-Body
+
+is-at-least
+~~~~~~~~~~~
+
+Has 56 line(s). Doesn't call other functions.
+
+Called by:
+
+ Script-Body
+

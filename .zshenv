@@ -1,17 +1,12 @@
-# fpath=($fpath $HOME/.zsh/func)
-# typeset -U fpath
 source $HOME/.shrc
 
-[ -d "/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate" ] && eval "$(/home/tj/dev/src/github.com/confluentinc/cc-dbmigrate/bin/dbmigrate init -)"
+[[ -f $HOME/work.sh ]] && source $HOME/work.sh
 
-export CAAS_USER=travis
-export CC_USER=travis
 export GOPATH=$HOME/dev
 export GOENV_ROOT=$HOME/.goenv
 export PATH="$GOENV_ROOT/bin:$PATH"
-export PATH="$GOPATH/bin:$PATH"
 
-[ -d ~/.zsh/z ] && . ~/.zsh/z/z.sh
+[ -d ~/.zsh/z ] && . ~/.zsh/z/zsh-z.plugin.zsh
 
 # for emacs vterm.el
 HOSTNAME=$(uname -n)
@@ -23,6 +18,9 @@ case $TERM in
         ;;
 esac
 
-if type goenv; then
+if type goenv &> /dev/null; then
   eval "$(goenv init -)"
 fi
+
+
+export PATH="$GOPATH/bin:$PATH"
