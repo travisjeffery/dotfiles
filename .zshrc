@@ -86,6 +86,8 @@ setopt notify
 setopt AUTO_NAME_DIRS
 setopt PUSHD_MINUS
 
+setopt no_bare_glob_qual
+
 setopt appendhistory
 setopt extendedhistory
 setopt histexpiredupsfirst
@@ -442,6 +444,7 @@ alias k=kubectl
 alias dc="docker-compose"
 alias trash="rmtrash"
 alias magit='emacsclient -n -e \(magit-status\)'
+alias wget='noglob wget'
 
 backward-delete-to-slash() {
   integer pos=$CURSOR

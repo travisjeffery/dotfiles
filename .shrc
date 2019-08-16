@@ -68,7 +68,6 @@ export GITHUB_USERNAME=travisjeffery
 export JAVA_HOME=/usr
 # export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
-
 if [ -d "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home" ]; then JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"; fi
 
 export ROBO_PATH=commands/commands
