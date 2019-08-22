@@ -1,10 +1,6 @@
 export PATH
 export MANPATH
 export INFOPATH
-export GRADLE_HOME
-
-OLD_PATH=$PATH
-PATH=""
 
 if [ -d "/bin" ]; then PATH="/bin:$PATH"; fi
 if [ -d "/sbin" ]; then PATH="/sbin:$PATH"; fi
@@ -66,7 +62,7 @@ export GITHUB_USERNAME=travisjeffery
 # export GOPROXY=https://proxy.golang.org
 # export GOPRIVATE=github.com/confluentinc/*,github.com/travisjeffery/*
 export JAVA_HOME=/usr
-# export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 
 if [ -d "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home" ]; then JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"; fi
 
@@ -74,8 +70,6 @@ export ROBO_PATH=commands/commands
 export ROBO_HOST=bastion
 
 PATH="$JAVA_HOME/bin:$PATH"
-
-PATH="$PATH:$OLD_PATH"
 
 if [ ! $(uname -s) = "Darwin" ]; then
     alias pbcopy='xsel --clipboard --input'

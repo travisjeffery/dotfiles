@@ -51,7 +51,6 @@ bindkey "^X^L" insert-last-command-output
 fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
 fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
 
-
 autoload -U promptinit && promptinit
 
 prompt pure
@@ -464,6 +463,10 @@ function mongo-date() {
 function git-ignore() {
   local lang=$1
   curl https://raw.githubusercontent.com/github/gitignore/master/$lang.gitignore > .gitignore
+}
+
+function emacsclient () {
+  /usr/local/bin/emacsclient $@ -s /run/user/1000/emacs/server
 }
 
 zle -N backward-delete-to-slash
