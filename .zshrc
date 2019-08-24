@@ -466,6 +466,10 @@ function git-ignore() {
   curl https://raw.githubusercontent.com/github/gitignore/master/$lang.gitignore > .gitignore
 }
 
+function emacsclient () {
+  /usr/local/bin/emacsclient $@ -s /run/user/1000/emacs/server
+}
+
 zle -N backward-delete-to-slash
 
 zstyle ':completion:*:*:git:*' user-commands author:'show author info'
