@@ -22,5 +22,4 @@ if type goenv &> /dev/null; then
   eval "$(goenv init -)"
 fi
 
-
 export PATH="$GOPATH/bin:$PATH"

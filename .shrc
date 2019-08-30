@@ -38,6 +38,7 @@ if [ -d "$HOME/bin/lectl" ]; then PATH="$HOME/bin/lectl:$PATH"; fi
 if [ -d "/snap/bin" ]; then PATH="/snap/bin:$PATH"; fi
 if [ -d "/opt/gradle/gradle-4.9/bin" ]; then PATH="/opt/gradle/gradle-4.9/bin:$PATH"; fi
 if [ -d "/opt/chef/bin" ]; then PATH="/opt/chef/bin:$PATH"; fi
+if [ -d "/opt/idea/bin" ]; then PATH="/opt/idea/bin:$PATH"; fi
 if [ -d "/opt/gradle" ]; then GRADLE_HOME="/opt/gradle/gradle-4.9"; fi
 
 export PATH="/usr/local/go/bin:$PATH"
