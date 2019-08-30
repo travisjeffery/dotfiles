@@ -51,7 +51,6 @@ bindkey "^X^L" insert-last-command-output
 fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
 fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
 
-
 autoload -U promptinit && promptinit
 
 prompt pure

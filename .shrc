@@ -1,10 +1,6 @@
 export PATH
 export MANPATH
 export INFOPATH
-export GRADLE_HOME
-
-OLD_PATH=$PATH
-PATH=""
 
 if [ -d "/bin" ]; then PATH="/bin:$PATH"; fi
 if [ -d "/sbin" ]; then PATH="/sbin:$PATH"; fi
@@ -33,6 +29,7 @@ if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
 if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
+if [ -d "$HOME/.cargo/bin" ]; then PATH="$HOME/.cargo/bin:$PATH"; fi
 
 if [ -d "/usr/local/protobuf/bin" ]; then PATH="/usr/local/protobuf/bin:$PATH"; fi
 if [ -d "/usr/local/goland/bin" ]; then PATH="/usr/local/goland/bin:$PATH"; fi
@@ -43,6 +40,7 @@ if [ -d "/snap/bin" ]; then PATH="/snap/bin:$PATH"; fi
 if [ -d "/opt/gradle/gradle-5.6/bin" ]; then PATH="/opt/gradle/gradle-5.6/bin:$PATH"; fi
 if [ -d "/opt/chef/bin" ]; then PATH="/opt/chef/bin:$PATH"; fi
 if [ -d "/opt/gradle" ]; then GRADLE_HOME="/opt/gradle/gradle-5.6"; fi
+if [ -d "/opt/idea/bin" ]; then PATH="/opt/idea/bin:$PATH"; fi
 
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="/usr/local/mysql/bin:$PATH"
@@ -66,7 +64,7 @@ export GITHUB_USERNAME=travisjeffery
 # export GOPROXY=https://proxy.golang.org
 # export GOPRIVATE=github.com/confluentinc/*,github.com/travisjeffery/*
 export JAVA_HOME=/usr
-# export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 
 if [ -d "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home" ]; then JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"; fi
 
@@ -74,8 +72,6 @@ export ROBO_PATH=commands/commands
 export ROBO_HOST=bastion
 
 PATH="$JAVA_HOME/bin:$PATH"
-
-PATH="$PATH:$OLD_PATH"
 
 if [ ! $(uname -s) = "Darwin" ]; then
     alias pbcopy='xsel --clipboard --input'
