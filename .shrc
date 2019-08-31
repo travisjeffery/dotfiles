@@ -37,10 +37,12 @@ if [ -d "$HOME/ccloud-0.2.1/bin" ]; then PATH="$HOME/ccloud-0.2.1/bin:$PATH"; fi
 if [ -d "$HOME/bin/extraterm" ]; then PATH="$HOME/bin/extraterm:$PATH"; fi
 if [ -d "$HOME/bin/lectl" ]; then PATH="$HOME/bin/lectl:$PATH"; fi
 if [ -d "/snap/bin" ]; then PATH="/snap/bin:$PATH"; fi
+
 if [ -d "/opt/gradle/bin" ]; then PATH="/opt/gradle/bin:$PATH"; fi
 if [ -d "/opt/chef/bin" ]; then PATH="/opt/chef/bin:$PATH"; fi
 if [ -d "/opt/gradle" ]; then GRADLE_HOME="/opt/gradle"; fi
 if [ -d "/opt/idea/bin" ]; then PATH="/opt/idea/bin:$PATH"; fi
+if [ -d "/opt/firefox" ]; then PATH="/opt/firefox:$PATH"; fi
 
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="/usr/local/mysql/bin:$PATH"
