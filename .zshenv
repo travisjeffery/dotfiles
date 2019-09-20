@@ -23,3 +23,5 @@ if type goenv &> /dev/null; then
 fi
 
 export PATH="$GOPATH/bin:$PATH"
+
+export GO111MODULE=on
