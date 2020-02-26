@@ -2,7 +2,6 @@ source $HOME/.shrc
 
 [[ -f $HOME/work.sh ]] && source $HOME/work.sh
 
-export GOPATH=$HOME/dev
 export GOENV_ROOT=$HOME/.goenv
 export PATH="$GOENV_ROOT/bin:$PATH"
 

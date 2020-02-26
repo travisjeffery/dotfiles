@@ -55,6 +55,8 @@ autoload -U promptinit && promptinit
 
 prompt pure
 
+export PURE_PROMPT_SYMBOL="$"
+
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion:*'          list-colors ''
 zstyle ':completion:*'          insert-tab pending
@@ -135,6 +137,7 @@ alias e='emacsclient -nt'
 alias ec='emacsclient -nc'
 alias a='atom-beta'
 alias pr='git pull-request'
+alias rg='rg --hidden'
 
 #
 # Set aliases

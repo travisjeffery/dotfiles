@@ -37,6 +37,7 @@ if [ -d "$HOME/ccloud-0.2.1/bin" ]; then PATH="$HOME/ccloud-0.2.1/bin:$PATH"; fi
 if [ -d "$HOME/bin/extraterm" ]; then PATH="$HOME/bin/extraterm:$PATH"; fi
 if [ -d "$HOME/bin/lectl" ]; then PATH="$HOME/bin/lectl:$PATH"; fi
 if [ -d "/snap/bin" ]; then PATH="/snap/bin:$PATH"; fi
+if [ -d "$HOME/.tfenv/bin" ]; then PATH="$HOME/.tfenv/bin:$PATH"; fi
 
 if [ -d "/opt/gradle/bin" ]; then PATH="/opt/gradle/bin:$PATH"; fi
 if [ -d "/opt/chef/bin" ]; then PATH="/opt/chef/bin:$PATH"; fi
@@ -64,7 +65,6 @@ export GZIP='--best --name --verbose'
 # export TERM=xterm-16color
 export GITHUB_USERNAME=travisjeffery
 # export GOPROXY=https://proxy.golang.org
-# export GOPRIVATE=github.com/confluentinc/*,github.com/travisjeffery/*
 export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 
