@@ -133,9 +133,7 @@ else
   # export PAGER="/bin/more"
 fi
 
-alias e='emacsclient -nt'
-alias ec='emacsclient -nc'
-alias a='atom-beta'
+alias e='emacsclient'
 alias pr='git pull-request'
 alias rg='rg --hidden'
 
@@ -472,6 +470,14 @@ function emacsclient () {
   /usr/local/bin/emacsclient $@ -s /run/user/1000/emacs/server
 }
 
+function install-emacs (){
+  git clone git://git.savannah.gnu.org/emacs.git && \
+    cd emacs && \
+    configure --with-modules --with-mailutils --with-json && 
+    make && \
+      make install
+}
+
 zle -N backward-delete-to-slash
 
 zstyle ':completion:*:*:git:*' user-commands author:'show author info'
@@ -481,6 +487,8 @@ export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
 if type kubectl &> /dev/null; then
   source <(kubectl completion zsh)
 fi
+
+source ~/.zsh/completions/_docker
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
