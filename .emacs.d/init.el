@@ -319,8 +319,6 @@
     (with-current-buffer reb-target-buffer
       (query-replace-regexp (reb-target-binding reb-regexp) to-string))))
 
-
-
 (use-package edit-indirect
   :bind (("C-c '" . edit-indirect-region)))
 
