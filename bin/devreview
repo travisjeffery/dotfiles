@@ -1,5 +1,0 @@
-#!/bin/sh
-
-commits=$(git log --pretty=oneline | grep -P "Merge branch '${1}.*' into (dev|release|production|rails_3|icg|wms_base)" | awk '{print "https://github.com/nulogy/packmanager/commit/" $1}')
-
-for c in $commits; do xdg-open $c; done
