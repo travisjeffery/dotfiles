@@ -85,8 +85,6 @@
 	name = Travis Jeffery
 [rerere]
 	enabled = 1
-[credential]
-	helper = osxkeychain
 [ghi]
 	token = !security find-internet-password -a travisjeffery -s github.com -l 'ghi token' -w
 [filter "lfs"]
