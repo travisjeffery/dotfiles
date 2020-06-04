@@ -2000,12 +2000,13 @@
   :config
   (load-theme 'plain t)
   (set-default 'cursor-type  '(box . 1))
-  (set-face-font 'default "IBM Plex Mono Light 12")
+  (set-face-foreground 'face-popout "#ff4c04")
+  (set-face-font 'default "IBM Plex Mono Light 9")
   (setq default-frame-alist
         (append (list '(width  . 72) '(height . 40)
                       '(vertical-scroll-bars . nil)
                       '(internal-border-width . 24)
-                      '(font . "IBM Plex Mono Light 12")))))
+                      '(font . "IBM Plex Mono Light 9")))))
 
 (use-package server
   :no-require
