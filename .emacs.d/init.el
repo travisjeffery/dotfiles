@@ -103,6 +103,8 @@
 
 (use-package cider)
 
+(use-package org-agenda-property)
+
 (use-package clojure-mode
   :hook
   (clojure-mode . eldoc-mode)
@@ -1914,10 +1916,6 @@
   :config
   (add-hook 'yaml-mode-hook 'indent-tools-minor-mode))
 
-(use-package plain-theme
-  :config
-  (load-theme 'plain t))
-
 (use-package ghub)
 
 (require 'resmacro)
@@ -1986,6 +1984,28 @@
 
 (require 'go-mod)
 (require 'prag-prog)
+
+(use-package elegance
+  :requires (org-agenda-property)
+  :straight (:type git
+             :host github
+             :repo "rougier/elegant-emacs"
+             :files ("elegance.el"))
+  :init
+  (setq standard-display-table (make-display-table))
+  :config
+  (elegance-light))
+
+(use-package plain-theme
+  :config
+  (load-theme 'plain t)
+  (set-default 'cursor-type  '(box . 1))
+  (set-face-font 'default "IBM Plex Mono Light 12")
+  (setq default-frame-alist
+        (append (list '(width  . 72) '(height . 40)
+                      '(vertical-scroll-bars . nil)
+                      '(internal-border-width . 24)
+                      '(font . "IBM Plex Mono Light 12")))))
 
 (use-package server
   :no-require

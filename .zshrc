@@ -49,13 +49,10 @@ zle -N insert-last-command-output
 bindkey "^X^L" insert-last-command-output
 
 fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
-fpath+=('/usr/local/lib/node_modules/pure-prompt/functions')
 
 autoload -U promptinit && promptinit
 
-prompt pure
-
-export PURE_PROMPT_SYMBOL="$"
+prompt redhat
 
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion:*'          list-colors ''
@@ -221,49 +218,6 @@ if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
   eval `dircolors $HOME/.dir_colors`
 fi
 
-
-BUNDLED_COMMANDS=(cap
-                  capify
-                  cucumber
-                  foreman
-                  guard
-                  haml
-                  heroku
-                  html2haml
-                  jekyll
-                  #pry
-                  rackup
-                  rails
-                  rake
-                  rake2thor
-                  puma
-                  rspec
-                  sass
-                  sass-convert
-                  serve
-                  shotgun
-                  spec
-                  spork
-                  thin
-                  thor
-                  tilt
-                  tt
-                  unicorn
-                  unicorn_rails)
-
-is-bundler-installed() {
-  which bundle > /dev/null 2>&1
-}
-
-is-within-bundled-project() {
-  local dir="$(pwd)"
-  while [ "$(dirname $dir)" != "/" ]; do
-    [ -f "$dir/Gemfile" ] && return
-    dir="$(dirname $dir)"
-  done
-  false
-}
-
 dev () {
   local dev="$HOME/dev/travisjeffery"
   local dir="$dev/$@"
@@ -296,18 +250,6 @@ tj-forward-word() {
   zle forward-word;
 };
 zle -N tj-forward-word;
-
-run-with-bundler() {
-  if is-bundler-installed && is-within-bundled-project; then
-    bundle exec $@
-  else
-    $@
-  fi
-};
-
-for CMD in $BUNDLED_COMMANDS; do
-  alias $CMD="run-with-bundler $CMD"
-done
 
 autoload smart-insert-last-word
 zle -N insert-last-word smart-insert-last-word
@@ -455,10 +397,6 @@ backward-delete-to-slash() {
     fi
   done
   return 1
-}
-
-function mongo-date() {
-  mongo --eval "ObjectId('$1').getTimestamp()"
 }
 
 function git-ignore() {
