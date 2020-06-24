@@ -513,7 +513,6 @@
               (go-test--gb-start (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
             (go-test--go-test (s-concat test-flag test-name additional-arguments "\\$ .")))))))
 
-  (load "~/dev/src/github.com/stapelberg/expanderr/expanderr.el")
   (setq gofmt-command "goimports")
 
   (setq tab-width 8)
