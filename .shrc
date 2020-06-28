@@ -39,6 +39,8 @@ if [ -d "$HOME/bin/lectl" ]; then PATH="$HOME/bin/lectl:$PATH"; fi
 if [ -d "/snap/bin" ]; then PATH="/snap/bin:$PATH"; fi
 if [ -d "$HOME/.tfenv/bin" ]; then PATH="$HOME/.tfenv/bin:$PATH"; fi
 
+if [ -d "$HOME/.local/istio/bin" ]; then PATH="$HOME/.local/istio/bin:$PATH"; fi
+
 if [ -d "/opt/gradle/bin" ]; then PATH="/opt/gradle/bin:$PATH"; fi
 if [ -d "/opt/chef/bin" ]; then PATH="/opt/chef/bin:$PATH"; fi
 if [ -d "/opt/gradle" ]; then GRADLE_HOME="/opt/gradle"; fi

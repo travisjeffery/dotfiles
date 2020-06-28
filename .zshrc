@@ -409,11 +409,13 @@ function emacsclient () {
 }
 
 function install-emacs (){
-  git clone git://git.savannah.gnu.org/emacs.git && \
-    cd emacs && \
-    configure --with-modules --with-mailutils --with-json && 
+  [[ -d ~/code/emacs ]] || git clone git://git.savannah.gnu.org/emacs.git ~/code/emacs
+  cd ~/code/emacs && \
+    git pull && \
+    ./autogen.sh && \
+    ./configure --with-modules --with-mailutils --with-json && \
     make && \
-      make install
+    make install
 }
 
 zle -N backward-delete-to-slash

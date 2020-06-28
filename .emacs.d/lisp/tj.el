@@ -616,7 +616,13 @@ them across multiple lines."
 
 (defun tj-yank-append (space)
     (interactive "sSpace: ")
-  (tj-yank-rectangle nil space))
+    (tj-yank-rectangle nil space))
+
+(defun tj-pull-request ()
+  "Create a pull request."
+  (interactive)
+  (condition-case nil
+      (call-interactively 'forge-create-pullreq)))
 
 (defun tj-yank-rectangle (prepend space)
     (interactive)

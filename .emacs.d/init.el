@@ -57,7 +57,6 @@
 
 (use-package visual-fill-column
   :config
-  (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
   (add-hook 'markdown-mode-hook 'visual-line-mode))
 
 (use-package lisp-mode
@@ -195,6 +194,12 @@
 (use-package magit-diff-flycheck)
 
 (use-package forge
+  :straight (:type git
+             :host github
+             :repo "magit/forge"
+             :fork (:host github
+                          :repo "JulienMasson/forge"
+                          :branch "code-review-support"))
   :config
   (setq forge-topic-list-limit '(3 . -1)
         forge-pull-notifications nil))
@@ -447,8 +452,10 @@
 (use-package eldoc
   :diminish)
 
+(use-package go-guru)
+
 (use-package go-mode
-  
+  :requires (go-guru)
   :bind
   (:map go-mode-map
         ("M-j" . comment-indent-new-line)
@@ -568,7 +575,6 @@
     (font-lock-mode -1)
     (set-face-foreground 'go-test--ok-face "forest green")
     (set-face-foreground 'go-test--standard-face "dark orange")
-    (setq company-backends '(company-go))
     (go-guru-hl-identifier-mode)
     (if (not (string-match "go" compile-command))
 	(set (make-local-variable 'compile-command)
@@ -1262,6 +1268,12 @@
   :bind (("<C-m> h"   . ace-mc-add-multiple-cursors)
 	 ("<C-m> M-h" . ace-mc-add-single-cursor)))
 
+(use-package org-roam
+  :hook
+  (after-init . org-roam-mode)
+  :custom
+  (org-roam-directory "~/Dropbox/notes"))
+
 (use-package multiple-cursors
   :defer 5
   :after selected
@@ -1731,7 +1743,7 @@
     (add-hook 'eshell-expand-input-functions 'eshell-spawn-external-command)
 
     (use-package em-unix
-      :defer t
+      :straight (:type built-in)
       :config
       (unintern 'eshell/su nil)
       (unintern 'eshell/sudo nil)))
