@@ -44,6 +44,9 @@
           ("M-i" . my-m-i-map)
           ("M-o" . my-m-o-map))))
 
+(use-package persistent-scratch
+  :config
+  (persistent-scratch-autosave-mode 1))
 
 (use-package undo-fu
   :bind (
@@ -103,6 +106,9 @@
 (use-package cider)
 
 (use-package org-agenda-property)
+
+(use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
 
 (use-package clojure-mode
   :hook
