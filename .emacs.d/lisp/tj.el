@@ -6,6 +6,8 @@
 
 (global-so-long-mode 1)
 
+(setq initial-major-mode 'org-mode)
+
 (add-hook 'prog-mode-hook 'hs-minor-mode)
 ;; (add-hook 'prog-mode-hook 'disable-font-lock-mode)
 ;; (add-hook 'protobuf-mode-hook 'disable-font-lock-mode)
