@@ -1,20 +1,17 @@
 - hosts: localhost
   tasks:
-    - name: install google-chrome
+    - name: install packages
       become: yes
       package:
-        name: google-chrome
+        name:
+          - google-chrome
+          - zsh
+          - redshift
+          - emacs
+          - docker
+          - docker-compose
+          - tilix
         state: present    
-    - name: install zsh
-      become: yes
-      package:
-        name: zsh
-        state: present
-    - name: install redshift
-      become: yes
-      package:
-        name: redshift
-        state: present
     - name: install goenv
       become: no
       git:
@@ -29,9 +26,3 @@
       # package:
       #   name: goenv
       #   state: present
-
-      # - name: install emacs
-      # become: yes
-      # package:
-      #   name: emacs
-      #   state: present    
