@@ -1,0 +1,37 @@
+- hosts: localhost
+  tasks:
+    - name: install google-chrome
+      become: yes
+      package:
+        name: google-chrome
+        state: present    
+    - name: install zsh
+      become: yes
+      package:
+        name: zsh
+        state: present
+    - name: install redshift
+      become: yes
+      package:
+        name: redshift
+        state: present
+    - name: install goenv
+      become: no
+      git:
+        repo: https://github.com/syndbg/goenv.git
+        version: master
+        dest: "{{ ansible_env.HOME }}/.goenv"
+        accept_hostkey: yes
+      #   - name: install dotflies
+      # become: yes
+      # - name: install goenv
+      # become: yes
+      # package:
+      #   name: goenv
+      #   state: present
+
+      # - name: install emacs
+      # become: yes
+      # package:
+      #   name: emacs
+      #   state: present    
