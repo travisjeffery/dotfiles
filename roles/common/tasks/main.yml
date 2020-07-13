@@ -8,6 +8,7 @@
       - docker
       - docker-compose
       - tilix
+      - deluge
     state: present
 - name: set default shell to zsh
   shell: chsh -s /usr/bin/zsh tj
