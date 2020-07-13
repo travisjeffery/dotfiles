@@ -1,0 +1,29 @@
+- name: install packages
+  become: yes
+  package:
+    name:
+      - google-chrome
+      - zsh
+      - redshift
+      - docker
+      - docker-compose
+      - tilix
+    state: present
+- name: set default shell to zsh
+  shell: chsh -s /usr/bin/zsh tj
+  tags: shellchange
+  become: true
+- name: link dotfiles
+  command: "./{{playbook_dir}}/bin/hlink"
+- name: clone goenv
+  become: no
+  git:
+    repo: https://github.com/syndbg/goenv.git
+    version: master
+    dest: "{{ ansible_env.HOME }}/.goenv"
+    accept_hostkey: yes
+- name: install kind
+  command:
+    - curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64
+    - chmod +x ./kind
+    - mv ./kind "{{home_dir}}/.local/bin"
