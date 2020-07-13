@@ -8,16 +8,20 @@
       - docker
       - docker-compose
       - tilix
-      - deluge
     state: present
-- name: set default shell to zsh
+- name: make zsh default shell
   shell: chsh -s /usr/bin/zsh tj
   tags: shellchange
   become: true
-- name: copy tilix config
+- name: load tilix config
   copy: src=files/tilix.dconf dest=/tmp/tilix.dconf
 - name: load tilix config
   command: dconf load /com/gexperts/Tilix/ < /tmp/tilix.dconf
+- name: start docker service
+  service:
+    name: docker
+    state: started
+  become: true
 - name: link dotfiles
   command: "./{{playbook_dir}}/bin/hlink"
 - name: use emacs keybinds

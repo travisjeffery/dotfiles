@@ -1,0 +1,14 @@
+---
+version: "3.8"
+services:
+  deluge:
+    image: linuxserver/deluge
+    container_name: deluge
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ~/.config/deluge:/config
+      - /mnt/data:/downloads
+    restart: unless-stopped
