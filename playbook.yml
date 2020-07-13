@@ -1,4 +1,7 @@
 - hosts: localhost
+  vars:
+    home_dir: "{{ ansible_env.HOME }}"
+    code_dir: "{{ home_dir }}/code"
   tasks:
     - name: install packages
       become: yes
@@ -7,22 +10,24 @@
           - google-chrome
           - zsh
           - redshift
-          - emacs
           - docker
           - docker-compose
           - tilix
         state: present    
-    - name: install goenv
+    - name: clone goenv
       become: no
       git:
         repo: https://github.com/syndbg/goenv.git
         version: master
         dest: "{{ ansible_env.HOME }}/.goenv"
         accept_hostkey: yes
-      #   - name: install dotflies
-      # become: yes
-      # - name: install goenv
-      # become: yes
-      # package:
-      #   name: goenv
-      #   state: present
+    - name: install emacs
+      become: no
+      command:
+        chdir: "{{ code_dir }}/emacs"
+        free_form: "{{ item }}"
+      with_items:
+        - "./configure --prefix={{ home_dir }}/.local/emacs --bindir={{ home_dir }}/.local/bin --with-modules --with-mailutils --with-json"
+        - make
+        - make install
+      when: changed
