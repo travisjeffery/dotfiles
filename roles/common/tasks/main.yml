@@ -13,8 +13,14 @@
   shell: chsh -s /usr/bin/zsh tj
   tags: shellchange
   become: true
+- name: copy tilix config
+  copy: src=files/tilix.dconf dest=/tmp/tilix.dconf
+- name: load tilix config
+  command: dconf load /com/gexperts/Tilix/ < /tmp/tilix.dconf
 - name: link dotfiles
   command: "./{{playbook_dir}}/bin/hlink"
+- name: use emacs keybinds
+  command: gsettings set org.cinnamon.desktop.interface gtk-key-theme "Emacs"
 - name: clone goenv
   become: no
   git:
