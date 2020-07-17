@@ -25,8 +25,6 @@
 
 (define-key isearch-mode-map (kbd "C-o") #'isearch-occur)
 
-(define-key input-decode-map [?\C-m] [C-m])
-
 (use-package bind-key)
 
 (setq use-package-verbose t)
@@ -35,10 +33,10 @@
   (mapc #'(lambda (entry)
             (define-prefix-command (cdr entry))
             (bind-key (car entry) (cdr entry)))
-        '(("<C-m>" . my-ctrl-m-map) ;; mc
+        '(("C-;" . my-ctrl-semicolon-map) ;; mc
           ("C-c b" . my-ctrl-c-b-map) ;; for bm
-          ("C-c m" . my-ctrl-c-o-map) ;; for org
-          ("C-c o" . my-ctrl-c-m-map) ;; for occur
+          ("C-c m" . my-ctrl-c-m-map) ;; for org
+          ("C-c o" . my-ctrl-c-o-map) ;; for occur
           ("C-c y" . my-ctrl-c-y-map) ;; aya
           ("C-c C-d" . my-ctrl-c-c-c-d-map)
           ("M-i" . my-m-i-map)
@@ -116,10 +114,6 @@
   (inf-clojure-mode . eldoc-mode)
   (clojure-mode . clj-refactor-mode)
   (clojure-mode . paredit-mode))
-
-(use-package clj-refactor
-  :config
-  (cljr-add-keybindings-with-prefix "<C-m> C-r"))
 
 (use-package dashboard
   :init
@@ -471,7 +465,7 @@
 	("C-c C-t" . go-test-current-file)
 	;; ("C-c C-c" . lsp-describe-thing-at-point)
 	("C-c M-t" . go-test-current-test)
-	;; ("C-c <C-m>" . tj-go-kill-doc)
+	;; ("C-c C-;" . tj-go-kill-doc)
         ("C-c C-e" . tj-go-err))
   :config
 
@@ -1271,8 +1265,8 @@
   (bind-key "C-c M-o" 'ace-link-addr))
 
 (use-package ace-mc
-  :bind (("<C-m> h"   . ace-mc-add-multiple-cursors)
-	 ("<C-m> M-h" . ace-mc-add-single-cursor)))
+  :bind (("C-; h"   . ace-mc-add-multiple-cursors)
+	 ("C-; M-h" . ace-mc-add-single-cursor)))
 
 (use-package org-roam
   :hook
@@ -1293,28 +1287,28 @@
   (add-to-list 'mc/cursor-specific-vars 'iy-go-to-char-start-pos)
 
   :bind (
-         ("<C-m> <C-m>" . mc/edit-lines)
-         ("<C-m> C-SPC" . mc/mark-pop)
-         ("<C-m> C-e" . mc/edit-ends-of-lines)
-         ("<C-m> C-a" . mc/edit-beginnings-of-lines)
-         ("<C-m> a" . mc/mark-all-dwim)
-         ("<C-m> C-x" . reactivate-mark)
-         ("<C-m> C-SPC" . mc/mark-pop)
-         ("<C-m> <" . mc/mark-previous-like-this)
-         ("<C-m> >" . mc/mark-next-like-this)
+         ("C-; C-;" . mc/edit-lines)
+         ("C-; C-SPC" . mc/mark-pop)
+         ("C-; C-e" . mc/edit-ends-of-lines)
+         ("C-; C-a" . mc/edit-beginnings-of-lines)
+         ("C-; a" . mc/mark-all-dwim)
+         ("C-; C-x" . reactivate-mark)
+         ("C-; C-SPC" . mc/mark-pop)
+         ("C-; <" . mc/mark-previous-like-this)
+         ("C-; >" . mc/mark-next-like-this)
          ;; Extra multiple cursors stuff
-         ("<C-m> %" . mc/insert-numbers)
+         ("C-; %" . mc/insert-numbers)
          ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
 (use-package mc-extras
   :after multiple-cursors
-  :bind (("<C-m> M-C-f" . mc/mark-next-sexps)
-         ("<C-m> M-C-b" . mc/mark-previous-sexps)
-         ("<C-m> C-d"   . mc/remove-current-cursor)
-         ("<C-m> C-k"   . mc/remove-cursors-at-eol)
-         ("<C-m> M-d"   . mc/remove-duplicated-cursors)
-         ("<C-m> |"     . mc/move-to-column)
-         ("<C-m> ~"     . mc/compare-chars)))
+  :bind (("C-; M-C-f" . mc/mark-next-sexps)
+         ("C-; M-C-b" . mc/mark-previous-sexps)
+         ("C-; C-d"   . mc/remove-current-cursor)
+         ("C-; C-k"   . mc/remove-cursors-at-eol)
+         ("C-; M-d"   . mc/remove-duplicated-cursors)
+         ("C-; |"     . mc/move-to-column)
+         ("C-; ~"     . mc/compare-chars)))
 
 (use-package phi-search
   :bind (:map mc/keymap
@@ -1600,7 +1594,7 @@
    ("C-h v"   . counsel-describe-variable)
    ("C-x r b" . counsel-bookmark)
    ("M-x"     . counsel-M-x)
-   ("C-x <C-m>"     . counsel-M-x)
+   ("C-x C-m"     . counsel-M-x)
    ("C-c i" . counsel-imenu)
    ("M-y" . counsel-yank-pop))
   :commands counsel-minibuffer-history
