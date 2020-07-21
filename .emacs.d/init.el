@@ -1324,11 +1324,6 @@
   :bind
   (("C-c x" . browse-url-at-point)))
 
-(use-package pdf-tools
-  :config
-  (pdf-tools-install)
-  (pdf-loader-install))
-
 (defun isearch-initial-string nil)
 
 (defun isearch-set-initial-string ()
