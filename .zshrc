@@ -404,10 +404,6 @@ function git-ignore() {
   curl https://raw.githubusercontent.com/github/gitignore/master/$lang.gitignore > .gitignore
 }
 
-function emacsclient () {
-  /usr/local/bin/emacsclient $@ -s /run/user/1000/emacs/server
-}
-
 function install-emacs (){
   [[ -d ~/code/emacs ]] || git clone git://git.savannah.gnu.org/emacs.git ~/code/emacs
   cd ~/code/emacs && \
