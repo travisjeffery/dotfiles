@@ -71,9 +71,6 @@ export GITHUB_USERNAME=travisjeffery
 export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 
-export ROBO_PATH=commands/commands
-export ROBO_HOST=bastion
-
 if [ ! $(uname -s) = "Darwin" ]; then
     alias pbcopy='xsel --clipboard --input'
     alias pbpaste='xsel --clipboard --output'
