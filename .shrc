@@ -71,12 +71,8 @@ export GITHUB_USERNAME=travisjeffery
 export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 
-if [ -d "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home" ]; then JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"; fi
-
 export ROBO_PATH=commands/commands
 export ROBO_HOST=bastion
-
-PATH="$JAVA_HOME/bin:$PATH"
 
 if [ ! $(uname -s) = "Darwin" ]; then
     alias pbcopy='xsel --clipboard --input'
