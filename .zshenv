@@ -1,18 +1,58 @@
-source $HOME/.shrc
+export PATH
+export MANPATH
+export INFOPATH
 
-[[ -f $HOME/work.sh ]] && source $HOME/work.sh
+if [ -d "/bin" ]; then PATH="/bin:$PATH"; fi
+if [ -d "/sbin" ]; then PATH="/sbin:$PATH"; fi
+if [ -d "/usr/bin" ]; then PATH="/usr/bin:$PATH"; fi
+if [ -d "/usr/man" ]; then MANPATH="/usr/man:$MANPATH"; fi
+if [ -d "/usr/share/man" ]; then MANPATH="/usr/share/man:$MANPATH"; fi
+if [ -d "/usr/info" ]; then INFOPATH="/usr/info:$INFOPATH"; fi
+if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
+if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
+if [ -d "$HOME/dev/go/bin" ]; then PATH="$HOME/dev/go/bin:$PATH"; fi
+if [ -d "/usr/local/bin" ]; then PATH="/usr/local/bin:$PATH"; fi
+if [ -d "/usr/local/sbin" ]; then PATH="/usr/local/sbin:$PATH"; fi
+if [ -d "/usr/local/man" ]; then MANPATH="/usr/local/man:$MANPATH"; fi
+if [ -d "/usr/local/share/man" ]; then MANPATH="/usr/local/share/man:$MANPATH"; fi
+if [ -d "/usr/local/info" ]; then INFOPATH="/usr/local/info:$INFOPATH"; fi
+if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
+if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
+if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
+if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
+if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
+if [ -d "$HOME/.cargo/bin" ]; then PATH="$HOME/.cargo/bin:$PATH"; fi
+if [ -d "/usr/local/protobuf/bin" ]; then PATH="/usr/local/protobuf/bin:$PATH"; fi
+if [ -d "/usr/local/goland/bin" ]; then PATH="/usr/local/goland/bin:$PATH"; fi
+if [ -d "$HOME/.tfenv/bin" ]; then PATH="$HOME/.tfenv/bin:$PATH"; fi
+if [ -d "$HOME/.local/istio/bin" ]; then PATH="$HOME/.local/istio/bin:$PATH"; fi
+if [ -d "/opt/gradle/bin" ]; then PATH="/opt/gradle/bin:$PATH"; fi
+if [ -d "/opt/chef/bin" ]; then PATH="/opt/chef/bin:$PATH"; fi
+if [ -d "/opt/gradle" ]; then GRADLE_HOME="/opt/gradle"; fi
+if [ -d "/opt/idea/bin" ]; then PATH="/opt/idea/bin:$PATH"; fi
+if [ -d "/opt/tfenv/bin" ]; then PATH="/opt/tfenv/bin:$PATH"; fi
+if [ -d "/opt/firefox" ]; then PATH="/opt/firefox:$PATH"; fi
+if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
+if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
 
-[ -d ~/.zsh/z ] && . ~/.zsh/z/zsh-z.plugin.zsh
+if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
-# for emacs vterm.el
-HOSTNAME=$(uname -n)
-USER=$(whoami)
+export EDITOR="emacsclient"
+export PAGER=less
+export SHELL=$(which zsh)
+export TZ=EST
+export TERM=xterm-256color
+export GZIP='--best --name --verbose'
+export GITHUB_USERNAME=travisjeffery
+export JAVA_HOME=/usr
+export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 
-case $TERM in
-    xterm*)
-        precmd () {print -Pn "\e]0;%n@%m: %~\a"}
-        ;;
-esac
+if [ ! $(uname -s) = "Darwin" ]; then
+    alias pbcopy='xsel --clipboard --input'
+    alias pbpaste='xsel --clipboard --output'
+fi
+
+command -v hub >/dev/null && eval "$(hub alias -s)"
 
 export GOENV_ROOT=$HOME/.goenv
 export PATH="$GOENV_ROOT/bin:$PATH"

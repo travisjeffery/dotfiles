@@ -1,5 +1,3 @@
-source $HOME/.shrc
-
 skip_global_compinit=true
 
 DEFAULT_USERNAME='tj'
@@ -431,3 +429,13 @@ source ~/.zsh/completions/_docker
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   [ -f "/etc/profile.d/vte.sh" ] && source /etc/profile.d/vte.sh
 fi
+
+[ -d ~/.zsh/z ] && . ~/.zsh/z/zsh-z.plugin.zsh
+
+case $TERM in
+    xterm*)
+        precmd () {print -Pn "\e]0;%n@%m: %~\a"}
+        ;;
+esac
+
+[[ -f $HOME/work.sh ]] && source $HOME/work.sh
