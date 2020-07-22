@@ -1031,8 +1031,7 @@
   :init
   (setq exec-path-from-shell-variables '("PATH" "MANPATH" "GOROOT" "GOPATH" "JAVA_HOME" "JAVA_OPTS"))
   :config
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
+  (exec-path-from-shell-initialize))
 
 (use-package move-text
   :bind
@@ -1955,7 +1954,9 @@
   (setq dot-mode-global-mode t)
   (dot-mode))
 
-(use-package iedit)
+(use-package iedit
+  :config
+  (setq iedit-toggle-key-default (kbd "C-:")))
 
 (use-package frog-jump-buffer)
 
