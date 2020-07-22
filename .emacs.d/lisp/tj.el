@@ -8,6 +8,8 @@
 
 (setq initial-major-mode 'org-mode)
 
+(setq tramp-default-method "ssh")
+
 (add-hook 'prog-mode-hook 'hs-minor-mode)
 ;; (add-hook 'prog-mode-hook 'disable-font-lock-mode)
 ;; (add-hook 'protobuf-mode-hook 'disable-font-lock-mode)
