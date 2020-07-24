@@ -1,0 +1,220 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iwantmyname-ddns
+  namespace: homelab
+  labels:
+    app.kubernetes.io/name: iwantmyname-ddns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: iwantmyname-ddns
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: iwantmyname-ddns
+    spec:
+      containers:
+        - name: iwantmyname-ddns
+          image: travisjeffery/iwantmyname-ddns:0.0.3
+          env:
+            - name: INTERVAL
+              value: "3600"
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: iwantmyname-credentials
+                  key: username
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: iwantmyname-credentials
+                  key: password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adguard
+  namespace: homelab
+  labels:
+    app.kubernetes.io/name: adguard
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: adguard
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: adguard
+    spec:
+      hostNetwork: true
+      containers:
+        - name: adguard-home
+          image: adguard/adguardhome
+          volumeMounts:
+            - mountPath: /opt/adguardhome/conf
+              name: config
+            - mountPath: /opt/adguardhome/work
+              name: work
+      volumes:
+        - name: config
+          hostPath:
+            path: /home/tj/.local/adguard/config
+        - name: work
+          hostPath:
+            path: /home/tj/.local/adguard/work
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filebot
+  namespace: homelab
+  labels:
+    app.kubernetes.io/name: filebot
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: filebot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: filebot
+    spec:
+      containers:
+        - name: filebot
+          image: rednoah/filebot:watcher
+          args: ["/data/Downloads/Completed", "--output", "/data/", "--action", "move", "-non-strict", "--order", "Airdate", "--conflict", "auto", "--lang", "en", "--def", "'music=y'", "'unsorted=y'", "'artwork=y'", "'clean=y'", "'skipExtract=y'", "'excludeList=.excludes'", "--apply", "refresh", "--log", "all", "--log-file", "'/data/.filebot-node/filebot.log'"]
+          volumeMounts:
+            - mountPath: /volume1
+              name: config
+            - mountPath: /data
+              name: data
+      volumes:
+        - name: config
+          hostPath:
+            path: /home/tj/.config/filebot
+        - name: data
+          hostPath:
+            path: /mnt/data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plex
+  namespace: homelab
+  labels:
+    app.kubernetes.io/name: plex
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: plex
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: plex
+    spec:
+      hostNetwork: true
+      containers:
+        - name: plex
+          image: linuxserver/plex
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: VERSION
+              value: "docker"
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /tv
+              name: tv
+            - mountPath: /movies
+              name: movies
+      volumes:
+        - name: config
+          hostPath:
+            path: /mnt/data/Plex
+        - name: tv
+          hostPath:
+            path: /mnt/data/Television
+        - name: movies
+          hostPath:
+            path: /mnt/data/Movies
+---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: filebrowser
+#   namespace: homelab
+#   labels:
+#     app.kubernetes.io/name: filebrowser
+# spec:
+#   selector:
+#     matchLabels:
+#       app.kubernetes.io/name: filebrowser
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app.kubernetes.io/name: filebrowser
+#     spec:
+#       containers:
+#         - name: filebrowser
+#           image: filebrowser/filebrowser
+#           volumeMounts:
+#             - mountPath: /files
+#               name: files
+#             - mountPath: /database.db
+#               name: database
+#             - mountPath: /.filebrowser.json
+#               name: config
+#       volumes:
+#         - name: config
+#           hostPath:
+#             path: /home/tj/.config/filebrowser/config.json
+#         - name: database
+#           hostPath:
+#             path: /home/tj/.config/filebrowser/database.db
+#         - name: files
+#           hostPath:
+#             path: /mnt/data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deluge
+  namespace: homelab
+  labels:
+    app.kubernetes.io/name: deluge
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: deluge
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: deluge
+    spec:
+      hostNetwork: true
+      containers:
+        - name: deluge
+          image: linuxserver/deluge
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /downloads
+              name: downloads
+      volumes:
+        - name: config
+          hostPath:
+            path: /home/tj/.config/deluge
+        - name: downloads
+          hostPath:
+            path: /mnt/data
