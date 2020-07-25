@@ -2,36 +2,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iwantmyname-ddns
+  name: travisjeffery-ddclient
   namespace: homelab
   labels:
-    app.kubernetes.io/name: iwantmyname-ddns
+    app.kubernetes.io/name: travisjeffery-ddclient
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: iwantmyname-ddns
+      app.kubernetes.io/name: travisjeffery-ddclient
+  replicas: 1
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: iwantmyname-ddns
+        app.kubernetes.io/name: travisjeffery-ddclient
     spec:
+      hostNetwork: true
       containers:
-        - name: iwantmyname-ddns
-          image: travisjeffery/iwantmyname-ddns:0.0.3
+        - name: ddclient
+          image: linuxserver/ddclient
           env:
-            - name: INTERVAL
-              value: "3600"
-            - name: USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: iwantmyname-credentials
-                  key: username
-            - name: PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: iwantmyname-credentials
-                  key: password
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+          volumeMounts:
+            - mountPath: /config
+              name: config
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            secretName: travisjeffery-ddclient-config
 ---
 apiVersion: apps/v1
 kind: Deployment
