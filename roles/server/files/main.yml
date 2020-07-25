@@ -105,6 +105,11 @@ spec:
     spec:
       containers:
         - name: filebot
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
           image: rednoah/filebot:watcher
           args: ["/data/Downloads/Completed", "--output", "/data/", "--action", "move", "-non-strict", "--order", "Airdate", "--conflict", "auto", "--lang", "en", "--def", "'music=y'", "'unsorted=y'", "'artwork=y'", "'clean=y'", "'skipExtract=y'", "'excludeList=.excludes'", "--apply", "refresh", "--log", "all", "--log-file", "'/data/.filebot-node/filebot.log'"]
           volumeMounts:
@@ -200,6 +205,11 @@ spec:
       hostNetwork: true
       containers:
         - name: deluge
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
           image: linuxserver/deluge
           volumeMounts:
             - mountPath: /config
