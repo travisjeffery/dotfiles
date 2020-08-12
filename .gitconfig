@@ -124,3 +124,5 @@
 	reportError = allow
 [mergetool]
 	keepBackup = false
+[pull]
+	ff = only

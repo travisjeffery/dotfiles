@@ -21,6 +21,7 @@ if [ -d "$HOME/man" ]; then MANPATH="$HOME/man:$MANPATH"; fi
 if [ -d "$HOME/share/man" ]; then MANPATH="$HOME/share/man:$MANPATH"; fi
 if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
+if [ -d "$HOME/.local/google-cloud-sdk/bin" ]; then PATH="$HOME/.local/google-cloud-sdk/bin:$PATH"; fi
 if [ -d "$HOME/.cargo/bin" ]; then PATH="$HOME/.cargo/bin:$PATH"; fi
 if [ -d "/usr/local/protobuf/bin" ]; then PATH="/usr/local/protobuf/bin:$PATH"; fi
 if [ -d "/usr/local/goland/bin" ]; then PATH="/usr/local/goland/bin:$PATH"; fi
@@ -34,6 +35,8 @@ if [ -d "/opt/tfenv/bin" ]; then PATH="/opt/tfenv/bin:$PATH"; fi
 if [ -d "/opt/firefox" ]; then PATH="/opt/firefox:$PATH"; fi
 if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
+
+command -v ruby >/dev/null && PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
 
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
@@ -63,3 +66,5 @@ fi
 
 export PATH="$GOPATH/bin:$PATH"
 export GO111MODULE=on
+
+[ $TERM = "dumb" ] && unsetopt zle && PS1='$ '

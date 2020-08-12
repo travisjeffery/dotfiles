@@ -463,13 +463,12 @@
 	("M-f" . subword-forward)
 	("M-d" . subword-kill)
 	("C-c C-t" . go-test-current-file)
-	;; ("C-c C-c" . lsp-describe-thing-at-point)
 	("C-c M-t" . go-test-current-test)
-	;; ("C-c C-;" . tj-go-kill-doc)
         ("C-c C-e" . tj-go-err))
   :config
 
   (setq go-test-args "-timeout 60s -race -v")
+  (setq go-test-args "-timeout 60s -race -v -ldflags \"-X github.com/confluentinc/cc-scheduler-service.Environment=devel\"")
 
   (defun tj-go-err ()
     (interactive)
@@ -756,15 +755,15 @@
 	savehist-file (expand-file-name "savehist" savefile-dir))
   (savehist-mode +1))
 
-;; (use-package recentf
-;;   :config
-;;   (setq recentf-save-file (expand-file-name "recentf" savefile-dir)
-;; 	recentf-max-saved-items 500
-;; 	recentf-max-menu-items 15
-;; 	;; disable recentf-cleanup on Emacs start, because it can cause
-;; 	;; problems with remote files
-;; 	recentf-auto-cleanup 'never)
-;;   (recentf-mode +1))
+(use-package recentf
+  :config
+  (setq recentf-save-file (expand-file-name "recentf" savefile-dir)
+	recentf-max-saved-items 500
+	recentf-max-menu-items 15
+	;; disable recentf-cleanup on Emacs start, because it can cause
+	;; problems with remote files
+	recentf-auto-cleanup 'never)
+  (recentf-mode +1))
 
 (use-package windmove
   :config
@@ -1052,7 +1051,7 @@
   :config
   (unless (executable-find "pandoc")
     (message "install pandoc"))
-  (setq markdown-command "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained --smart --to=html5 --css=$HOME/.config/css/style.css")
+  (setq markdown-command "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained -f markdown+smart --to=html5 --css=$HOME/.config/css/style.css")
   :mode
   ("\\.markdown$" . markdown-mode)
   ("\\.md$" . markdown-mode)
@@ -1455,7 +1454,6 @@
 (use-package crux
   :bind (("C-c d" . crux-duplicate-current-line-or-region)
 	 ("C-c n" . crux-cleanup-buffer-or-region)
-	 ("C-c f" . crux-recentf-find-file)
 	 ("C-M-z" . crux-indent-defun)
 	 ("C-c u" . crux-view-url)
 	 ("C-c w" . crux-swap-windows)
@@ -1583,6 +1581,7 @@
   :bind
   (("C-*"     . counsel-org-agenda-headlines)
    ("C-x C-f" . counsel-find-file)
+   ("C-c f" . counsel-recentf)
    ("C-c p g" . go-find-file)
    ("C-h f"   . counsel-describe-function)
    ("C-h v"   . counsel-describe-variable)
