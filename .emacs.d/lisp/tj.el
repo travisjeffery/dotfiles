@@ -683,4 +683,16 @@ will be killed."
   (cl-flet ((kill-region (b e) (delete-region b e)))
     ad-do-it))
 
+(defun tj-apply-function-to-region (fn)   
+  (interactive "XFunction to apply to region: ")   
+  (save-excursion
+    (let* ((beg (region-beginning))
+           (end (region-end))
+           (resulting-text 
+            (funcall 
+             fn 
+             (buffer-substring-no-properties beg end))))
+      (kill-region beg end)
+      (insert resulting-text))))
+
 (provide 'tj)
