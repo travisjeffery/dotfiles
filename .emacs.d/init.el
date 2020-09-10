@@ -105,9 +105,6 @@
 
 (use-package org-agenda-property)
 
-(use-package org-superstar
-    :hook (org-mode . org-superstar-mode))
-
 (use-package clojure-mode
   :hook
   (clojure-mode . eldoc-mode)
@@ -292,9 +289,6 @@
   :commands git-timemachine
   :bind (("s-g" . git-timemachine)))
 
-(use-package ag
-  :bind
-  ("C-c A" . ag))
 
 (use-package smart-forward
   :config
@@ -501,8 +495,6 @@
 
   (add-hook 'go-mode-hook #'my-go-project-setup)
 
-  (use-package go-eldoc)
-
   (use-package godoctor)
 
   ;; override this func for testify
@@ -536,11 +528,15 @@
 
   (defun tj-turn-on-gofmt-before-save ()
     (interactive)
-    (add-hook 'before-save-hook 'gofmt-before-save))
+    (add-hook 'before-save-hook 'lsp-format-buffer)
+    (add-hook 'before-save-hook 'lsp-organize-imports)
+    )
 
   (defun tj-turn-off-gofmt-before-save ()
     (interactive)
-    (remove-hook 'before-save-hook 'gofmt-before-save))
+    (remove-hook 'before-save-hook 'lsp-format-buffer)
+    (remove-hook 'before-save-hook 'lsp-organize-imports)
+    )
 
   (tj-turn-on-gofmt-before-save)
 
@@ -1070,7 +1066,9 @@
   :hook (org-mode . font-lock-mode)
   :config
   (add-hook 'org-mode-hook
-	    #'(lambda () (auto-fill-mode 1)))
+	    #'(lambda ()
+                (auto-fill-mode 1)
+                (org-indent-mode 1)))
   (define-key org-mode-map (kbd "C-c C-d") nil)
   (add-to-list 'auto-mode-alist '("\\.txt\\'" . org-mode))
   (setq org-todo-keywords
@@ -1120,6 +1118,7 @@
   (setq org-default-notes-file (expand-file-name "~/Dropbox/notes/capture.org"))
 
   (setq org-startup-folded nil)
+  (setq org-startup-indented t)
 
   (defun tj-org-capture ()
     (interactive)
@@ -1367,17 +1366,6 @@
           (funcall body))
       (funcall body))))
 
-
-(defun eshell/goto (&optional repo)
-  "cd to `repo', cloning if necessary."
-  (interactive)
-  (let ((segment-path (concat "~/dev/segmentio/" repo))
-	(dev-path (concat "~/dev/" repo)))
-    (if (file-exists-p segment-path)
-	(eshell/cd segment-path)
-      (if (file-exists-p dev-path)
-	  (eshell/cd dev-path)))))
-
 (defun eshell/clear ()
   "Clear eshell's buffer.'"
   (interactive)
@@ -1396,19 +1384,22 @@
   (define-key company-active-map (kbd "<tab>") 'yas-next-field)
   ;; Ignore go test -c output files
   (add-to-list 'completion-ignored-extensions ".test")
-  (setq company-ddabbrev-code-everywhere t)
-  (setq company-dabbrev-code-modes t)
-  (setq company-dabbrev-code-other-buffers 'all)
-  (setq company-dabbrev-ignore-buffers "\\`\\'")
-  (setq company-idle-delay 0)
-  (setq company-echo-delay 0)
-  (setq company-tooltip-align-annotations t)
-  (setq company-tern-property-marker "")
-  (setq company-minimum-prefix-length 3)
-  (setq company-abort-manual-when-too-short 3)
-  (setq company-dabbrev-downcase nil)
-  (setq company-dabbrev-ignore-case t)
-  (setq company-dabbrev-other-buffers 'all)
+  
+  ;; (setq company-ddabbrev-code-everywhere t)
+  ;; (setq company-dabbrev-code-modes t)
+  ;; (setq company-dabbrev-code-other-buffers 'all)
+  ;; (setq company-dabbrev-ignore-buffers "\\`\\'")
+  
+  ;; (setq company-idle-delay 0)
+  ;; (setq company-echo-delay 0)
+  
+  ;; (setq company-tooltip-align-annotations t)
+  ;; (setq company-tern-property-marker "")
+  ;; (setq company-minimum-prefix-length 3)
+  ;; (setq company-abort-manual-when-too-short 3)
+  ;; (setq company-dabbrev-downcase nil)
+  ;; (setq company-dabbrev-ignore-case t)
+  ;; (setq company-dabbrev-other-buffers 'all)
 
   ;; From https://github.com/company-mode/company-mode/issues/87
   ;; See also https://github.com/company-mode/company-mode/issues/123
@@ -1711,7 +1702,6 @@
     (let ((map (copy-keymap isearch-mode-map)))
       (define-key map [(control ?m)] 'eshell-isearch-return)
       (define-key map [return]	     'eshell-isearch-return)
-      (define-key map [(control ?r)] 'eshell-isearch-repeat-backward)
       (define-key map [(control ?s)] 'eshell-isearch-repeat-forward)
       (define-key map [(control ?g)] 'eshell-isearch-abort)
       (define-key map [backspace]    'eshell-isearch-delete-char)
@@ -1757,9 +1747,12 @@
     (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history)
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
 
-  (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook)
-  :bind
-  (("C-x m" . eshell)))
+  (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
+
+(use-package shell-here
+  :after eshell
+    :bind
+  (("C-x m" . shell-here)))
 
 
 (use-package eshell-bookmark
@@ -1932,17 +1925,20 @@
   :bind
   (("M-Q" . unfill-paragraph)))
 
+(use-package company-lsp
+  :ensure t
+  :commands company-lsp)
+
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :hook (go-mode . lsp-deferred))
+
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.
 
   \(fn arg char)"
   'interactive)
-
-(use-package eglot
-  :bind
-  (("C-c C-c" . eglot-help-at-point)
-   ("C-c C-r" . eglot-rename))
-  :hook (go-mode . eglot-ensure))
 
 (use-package vdiff)
 
@@ -1987,6 +1983,11 @@
 (use-package mw-thesaurus
   :bind (:map markdown-mode-map
               ("C-c C-c d" . mw-thesaurus-lookup-at-point)))
+
+(use-package zoom
+  :config (zoom-mode t))
+
+
 
 (require 'go-mod)
 (require 'prag-prog)

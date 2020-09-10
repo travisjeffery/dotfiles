@@ -20,6 +20,8 @@
 (setq user-full-name "Travis Jeffery"
       user-mail-address "tj@travisjeffery.com")
 
+(setq read-process-output-max (* 1024 1024))
+
 ;; turn off mode-line
 ;; (setq-default mode-line-format nil)
 
@@ -34,10 +36,6 @@
 
 ;; Always load newest byte code
 (setq load-prefer-newer t)
-
-;; reduce the frequency of garbage collection by making it happen on
-;; each 50MB of allocated data (the default is on every 0.76MB)
-(setq gc-cons-threshold 50000000)
 
 ;; warn when opening files bigger than 100MB
 (setq large-file-warning-threshold 100000000)
@@ -668,6 +666,18 @@ will be killed."
             (kill-buffer buf)
             (message "Killed non-existing/unreadable file buffer: %s" filename))))))
   (message "Finished reverting buffers containing unmodified files."))
+
+(defun tj-kill-file-name ()
+  "Put the current file name on the clipboard"
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (with-temp-buffer
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
+      (message filename))))
 
 (defadvice backward-kill-word (around fix activate)
   (cl-flet ((kill-region (b e) (delete-region b e)))
