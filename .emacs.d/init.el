@@ -462,7 +462,7 @@
   :config
 
   (setq go-test-args "-timeout 60s -race -v")
-  (setq go-test-args "-timeout 60s -race -v -ldflags \"-X github.com/confluentinc/cc-scheduler-service.Environment=devel\"")
+  ;; (setq go-test-args "-timeout 60s -race -v -ldflags \"-X github.com/confluentinc/cc-scheduler-service.Environment=devel\"")
 
   (defun tj-go-err ()
     (interactive)
@@ -540,19 +540,6 @@
 
   (tj-turn-on-gofmt-before-save)
 
-  (defun tj-go-kill-doc ()
-    "Kill the doc for the thing at point."
-    (interactive)
-    (let ((funcinfo (go-eldoc--get-funcinfo)))
-      (if funcinfo
-	  (go-eldoc--format-signature funcinfo)
-	(let ((bounds (go-eldoc--bounds-of-go-symbol)))
-	  (when bounds
-	    (let ((curinfo (go-eldoc--get-cursor-info bounds)))
-	      (when curinfo
-		(kill-new (format "%s" curinfo))
-		(message (format "killed: %s" curinfo)))))))))
-
   (defun tj-go-hook ()
     (setq imenu-generic-expression
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
@@ -562,7 +549,6 @@
     (highlight-symbol-mode)
     (subword-mode)
     (flycheck-mode)
-    (go-eldoc-setup)
     (electric-indent-mode)
     (electric-pair-mode 1)
     (selected-minor-mode 1)
@@ -1931,6 +1917,12 @@
 
 (use-package lsp-mode
   :ensure t
+  :config
+  (setq lsp-auto-guess-root t)
+  :bind (
+         ("C-c C-c" . lsp-describe-thing-at-point)
+         ("C-c C-r" . lsp-rename)
+         )
   :commands (lsp lsp-deferred)
   :hook (go-mode . lsp-deferred))
 
@@ -2019,3 +2011,4 @@
   :no-require
   :hook (after-init . server-start))
 (put 'erase-buffer 'disabled nil)
+(put 'downcase-region 'disabled nil)
