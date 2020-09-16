@@ -24,7 +24,6 @@ if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
 if [ -d "$HOME/.local/google-cloud-sdk/bin" ]; then PATH="$HOME/.local/google-cloud-sdk/bin:$PATH"; fi
 if [ -d "$HOME/.cargo/bin" ]; then PATH="$HOME/.cargo/bin:$PATH"; fi
 if [ -d "/usr/local/protobuf/bin" ]; then PATH="/usr/local/protobuf/bin:$PATH"; fi
-if [ -d "/usr/local/goland/bin" ]; then PATH="/usr/local/goland/bin:$PATH"; fi
 if [ -d "$HOME/.tfenv/bin" ]; then PATH="$HOME/.tfenv/bin:$PATH"; fi
 if [ -d "$HOME/.local/istio/bin" ]; then PATH="$HOME/.local/istio/bin:$PATH"; fi
 if [ -d "/opt/gradle/bin" ]; then PATH="/opt/gradle/bin:$PATH"; fi
@@ -33,6 +32,7 @@ if [ -d "/opt/gradle" ]; then GRADLE_HOME="/opt/gradle"; fi
 if [ -d "/opt/idea/bin" ]; then PATH="/opt/idea/bin:$PATH"; fi
 if [ -d "/opt/tfenv/bin" ]; then PATH="/opt/tfenv/bin:$PATH"; fi
 if [ -d "/opt/firefox" ]; then PATH="/opt/firefox:$PATH"; fi
+if [ -d "/opt/goland" ]; then PATH="/opt/goland/bin:$PATH"; fi
 if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
 
