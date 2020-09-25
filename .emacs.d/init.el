@@ -34,7 +34,6 @@
   (setq sqlformat-command 'pgformatter)
   (setq sqlformat-args '("-B" "-e")))
 
-
 (eval-and-compile
   (mapc #'(lambda (entry)
             (define-prefix-command (cdr entry))
@@ -618,33 +617,16 @@
 				 (bm-buffer-save-all)
 				 (bm-repository-save))))
 (use-package projectile
+  :commands (projectile-switch-project
+             projectile-commander)
   :config
   (setq projectile-enable-caching t)
   (setq projectile-indexing-method 'alien)
   (setq projectile-mode-line nil)
   (setq projectile-sort-order 'modification-time)
-  ;; (setq projectile-sort-order 'default)
 
-  ;; Fix the issue where the older project name is prepended to 'Find File:'
-  ;; prompt after `projectile-switch-project'
-  ;; https://github.com/bbatsov/projectile/issues/1067#issuecomment-270656085
-  ;; https://github.com/bbatsov/projectile/issues/1067#issuecomment-270686996
-  ;; (defun projectile-project-name-old ()
-  ;;   "Return project name."
-  ;;   (if projectile-project-name
-  ;;       projectile-project-name
-  ;;     (let ((project-root
-  ;;            (condition-case nil
-  ;;       	 (projectile-project-root)
-  ;;              (error nil))))
-  ;;       (if project-root
-  ;;           (funcall projectile-project-name-function project-root)
-  ;;         "-"))))
-  ;; (advice-add 'projectile-project-name :override #'projectile-project-name-old)
 
-  ;; (def-projectile-commander-method ?f "Find file." (call-interactively 'counsel-fzf))
-  (def-projectile-commander-method ?f "Find file." (call-interactively 'projectile-find-file-dwim))
-  (def-projectile-commander-method ?a "Run deadgrep." (call-interactively 'deadgrep))
+  
   (setq projectile-switch-project-action #'projectile-commander)
   (add-to-list 'projectile-globally-ignored-directories "Godeps/_workspace")
   (add-to-list 'projectile-globally-ignored-directories "vendor")
@@ -653,6 +635,13 @@
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
 
   (projectile-global-mode 1)
+
+  (defun tj-define-projectile-commander-methods ()
+    (def-projectile-commander-method ?f "Find file." (call-interactively 'projectile-find-file-dwim))
+    (def-projectile-commander-method ?a "Run deadgrep." (call-interactively 'deadgrep)))
+
+  :hook
+  ((projectile-before-switch-project . tj-define-projectile-commander-methods))
 
   :bind
   (("C-c t" . projectile-toggle-between-implementation-and-test)
@@ -1739,11 +1728,10 @@
     (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history)
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
 
-  (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
+  (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook)
 
-(use-package shell-here
   :bind
-  (("C-x m" . shell-here)))
+  (("C-x m" . tj-eshell-here)))
 
 (use-package eshell-bookmark
   :hook (eshell-mode . eshell-bookmark-setup))
