@@ -29,6 +29,12 @@
 
 (setq use-package-verbose t)
 
+(use-package sqlformat
+  :config
+  (setq sqlformat-command 'pgformatter)
+  (setq sqlformat-args '("-B" "-e")))
+
+
 (eval-and-compile
   (mapc #'(lambda (entry)
             (define-prefix-command (cdr entry))
@@ -192,11 +198,11 @@
 
 (use-package forge
   :straight (:type git
-             :host github
-             :repo "magit/forge"
-             :fork (:host github
-                          :repo "JulienMasson/forge"
-                          :branch "code-review-support"))
+                   :host github
+                   :repo "magit/forge"
+                   :fork (:host github
+                                :repo "JulienMasson/forge"
+                                :branch "code-review-support"))
   :config
   (setq forge-topic-list-limit '(3 . -1)
         forge-pull-notifications nil))
@@ -528,8 +534,8 @@
 
   (defun tj-turn-on-gofmt-before-save ()
     (interactive)
-    (add-hook 'before-save-hook 'lsp-format-buffer)
-    (add-hook 'before-save-hook 'lsp-organize-imports)
+    (add-hook 'before-save-hook 'lsp-format-buffer t t)
+    (add-hook 'before-save-hook 'lsp-organize-imports t t)
     )
 
   (defun tj-turn-off-gofmt-before-save ()
@@ -538,14 +544,13 @@
     (remove-hook 'before-save-hook 'lsp-organize-imports)
     )
 
-  (tj-turn-on-gofmt-before-save)
-
   (defun tj-go-hook ()
     (setq imenu-generic-expression
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
             ("func" "^func *\\(.*\\)" 1)))
 
     (which-function-mode)
+    (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
     (subword-mode)
     (flycheck-mode)
@@ -639,6 +644,7 @@
 
   ;; (def-projectile-commander-method ?f "Find file." (call-interactively 'counsel-fzf))
   (def-projectile-commander-method ?f "Find file." (call-interactively 'projectile-find-file-dwim))
+  (def-projectile-commander-method ?a "Run deadgrep." (call-interactively 'deadgrep))
   (setq projectile-switch-project-action #'projectile-commander)
   (add-to-list 'projectile-globally-ignored-directories "Godeps/_workspace")
   (add-to-list 'projectile-globally-ignored-directories "vendor")
@@ -1736,10 +1742,8 @@
   (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
 
 (use-package shell-here
-  :after eshell
-    :bind
+  :bind
   (("C-x m" . shell-here)))
-
 
 (use-package eshell-bookmark
   :hook (eshell-mode . eshell-bookmark-setup))
@@ -1987,9 +1991,9 @@
 (use-package elegance
   :requires (org-agenda-property)
   :straight (:type git
-             :host github
-             :repo "rougier/elegant-emacs"
-             :files ("elegance.el"))
+                   :host github
+                   :repo "rougier/elegant-emacs"
+                   :files ("elegance.el"))
   :init
   (setq standard-display-table (make-display-table))
   :config
