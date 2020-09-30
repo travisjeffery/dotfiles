@@ -534,12 +534,14 @@
   (defun tj-turn-on-gofmt-before-save ()
     (interactive)
     (add-hook 'before-save-hook 'lsp-format-buffer t t)
+    (add-hook 'before-save-hook 'gofmt t t)
     (add-hook 'before-save-hook 'lsp-organize-imports t t)
     )
 
   (defun tj-turn-off-gofmt-before-save ()
     (interactive)
     (remove-hook 'before-save-hook 'lsp-format-buffer)
+    (remove-hook 'before-save-hook 'gofmt)
     (remove-hook 'before-save-hook 'lsp-organize-imports)
     )
 
@@ -560,7 +562,7 @@
     (font-lock-mode -1)
     (set-face-foreground 'go-test--ok-face "forest green")
     (set-face-foreground 'go-test--standard-face "dark orange")
-    (go-guru-hl-identifier-mode)
+    (go-guru-hl-identifier-mode)   
     (if (not (string-match "go" compile-command))
 	(set (make-local-variable 'compile-command)
 	     "go build -v && go test -v && go vet")))
@@ -1692,7 +1694,10 @@
 
   (defun tj-eshell-here ()
     (interactive)
-    (eshell (f-dirname (buffer-file-name))))
+    (let ((dir (if (buffer-file-name)
+                   (f-dirname (buffer-file-name))
+                 (projectile-project-root))))
+      (eshell dir)))
 
   (defun eshell-initialize ()
     (defun eshell-spawn-external-command (beg end)
@@ -1910,6 +1915,10 @@
 (use-package lsp-mode
   :ensure t
   :config
+  
+  (lsp-register-custom-settings
+     '(("gopls.completeUnimported" t t)
+       ("gopls.staticcheck" t t)))
   (setq lsp-auto-guess-root t)
   :bind (
          ("C-c C-c" . lsp-describe-thing-at-point)
