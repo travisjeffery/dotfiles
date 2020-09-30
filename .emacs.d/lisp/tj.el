@@ -42,6 +42,9 @@
 
 (global-set-key (kbd "C-h A") 'apropos)
 
+;; handle long lines
+(global-so-long-mode t)
+
 ;; the toolbar is just a waste of valuable screen estate
 ;; in a tty tool-bar-mode does not properly auto-load, and is
 ;; already disabled anyway
