@@ -535,16 +535,14 @@
     (interactive)
     (add-hook 'before-save-hook 'lsp-format-buffer t t)
     (add-hook 'before-save-hook 'gofmt t t)
-    (add-hook 'before-save-hook 'lsp-organize-imports t t)
-    )
-
+    (add-hook 'before-save-hook 'lsp-organize-imports t t))
+  
   (defun tj-turn-off-gofmt-before-save ()
     (interactive)
-    (remove-hook 'before-save-hook 'lsp-format-buffer)
-    (remove-hook 'before-save-hook 'gofmt)
-    (remove-hook 'before-save-hook 'lsp-organize-imports)
-    )
-
+    (remove-hook 'before-save-hook 'lsp-format-buffer t)
+    (remove-hook 'before-save-hook 'gofmt t)
+    (remove-hook 'before-save-hook 'lsp-organize-imports t))
+  
   (defun tj-go-hook ()
     (setq imenu-generic-expression
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
@@ -1694,9 +1692,10 @@
 
   (defun tj-eshell-here ()
     (interactive)
-    (let ((dir (if (buffer-file-name)
+    (let* ((dir (if (buffer-file-name)
                    (f-dirname (buffer-file-name))
-                 (projectile-project-root))))
+                 (projectile-project-root)))
+          (eshell-buffer-name (ff-basename dir)))
       (eshell dir)))
 
   (defun eshell-initialize ()

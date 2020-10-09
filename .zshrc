@@ -438,6 +438,4 @@ case $TERM in
         ;;
 esac
 
-[[ -f $HOME/work.sh ]] && source $HOME/work.sh
-
 gam() { "/home/tj/bin/gam/gam" "$@" ; }

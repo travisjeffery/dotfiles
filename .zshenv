@@ -68,3 +68,5 @@ export PATH="$GOPATH/bin:$PATH"
 export GO111MODULE=on
 
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
+
+[[ -f $HOME/work.sh ]] && source $HOME/work.sh
