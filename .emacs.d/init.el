@@ -644,11 +644,9 @@
   ((projectile-before-switch-project . tj-define-projectile-commander-methods))
 
   :bind
-  (("C-c t" . projectile-toggle-between-implementation-and-test)
-   ("C-c p p" . projectile-switch-project)
+  (("C-c t" . projectile-toggle-between-implementation-and-test)   
    ("C-c p i" . projectile-invalidate-cache)
-   ("C-c C-p" . projectile-test-project)
-   ("C-c P" . 'projectile-switch-project)))
+   ("C-c C-p" . projectile-test-project)))
 
 (use-package web-beautify)
 
@@ -1608,6 +1606,8 @@
 
   :bind
   (("C-\\" . counsel-projectile-find-file)
+   ("C-c p p" . counsel-projectile-switch-project)
+   ("C-c P" . counsel-projectile-switch-project)
    ("C-c p f" . counsel-projectile-find-file)))
 
 (use-package github-browse-file
