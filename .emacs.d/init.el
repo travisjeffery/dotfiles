@@ -510,11 +510,12 @@
       (let ((test-flag (if (> (length test-suite) 0) "-testify.m " "-run "))
             (additional-arguments (if go-test-additional-arguments-function
                                       (funcall go-test-additional-arguments-function
-                                               test-suite test-name) "")))
+                                               test-suite test-name) "")))        
         (when test-name
           (if (go-test--is-gb-project)
               (go-test--gb-start (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
-            (go-test--go-test (s-concat test-flag test-name additional-arguments "\\$ .")))))))
+            (go-test--go-test (s-concat test-flag test-name additional-arguments "\\$ .")))
+          ))))
 
   (setq gofmt-command "goimports")
 
@@ -1362,31 +1363,7 @@
   :config
   (define-key company-active-map (kbd "<tab>") 'yas-next-field)
   ;; Ignore go test -c output files
-  (add-to-list 'completion-ignored-extensions ".test")
-  
-  ;; (setq company-ddabbrev-code-everywhere t)
-  ;; (setq company-dabbrev-code-modes t)
-  ;; (setq company-dabbrev-code-other-buffers 'all)
-  ;; (setq company-dabbrev-ignore-buffers "\\`\\'")
-  
-  ;; (setq company-idle-delay 0)
-  ;; (setq company-echo-delay 0)
-  
-  ;; (setq company-tooltip-align-annotations t)
-  ;; (setq company-tern-property-marker "")
-  ;; (setq company-minimum-prefix-length 3)
-  ;; (setq company-abort-manual-when-too-short 3)
-  ;; (setq company-dabbrev-downcase nil)
-  ;; (setq company-dabbrev-ignore-case t)
-  ;; (setq company-dabbrev-other-buffers 'all)
-
-  ;; From https://github.com/company-mode/company-mode/issues/87
-  ;; See also https://github.com/company-mode/company-mode/issues/123
-  ;; (defadvice company-pseudo-tooltip-unless-just-one-frontend
-  ;;     (around only-show-tooltip-when-invoked activate)
-  ;;   (when (company-explicit-action-p)
-  ;;     ad-do-it)))
-  )
+  (add-to-list 'completion-ignored-extensions ".test"))
 
 (use-package cask-mode)
 
@@ -1415,11 +1392,6 @@
   (setq flycheck-check-syntax-automatically '(save mode-enable))
   (setq flycheck-idle-change-delay 4)
   (add-hook 'after-init-hook #'global-flycheck-mode))
-
-;; (use-package super-save
-;;   ;;   :diminish
-;;   :config
-;;   (super-save-mode +1))
 
 (use-package crux
   :bind (("C-c d" . crux-duplicate-current-line-or-region)
@@ -1594,6 +1566,11 @@
 
 (use-package counsel-projectile
   :config
+  (defun tj-counsel-projectile-commander (project)
+    (let ((projectile-project-root project))
+      (call-interactively 'projectile-commander)))
+
+  (setq counsel-projectile-switch-project-action 'tj-counsel-projectile-commander)
   (setq counsel-projectile-remove-current-buffer t)
   (setq counsel-projectile-remove-current-project t)
   (setq counsel--find-file-matcher 'counsel--find-file-matcher)
@@ -1603,7 +1580,6 @@
 
   (add-to-list 'ivy-sort-matches-functions-alist
                '(counsel-find-file . ivy--sort-files-by-date))
-
   :bind
   (("C-\\" . counsel-projectile-find-file)
    ("C-c p p" . counsel-projectile-switch-project)
