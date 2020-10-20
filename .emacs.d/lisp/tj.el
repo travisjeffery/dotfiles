@@ -20,6 +20,17 @@
 (setq user-full-name "Travis Jeffery"
       user-mail-address "tj@travisjeffery.com")
 
+;; config changes made through the customize UI will be stored here
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+;; (defadvice split-window (after move-point-to-new-window activate)
+;;   "Moves the point to the newly created window after splitting."
+;;   (other-window 1))
+
+(setq comment-multi-line t)
+
+(setq-default indent-tabs-mode nil)
+
 (setq read-process-output-max (* 1024 1024))
 
 ;; turn off mode-line

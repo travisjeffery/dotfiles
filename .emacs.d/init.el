@@ -1567,8 +1567,8 @@
 (use-package counsel-projectile
   :config
   (defun tj-counsel-projectile-commander (project)
-    (let ((projectile-project-root project))
-      (call-interactively 'projectile-commander)))
+    (flet ((projectile-project-root () project))
+      (projectile-commander)))
 
   (setq counsel-projectile-switch-project-action 'tj-counsel-projectile-commander)
   (setq counsel-projectile-remove-current-buffer t)
@@ -1637,18 +1637,6 @@
   :config
   (volatile-highlights-mode +1))
 
-;; config changes made through the customize UI will be stored here
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-
-;; (defadvice split-window (after move-point-to-new-window activate)
-;;   "Moves the point to the newly created window after splitting."
-;;   (other-window 1))
-
-;; Functions and bindings.
-
-
-(setq comment-multi-line t)
-(setq-default indent-tabs-mode nil)
 
 (use-package pcmpl-args)
 
