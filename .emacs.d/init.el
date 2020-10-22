@@ -20,7 +20,6 @@
 
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
-
 (set-frame-font (font-spec :family "JetBrains Mono Light" :size 10.0))
 
 (define-key isearch-mode-map (kbd "C-o") #'isearch-occur)
@@ -409,6 +408,7 @@
 
 (use-package ivy
   :config
+  (setq ivy-truncate-lines nil)
   (setq ivy-initial-inputs-alist nil)
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
@@ -502,21 +502,6 @@
 
   (use-package godoctor)
 
-  ;; override this func for testify
-  (defun go-test-current-test ()
-    "Launch go test on the current test."
-    (interactive)
-    (cl-destructuring-bind (test-suite test-name) (go-test--get-current-test-info)
-      (let ((test-flag (if (> (length test-suite) 0) "-testify.m " "-run "))
-            (additional-arguments (if go-test-additional-arguments-function
-                                      (funcall go-test-additional-arguments-function
-                                               test-suite test-name) "")))        
-        (when test-name
-          (if (go-test--is-gb-project)
-              (go-test--gb-start (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
-            (go-test--go-test (s-concat test-flag test-name additional-arguments "\\$ .")))
-          ))))
-
   (setq gofmt-command "goimports")
 
   (setq tab-width 8)
@@ -545,9 +530,24 @@
     (remove-hook 'before-save-hook 'lsp-organize-imports t))
   
   (defun tj-go-hook ()
-    (setq imenu-generic-expression
-          '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
-            ("func" "^func *\\(.*\\)" 1)))
+      ;; override this func for testify
+  (defun go-test-current-test ()
+    "Launch go test on the current test."
+    (interactive)
+    (cl-destructuring-bind (test-suite test-name) (go-test--get-current-test-info)
+      (let ((test-flag (if (> (length test-suite) 0) "-testify.m " "-run "))
+            (additional-arguments (if go-test-additional-arguments-function
+                                      (funcall go-test-additional-arguments-function
+                                               test-suite test-name) "")))        
+        (when test-name
+          (if (go-test--is-gb-project)
+              (go-test--gb-start (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
+            (go-test--go-test (s-concat test-flag test-name additional-arguments "\\$ .")))
+          ))))
+
+  (setq imenu-generic-expression
+        '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
+          ("func" "^func *\\(.*\\)" 1)))
 
     (which-function-mode)
     (tj-turn-on-gofmt-before-save)
@@ -636,13 +636,6 @@
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
 
   (projectile-global-mode 1)
-
-  (defun tj-define-projectile-commander-methods ()
-    (def-projectile-commander-method ?f "Find file." (call-interactively 'projectile-find-file-dwim))
-    (def-projectile-commander-method ?a "Run deadgrep." (call-interactively 'deadgrep)))
-
-  :hook
-  ((projectile-before-switch-project . tj-define-projectile-commander-methods))
 
   :bind
   (("C-c t" . projectile-toggle-between-implementation-and-test)   
@@ -1567,9 +1560,14 @@
 (use-package counsel-projectile
   :config
   (defun tj-counsel-projectile-commander (project)
-    (flet ((projectile-project-root () project))
+    (flet ((projectile-project-root (&optional dir) project)
+           (project-current ()
+                            (cons 'vc project)))
       (projectile-commander)))
 
+  (def-projectile-commander-method ?f "Find file." (call-interactively 'projectile-find-file-dwim))
+  (def-projectile-commander-method ?a "Run deadgrep." (call-interactively 'deadgrep))
+  
   (setq counsel-projectile-switch-project-action 'tj-counsel-projectile-commander)
   (setq counsel-projectile-remove-current-buffer t)
   (setq counsel-projectile-remove-current-project t)
@@ -1589,6 +1587,10 @@
 (use-package github-browse-file
   :bind ("C-c g" . github-browse-file))
 
+
+
+
+
 (use-package minibuffer
   :straight (:type built-in)
   :config
@@ -1596,6 +1598,9 @@
     (smartparens-mode -1)
     (electric-pair-mode -1)
     (subword-mode)
+    (setq truncate-lines nil)
+    (set (make-local-variable 'face-remapping-alist)
+         '((default :family "JetBrains Mono Light" :height 100)))
     (setq gc-cons-threshold most-positive-fixnum))
 
   (defun my-minibuffer-exit-hook ()
@@ -1696,10 +1701,7 @@
     (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history)
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
 
-  (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook)
-
-  :bind
-  (("C-x m" . tj-eshell-here)))
+  (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
 
 (use-package eshell-bookmark
   :hook (eshell-mode . eshell-bookmark-setup))
@@ -1924,6 +1926,8 @@
       (cd-absolute title))
     (rename-buffer (format "term %s" title)))
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
+  :bind
+  (("C-x m" . vterm))
   :hook
   (vterm-mode . disable-font-lock-mode))
 

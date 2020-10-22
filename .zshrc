@@ -430,6 +430,10 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   [ -f "/etc/profile.d/vte.sh" ] && source /etc/profile.d/vte.sh
 fi
 
+if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
+    alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
+fi
+
 [ -d ~/.zsh/z ] && . ~/.zsh/z/zsh-z.plugin.zsh
 
 case $TERM in
