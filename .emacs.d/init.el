@@ -195,12 +195,6 @@
 (use-package magit-diff-flycheck)
 
 (use-package forge
-  :straight (:type git
-                   :host github
-                   :repo "magit/forge"
-                   :fork (:host github
-                                :repo "JulienMasson/forge"
-                                :branch "code-review-support"))
   :config
   (setq forge-topic-list-limit '(3 . -1)
         forge-pull-notifications nil))
@@ -1861,8 +1855,6 @@
   :config
   (add-hook 'yaml-mode-hook 'indent-tools-minor-mode))
 
-(use-package ghub)
-
 (require 'resmacro)
 (global-set-key (kbd "C-x (") 'resmacro-start-macro)
 
@@ -1921,13 +1913,17 @@
 (use-package vterm
   :custom (vterm-install t)
   :config
+  (defun tj-vterm (title)
+    (interactive "sTitle: ")
+    (vterm (format "*%s*" title)))
+  
   (defun vterm--rename-buffer-as-title (title)
     (when (ignore-errors (file-directory-p title))
       (cd-absolute title))
     (rename-buffer (format "term %s" title)))
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
   :bind
-  (("C-x m" . vterm))
+  (("C-x m" . tj-vterm))
   :hook
   (vterm-mode . disable-font-lock-mode))
 
