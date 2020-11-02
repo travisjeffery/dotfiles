@@ -524,24 +524,24 @@
     (remove-hook 'before-save-hook 'lsp-organize-imports t))
   
   (defun tj-go-hook ()
-      ;; override this func for testify
-  (defun go-test-current-test ()
-    "Launch go test on the current test."
-    (interactive)
-    (cl-destructuring-bind (test-suite test-name) (go-test--get-current-test-info)
-      (let ((test-flag (if (> (length test-suite) 0) "-testify.m " "-run "))
-            (additional-arguments (if go-test-additional-arguments-function
-                                      (funcall go-test-additional-arguments-function
-                                               test-suite test-name) "")))        
-        (when test-name
-          (if (go-test--is-gb-project)
-              (go-test--gb-start (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
-            (go-test--go-test (s-concat test-flag test-name additional-arguments "\\$ .")))
-          ))))
+    ;; override this func for testify
+    (defun go-test-current-test ()
+      "Launch go test on the current test."
+      (interactive)
+      (cl-destructuring-bind (test-suite test-name) (go-test--get-current-test-info)
+        (let ((test-flag (if (> (length test-suite) 0) "-testify.m " "-run "))
+              (additional-arguments (if go-test-additional-arguments-function
+                                        (funcall go-test-additional-arguments-function
+                                                 test-suite test-name) "")))        
+          (when test-name
+            (if (go-test--is-gb-project)
+                (go-test--gb-start (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
+              (go-test--go-test (s-concat test-flag test-name additional-arguments "\\$ .")))
+            ))))
 
-  (setq imenu-generic-expression
-        '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
-          ("func" "^func *\\(.*\\)" 1)))
+    (setq imenu-generic-expression
+          '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
+            ("func" "^func *\\(.*\\)" 1)))
 
     (which-function-mode)
     (tj-turn-on-gofmt-before-save)
@@ -1656,9 +1656,9 @@
   (defun tj-eshell-here ()
     (interactive)
     (let* ((dir (if (buffer-file-name)
-                   (f-dirname (buffer-file-name))
-                 (projectile-project-root)))
-          (eshell-buffer-name (ff-basename dir)))
+                    (f-dirname (buffer-file-name))
+                  (projectile-project-root)))
+           (eshell-buffer-name (ff-basename dir)))
       (eshell dir)))
 
   (defun eshell-initialize ()
@@ -1874,13 +1874,13 @@
   :config
   
   (lsp-register-custom-settings
-     '(("gopls.completeUnimported" t t)
-       ("gopls.staticcheck" t t)))
+   '(("gopls.allExperiments" t t)
+     ("gopls.completeUnimported" t t)
+     ("gopls.staticcheck" t t)))
   (setq lsp-auto-guess-root t)
   :bind (
          ("C-c C-c" . lsp-describe-thing-at-point)
-         ("C-c C-r" . lsp-rename)
-         )
+         ("C-c C-r" . lsp-rename))
   :commands (lsp lsp-deferred)
   :hook (go-mode . lsp-deferred))
 
@@ -1942,8 +1942,6 @@
 
 (use-package zoom
   :config (zoom-mode t))
-
-
 
 (require 'go-mod)
 (require 'prag-prog)
