@@ -20,7 +20,7 @@
 
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
-(set-frame-font (font-spec :family "JetBrains Mono Light" :size 10.0))
+(set-frame-font (font-spec :family "Hack" :size 10.0))
 
 (define-key isearch-mode-map (kbd "C-o") #'isearch-occur)
 
@@ -261,6 +261,11 @@
          (point-marker)))
 
   :hook ((compilation-filter . compilation-ansi-color-process-output)))
+
+(use-package comint
+  :straight (:type built-in)
+  :config
+  (setq shell-prompt-pattern "^\[.*\]$ "))
 
 (use-package dired-toggle
   :preface
@@ -1594,7 +1599,7 @@
     (subword-mode)
     (setq truncate-lines nil)
     (set (make-local-variable 'face-remapping-alist)
-         '((default :family "JetBrains Mono Light" :height 100)))
+         '((default :family "Hack" :height 100)))
     (setq gc-cons-threshold most-positive-fixnum))
 
   (defun my-minibuffer-exit-hook ()
@@ -1922,10 +1927,12 @@
       (cd-absolute title))
     (rename-buffer (format "term %s" title)))
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
-  :bind
-  (("C-x m" . tj-vterm))
   :hook
   (vterm-mode . disable-font-lock-mode))
+
+(use-package shell-here
+  :bind
+  ("C-x m" . shell-here))
 
 (use-package flycheck-vale
   :config
@@ -1962,12 +1969,12 @@
   (load-theme 'plain t)
   (set-default 'cursor-type  '(box . 1))
   (set-face-foreground 'face-popout "#ff4c04")
-  (set-frame-font (font-spec :family "JetBrains Mono Light" :size 10.0))
+  (set-frame-font (font-spec :family "Hack" :size 10.0))
   (setq default-frame-alist
         (append (list '(width  . 72) '(height . 40)
                       '(vertical-scroll-bars . nil)
                       '(internal-border-width . 24)
-                      '(font . "JetBrains Mono Light 10")))))
+                      '(font . "Hack 10")))))
 
 (use-package server
   :no-require
