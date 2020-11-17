@@ -1688,8 +1688,10 @@
   (add-hook 'eshell-first-time-mode-hook 'eshell-initialize)
   (require 'em-smart)
 
-  :config
+  :bind
+  (("C-x m" . eshell))
 
+  :config
   (define-key eshell-mode-map [remap eshell-previous-matching-input-from-input] 'counsel-esh-history)
 
   (setq eshell-where-to-jump 'begin)
@@ -1701,7 +1703,7 @@
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
 
   (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
-
+ 
 (use-package eshell-bookmark
   :hook (eshell-mode . eshell-bookmark-setup))
 
@@ -1929,10 +1931,6 @@
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
   :hook
   (vterm-mode . disable-font-lock-mode))
-
-(use-package shell-here
-  :bind
-  ("C-x m" . shell-here))
 
 (use-package flycheck-vale
   :config
