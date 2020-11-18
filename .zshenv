@@ -49,6 +49,8 @@ export GZIP='--best --name --verbose'
 export GITHUB_USERNAME=travisjeffery
 export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
+export GEM_HOME=`ruby -e 'puts Gem.user_dir'`
+export PATH=$PATH:$HOME/.gem/bin
 
 if [ ! $(uname -s) = "Darwin" ]; then
     alias pbcopy='xsel --clipboard --input'

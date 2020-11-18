@@ -443,3 +443,4 @@ case $TERM in
 esac
 
 gam() { "/home/tj/bin/gam/gam" "$@" ; }
+

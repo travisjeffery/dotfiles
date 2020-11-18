@@ -1920,6 +1920,8 @@
 (use-package vterm
   :custom (vterm-install t)
   :config
+  (setq vterm-buffer-name-string "*vterm*")
+  
   (defun tj-vterm (title)
     (interactive "sTitle: ")
     (vterm (format "*%s*" title)))
