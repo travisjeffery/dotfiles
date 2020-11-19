@@ -72,6 +72,17 @@ if [ ! -n "$INSIDE_EMACS" ]; then
   zstyle ':filter-select' extended-search yes
 
   
+  backward-delete-to-slash() {
+    integer pos=$CURSOR
+    while (( pos > 1 )); do
+      if [[ $LBUFFER[--pos] = / ]]; then
+        LBUFFER=${LBUFFER[1,pos]}
+        return 0
+      fi
+    done
+    return 1
+  }
+
   zle -N backward-delete-to-slash
 
   zstyle ':completion:*:*:git:*' user-commands author:'show author info'
@@ -213,10 +224,7 @@ EOT
   afu-ad-delete-unambiguous-prefix afu+accept-and-hold
 fi
 
-autoload -U promptinit && promptinit
-
-prompt redhat
-
+PROMPT='; '
 
 setopt EXTENDED_GLOB AUTO_PUSHD LISTPACKED \
        AUTOREMOVESLASH HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS \
@@ -399,17 +407,6 @@ alias dc="docker-compose"
 alias trash="rmtrash"
 alias magit='emacsclient -n -e \(magit-status\)'
 alias wget='noglob wget'
-
-backward-delete-to-slash() {
-  integer pos=$CURSOR
-  while (( pos > 1 )); do
-    if [[ $LBUFFER[--pos] = / ]]; then
-      LBUFFER=${LBUFFER[1,pos]}
-      return 0
-    fi
-  done
-  return 1
-}
 
 function git-ignore() {
   local lang=$1
