@@ -1692,6 +1692,9 @@
   (("C-x m" . eshell))
 
   :config
+  (defun tj-eshell-prompt () "; ")
+  (setq eshell-prompt-function 'tj-eshell-prompt)
+  
   (define-key eshell-mode-map [remap eshell-previous-matching-input-from-input] 'counsel-esh-history)
 
   (setq eshell-where-to-jump 'begin)
