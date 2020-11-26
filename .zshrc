@@ -105,6 +105,12 @@ if [ ! -n "$INSIDE_EMACS" ]; then
   zle -N tj-backward-kill;
   bindkey '^w' tj-backward-kill;
 
+  tj-backward-kill-word () {
+    local WORDCHARS=${WORDCHARS/\/}
+    zle backward-kill-word
+  }
+  zle -N tj-backward-kill-word
+  bindkey '^[^?' tj-backward-kill-word
 
   tj-backward-word() {
     local WORDCHARS='*?_~=&;!#$%^(){}'
