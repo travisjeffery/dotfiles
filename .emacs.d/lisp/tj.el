@@ -723,8 +723,6 @@ Otherwise split the current paragraph into one sentence per line."
     ;; otherwise do ordinary fill paragraph
     (fill-paragraph P)))
 
-(global-set-key (kbd "M-q") 'tj-fill-paragraph)
-
 (defun tj-apply-function-to-region (fn)   
   (interactive "XFunction to apply to region: ")   
   (save-excursion

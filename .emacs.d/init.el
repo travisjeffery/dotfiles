@@ -28,6 +28,8 @@
 
 (setq use-package-verbose t)
 
+
+
 (use-package sqlformat
   :config
   (setq sqlformat-command 'pgformatter)
@@ -265,7 +267,7 @@
 (use-package comint
   :straight (:type built-in)
   :config
-  (setq shell-prompt-pattern "^\[.*\]$ "))
+  (setq shell-prompt-pattern "^; "))
 
 (use-package dired-toggle
   :preface
@@ -1934,8 +1936,15 @@
       (cd-absolute title))
     (rename-buffer (format "term %s" title)))
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
+  
   :hook
-  (vterm-mode . disable-font-lock-mode))
+  (vterm-mode . disable-font-lock-mode)
+
+  :bind (:map vterm-mode-map
+              ("M-y" . vterm-yank)))
+
+(use-package vterm-toggle
+  :after (vterm))
 
 (use-package flycheck-vale
   :config
@@ -1953,6 +1962,13 @@
 (use-package zoom
   :config (zoom-mode t))
 
+(use-package with-editor
+  :config
+  (add-hook 'shell-mode-hook  'with-editor-export-editor)
+  (add-hook 'term-exec-hook   'with-editor-export-editor)
+  (add-hook 'eshell-mode-hook 'with-editor-export-editor)
+  (add-hook 'vterm-mode-hook 'with-editor-export-editor))
+
 (require 'go-mod)
 (require 'prag-prog)
 
@@ -1966,6 +1982,7 @@
   (setq standard-display-table (make-display-table))
   :config
   (elegance-light))
+
 
 (use-package plain-theme
   :config
