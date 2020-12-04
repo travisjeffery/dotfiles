@@ -77,6 +77,7 @@
     (crux-start-or-switch-to 'ielm "*ielm*"))
 
   (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+
   (define-key emacs-lisp-mode-map (kbd "C-c C-z") #'visit-ielm)
   (define-key emacs-lisp-mode-map (kbd "C-c C-c") #'eval-defun)
   (define-key emacs-lisp-mode-map (kbd "C-c C-b") #'eval-buffer)
@@ -1588,10 +1589,6 @@
 (use-package github-browse-file
   :bind ("C-c g" . github-browse-file))
 
-
-
-
-
 (use-package minibuffer
   :straight (:type built-in)
   :config
@@ -1643,6 +1640,7 @@
   :config
   (volatile-highlights-mode +1))
 
+(use-package geiser)
 
 (use-package pcmpl-args)
 
