@@ -19,7 +19,9 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
+(use-package use-package-ensure-system-package :straight t)
 (setq straight-use-package-by-default t)
+
 (set-frame-font (font-spec :family "Hack" :size 10.0))
 
 (define-key isearch-mode-map (kbd "C-o") #'isearch-occur)
@@ -27,8 +29,6 @@
 (use-package bind-key)
 
 (setq use-package-verbose t)
-
-
 
 (use-package sqlformat
   :config
@@ -453,10 +453,29 @@
 (use-package eldoc
   :diminish)
 
-(use-package go-guru)
+(use-package go-guru
+  :after go-mode
+  :hook (go-mode . go-guru-hl-identifier-mode))
+
+(use-package godoctor
+  :after go-mode)
+
+(use-package go-add-tags
+  :after go-mode)
+
+(use-package gotest
+  :after go-mode)
+
+(use-package go-errcheck
+  :ensure-system-package ((errcheck . "go get -u github.com/kisielk/errcheck"))
+  :after go-mode-abbrev-table
+  :config
+  (defun tj-go-errcheck ()
+    (interactive)
+    (let ((default-directory (projectile-project-root)))
+      (go-errcheck nil nil nil))))
 
 (use-package go-mode
-  :requires (go-guru)
   :bind
   (:map go-mode-map
         ("M-j" . comment-indent-new-line)
@@ -502,23 +521,12 @@
 
   (add-hook 'go-mode-hook #'my-go-project-setup)
 
-  (use-package godoctor)
-
   (setq gofmt-command "goimports")
 
   (setq tab-width 8)
 
   (setq-local compilation-read-command nil)
-
-  (use-package go-add-tags)
-
-  (use-package go-errcheck
-    :config
-    (defun tj-go-errcheck ()
-      (interactive)
-      (let ((default-directory (projectile-project-root)))
-	(go-errcheck nil nil nil))))
-
+  
   (defun tj-turn-on-gofmt-before-save ()
     (interactive)
     (add-hook 'before-save-hook 'lsp-format-buffer t t)
@@ -563,13 +571,12 @@
     (font-lock-mode -1)
     (set-face-foreground 'go-test--ok-face "forest green")
     (set-face-foreground 'go-test--standard-face "dark orange")
-    (go-guru-hl-identifier-mode)   
+    
     (if (not (string-match "go" compile-command))
 	(set (make-local-variable 'compile-command)
 	     "go build -v && go test -v && go vet")))
+  
   (add-hook 'go-mode-hook 'tj-go-hook)
-
-  (use-package gotest)
 
   :hook
   (go-mode . tj-go-hook))
@@ -1644,6 +1651,13 @@
 
 (use-package pcmpl-args)
 
+(use-package em-unix
+  :after eshell
+  :straight (:type built-in)
+  :config
+  (unintern 'eshell/su nil)
+  (unintern 'eshell/sudo nil)))
+
 (use-package eshell
   :commands (eshell eshell-command)
   :preface
@@ -1678,12 +1692,7 @@
 
     (add-hook 'eshell-expand-input-functions 'eshell-spawn-external-command)
 
-    (use-package em-unix
-      :straight (:type built-in)
-      :config
-      (unintern 'eshell/su nil)
-      (unintern 'eshell/sudo nil)))
-
+    
   :init
   (add-hook 'eshell-first-time-mode-hook 'eshell-initialize)
   (require 'em-smart)
