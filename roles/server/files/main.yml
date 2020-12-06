@@ -85,45 +85,13 @@ spec:
             backend:
               serviceName: deluge
               servicePort: 80
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: filebot
-  namespace: homelab
-  labels:
-    app.kubernetes.io/name: filebot
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: filebot
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: filebot
-    spec:
-      containers:
-        - name: filebot
-          env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
-          image: rednoah/filebot:watcher
-          args: ["/data/Downloads/Completed", "--output", "/data/", "--action", "move", "-non-strict", "--order", "Airdate", "--conflict", "auto", "--lang", "en", "--def", "'music=y'", "'unsorted=y'", "'artwork=y'", "'clean=y'", "'skipExtract=y'", "'excludeList=.excludes'", "--apply", "refresh", "--log", "all", "--log-file", "'/data/.filebot-node/filebot.log'"]
-          volumeMounts:
-            - mountPath: /volume1
-              name: config
-            - mountPath: /data
-              name: data
-      volumes:
-        - name: config
-          hostPath:
-            path: /home/tj/.config/filebot
-        - name: data
-          hostPath:
-            path: /mnt/data
+    - host: syncthing.haus.travisjeffery.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: syncthing
+              servicePort: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -238,3 +206,52 @@ spec:
   selector:
     app.kubernetes.io/name: deluge
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syncthing
+  namespace: homelab
+  labels:
+    app.kubernetes.io/name: syncthing
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: syncthing
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: syncthing
+    spec:
+      hostNetwork: true
+      containers:
+        - name: syncthing
+          ports:
+            - containerPort: 8384
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+          image: linuxserver/syncthing
+          volumeMounts:
+            - mountPath: /config
+              name: config
+      volumes:
+        - name: config
+          hostPath:
+            path: /mnt/data/Sync
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: syncthing
+  namespace: homelab
+  labels:
+    app.kubernetes.io/name: syncthing
+spec:
+  ports:
+    - port: 80
+      targetPort: 8384
+  selector:
+    app.kubernetes.io/name: syncthing
