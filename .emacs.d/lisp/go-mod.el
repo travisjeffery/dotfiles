@@ -15,25 +15,25 @@
 ;;; Code:
 
 ;;;###autoload
-(defun go-mod-tidy()
+(defun go-mod-tidy ()
   "Run go mod tidy"
   (interactive)
   (shell-command "go mod tidy -v"))
 
 ;;;###autoload
-(defun go-mod-graph()
+(defun go-mod-graph ()
   "Run go mod graph"
   (interactive)
   (shell-command "go mod graph"))
 
 ;;;###autoload
-(defun go-mod-init()
+(defun go-mod-init (name)
   "Run go mod init"
-  (interactive)
-  (shell-command "go mod init"))
+  (interactive "sName: ")
+  (shell-command (format "go mod init %s" name)))
 
 ;;;###autoload
-(defun go-mod-verify()
+(defun go-mod-verify ()
   "Run go mod verify"
   (interactive)
   (shell-command "go mod verify"))
@@ -46,14 +46,17 @@
   "go mod mode syntax table.")
 
 (setq go-mod-mode-highlights
-      '(("^\\(module\\) " . font-lock-type-face)
-        ("^\\(require\\)" . font-lock-function-name-face)
-        ("^[\t ]+\\(replace\\)\\|^[\t ]+\\(exclude\\)" . font-lock-builtin-face)
-        ("[ ]\\(v[-_A-Za-z0-9./+:]+\\)[ \n]" . font-lock-keyword-face)
-        ("\\(h1:[-_A-Za-z0-9./+:]+=\\)[\n]" . font-lock-variable-name-face)))
+  '
+  (("^\\(module\\) " . font-lock-type-face)
+    ("^\\(require\\)" . font-lock-function-name-face)
+    ("^[\t ]+\\(replace\\)\\|^[\t ]+\\(exclude\\)" . font-lock-builtin-face)
+    ("[ ]\\(v[-_A-Za-z0-9./+:]+\\)[ \n]" . font-lock-keyword-face)
+    ("\\(h1:[-_A-Za-z0-9./+:]+=\\)[\n]" . font-lock-variable-name-face)))
 
 ;;;###autoload
-(define-derived-mode go-mod-mode prog-mode
+(define-derived-mode
+  go-mod-mode
+  prog-mode
   "Go Mod"
   "Major mode for go module file."
   (setq comment-start "//")
