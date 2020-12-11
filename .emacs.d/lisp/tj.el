@@ -17,8 +17,10 @@
 ;; (add-hook 'conf-mode-hook 'disable-font-lock-mode)
 ;; (add-hook 'compilation-mode-hook 'disable-font-lock-mode)
 
-(setq user-full-name "Travis Jeffery"
-      user-mail-address "tj@travisjeffery.com")
+(setq
+  user-full-name
+  "Travis Jeffery"
+  user-mail-address "tj@travisjeffery.com")
 
 ;; config changes made through the customize UI will be stored here
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -76,9 +78,11 @@
 (setq eldoc-idle-delay 0)
 
 ;; nice scrolling
-(setq scroll-margin 0
-      scroll-conservatively 100000
-      scroll-preserve-screen-position 1)
+(setq
+  scroll-margin
+  0
+  scroll-conservatively 100000
+  scroll-preserve-screen-position 1)
 
 ;; mode line settings
 (line-number-mode t)
@@ -91,16 +95,19 @@
 ;; more useful frame title, that show either a file or a
 ;; buffer name (if the buffer isn't visiting a file)
 (setq frame-title-format
-      '((:eval (if (buffer-file-name)
-		   (abbreviate-file-name (buffer-file-name))
-		 "%b"))))
+  '
+  (
+    (:eval
+      (if (buffer-file-name)
+        (abbreviate-file-name (buffer-file-name))
+        "%b"))))
 
 ;; Emacs modes typically provide a standard means to change the
 ;; indentation width -- eg. c-basic-offset: use that to adjust your
 ;; personal indentation width, while maintaining the style (and
 ;; meaning) of any files you load.
-(setq-default indent-tabs-mode nil)   ;; don't use tabs to indent
-(setq-default tab-width 8)	      ;; but maintain correct appearance
+(setq-default indent-tabs-mode nil) ;; don't use tabs to indent
+(setq-default tab-width 8) ;; but maintain correct appearance
 
 ;; Newline at end of file
 (setq require-final-newline t)
@@ -109,10 +116,8 @@
 (delete-selection-mode t)
 
 ;; store all backup and autosave files in the tmp dir
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
+(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 ;; revert buffers automatically when underlying files are changed externally
 (global-auto-revert-mode t)
@@ -123,25 +128,29 @@
 (set-keyboard-coding-system 'utf-8)
 
 ;; hippie expand is dabbrev expand on steroids
-(setq hippie-expand-try-functions-list '(try-expand-dabbrev
-					 try-expand-dabbrev-all-buffers
-					 try-expand-dabbrev-from-kill
-					 try-complete-file-name-partially
-					 try-complete-file-name
-					 try-expand-all-abbrevs
-					 try-expand-list
-					 try-expand-line
-					 try-complete-lisp-symbol-partially
-					 try-complete-lisp-symbol))
+(setq hippie-expand-try-functions-list
+  '
+  (try-expand-dabbrev
+    try-expand-dabbrev-all-buffers
+    try-expand-dabbrev-from-kill
+    try-complete-file-name-partially
+    try-complete-file-name
+    try-expand-all-abbrevs
+    try-expand-list
+    try-expand-line
+    try-complete-lisp-symbol-partially
+    try-complete-lisp-symbol))
 
 (defun tj-kill-line-save (&optional arg)
   (interactive "p")
   (save-excursion
     (copy-region-as-kill
-     (point)
-     (progn (if arg (forward-visible-line arg)
-	      (end-of-visible-line))
-	    (point)))))
+      (point)
+      (progn
+        (if arg
+          (forward-visible-line arg)
+          (end-of-visible-line))
+        (point)))))
 (global-set-key (kbd "C-c C-k") 'tj-kill-line-save)
 (global-set-key (kbd "s-l") 'goto-line)
 
@@ -152,12 +161,14 @@
 
 (defun tj-markdown-convert-code-blocks ()
   (interactive)
-  (cl-letf (((symbol-function 'kill-ticks)
-             (lambda ()
-               (search-forward "```")
-               (beginning-of-line)
-               (kill-whole-line)
-               (point))))
+  (cl-letf
+    (
+      ((symbol-function 'kill-ticks)
+        (lambda ()
+          (search-forward "```")
+          (beginning-of-line)
+          (kill-whole-line)
+          (point))))
     (string-rectangle (kill-ticks) (kill-ticks) "	")))
 
 (defun tj-eshell ()
@@ -173,14 +184,15 @@
 
 (defun tj-goto (repo)
   "Go to or clone the given dev REPO."
-  (interactive
-   (list
-    (ido-read-directory-name "Directory: " "~/dev/")))
-  (let* ((dev-dir "~/dev/")
-	 (repo-dir repo))
+  (interactive (list (ido-read-directory-name "Directory: " "~/dev/")))
+  (let*
+    (
+      (dev-dir "~/dev/")
+      (repo-dir repo))
     (if (file-exists-p repo-dir)
-	(projectile-find-file-in-directory repo)
-      (shell-command (format "cd %s; git clone git@github.com:travisjeffery/%s.git" dev-dir repo))
+      (projectile-find-file-in-directory repo)
+      (shell-command
+        (format "cd %s; git clone git@github.com:travisjeffery/%s.git" dev-dir repo))
       (projectile-find-file-in-directory repo))))
 
 (defun tj-marked ()
@@ -197,7 +209,7 @@
 
 (defun tj-ag-regexp (string)
   (interactive "sSearch string: ")
-  (ag-regexp string  (projectile-project-root)))
+  (ag-regexp string (projectile-project-root)))
 
 
 (defun tj-reload-dir-locals-for-current-buffer ()
@@ -213,54 +225,63 @@
   (let ((dir (projectile-project-root)))
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
-	(when (equal default-directory dir))
-	(tj-reload-dir-locals-for-current-buffer)))))
+        (when (equal default-directory dir))
+        (tj-reload-dir-locals-for-current-buffer)))))
 
 (defun tj-what-hexadecimal-value ()
   "Prints the decimal value of a hexadecimal string under cursor."
   (interactive)
-  (let (input tmp p1 p2 )
+  (let
+    (
+      input
+      tmp
+      p1
+      p2)
     (save-excursion
       (re-search-backward "[^0-9A-Fa-fx#]" nil t)
       (forward-char)
-      (setq p1 (point) )
+      (setq p1 (point))
       (re-search-forward "[^0-9A-Fa-fx#]" nil t)
       (backward-char)
-      (setq p2 (point) ) )
+      (setq p2 (point)))
 
-    (setq input (buffer-substring-no-properties p1 p2) )
+    (setq input (buffer-substring-no-properties p1 p2))
 
-    (let ((case-fold-search nil) )
-      (setq tmp (replace-regexp-in-string "^0x" "" input ))
-      (setq tmp (replace-regexp-in-string "^#x" "" tmp ))
-      (setq tmp (replace-regexp-in-string "^#" "" tmp )))
+    (let ((case-fold-search nil))
+      (setq tmp (replace-regexp-in-string "^0x" "" input))
+      (setq tmp (replace-regexp-in-string "^#x" "" tmp))
+      (setq tmp (replace-regexp-in-string "^#" "" tmp)))
 
     (message "Hex %s is %d" tmp (string-to-number tmp 16))))
 
 (defun tj-toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-	     (next-win-buffer (window-buffer (next-window)))
-	     (this-win-edges (window-edges (selected-window)))
-	     (next-win-edges (window-edges (next-window)))
-	     (this-win-2nd (not (and (<= (car this-win-edges)
-					 (car next-win-edges))
-				     (<= (cadr this-win-edges)
-					 (cadr next-win-edges)))))
-	     (splitter
-	      (if (= (car this-win-edges)
-		     (car (window-edges (next-window))))
-		  'split-window-horizontally
-		'split-window-vertically)))
-	(delete-other-windows)
-	(let ((first-win (selected-window)))
-	  (funcall splitter)
-	  (if this-win-2nd (other-window 1))
-	  (set-window-buffer (selected-window) this-win-buffer)
-	  (set-window-buffer (next-window) next-win-buffer)
-	  (select-window first-win)
-	  (if this-win-2nd (other-window 1))))))
+    (let*
+      (
+        (this-win-buffer (window-buffer))
+        (next-win-buffer (window-buffer (next-window)))
+        (this-win-edges (window-edges (selected-window)))
+        (next-win-edges (window-edges (next-window)))
+        (this-win-2nd
+          (not
+            (and
+              (<= (car this-win-edges) (car next-win-edges))
+              (<= (cadr this-win-edges) (cadr next-win-edges)))))
+        (splitter
+          (if (= (car this-win-edges) (car (window-edges (next-window))))
+            'split-window-horizontally
+            'split-window-vertically)))
+      (delete-other-windows)
+      (let ((first-win (selected-window)))
+        (funcall splitter)
+        (if this-win-2nd
+          (other-window 1))
+        (set-window-buffer (selected-window) this-win-buffer)
+        (set-window-buffer (next-window) next-win-buffer)
+        (select-window first-win)
+        (if this-win-2nd
+          (other-window 1))))))
 
 (defun tj-newline-and-indent ()
   "Newline under the current line."
@@ -285,20 +306,13 @@
   (kill-sexp -1)
   (insert (format "%S" value)))
 
-(defun tj-goto-match-beginning ()
-  "Go to the start of current isearch match.
-  Use in `isearch-mode-end-hook'."
-  (when (and isearch-forward
-	     (number-or-marker-p isearch-other-end)
-	     (not mark-active)
-	     (not isearch-mode-end-hook-quit))
-    (goto-char isearch-other-end)))
 
 (defun tj-comment-line ()
   "Comment the current line or region."
   (interactive)
   (call-interactively #'comment-line)
-  (unless (region-active-p) (forward-line -1)))
+  (unless (region-active-p)
+    (forward-line -1)))
 
 (defun tj-kill-other-buffer ()
   "Kill the other window's buffer."
@@ -315,7 +329,9 @@
       (back-to-indentation)
       (setq col (+ 1 (current-column)))
       (set-selective-display
-       (if selective-display nil (or col 1))))))
+        (if selective-display
+          nil
+          (or col 1))))))
 
 (global-set-key (kbd "M-;") 'tj-comment-line)
 
@@ -356,12 +372,17 @@ copied, even if the region is narrowed to the middle of a line.
 
 Current position is preserved."
   (interactive "r")
-  (let (str (orig-pos (point-marker)))
+  (let
+    (
+      str
+      (orig-pos (point-marker)))
     (save-restriction
       (widen)
       (when (and transient-mark-mode (not (use-region-p)))
-        (setq beg (line-beginning-position)
-              end (line-beginning-position 2)))
+        (setq
+          beg
+          (line-beginning-position)
+          end (line-beginning-position 2)))
 
       (goto-char beg)
       (setq beg (line-beginning-position))
@@ -370,7 +391,13 @@ Current position is preserved."
         (setq end (line-beginning-position 2)))
 
       (goto-char beg)
-      (setq str (replace-regexp-in-string "[ \t]*\n" "" (replace-regexp-in-string "^[ \t]+" "" (buffer-substring-no-properties beg end))))
+      (setq str
+        (replace-regexp-in-string
+          "[ \t]*\n" ""
+          (replace-regexp-in-string
+            "^[ \t]+"
+            ""
+            (buffer-substring-no-properties beg end))))
       ;; (message "str=%s" str)
       (kill-new str)
       (goto-char orig-pos))))
@@ -383,29 +410,22 @@ Current position is preserved."
     (let ((upcase? (not (s-uppercase? (char-to-string (char-after))))))
       (while (not (eq end (point)))
         (setq upcase? (not upcase?))
-        (let* ((curchar (char-after))
-               (newchar (if upcase?
-                            (upcase curchar)
-                          (downcase curchar))))
+        (let*
+          (
+            (curchar (char-after))
+            (newchar
+              (if upcase?
+                (upcase curchar)
+                (downcase curchar))))
           (delete-char 1)
           (insert-char newchar))))))
-
-(define-key isearch-mode-map [(control return)]
-  #'isearch-exit-other-end)
-
-(defun isearch-exit-other-end ()
-  "Exit isearch, at the opposite end of the string."
-  (interactive)
-  (isearch-exit)
-  (goto-char isearch-other-end))
 
 (define-key 'help-command (kbd "C-i") #'info-display-manual)
 
 (defun tj-format-sql-region (beg end)
   "Format SQL in region from BEG to END."
   (interactive "r")
-  (save-excursion
-    (shell-command-on-region beg end "sql-formatter-cli" nil t)))
+  (save-excursion (shell-command-on-region beg end "sql-formatter-cli" nil t)))
 
 (defun tj-format-sql-buffer ()
   "Format SQL in buffer."
@@ -423,15 +443,17 @@ Current position is preserved."
   (tj--browse-word "https://merriam-webster.com/dictionary/%s"))
 
 (defun tj--browse-word (url)
-  (let ((word
-         (or
-          (and (region-active-p)
-               (buffer-substring-no-properties (region-beginning) (region-end)))
+  (let
+    (
+      (word
+        (or
+          (and
+            (region-active-p)
+            (buffer-substring-no-properties (region-beginning) (region-end)))
           (read-string "Word: "))))
     (browse-url (format url word))))
 
-(defun tj-sql-mode-hook ()
-  (add-hook 'after-save-hook 'tj-format-sql-buffer nil t))
+(defun tj-sql-mode-hook () (add-hook 'after-save-hook 'tj-format-sql-buffer nil t))
 ;; (add-hook 'sql-mode-hook 'tj-sql-mode-hook)
 (remove-hook 'sql-mode-hook 'tj-sql-mode-hook)
 
@@ -442,51 +464,61 @@ Current position is preserved."
 (defvar ffap-file-at-point-line-number nil
   "Variable to hold line number from the last `ffap-file-at-point' call.")
 
-(defadvice ffap-file-at-point (after ffap-store-line-number activate)
+(defadvice ffap-file-at-point
+  (after ffap-store-line-number activate)
   "Search `ffap-string-at-point' for a line number pattern and save it in `ffap-file-at-point-line-number' variable."
-  (let* ((string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
-	 (name
-	  (or (condition-case nil
-		  (and (not (string-match "//" string)) ; foo.com://bar
-		       (substitute-in-file-name string))
-		(error nil))
-	      string))
-	 (line-number-string
-	  (and (string-match ":[0-9]+" name)
-	       (substring name (1+ (match-beginning 0)) (match-end 0))))
-	 (line-number
-	  (and line-number-string
-	       (string-to-number line-number-string))))
+  (let*
+    (
+      (string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
+      (name
+        (or
+          (condition-case nil
+            (and
+              (not (string-match "//" string)) ; foo.com://bar
+              (substitute-in-file-name string))
+            (error nil))
+          string))
+      (line-number-string
+        (and
+          (string-match ":[0-9]+" name)
+          (substring name (1+ (match-beginning 0)) (match-end 0))))
+      (line-number (and line-number-string (string-to-number line-number-string))))
     (if (and line-number (> line-number 0))
-	(setq ffap-file-at-point-line-number line-number)
+      (setq ffap-file-at-point-line-number line-number)
       (setq ffap-file-at-point-line-number nil))))
 
-(defadvice ffap-guesser (after ffap-store-line-number activate)
+(defadvice ffap-guesser
+  (after ffap-store-line-number activate)
   "Search `ffap-string-at-point' for a line number pattern and save it in `ffap-file-at-point-line-number' variable."
-  (let* ((string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
-	 (name
-	  (or (condition-case nil
-		  (and (not (string-match "//" string)) ; foo.com://bar
-		       (substitute-in-file-name string))
-		(error nil))
-	      string))
-	 (line-number-string
-	  (and (string-match ":[0-9]+" name)
-	       (substring name (1+ (match-beginning 0)) (match-end 0))))
-	 (line-number
-	  (and line-number-string
-	       (string-to-number line-number-string))))
+  (let*
+    (
+      (string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
+      (name
+        (or
+          (condition-case nil
+            (and
+              (not (string-match "//" string)) ; foo.com://bar
+              (substitute-in-file-name string))
+            (error nil))
+          string))
+      (line-number-string
+        (and
+          (string-match ":[0-9]+" name)
+          (substring name (1+ (match-beginning 0)) (match-end 0))))
+      (line-number (and line-number-string (string-to-number line-number-string))))
     (if (and line-number (> line-number 0))
-	(setq ffap-file-at-point-line-number line-number)
+      (setq ffap-file-at-point-line-number line-number)
       (setq ffap-file-at-point-line-number nil))))
 
-(defadvice find-file (after ffap-goto-line-number activate)
+(defadvice find-file
+  (after ffap-goto-line-number activate)
   "If `ffap-file-at-point-line-number' is non-nil goto this line."
   (when ffap-file-at-point-line-number
     (with-no-warnings (goto-line ffap-file-at-point-line-number))
     (setq ffap-file-at-point-line-number nil)))
 
-(defadvice find-file-at-point (after ffap-goto-line-number activate)
+(defadvice find-file-at-point
+  (after ffap-goto-line-number activate)
   "If `ffap-file-at-point-line-number' is non-nil goto this line."
   (when ffap-file-at-point-line-number
     (with-no-warnings (goto-line ffap-file-at-point-line-number))
@@ -497,8 +529,10 @@ Current position is preserved."
 Useful to take a long list of arguments on one-line and split
 them across multiple lines."
   (interactive "r")
-  (let* ((in (buffer-substring-no-properties start end))
-         (out (s-replace ", " ",\n" in)))
+  (let*
+    (
+      (in (buffer-substring-no-properties start end))
+      (out (s-replace ", " ",\n" in)))
     (save-excursion
       (delete-region start end)
       (insert out))))
@@ -513,10 +547,11 @@ them across multiple lines."
     (goto-char (region-beginning))
     (delete-char (string-width body))
     (yas-expand-snippet
-     (concat "<${1:tag}$2>"
-             body
-             "</${1:$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text)"
-	     "(match-string 0 yas-text))}>"))))
+      (concat
+        "<${1:tag}$2>"
+        body
+        "</${1:$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text)"
+        "(match-string 0 yas-text))}>"))))
 (global-set-key (kbd "C-c C-w") 'tj-wrap-with-tags)
 (define-key markdown-mode-map (kbd "C-c C-w") 'tj-wrap-with-tags)
 
@@ -525,51 +560,62 @@ them across multiple lines."
   (interactive)
   (let ((inserting-new-tag nil))
     (if (looking-back "[-A-Za-z0-9:_]")
-	(progn (set-mark-command nil)
-	       (while (looking-back "[-A-Za-z0-9:_]")
-		 (backward-char)))
+      (progn
+        (set-mark-command nil)
+        (while (looking-back "[-A-Za-z0-9:_]")
+          (backward-char)))
       (setq inserting-new-tag t)
       (set-mark-command nil)
       (insert "p")
       (exchange-point-and-mark))
     (let ((tag (buffer-substring (region-beginning) (region-end))))
       (delete-char (string-width tag))
-      (cond ((string-match "\\`[bh]r\\'" tag)
-	     (insert (concat "<" tag ">")))
-	    ((string-match (concat "\\`\\(?:img\\|meta\\|link\\|"
-				   "input\\|base\\|area\\|col\\|"
-				   "frame\\|param\\)\\'")
-			   tag)
-	     (yas-expand-snippet (concat "<" tag " $1>$0")))
-	    (t
-	     (yas-expand-snippet
-	      (if inserting-new-tag
-		  (concat "<${1:"
-			  tag
-			  "}>$0</${1:"
-			  "$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text) "
-			  "(match-string 0 yas-text))}>")
-		(concat "<"
-			tag
-			"$1>$0</"
-			tag
-			">"))))))))
+      (cond
+        ((string-match "\\`[bh]r\\'" tag)
+          (insert (concat "<" tag ">")))
+        (
+          (string-match
+            (concat
+              "\\`\\(?:img\\|meta\\|link\\|"
+              "input\\|base\\|area\\|col\\|"
+              "frame\\|param\\)\\'")
+            tag)
+          (yas-expand-snippet (concat "<" tag " $1>$0")))
+        (t
+          (yas-expand-snippet
+            (if inserting-new-tag
+              (concat
+                "<${1:"
+                tag
+                "}>$0</${1:"
+                "$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text) "
+                "(match-string 0 yas-text))}>")
+              (concat "<" tag "$1>$0</" tag ">"))))))))
 (global-set-key (kbd "C-c <") 'tj-insert-open-and-close-tag)
 (define-key markdown-mode-map (kbd "C-c <") 'tj-insert-open-and-close-tag)
 
 (defun init-subword ()
-  (let ((adv (cons 'advice
-		   (lambda ()
-		     (let ((os (char-syntax ?_)))
-		       (modify-syntax-entry ?_ "_")
-		       ad-do-it
-		       (modify-syntax-entry ?_ (string os))))))
-	(fun '(subword-forward subword-kill subword-backward
-			       subword-backward-kill subword-downcase subword-upcase
-			       subword-transpose)))
+  (let
+    (
+      (adv
+        (cons
+          'advice
+          (lambda ()
+            (let ((os (char-syntax ?_)))
+              (modify-syntax-entry ?_ "_")
+              ad-do-it
+              (modify-syntax-entry ?_ (string os))))))
+      (fun
+        '
+        (subword-forward
+          subword-kill
+          subword-backward
+          subword-backward-kill
+          subword-downcase
+          subword-upcase
+          subword-transpose)))
     (dolist (f fun)
-      (ad-add-advice f (list 'underscore-wrap nil t adv)
-		     'around 'last)
+      (ad-add-advice f (list 'underscore-wrap nil t adv) 'around 'last)
       (ad-activate f))))
 
 (add-hook 'after-init-hook #'init-subword)
@@ -579,44 +625,45 @@ them across multiple lines."
 (defun tj-prowritingaid-to-markdown-format ()
   "Fix quotes after copying from ProWritingAid."
   (interactive)
-  (let ((replacements
-         '(("“" . "\"")
-          ("”" . "\"")
-          ("’" . "'")
-          ("‘" . "'")
-          (" " . " "))))
-    (cl-loop for (key . value) in replacements
-             do (progn
-                  (goto-char 0)
-                  (replace-string key value)))))
+  (let
+    (
+      (replacements
+        '(("“" . "\"") ("”" . "\"") ("’" . "'") ("‘" . "'") (" " . " "))))
+    (cl-loop
+      for (key . value) in replacements do
+      (progn
+        (goto-char 0)
+        (replace-string key value)))))
 
 (defun tj-remove-prag-prog-code-tags ()
   (interactive)
   (save-excursion
     (goto-char 0)
-    (replace-regexp "^.*// END.*
-" "")
-    )
+    (replace-regexp
+      "^.*// END.*
+"
+      ""))
 
   (save-excursion
     (goto-char 0)
-    (replace-regexp "^.*// START.*
-" "")))
+    (replace-regexp
+      "^.*// START.*
+"
+      "")))
 
 ;; (define-key proced-mode-map (kbd "/") 'proced-narrow)
 
 (defun tj-arrayify (beg end)
   "Wrap each line from BEG to END in quotes and join them in a line."
   (interactive "r")
-  (replace-region-contents beg end
-                          (lambda ()
-                            (-> (buffer-substring-no-properties beg end)
-                                (split-string "\n")
-                                (->>
-                                 (remove "")
-                                 (cl-mapcar (lambda (x)
-                                              (format "\"\%s\"" x))))
-                                (string-join ", "))))
+  (replace-region-contents
+    beg end
+    (lambda ()
+      (->
+        (buffer-substring-no-properties beg end)
+        (split-string "\n")
+        (->> (remove "") (cl-mapcar (lambda (x) (format "\"\%s\"" x))))
+        (string-join ", "))))
   (end-of-line))
 
 (defun tj-browse-urls (beg end)
@@ -629,32 +676,33 @@ them across multiple lines."
     (forward-line)))
 
 (defun tj-yank-prepend (space)
-    (interactive "sSpace: ")
-    (tj-yank-rectangle t space))
+  (interactive "sSpace: ")
+  (tj-yank-rectangle t space))
 
 (defun tj-yank-append (space)
-    (interactive "sSpace: ")
-    (tj-yank-rectangle nil space))
+  (interactive "sSpace: ")
+  (tj-yank-rectangle nil space))
 
 (defun tj-pull-request ()
   "Create a pull request."
   (interactive)
   (condition-case nil
-      (call-interactively 'forge-create-pullreq)))
+    (call-interactively 'forge-create-pullreq)))
 
 (defun tj-yank-rectangle (prepend space)
-    (interactive)
+  (interactive)
   (save-excursion
     (let ((lines (split-string (current-kill 0) "\n")))
       (dolist (line lines)
-        (goto-char (if prepend
-                       (line-beginning-position)
-                     (line-end-position)))
+        (goto-char
+          (if prepend
+            (line-beginning-position)
+            (line-end-position)))
         (unless prepend
           (insert space))
         (insert line)
         (if prepend
-            (insert space))
+          (insert space))
         (unless (zerop (forward-line))
           (insert "\n"))))))
 
@@ -671,12 +719,11 @@ will be killed."
     (let ((filename (buffer-file-name buf)))
       ;; Revert only buffers containing files, which are not modified;
       ;; do not try to revert non-file buffers like *Messages*.
-      (when (and filename
-                 (not (buffer-modified-p buf)))
+      (when (and filename (not (buffer-modified-p buf)))
         (if (file-readable-p filename)
-            ;; If the file exists and is readable, revert the buffer.
-            (with-current-buffer buf
-              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; If the file exists and is readable, revert the buffer.
+          (with-current-buffer buf
+            (revert-buffer :ignore-auto :noconfirm :preserve-modes))
           ;; Otherwise, kill the buffer.
           (let (kill-buffer-query-functions) ; No query done when killing buffer
             (kill-buffer buf)
@@ -686,52 +733,59 @@ will be killed."
 (defun tj-kill-file-name ()
   "Put the current file name on the clipboard"
   (interactive)
-  (let ((filename (if (equal major-mode 'dired-mode)
-                      default-directory
-                    (buffer-file-name))))
+  (let
+    (
+      (filename
+        (if (equal major-mode 'dired-mode)
+          default-directory
+          (buffer-file-name))))
     (when filename
       (with-temp-buffer
         (insert filename)
         (clipboard-kill-region (point-min) (point-max)))
       (message filename))))
 
-(defadvice backward-kill-word (around fix activate)
-  (cl-flet ((kill-region (b e) (delete-region b e)))
-    ad-do-it))
+(defadvice backward-kill-word
+  (around fix activate)
+  (cl-flet ((kill-region (b e) (delete-region b e))) ad-do-it))
 
 (defun tj-fill-paragraph (&optional P)
   "When called with prefix argument call `fill-paragraph'.
 Otherwise split the current paragraph into one sentence per line."
   (interactive "P")
   (if (not P)
-      (save-excursion 
-        (let ((fill-column 12345678)) ;; relies on dynamic binding
-          (fill-paragraph) ;; this will not work correctly if the paragraph is
-                           ;; longer than 12345678 characters (in which case the
-                           ;; file must be at least 12MB long. This is unlikely.)
-          (let ((end (save-excursion
-                       (forward-paragraph 1)
-                       (backward-sentence)
-                       (point-marker))))  ;; remember where to stop
-            (beginning-of-line)
-            (while (progn (forward-sentence)
-                          (<= (point) (marker-position end)))
-              (just-one-space) ;; leaves only one space, point is after it
-              (delete-char -1) ;; delete the space
-              (newline)        ;; and insert a newline
-              ))))
+    (save-excursion
+      (let ((fill-column 12345678)) ;; relies on dynamic binding
+        (fill-paragraph) ;; this will not work correctly if the paragraph is
+        ;; longer than 12345678 characters (in which case the
+        ;; file must be at least 12MB long. This is unlikely.)
+        (let
+          (
+            (end
+              (save-excursion
+                (forward-paragraph 1)
+                (backward-sentence)
+                (point-marker)))) ;; remember where to stop
+          (beginning-of-line)
+          (while
+            (progn
+              (forward-sentence)
+              (<= (point) (marker-position end)))
+            (just-one-space) ;; leaves only one space, point is after it
+            (delete-char -1) ;; delete the space
+            (newline) ;; and insert a newline
+            ))))
     ;; otherwise do ordinary fill paragraph
     (fill-paragraph P)))
 
-(defun tj-apply-function-to-region (fn)   
-  (interactive "XFunction to apply to region: ")   
+(defun tj-apply-function-to-region (fn)
+  (interactive "XFunction to apply to region: ")
   (save-excursion
-    (let* ((beg (region-beginning))
-           (end (region-end))
-           (resulting-text 
-            (funcall 
-             fn 
-             (buffer-substring-no-properties beg end))))
+    (let*
+      (
+        (beg (region-beginning))
+        (end (region-end))
+        (resulting-text (funcall fn (buffer-substring-no-properties beg end))))
       (kill-region beg end)
       (insert resulting-text))))
 

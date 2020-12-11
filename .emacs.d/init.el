@@ -31,8 +31,6 @@
 
 (set-frame-font (font-spec :family "Hack" :size 10.0))
 
-(define-key isearch-mode-map (kbd "C-o") #'isearch-occur)
-
 (use-package bind-key)
 
 (setq use-package-verbose t)
@@ -196,18 +194,14 @@
     '(3 . -1)
     forge-pull-notifications nil))
 
-(use-package ivy-rich
-  :requires (counsel)
-  :config
-  (setq
-    ivy-virtual-abbreviate
-    'full
-    ivy-rich-switch-buffer-align-virtual-buffer t)
-  (setq ivy-rich-path-style 'abbrev)
-  (ivy-set-display-transformer
-    'ivy-switch-buffer
-    'ivy-rich-switch-buffer-transformer)
-  (ivy-rich-mode))
+(use-package selectrum
+  :config (selectrum-mode +1))
+
+(use-package prescient
+  :config (prescient-persist-mode +1))
+
+(use-package selectrum-prescient
+  :config (selectrum-prescient-mode +1))
 
 (use-package copy-as-format
   :init (setq copy-as-format-default "github"))
@@ -390,35 +384,6 @@
 
 (use-package diminish
   :demand t)
-
-(use-package ivy
-  :config
-  (setq ivy-truncate-lines nil)
-  (setq ivy-initial-inputs-alist nil)
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
-  (setq projectile-completion-system 'ivy)
-  (bind-keys :map minibuffer-local-map ((kbd "C-r") #'counsel-minibuffer-history))
-  :bind
-  (("C-c C-r" . ivy-resume)
-    ("M-R" . ivy-resume)
-    ("C-x b" . ivy-switch-buffer)
-    ("C-x B" . ivy-switch-buffer-other-window)))
-
-(use-package swiper
-
-  :diminish
-  :after ivy
-  :bind
-  (:map
-    swiper-map
-    ("M-y" . yank)
-    ("M-%" . swiper-query-replace)
-    ("C-'" . isearch-forward-regexp)
-    ("M-h" . swiper-avy)
-    ("M-c" . swiper-mc))
-  :commands swiper-from-isearch
-  :init (bind-keys :map isearch-mode-map ("C-i" . swiper-from-isearch)))
 
 
 (use-package expand-region
@@ -722,7 +687,7 @@
 
 (use-package dired
   :straight (:type built-in)
-  :bind (("C-x d" . dired-jump) ("C-x D" . counsel-dired-jump))
+  :bind (("C-x d" . dired-jump))
   :bind
   (:map
     dired-mode-map
@@ -1257,39 +1222,11 @@
 (use-package phi-search
   :bind (:map mc/keymap ("C-r" . phi-search-backward) ("C-s" . phi-search)))
 
-
 (use-package ace-jump-mode
   :defer t)
 
 (use-package browse-url
   :bind (("C-c x" . browse-url-at-point)))
-
-(defun isearch-initial-string nil)
-
-(defun isearch-set-initial-string ()
-  (remove-hook 'isearch-mode-hook 'isearch-set-initial-string)
-  (setq isearch-string isearch-initial-string)
-  (isearch-search-and-update))
-
-(defun isearch-foward-at-point (&optional regexp-p no-recursive-edit)
-  (interactive)
-  (if regexp-p
-    (isearch-forward regexp-p no-recursive-edit)
-    (let*
-      (
-        (end
-          (progn
-            (skip-syntax-foward "w_")
-            (point)))
-        (begin
-          (progn
-            (skip-syntax-backward "w_")
-            (point))))
-      (if (eq begin end)
-        (isearch-forward regexp-p no-recursive-edit)
-        (setq isearch-initial-string (buffer-substring begin end))
-        (add-hook 'isearch-mode-hook 'isearch-set-initial-string)
-        (isearch-forward regexp-p no-recursive-edit)))))
 
 (defun eshell-execute-current-line ()
   "Insert current line at the end of the buffer."
@@ -1390,6 +1327,9 @@
     ([remap kill-whole-line] . crux-kill-whole-line)
     ("C-c s" . crux-ispell-word-then-abbrev)))
 
+(use-package ctrlf
+  :config (ctrlf-mode +1))
+
 (use-package diff-hl
   :config
   (global-diff-hl-mode +1)
@@ -1420,98 +1360,14 @@
   :bind (("C-c ." . goto-last-change) ("C-c ," . goto-last-change-reverse)))
 
 (use-package color-moccur
-  :commands (isearch-moccur isearch-all isearch-moccur-all)
-  :bind
-  (("C-c o o" . occur)
-    ("C-c o O" . moccur)
-    :map
-    isearch-mode-map
-    ("M-o" . isearch-moccur)
-    ("M-O" . isearch-moccur-all)))
-
-(use-package isearch
-  :straight (:type built-in)
-  :config
-  (setq isearch-lazy-highlight 'all-windows)
-  (setq isearch-allow-scroll t)
-  (setq lazy-highlight-cleanup t)
-  (defun zap-to-isearch (rbeg rend)
-    "Kill the region between the mark and the closest portion of
-  the isearch match string. The behaviour is meant to be analogous
-  to zap-to-char; let's call it zap-to-isearch. The deleted region
-  does not include the isearch word. This is meant to be bound only
-  in isearch mode.
-  The point of this function is that oftentimes you want to delete
-  some portion of text, one end of which happens to be an active
-  isearch word. The observation to make is that if you use isearch
-  a lot to move the cursor around (as you should, it is much more
-  efficient than using the arrows), it happens a lot that you could
-  just delete the active region between the mark and the point, not
-  include the isearch word."
-    (interactive "r")
-    (when (not mark-active)
-      (error "Mark is not active"))
-    (let*
-      (
-        (isearch-bounds (list isearch-other-end (point)))
-        (ismin (apply 'min isearch-bounds))
-        (ismax (apply 'max isearch-bounds)))
-      (if (< (mark) ismin)
-        (kill-region (mark) ismin)
-        (if (> (mark) ismax)
-          (kill-region ismax (mark))
-          (error "Internal error in isearch kill function.")))
-      (isearch-exit)))
-  :bind
-  (("C-s" . isearch-forward-regexp)
-    ("C-M-s" . isearch-forward)
-    ("C-r" . isearch-backward-regexp)
-    ("C-M-r" . isearch-backward))
-  (:map isearch-mode-map ("M-z" . zap-to-isearch)))
+  :bind (("C-c o o" . occur) ("C-c o O" . moccur)))
 
 (use-package moccur-edit
   :after color-moccur)
 
 (use-package ace-window
-
   :diminish
   :bind* ("<s-return>" . ace-window))
-
-(use-package counsel
-
-  :diminish
-  :config
-  (defun go-find-file ()
-    "Find file under $GOROOT."
-    (interactive)
-    (find-file (format "%s/src/" (getenv "GOROOT"))))
-  (defun tj-counsel-ag ()
-    (interactive)
-    (counsel-ag nil (projectile-project-root)))
-  (setq counsel-find-file-at-point t)
-  :bind
-  (("C-*" . counsel-org-agenda-headlines)
-    ("C-x C-f" . counsel-find-file)
-    ("C-c f" . counsel-recentf)
-    ("C-c p g" . go-find-file)
-    ("C-h f" . counsel-describe-function)
-    ("C-h v" . counsel-describe-variable)
-    ("C-x r b" . counsel-bookmark)
-    ("M-x" . counsel-M-x)
-    ("C-x C-m" . counsel-M-x)
-    ("C-c i" . counsel-imenu)
-    ("M-y" . counsel-yank-pop))
-  :commands counsel-minibuffer-history
-  :init
-  :config
-  (defun ag-go (arg)
-    (interactive "P")
-    (let*
-      (
-        (pkg (or (and arg (read-string "PKG: ")) (thing-at-point 'filename)))
-        (dir (f-join (getenv "GOPATH") "src" pkg))
-        (search (read-string "Search string: ")))
-      (ag search dir))))
 
 (use-package smartparens
   :bind
@@ -1533,35 +1389,6 @@
     '(minibuffer-inactive-mode eval-expression-minibuffer-setup))
   (sp-local-pair 'js2-mode "{ " " }" :trigger-wrap "{")
   :hook (prog-mode . smartparens-mode))
-
-(use-package counsel-projectile
-  :config
-  (defun tj-counsel-projectile-commander (project)
-    (flet
-      ((projectile-project-root (&optional dir) project)
-        (project-current () (cons 'vc project)))
-      (projectile-commander)))
-  (def-projectile-commander-method
-    ?f
-    "Find file."
-    (call-interactively 'projectile-find-file-dwim))
-  (def-projectile-commander-method
-    ?a
-    "Run deadgrep."
-    (call-interactively 'deadgrep))
-  (setq counsel-projectile-switch-project-action 'tj-counsel-projectile-commander)
-  (setq counsel-projectile-remove-current-buffer t)
-  (setq counsel-projectile-remove-current-project t)
-  (setq counsel--find-file-matcher 'counsel--find-file-matcher)
-  (add-to-list 'ivy-sort-matches-functions-alist
-    '(counsel-projectile-find-file . ivy--sort-files-by-date))
-  (add-to-list 'ivy-sort-matches-functions-alist
-    '(counsel-find-file . ivy--sort-files-by-date))
-  :bind
-  (("C-\\" . counsel-projectile-find-file)
-    ("C-c p p" . counsel-projectile-switch-project)
-    ("C-c P" . counsel-projectile-switch-project)
-    ("C-c p f" . counsel-projectile-find-file)))
 
 (use-package minibuffer
   :straight (:type built-in)
@@ -1664,13 +1491,11 @@
   (defun tj-eshell-prompt ()
     "; ")
   (setq eshell-prompt-function 'tj-eshell-prompt)
-  (define-key eshell-mode-map [remap eshell-previous-matching-input-from-input]
-    'counsel-esh-history)
+
   (setq eshell-where-to-jump 'begin)
   (setq eshell-review-quick-commands nil)
   (setq eshell-smart-space-goes-to-end t)
   (defun tj-eshell-mode-hook ()
-    (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history)
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
   (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
 
