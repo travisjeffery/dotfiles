@@ -560,6 +560,7 @@
   (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
   (add-hook 'kill-emacs-hook
     #'(lambda nil (bm-buffer-save-all) (bm-repository-save))))
+
 (use-package projectile
   :commands (projectile-switch-project projectile-commander)
   :config
@@ -568,16 +569,16 @@
   (setq projectile-mode-line nil)
   (setq projectile-sort-order 'modification-time)
 
-
   (setq projectile-switch-project-action #'projectile-commander)
   (add-to-list 'projectile-globally-ignored-directories "Godeps/_workspace")
   (add-to-list 'projectile-globally-ignored-directories "vendor")
-  ;; (add-to-list 'projectile-globally-ignored-directories "_build")
+  (add-to-list 'projectile-globally-ignored-directories "_build")
   (add-to-list 'projectile-globally-ignored-directories "deps")
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
   (projectile-global-mode 1)
   :bind
   (("C-c t" . projectile-toggle-between-implementation-and-test)
+    ("C-c p p" . projectile-switch-project)
     ("C-c p i" . projectile-invalidate-cache)
     ("C-c C-p" . projectile-test-project)))
 
@@ -1491,6 +1492,7 @@
   (defun tj-eshell-prompt ()
     "; ")
   (setq eshell-prompt-function 'tj-eshell-prompt)
+  (setq eshell-prompt-regexp "^; ")
 
   (setq eshell-where-to-jump 'begin)
   (setq eshell-review-quick-commands nil)
