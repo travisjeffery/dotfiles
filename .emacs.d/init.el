@@ -1,11 +1,3 @@
-;;; Environment
-
-(eval-and-compile
-  (setq load-path
-    (append
-      (delete-dups load-path)
-      (list (format "%s%s" user-emacs-directory "lisp")))))
-
 (defvar bootstrap-version)
 (let
   (
@@ -28,6 +20,12 @@
 (use-package use-package-ensure-system-package
   :straight t)
 (setq straight-use-package-by-default t)
+
+(eval-and-compile
+  (setq load-path
+    (append
+      (delete-dups load-path)
+      (list (format "%s%s" user-emacs-directory "lisp")))))
 
 (set-frame-font (font-spec :family "Hack" :size 10.0))
 
@@ -94,20 +92,12 @@
   (avy-setup-default)
   (setq avy-background t))
 
-(use-package ido
-  :config (setq ido-use-faces nil))
-
-(use-package ido-at-point
-  :config (ido-at-point-mode))
-
-(use-package ido-vertical-mode
-  :config (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right))
-
 (use-package cider)
 
 (use-package org-agenda-property)
 
 (use-package clojure-mode
+  :after paredit
   :hook
   (clojure-mode . eldoc-mode)
   (inf-clojure-mode . eldoc-mode)
@@ -194,15 +184,6 @@
     '(3 . -1)
     forge-pull-notifications nil))
 
-(use-package selectrum
-  :config (selectrum-mode +1))
-
-(use-package prescient
-  :config (prescient-persist-mode +1))
-
-(use-package selectrum-prescient
-  :config (selectrum-prescient-mode +1))
-
 (use-package copy-as-format
   :init (setq copy-as-format-default "github"))
 
@@ -279,7 +260,6 @@
 
 
 (use-package smart-forward
-
   :config
   :bind
   (("M-<up>" . smart-up)
@@ -425,6 +405,7 @@
       (go-errcheck nil nil nil))))
 
 (use-package go-mode
+  :ensure-system-package ((goimports . "go get golang.org/x/tools/cmd/goimports"))
   :bind
   (:map
     go-mode-map
@@ -545,10 +526,6 @@
   :config (setq embrace-show-help-p nil)
   :bind ("C-c M-e" . embrace-commander))
 
-(use-package ido-completing-read+
-  :config (ido-ubiquitous-mode))
-
-
 (use-package bm
   :commands (bm-repository-load bm-buffer-save bm-buffer-save-all bm-buffer-restore)
   :init
@@ -579,6 +556,7 @@
   :bind
   (("C-c t" . projectile-toggle-between-implementation-and-test)
     ("C-c p p" . projectile-switch-project)
+    ("C-c p f" . projectile-find-file)
     ("C-c p i" . projectile-invalidate-cache)
     ("C-c C-p" . projectile-test-project)))
 
@@ -611,8 +589,6 @@
     (eval-expression-minibuffer-setup . paredit-mode))
   :diminish
   :bind (:map paredit-mode-map ("M-;" . nil) ("M-r" . nil) ("M-I" . paredit-splice-sexp)))
-
-(use-package smex)
 
 (use-package paren
   :config (show-paren-mode +1))
@@ -943,6 +919,9 @@
   (setq whitespace-style '(face empty lines trailing)))
 
 (use-package docker)
+
+(use-package dockerfile-mode
+  :config (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 
 (use-package markdown-mode
   :bind (:map markdown-mode-map ("C-c C-d" . nil))
@@ -1302,6 +1281,18 @@
   (setq flycheck-idle-change-delay 4)
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
+(use-package flycheck-rust
+  :config
+  (with-eval-after-load 'rust-mode
+    (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
+
+(use-package racer
+  :config (setq company-tooltip-align-annotations t)
+  :hook
+  (rust-mode . racer-mode)
+  (racer-mode . eldoc-mode)
+  (racer-mode . company-mode))
+
 (use-package crux
   :bind
   (("C-c d" . crux-duplicate-current-line-or-region)
@@ -1409,7 +1400,6 @@
   (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
   (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook))
 
-
 (use-package eval-expr
   :bind ("M-:" . eval-expr)
   :config
@@ -1440,7 +1430,8 @@
   :diminish
   :config (volatile-highlights-mode +1))
 
-(use-package geiser)
+(use-package geiser
+  :hook (geiser-repl-mode . paredit-mode))
 
 (use-package pcmpl-args)
 
@@ -1768,9 +1759,15 @@
   :init (setq standard-display-table (make-display-table))
   :config (elegance-light))
 
-(require 'elisp-autofmt)
-(add-hook 'emacs-lisp-mode-hook
-  (lambda () (elisp-autofmt-save-hook-for-this-buffer)))
+(use-package shim
+  :commands shim-auto-set
+  :straight (:type built-in :load-path "lisp/shim.el")
+  :config (shim-init-go)
+  :hook (go-mode . shim-auto-set))
+
+(use-package elisp-autofmt
+  :straight (:type built-in)
+  :hook (emacs-lisp-mode-hook . (lambda () (elisp-autofmt-save-hook-for-this-buffer))))
 
 (use-package plain-theme
   :config
@@ -1787,8 +1784,42 @@
         '(internal-border-width . 24)
         '(font . "Hack 10")))))
 
-(use-package server
+(use-package selectrum
+  :config
+  (selectrum-mode +1)
+  (defun yank-pop+ (&optional arg)
+ "Call `yank-pop' with ARG when appropriate, or offer completion."
+ (interactive "*P")
+ (if arg (yank-pop arg)
+   (let* ((old-last-command last-command)
+          (selectrum-should-sort-p nil)
+          (enable-recursive-minibuffers t)
+          (text (completing-read
+                 "Yank: "
+                 (cl-remove-duplicates
+                  kill-ring :test #'string= :from-end t)
+                 nil t nil nil))
+          ;; Find `text' in `kill-ring'.
+          (pos (cl-position text kill-ring :test #'string=))
+          ;; Translate relative to `kill-ring-yank-pointer'.
+          (n (+ pos (length kill-ring-yank-pointer))))
+     (unless (string= text (current-kill n t))
+       (error "Could not setup for `current-kill'"))
+     ;; Restore `last-command' over Selectrum commands.
+     (setq last-command old-last-command)
+     ;; Delegate to `yank-pop' if appropriate or just insert.
+     (if (eq last-command 'yank)
+         (yank-pop n) (insert-for-yank text)))))
+  :bind (("C-x C-z" . #'selectrum-repeat)
+         ("M-y" . yank-pop+)))
 
+(use-package prescient
+  :config (prescient-persist-mode +1))
+
+(use-package selectrum-prescient
+  :config (selectrum-prescient-mode +1))
+
+(use-package server
   :no-require
   :hook (after-init . server-start))
 
