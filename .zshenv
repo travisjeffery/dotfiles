@@ -36,6 +36,8 @@ if [ -d "/opt/goland" ]; then PATH="/opt/goland/bin:$PATH"; fi
 if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
 
+command -v rustup >/dev/null && export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
+
 command -v ruby >/dev/null && PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
 
 if [ -f /etc/os-release ]; then source /etc/os-release; fi

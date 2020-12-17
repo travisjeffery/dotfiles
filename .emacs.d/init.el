@@ -904,7 +904,7 @@
 (use-package exec-path-from-shell
   :init
   (setq exec-path-from-shell-variables
-    '("PATH" "MANPATH" "GOROOT" "GOPATH" "JAVA_HOME" "JAVA_OPTS"))
+    '("PATH" "MANPATH" "GOROOT" "GOPATH" "JAVA_HOME" "JAVA_OPTS" "RUST_SRC_PATH"))
   :config (exec-path-from-shell-initialize))
 
 (use-package kubernetes-helm)
