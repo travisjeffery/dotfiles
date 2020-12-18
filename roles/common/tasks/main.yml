@@ -1,31 +1,38 @@
+- name: current user
+  debug: msg="{{ lookup('env','USER') }}"
+- name: home dir 
+  debug: msg="{{ ansible_env.HOME }}"
 - name: install packages
   become: yes
-  package:
+  yay:
     name:
       - google-chrome
       - zsh
       - redshift
       - docker
       - docker-compose
-      - tilix
+      - zoom
+      - ripgrep
+      - rustup
     state: present
 - name: make zsh default shell
   shell: chsh -s /usr/bin/zsh tj
   tags: shellchange
   become: true
-- name: load tilix config
-  copy: src=files/tilix.dconf dest=/tmp/tilix.dconf
-- name: load tilix config
-  command: dconf load /com/gexperts/Tilix/ < /tmp/tilix.dconf
 - name: start docker service
   service:
     name: docker
     state: started
   become: true
-- name: link dotfiles
-  command: "./{{playbook_dir}}/bin/hlink"
 - name: use emacs keybinds
-  command: gsettings set org.cinnamon.desktop.interface gtk-key-theme "Emacs"
+  lineinfile:
+    dest="{{ item.file }}"
+    regexp="{{ item.line }}"
+    line="{{ item.line }}"
+    state=present
+  with_items:
+    - { line: 'gtk-key-theme-name="Emacs"', file: "{{ ansible_env.HOME }}/.gtkrc-2.0" }
+    - { line: 'gtk-key-theme-name=Emacs', file: "{{ ansible_env.HOME }}/.config/gtk-3.0/settings.ini" }
 - name: clone goenv
   become: no
   git:
@@ -33,8 +40,3 @@
     version: master
     dest: "{{ ansible_env.HOME }}/.goenv"
     accept_hostkey: yes
-- name: install kind
-  command:
-    - curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64
-    - chmod +x ./kind
-    - mv ./kind "{{home_dir}}/.local/bin"
