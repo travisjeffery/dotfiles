@@ -258,7 +258,6 @@
   :commands git-timemachine
   :bind (("s-g" . git-timemachine)))
 
-
 (use-package smart-forward
   :config
   :bind
@@ -536,9 +535,12 @@
   (add-hook 'after-save-hook #'bm-buffer-save)
   (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
   (add-hook 'kill-emacs-hook
-    #'(lambda nil (bm-buffer-save-all) (bm-repository-save))))
+            #'(lambda nil (bm-buffer-save-all) (bm-repository-save))))
+
+(use-package ripgrep)
 
 (use-package projectile
+  :after ripgrep
   :commands (projectile-switch-project projectile-commander)
   :config
   (setq projectile-enable-caching t)
@@ -553,6 +555,11 @@
   (add-to-list 'projectile-globally-ignored-directories "deps")
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
   (projectile-global-mode 1)
+
+  (def-projectile-commander-method ?a
+    "Run ripgrep on project."
+    (call-interactively #'projectile-ripgrep))
+  
   :bind
   (("C-c t" . projectile-toggle-between-implementation-and-test)
     ("C-c p p" . projectile-switch-project)
