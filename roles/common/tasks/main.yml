@@ -14,9 +14,15 @@
       - zoom
       - ripgrep
       - rustup
+      - cups
     state: present
+- name: install rust
+  shell: "{{ item }}"
+  with_items:
+    - rustup default nightly
+    - rustup component add rust-src
 - name: make zsh default shell
-  shell: chsh -s /usr/bin/zsh tj
+  shell: chsh -s /bin/zsh tj
   tags: shellchange
   become: true
 - name: start docker service
