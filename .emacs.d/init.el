@@ -1254,7 +1254,6 @@
 (add-to-list 'completion-styles 'substring t)
 
 (use-package company
-
   :diminish
   :hook (prog-mode . company-mode)
   :config (define-key company-active-map (kbd "<tab>") 'yas-next-field)
@@ -1327,7 +1326,11 @@
     ("C-c s" . crux-ispell-word-then-abbrev)))
 
 (use-package ctrlf
-  :config (ctrlf-mode +1))
+  :config (ctrlf-mode +1)
+  (setq ctrlf-highlight-current-line nil)
+  (set-face-attribute 'ctrlf-highlight-active nil
+                      :foreground (face-foreground 'face-popout)
+                      :background (face-background 'ctrlf-highlight-passive nil t)))
 
 (use-package diff-hl
   :config
