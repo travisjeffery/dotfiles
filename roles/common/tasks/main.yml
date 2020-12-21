@@ -15,6 +15,8 @@
       - ripgrep
       - rustup
       - cups
+      - ttf-roboto-mono
+      - ttf-fira-code
     state: present
 - name: install rust
   shell: "{{ item }}"

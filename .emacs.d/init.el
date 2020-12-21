@@ -21,13 +21,20 @@
   :straight t)
 (setq straight-use-package-by-default t)
 
-(eval-and-compile
-  (setq load-path
-    (append
-      (delete-dups load-path)
-      (list (format "%s%s" user-emacs-directory "lisp")))))
+(use-package f)
 
-(set-frame-font (font-spec :family "Hack" :size 10.0))
+(eval-and-compile
+  (let ((lisp-dir (format "%s%s" user-emacs-directory "lisp")))
+    (setq load-path
+          (append
+           (delete-dups load-path)
+           (list lisp-dir)
+           (f-directories lisp-dir)))))
+
+(setq tj-font
+      (font-spec :family "Hack" :size (if (string-equal "laptop" (system-name))
+                                                      12.0
+                                                    10.0)))
 
 (use-package bind-key)
 
@@ -245,6 +252,7 @@
   :hook (dired-toggle-mode . my-dired-toggle-mode-hook))
 
 (use-package yasnippet
+  :diminish
   :config (yas-global-mode))
 
 (use-package auto-yasnippet
@@ -495,7 +503,6 @@
     (electric-pair-mode 1)
     (selected-minor-mode 1)
     (whitespace-mode 0)
-    (font-lock-mode -1)
     (set-face-foreground 'go-test--ok-face "forest green")
     (set-face-foreground 'go-test--standard-face "dark orange")
     (if (not (string-match "go" compile-command))
@@ -598,6 +605,7 @@
   :bind (:map paredit-mode-map ("M-;" . nil) ("M-r" . nil) ("M-I" . paredit-splice-sexp)))
 
 (use-package paren
+  :diminish
   :config (show-paren-mode +1))
 
 (use-package abbrev
@@ -619,6 +627,7 @@
   :straight (:type built-in))
 
 (use-package saveplace
+  :diminish
   :straight (:type built-in)
   :config (defconst savefile-dir (expand-file-name "savefile" user-emacs-directory))
 
@@ -659,15 +668,12 @@
   (windmove-default-keybindings))
 
 (use-package highlight-symbol
-
   :diminish
   :config (highlight-symbol-mode)
   :bind (("M-p" . highlight-symbol-prev) ("M-n" . highlight-symbol-next)))
 
 (use-package diffview
   :commands (diffview-current diffview-region diffview-message))
-
-(use-package f)
 
 (use-package dired
   :straight (:type built-in)
@@ -1170,6 +1176,7 @@
   :bind (("C-; h" . ace-mc-add-multiple-cursors) ("C-; M-h" . ace-mc-add-single-cursor)))
 
 (use-package org-roam
+  :diminish
   :hook (after-init . org-roam-mode)
   :custom (org-roam-directory "~/Dropbox/notes"))
 
@@ -1329,7 +1336,7 @@
   :config (ctrlf-mode +1)
   (setq ctrlf-highlight-current-line nil)
   (set-face-attribute 'ctrlf-highlight-active nil
-                      :foreground (face-foreground 'face-popout)
+                      :foreground (face-foreground 'face-strong nil t)
                       :background (face-background 'ctrlf-highlight-passive nil t)))
 
 (use-package diff-hl
@@ -1339,11 +1346,8 @@
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
 (use-package which-key
-
   :diminish
   :config (which-key-mode +1))
-
-;; backups
 
 (setq
   backup-by-copying
@@ -1402,7 +1406,7 @@
     (setq truncate-lines nil)
     (set
       (make-local-variable 'face-remapping-alist)
-      '((default :family "Hack" :height 100)))
+      '((default :family (font-get tj-font :family) :height (* 10 (font-get tj-font :size)))))
     (setq gc-cons-threshold most-positive-fixnum))
   (defun my-minibuffer-exit-hook ()
     (electric-pair-mode 1)
@@ -1591,12 +1595,6 @@
     (append flycheck-disabled-checkers '(javascript-jshint)))
   (setq-default flycheck-disabled-checkers
     (append flycheck-disabled-checkers '(json-jsonlist)))
-
-
-  ;; :mode
-  ;; ("\\.js$" . js2-jsx-mode)
-  ;; ("\\.js\\'" . js2-jsx-mode)
-  ;; ("\\.json\\'" . js2-jsx-mode)
   :interpreter ("node" . js2-jsx-mode)
   :bind
   ("M-j" . comment-indent-new-line)
@@ -1662,11 +1660,16 @@
 (use-package indent-tools
   :config (add-hook 'yaml-mode-hook 'indent-tools-minor-mode))
 
-(require 'resmacro)
-(global-set-key (kbd "C-x (") 'resmacro-start-macro)
+(use-package resmacro
+  :straight (:type built-in)
+  :bind
+  (("C-x (" . resmacro-start-macro)))
 
-(require 'wordswitch)
-(require 'titlecase)
+(use-package wordswitch
+  :straight (:type built-in))
+
+(use-package titlecase
+  :straight (:type built-in))
 
 (use-package unfill
   :bind (("M-Q" . unfill-paragraph)))
@@ -1726,7 +1729,6 @@
       (cd-absolute title))
     (rename-buffer (format "term %s" title)))
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
-  :hook (vterm-mode . disable-font-lock-mode)
   :bind (:map vterm-mode-map ("M-y" . vterm-yank)))
 
 (use-package vterm-toggle
@@ -1751,6 +1753,7 @@
   :bind (:map markdown-mode-map ("C-c C-c d" . mw-thesaurus-lookup-at-point)))
 
 (use-package zoom
+  :diminish
   :config (zoom-mode t))
 
 (use-package with-editor
@@ -1760,39 +1763,21 @@
   (add-hook 'eshell-mode-hook 'with-editor-export-editor)
   (add-hook 'vterm-mode-hook 'with-editor-export-editor))
 
-(require 'go-mod)
-(require 'prag-prog)
+(use-package go-mod
+    :straight (:type built-in))
 
-(use-package elegance
-  :requires (org-agenda-property)
-  :straight (:type git :host github :repo "rougier/elegant-emacs" :files ("elegance.el"))
-  :init (setq standard-display-table (make-display-table))
-  :config (elegance-light))
+(use-package prag-prog
+    :straight (:type built-in))
 
 (use-package shim
   :commands shim-auto-set
-  :straight (:type built-in :load-path "lisp/shim.el")
+  :straight (:type built-in)
   :config (shim-init-go)
   :hook (go-mode . shim-auto-set))
 
 (use-package elisp-autofmt
   :straight (:type built-in)
   :hook (emacs-lisp-mode-hook . (lambda () (elisp-autofmt-save-hook-for-this-buffer))))
-
-(use-package plain-theme
-  :config
-  (load-theme 'plain t)
-  (set-default 'cursor-type '(box . 1))
-  (set-face-foreground 'face-popout "#ff4c04")
-  (set-frame-font (font-spec :family "Hack" :size 10.0))
-  (setq default-frame-alist
-    (append
-      (list
-        '(width . 72)
-        '(height . 40)
-        '(vertical-scroll-bars . nil)
-        '(internal-border-width . 24)
-        '(font . "Hack 10")))))
 
 (use-package selectrum
   :config
@@ -1822,6 +1807,28 @@
          (yank-pop n) (insert-for-yank text)))))
   :bind (("C-x C-z" . #'selectrum-repeat)
          ("M-y" . yank-pop+)))
+
+(defun tj-set-face (face style)
+  "Reset a FACE and make it inherit STYLE."
+  (set-face-attribute face nil
+   :foreground 'unspecified :background 'unspecified
+   :family     'unspecified :slant      'unspecified
+   :weight     'unspecified :height     'unspecified
+   :underline  'unspecified :overline   'unspecified
+   :box        'unspecified :inherit    style))
+
+(use-package elegance
+  :requires (org-agenda-property)
+  :straight (:type git :host github :repo "rougier/elegant-emacs" :files ("elegance.el"))
+  :init (setq standard-display-table (make-display-table))
+  :config (elegance-light)
+  (set-default 'cursor-type '(box . 1))
+  (set-face-attribute 'face-strong nil :weight 'bold)
+  (set-face 'font-lock-string-face nil)
+  (set-face 'font-lock-variable-name-face nil)
+  (set-face 'font-lock-function-name-face nil)
+  (set-face 'face-popout 'face-strong)  
+  (set-frame-font tj-font))
 
 (use-package prescient
   :config (prescient-persist-mode +1))
