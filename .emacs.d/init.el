@@ -17,9 +17,10 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+
 (use-package use-package-ensure-system-package
   :straight t)
-(setq straight-use-package-by-default t)
 
 (use-package f)
 
@@ -47,12 +48,12 @@
       (define-prefix-command (cdr entry))
       (bind-key (car entry) (cdr entry)))
     '
-    (("C-;" . my-ctrl-semicolon-map) ;; mc
-      ("C-c b" . my-ctrl-c-b-map) ;; for bm
-      ("C-c m" . my-ctrl-c-m-map) ;; for org
-      ("C-c o" . my-ctrl-c-o-map) ;; for occur
-      ("C-c y" . my-ctrl-c-y-map) ;; aya
-      ("C-c C-d" . my-ctrl-c-c-c-d-map) ("M-i" . my-m-i-map) ("M-o" . my-m-o-map))))
+    (("C-;" . tj-ctrl-semicolon-map) ;; mc
+      ("C-c b" . tj-ctrl-c-b-map) ;; for bm
+      ("C-c m" . tj-ctrl-c-m-map) ;; for org
+      ("C-c o" . tj-ctrl-c-o-map) ;; for occur
+      ("C-c y" . tj-ctrl-c-y-map) ;; aya
+      ("C-c C-d" . tj-ctrl-c-c-c-d-map) ("M-i" . tj-m-i-map) ("M-o" . tj-m-o-map))))
 
 (use-package persistent-scratch
   :config (persistent-scratch-autosave-mode 1))
@@ -117,15 +118,15 @@
   :config
   (add-hook 'after-save-hook 'magit-after-save-refresh-status)
   (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
-  ;; (setq vc-handled-backends '(Git))
-  ;; (setq magit-push-always-verify nil)
   (setq vc-follow-symlinks t)
   (setq magit-refresh-status-buffer t)
+
   (magit-define-section-jumper
     magit-jump-to-recent-commits
     "Recent commits"
     recent
     "HEAD~10..HEAD")
+  
   (defun tj-semaphore-open-branch ()
     "Open branch in Semaphore CI"
     (interactive)
@@ -149,8 +150,6 @@
     'magit
     '(define-key magit-mode-map "S" #'tj-semaphore-open-branch))
 
-
-  ;; (remove-hook 'server-switch-hook 'magit-commit-diff)
   (defun tj-visit-pull-request-url ()
     "Visit the current branch's PR on Github."
     (interactive)
@@ -240,11 +239,11 @@
 
 (use-package dired-toggle
   :preface
-  (defun my-dired-toggle-mode-hook ()
+  (defun tj-dired-toggle-mode-hook ()
     (interactive)
     (setq-local visual-line-fringe-indicators '(nil right-curly-arrow))
     (setq-local word-wrap nil))
-  :hook (dired-toggle-mode . my-dired-toggle-mode-hook))
+  :hook (dired-toggle-mode . tj-dired-toggle-mode-hook))
 
 (use-package yasnippet
   :diminish
@@ -368,9 +367,6 @@
   :demand t)
 
 
-(use-package expand-region
-  :bind ("C-=" . er/expand-region))
-
 (use-package rjsx-mode
   :config (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode)))
 
@@ -430,7 +426,8 @@
         (yas-expand-snippet
           (concat "if err := ${1:" body "}; err != nil {\n" "$0\n" "}")))
       (yas-expand-snippet (concat "if err != nil {\n$0\n}"))))
-  (defun my-try-go-mod (dir)
+  
+  (defun tj-try-go-mod (dir)
     "Find go project root for DIR."
     (if
       (and
@@ -445,23 +442,28 @@
           (cons 'transient dir)))
       (when dir
         (cons 'transient dir))))
-  (defun my-go-project-setup ()
+  
+  (defun tj-go-project-setup ()
     "Set project root for go project."
-    (setq-local project-find-functions (list #'my-try-go-mod #'project-try-vc)))
-  (add-hook 'go-mode-hook #'my-go-project-setup)
+    (setq-local project-find-functions (list #'tj-try-go-mod #'project-try-vc)))
+  
+  (add-hook 'go-mode-hook #'tj-go-project-setup)
   (setq gofmt-command "goimports")
   (setq tab-width 8)
   (setq-local compilation-read-command nil)
+  
   (defun tj-turn-on-gofmt-before-save ()
     (interactive)
     (add-hook 'before-save-hook 'lsp-format-buffer t t)
     (add-hook 'before-save-hook 'gofmt t t)
     (add-hook 'before-save-hook 'lsp-organize-imports t t))
+  
   (defun tj-turn-off-gofmt-before-save ()
     (interactive)
     (remove-hook 'before-save-hook 'lsp-format-buffer t)
     (remove-hook 'before-save-hook 'gofmt t)
     (remove-hook 'before-save-hook 'lsp-organize-imports t))
+  
   (defun tj-go-hook ()
     ;; override this func for testify
     (defun go-test-current-test ()
@@ -504,6 +506,7 @@
       (set
         (make-local-variable 'compile-command)
         "go build -v && go test -v && go vet")))
+  
   (add-hook 'go-mode-hook 'tj-go-hook)
   :hook
   (go-mode . tj-go-hook))
@@ -526,18 +529,6 @@
 (use-package embrace
   :config (setq embrace-show-help-p nil)
   :bind ("C-c M-e" . embrace-commander))
-
-(use-package bm
-  :commands (bm-repository-load bm-buffer-save bm-buffer-save-all bm-buffer-restore)
-  :init
-  (add-hook' after-init-hook 'bm-repository-load)
-  (add-hook 'find-file-hooks 'bm-buffer-restore)
-  (add-hook 'after-revert-hook #'bm-buffer-restore)
-  (add-hook 'kill-buffer-hook #'bm-buffer-save)
-  (add-hook 'after-save-hook #'bm-buffer-save)
-  (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
-  (add-hook 'kill-emacs-hook
-            #'(lambda nil (bm-buffer-save-all) (bm-repository-save))))
 
 (use-package ripgrep)
 
@@ -603,10 +594,6 @@
   :diminish
   :config (show-paren-mode +1))
 
-(use-package abbrev
-  :config
-  (setq save-abbrevs 'silently)
-  (setq-default abbrev-mode t))
 
 (use-package uniquify
   :straight (:type built-in)
@@ -771,7 +758,7 @@
             (lambda ()
               (setq ediff-after-quit-hook-internal nil)
               (set-window-configuration ,wnd))))
-        (error "no more than 2 files should be marked"))))
+        (error "No more than 2 files should be marked"))))
   :config
   (defun dired-back-to-top ()
     (interactive)
@@ -978,8 +965,7 @@
         (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
   (setq org-archive-location
     (expand-file-name "~/Dropbox/notes/archive.org::* Archived Tasks"))
-  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
-  (setq org-use-fast-todo-selection t)
+  
   (setq org-src-lang-modes
     '
     (("screen" . sh)
@@ -990,53 +976,24 @@
       ("asymptote" . asy)
       ("cl" . lisp)
       ("dot" . graphviz-dot)))
-  (setq org-refile-targets
-    (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
-  (setq org-refile-use-outline-path t)
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-allow-creating-parent-nodes (quote confirm))
-  (setq org-agenda-dim-blocked-tasks nil)
-  (setq org-agenda-compact-blocks t)
-  (setq org-agenda-custom-commands
-    (quote
-      (("d" todo nil)
-        ("c" todo "DONE|DEFERRED|CANCELLED" nil)
-        ("w" todo "WAITING" nil)
-        ("W" agenda "" ((org-agenda-ndays 21)))
-        ("A"
-          agenda ""
-          (
-            (org-agenda-skip-function
-              (lambda nil
-                (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]")))
-            (org-agenda-ndays 1)
-            (org-agenda-overriding-header "Today's Priority #A tasks: ")))
-        ("u"
-          alltodo ""
-          (
-            (org-agenda-skip-function
-              (lambda nil
-                (org-agenda-skip-entry-if
-                  (quote scheduled)
-                  (quote deadline)
-                  (quote regexp)
-                  "\n]+>")))
-            (org-agenda-overriding-header "Unscheduled TODO entries: "))))))
+  
 
-  (setq org-default-notes-file (expand-file-name "~/Dropbox/notes/capture.org"))
+
+
+
+
+  
+
   (setq org-startup-folded nil)
   (setq org-startup-indented t)
+  
   (defun tj-org-capture ()
     (interactive)
     (find-file org-default-notes-file))
-  (defun tj-org-archive-done-tasks ()
-    (interactive)
-    (org-map-entries
-      (lambda ()
-        (org-archive-subtree)
-        (setq org-map-continue-from (outline-previous-heading)))
-      "/DONE" 'tree))
-  (require 'org-table)
+  
+  
+  
+  
   (defun tj-org-replace-link-by-link-description ()
     "Replace an org link by its description or if empty its address"
     (interactive)
@@ -1052,29 +1009,17 @@
           (apply 'delete-region remove)
           (insert description)))))
   (setq org-src-tab-acts-natively t)
-  (setq org-default-notes-file (expand-file-name "~/Dropbox/notes/capture.org"))
-  (setq org-directory (expand-file-name "~/Dropbox/notes"))
+
+  (setq org-directory (expand-file-name "~/"))
   (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-archive-location (expand-file-name "~/archive.org"))
+
+  ;; activate single letter commands at beginning of a headline.
   (setq org-use-speed-commands t)
 
-  (setq org-todo-keywords
-    (quote
-      ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-        (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
-  (setq org-archive-location
-    (expand-file-name "~/Dropbox/notes/archive.org::* Archived Tasks"))
   (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+  ;; use fast todo selection with C-c C-t
   (setq org-use-fast-todo-selection t)
-  (setq org-src-lang-modes
-    '
-    (("screen" . sh)
-      ("ocaml" . tuareg)
-      ("elisp" . emacs-lisp)
-      ("lisp" . lisp)
-      ("ditaa" . artist)
-      ("asymptote" . asy)
-      ("cl" . lisp)
-      ("dot" . graphviz-dot)))
 
   (setq org-refile-targets
     (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
@@ -1124,7 +1069,7 @@
 
 (use-package org-journal
   :init
-  (setq org-journal-dir "~/Dropbox/notes/journal")
+  (setq org-journal-dir "~/journal")
   (setq org-journal-file-format "%Y%m%d.org")
   :config
   (defun org-journal-find-location ()
@@ -1140,14 +1085,14 @@
         ("t"
           "Todo"
           entry
-          (file "~/Dropbox/notes/capture.org")
+          (file "~/capture.org")
           "* TODO %?\n%U\n%a\n"
           :clock-in t
           :clock-resume t)
         ("n"
           "Note"
           entry
-          (file "~/Dropbox/notes/capture.org")
+          (file "~/capture.org")
           "* %? :NOTE:\n%U\n%a\n"
           :clock-in t
           :clock-resume t)
@@ -1159,7 +1104,7 @@
         ("w"
           "org-protocol"
           entry
-          (file "~/Dropbox/notes/refile.org")
+          (file "~/refile.org")
           "* TODO Review %c\n%U\n"
           :immediate-finish t)))))
 
@@ -1187,11 +1132,6 @@
 (use-package ace-mc
   :bind (("C-; h" . ace-mc-add-multiple-cursors) ("C-; M-h" . ace-mc-add-single-cursor)))
 
-(use-package org-roam
-  :diminish
-  :hook (after-init . org-roam-mode)
-  :custom (org-roam-directory "~/Dropbox/notes"))
-
 (use-package multiple-cursors
   :defer 5
   :after selected
@@ -1202,7 +1142,6 @@
   :config (add-to-list 'mc/cursor-specific-vars 'iy-go-to-char-start-pos)
   :bind
   (("C-; C-;" . mc/edit-lines)
-    ("C-; C-SPC" . mc/mark-pop)
     ("C-; C-e" . mc/edit-ends-of-lines)
     ("C-; C-a" . mc/edit-beginnings-of-lines)
     ("C-; a" . mc/mark-all-dwim)
@@ -1250,7 +1189,7 @@
     (eshell--execute-command command t)))
 
 (defun eshell-insert-command (text &optional func)
-  "Insert a command at the end of the buffer."
+  "Insert TEXT command at the end of the buffer and call 'eshell-send-input or FUNC if given."
   (interactive)
   (goto-char eshell-last-output-end)
   (insert-and-inherit text)
@@ -1263,7 +1202,7 @@
       (funcall body))))
 
 (defun eshell/clear ()
-  "Clear eshell's buffer.'"
+  "Clear eshell's buffer."
   (interactive)
   (let ((inhibit-read-only t))
     (erase-buffer)))
@@ -1405,15 +1344,14 @@
   :config
   (require 'smartparens-config)
   (setq sp-ignore-modes-list
-    '(minibuffer-inactive-mode eval-expression-minibuffer-setup))
-  (sp-local-pair 'js2-mode "{ " " }" :trigger-wrap "{")
+    '(minibuffer-inactive-mode eval-expression-minibuffer-setup))  
   :hook (prog-mode . smartparens-mode))
 
 (use-package minibuffer
   :after tj
   :straight (:type built-in)
   :config
-  (defun my-minibuffer-setup-hook ()
+  (defun tj-minibuffer-setup-hook ()
     (smartparens-mode -1)
     (electric-pair-mode -1)
     (subword-mode)
@@ -1422,11 +1360,11 @@
       (make-local-variable 'face-remapping-alist)
       '((default :family (font-get tj-font :family) :size (font-get tj-font :size))))
     (setq gc-cons-threshold most-positive-fixnum))
-  (defun my-minibuffer-exit-hook ()
+  (defun tj-minibuffer-exit-hook ()
     (electric-pair-mode 1)
     (setq gc-cons-threshold 800000))
-  (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
-  (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook))
+  (add-hook 'minibuffer-setup-hook #'tj-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'tj-minibuffer-exit-hook))
 
 (use-package eval-expr
   :bind ("M-:" . eval-expr)
@@ -1435,9 +1373,6 @@
     (local-set-key (kbd "<tab>") #'lisp-complete-symbol)
     (set-syntax-table emacs-lisp-mode-syntax-table)
     (paredit-mode)))
-
-(use-package undo-fu
-  :bind (("C-z" . 'undo-fu-only-undo) ("C-S-z" . 'undo-fu-only-redo)))
 
 (use-package selected
   :diminish selected-minor-mode
@@ -1584,51 +1519,6 @@
     (setq imenu-generic-expression tj-protobuf-imenu-generic-expression))
   (progn
     (defconst tj-protobuf-style '((c-basic-offset . 2) (indent-tabs-mode . nil)))))
-
-(use-package js2-mode
-  :init
-  (setq js-indent-level 8)
-  (setq-default js2-global-externs
-    '
-    ("module"
-      "require"
-      "buster"
-      "sinon"
-      "assert"
-      "refute"
-      "setTimeout"
-      "clearTimeout"
-      "setInterval"
-      "clearInterval"
-      "location"
-      "__dirname"
-      "console"
-      "JSON"))
-  (setq-default js2-strict-inconsistent-return-warning nil)
-  (setq-default flycheck-disabled-checkers
-    (append flycheck-disabled-checkers '(javascript-jshint)))
-  (setq-default flycheck-disabled-checkers
-    (append flycheck-disabled-checkers '(json-jsonlist)))
-  :interpreter ("node" . js2-jsx-mode)
-  :bind
-  ("M-j" . comment-indent-new-line)
-  ("C-c C-j" . js2-jump-to-definition)
-  :config
-  (defun js2-match-async-arrow-function ()
-    (when
-      (and
-        (js2-contextual-kwd-p (js2-current-token) "async")
-        (/= (js2-peek-token) js2-FUNCTION)
-        (/= (js2-peek-token) js2-DOT))
-      (js2-record-face 'font-lock-keyword-face)
-      (js2-get-token)
-      t))
-  (defun tj-js2-mode-hook ()
-    (electric-indent-mode 1)
-    (tern-mode)
-    (flycheck-mode)
-    (subword-mode))
-  (add-hook 'js2-mode-hook 'tj-js2-mode-hook))
 
 (use-package bm
   :bind
@@ -1855,3 +1745,5 @@
 
 (put 'erase-buffer 'disabled nil)
 (put 'downcase-region 'disabled nil)
+
+
