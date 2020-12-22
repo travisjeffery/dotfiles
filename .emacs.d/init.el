@@ -31,11 +31,6 @@
            (list lisp-dir)
            (f-directories lisp-dir)))))
 
-(setq tj-font
-      (font-spec :family "Hack" :size (if (string-equal "laptop" (system-name))
-                                                      12.0
-                                                    10.0)))
-
 (use-package bind-key)
 
 (setq use-package-verbose t)
@@ -624,7 +619,24 @@
   (setq uniquify-ignore-buffers-re "^\\*"))
 
 (use-package tj
-  :straight (:type built-in))
+  :after elegance
+  :straight (:type built-in)
+  :config
+  (setq tj-font
+	(font-spec :family "Hack"
+                   :size (if (string-equal "laptop" (system-name))
+                             12.0
+                           10.0)))
+  (face-attribute 'default :font)
+  (setq default-frame-alist
+        (append (list (cons 'width  72)
+                      (cons 'height 40)
+                      (cons 'vertical-scroll-bars nil)
+                      (cons 'internal-border-width 24)
+                      (cons 'font (format "%s %d"
+                                          (font-get tj-font :family)
+                                          (font-get tj-font :size))))))
+	(set-frame-font tj-font nil t))
 
 (use-package saveplace
   :diminish
@@ -1333,6 +1345,7 @@
     ("C-c s" . crux-ispell-word-then-abbrev)))
 
 (use-package ctrlf
+  :after elegance
   :config (ctrlf-mode +1)
   (setq ctrlf-highlight-current-line nil)
   (set-face-attribute 'ctrlf-highlight-active nil
@@ -1397,6 +1410,7 @@
   :hook (prog-mode . smartparens-mode))
 
 (use-package minibuffer
+  :after tj
   :straight (:type built-in)
   :config
   (defun my-minibuffer-setup-hook ()
@@ -1406,7 +1420,7 @@
     (setq truncate-lines nil)
     (set
       (make-local-variable 'face-remapping-alist)
-      '((default :family (font-get tj-font :family) :height (* 10 (font-get tj-font :size)))))
+      '((default :family (font-get tj-font :family) :size (font-get tj-font :size))))
     (setq gc-cons-threshold most-positive-fixnum))
   (defun my-minibuffer-exit-hook ()
     (electric-pair-mode 1)
@@ -1827,8 +1841,7 @@
   (set-face 'font-lock-string-face nil)
   (set-face 'font-lock-variable-name-face nil)
   (set-face 'font-lock-function-name-face nil)
-  (set-face 'face-popout 'face-strong)  
-  (set-frame-font tj-font))
+  (set-face 'face-popout 'face-strong))
 
 (use-package prescient
   :config (prescient-persist-mode +1))
