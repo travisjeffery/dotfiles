@@ -789,4 +789,25 @@ Otherwise split the current paragraph into one sentence per line."
       (kill-region beg end)
       (insert resulting-text))))
 
+(defun tj-find-duplicate-lines ()
+  (interactive)
+  (save-excursion
+    (goto-char 0)
+    (let ((lines (make-hash-table :test 'equal)))
+      (while (not (eobp))
+        (when-let* ((line (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                    (count (gethash line lines 0))
+                    (_ (not (string-empty-p line))))
+          (puthash line (+ count 1) lines))
+        (forward-line))
+      (if-let
+          ((lines (cl-loop for line being the hash-keys of lines
+                           using (hash-values count)
+                           when (> count 1)
+                           collect (format "^%s$" (regexp-quote line))))
+           (empty (length lines)))
+          (occur (format "\\(%s\\)"
+                         (string-join lines "\\|")))))))
+
+
 (provide 'tj)
