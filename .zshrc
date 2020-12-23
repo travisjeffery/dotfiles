@@ -325,7 +325,11 @@ esac
 [[ -x "`whence powerpill`" ]] && alias pacman="`whence powerpill` --nomessages"
 [[ -x "`whence rascut`" ]] && alias rascut="_JAVA_OPTIONS=-Duser.language=en `whence rascut`"
 [[ -x "`whence mplayer`" ]] && alias mplayer="`whence mplayer` -softvol"
-# [[ -x "`whence ctags`" ]] && alias ctags="ctags --sort=foldcase"
+if [[ -x "`whence microk8s`" ]]; then
+       	alias kubectl=microk8s.kubectl
+	source <(kubectl completion zsh)
+        alias helm=microk8s.helm3
+fi
 
 alias o=open
 alias rake="noglob rake"
@@ -413,6 +417,8 @@ alias dc="docker-compose"
 alias trash="rmtrash"
 alias magit='emacsclient -n -e \(magit-status\)'
 alias wget='noglob wget'
+
+
 
 function git-ignore() {
   local lang=$1
