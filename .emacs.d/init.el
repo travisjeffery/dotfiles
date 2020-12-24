@@ -1,17 +1,17 @@
 (defvar bootstrap-version)
 (let
-  (
-    (bootstrap-file
+    (
+     (bootstrap-file
       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        user-emacs-directory))
-    (bootstrap-version 5))
+       "straight/repos/straight.el/bootstrap.el"
+       user-emacs-directory))
+     (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-      (url-retrieve-synchronously
-        "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-        'silent
-        'inhibit-cookies)
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent
+         'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
@@ -43,16 +43,16 @@
 
 (eval-and-compile
   (mapc
-    #'(lambda (entry)
-      (define-prefix-command (cdr entry))
-      (bind-key (car entry) (cdr entry)))
-    '
-    (("C-;" . tj-ctrl-semicolon-map) ;; mc
-      ("C-c b" . tj-ctrl-c-b-map) ;; for bm
-      ("C-c m" . tj-ctrl-c-m-map) ;; for org
-      ("C-c o" . tj-ctrl-c-o-map) ;; for occur
-      ("C-c y" . tj-ctrl-c-y-map) ;; aya
-      ("C-c C-d" . tj-ctrl-c-c-c-d-map) ("M-i" . tj-m-i-map) ("M-o" . tj-m-o-map))))
+   (lambda (entry)
+     (define-prefix-command (cdr entry))
+     (bind-key (car entry) (cdr entry)))
+   '
+   (("C-;" . tj-ctrl-semicolon-map) ;; mc
+    ("C-c b" . tj-ctrl-c-b-map) ;; for bm
+    ("C-c m" . tj-ctrl-c-m-map) ;; for org
+    ("C-c o" . tj-ctrl-c-o-map) ;; for occur
+    ("C-c y" . tj-ctrl-c-y-map) ;; aya
+    ("C-c C-d" . tj-ctrl-c-c-c-d-map) ("M-i" . tj-m-i-map) ("M-o" . tj-m-o-map))))
 
 (use-package persistent-scratch
   :config (persistent-scratch-autosave-mode 1))
@@ -60,8 +60,8 @@
 (use-package undo-fu
   :bind
   (("C-_" . undo-fu-only-undo)
-    ("C-z" . undo-fu-only-undo)
-    ("C-S-z" . undo-fu-only-redo)))
+   ("C-z" . undo-fu-only-undo)
+   ("C-S-z" . undo-fu-only-redo)))
 
 (use-package undo-fu-session
   :config (global-undo-fu-session-mode +1))
@@ -106,7 +106,7 @@
    (clojure-mode . clj-refactor-mode)))
 
 (use-package dashboard
-  :init (setq initial-buffer-choice #'(lambda () (switch-to-buffer "*dashboard*")))
+  :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
   :config
   (setq dashboard-banner-logo-title "Do the work.")
   (setq dashboard-startup-banner nil)
@@ -129,46 +129,46 @@
     "Open branch in Semaphore CI"
     (interactive)
     (let*
-      (
-        (branch (magit-get-current-branch))
-        (group
+        (
+         (branch (magit-get-current-branch))
+         (group
           (thread-first
-            (magit-get "remote" "origin" "url")
+              (magit-get "remote" "origin" "url")
             (split-string ":")
             last
             first
             (split-string "\\.")
             first))
-        (group
+         (group
           (if (string-prefix-p "confluentinc" group)
-            (replace-regexp-in-string "confluentinc" "confluent" group)
+              (replace-regexp-in-string "confluentinc" "confluent" group)
             group)))
       (browse-url (format "https://semaphoreci.com/%s/branches/%s" group branch))))
   (eval-after-load
-    'magit
+      'magit
     '(define-key magit-mode-map "S" #'tj-semaphore-open-branch))
 
   (defun tj-visit-pull-request-url ()
     "Visit the current branch's PR on Github."
     (interactive)
     (browse-url
-      (format
-        "https://github.com/%s/pull/new/%s"
-        (replace-regexp-in-string
-          "\\`.+github\\.com:\\(.+\\)\\.git\\'"
-          "\\1"
-          (magit-get "remote" (magit-get-push-remote) "url"))
-        (magit-get-current-branch))))
+     (format
+      "https://github.com/%s/pull/new/%s"
+      (replace-regexp-in-string
+       "\\`.+github\\.com:\\(.+\\)\\.git\\'"
+       "\\1"
+       (magit-get "remote" (magit-get-push-remote) "url"))
+      (magit-get-current-branch))))
   (eval-after-load
-    'magit
+      'magit
     '(define-key magit-mode-map "v" #'tj-visit-pull-request-url))
 
   (defun magit-key-mode--add-default-options (arguments)
     (if (eq (car arguments) 'pulling)
-      (list 'pulling (list "--rebase"))
+        (list 'pulling (list "--rebase"))
       arguments)
     (if (eq (car arguments) 'pushing)
-      (list 'pushing (list "-u"))
+        (list 'pushing (list "-u"))
       arguments))
   (advice-add 'magit-key-mode :filter-args #'magit-key-mode--add-default-options)
   :bind (:map magit-diff-mode-map (("C-o" . magit-diff-visit-file-other-window)))
@@ -179,9 +179,9 @@
 (use-package forge
   :config
   (setq
-    forge-topic-list-limit
-    '(3 . -1)
-    forge-pull-notifications nil))
+   forge-topic-list-limit
+   '(3 . -1)
+   forge-pull-notifications nil))
 
 (use-package copy-as-format
   :init (setq copy-as-format-default "github"))
@@ -199,8 +199,8 @@
   :bind (("C-c c" . compile) ("M-O" . show-compilation))
   :bind
   (:map
-    compilation-mode-map
-    (("z" . delete-window) ("RET" . tj-compile-goto-error-same-window)))
+   compilation-mode-map
+   (("z" . delete-window) ("RET" . tj-compile-goto-error-same-window)))
   :bind (:map compilation-minor-mode-map ("RET" . tj-compile-goto-error-same-window))
   :bind (:map compilation-button-map ("RET" . tj-compile-goto-error-same-window))
   :bind (:map grep-mode-map ("RET" . tj-compile-goto-error-same-window))
@@ -208,23 +208,23 @@
   (defun tj-compile-goto-error-same-window ()
     (interactive)
     (let
-      (
-        (display-buffer-overriding-action
+        (
+         (display-buffer-overriding-action
           '
           ((display-buffer-reuse-window display-buffer-same-window)
-            (inhibit-same-window . nil))))
+           (inhibit-same-window . nil))))
       (call-interactively #'compile-goto-error)))
   (defun show-compilation ()
     (interactive)
     (let
-      (
-        (it
+        (
+         (it
           (catch 'found
             (dolist (buf (buffer-list))
               (when (string-match "\\*compilation\\*" (buffer-name buf))
                 (throw 'found buf))))))
       (if it
-        (display-buffer it)
+          (display-buffer it)
         (call-interactively 'compile))))
   (defun compilation-ansi-color-process-output ()
     (ansi-color-process-output nil)
@@ -262,16 +262,16 @@
   :config
   :bind
   (("M-<up>" . smart-up)
-    ("M-<down>" . smart-down)
-    ("M-<left>" . smart-backward)
-    ("M-<right>" . smart-forward)))
+   ("M-<down>" . smart-down)
+   ("M-<left>" . smart-backward)
+   ("M-<right>" . smart-forward)))
 
 (use-package ibuffer-projectile
   :hook
-  (ibuffer . #'(lambda ()
-      (ibuffer-projectile-set-filter-groups)
-      (unless (eq ibuffer-sorting-mode 'alphabetic)
-        (ibuffer-do-sort-by-alphabetic)))))
+  (ibuffer . (lambda ()
+               (ibuffer-projectile-set-filter-groups)
+               (unless (eq ibuffer-sorting-mode 'alphabetic)
+                 (ibuffer-do-sort-by-alphabetic)))))
 
 (use-package re-builder
   :bind (:map reb-mode-map ("M-%" . reb-query-replace))
@@ -280,10 +280,10 @@
   (defun reb-query-replace (to-string)
     "Replace current RE from point with `query-replace-regexp'."
     (interactive
-      (progn
-        (barf-if-buffer-read-only)
-        (list
-          (query-replace-read-to (reb-target-binding reb-regexp) "Query replace" t))))
+     (progn
+       (barf-if-buffer-read-only)
+       (list
+        (query-replace-read-to (reb-target-binding reb-regexp) "Query replace" t))))
     (with-current-buffer reb-target-buffer
       (query-replace-regexp (reb-target-binding reb-regexp) to-string))))
 
@@ -308,10 +308,10 @@
   (defun ediff-copy-both-to-C ()
     (interactive)
     (ediff-copy-diff
-      ediff-current-difference nil 'C nil
-      (concat
-        (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
-        (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+     ediff-current-difference nil 'C nil
+     (concat
+      (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
+      (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
   (defun add-d-to-ediff-mode-map ()
     (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
   (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
@@ -320,11 +320,11 @@
   (setq ediff-merge-split-window-function 'split-window-vertically)
   :bind
   (("C-c = b" . ediff-buffers)
-    ("C-c = f" . ediff-files)
-    ("C-c = r" . ediff-revision)
-    ("C-c = l" . ediff-regions-linewise)
-    ("C-c = w" . ediff-regions-wordwise)
-    ("C-c = c" . compare-windows)))
+   ("C-c = f" . ediff-files)
+   ("C-c = r" . ediff-revision)
+   ("C-c = l" . ediff-regions-linewise)
+   ("C-c = w" . ediff-regions-wordwise)
+   ("C-c = c" . compare-windows)))
 
 (use-package git-link
   :commands (git-link git-link-commit git-link-homepage)
@@ -371,7 +371,7 @@
   :defer t)
 
 (eval-after-load
-  'company
+    'company
   '(define-key company-active-map (kbd "M-h") #'company-quickhelp-manual-begin))
 
 (use-package eldoc :diminish)
@@ -403,40 +403,40 @@
   :ensure-system-package ((goimports . "go get golang.org/x/tools/cmd/goimports"))
   :bind
   (:map
-    go-mode-map
-    ("M-j" . comment-indent-new-line)
-    ("M-b" . subword-backward)
-    ("M-f" . subword-forward)
-    ("M-d" . subword-kill)
-    ("C-c C-t" . go-test-current-file)
-    ("C-c M-t" . go-test-current-test)
-    ("C-c C-e" . tj-go-err))
+   go-mode-map
+   ("M-j" . comment-indent-new-line)
+   ("M-b" . subword-backward)
+   ("M-f" . subword-forward)
+   ("M-d" . subword-kill)
+   ("C-c C-t" . go-test-current-file)
+   ("C-c M-t" . go-test-current-test)
+   ("C-c C-e" . tj-go-err))
   :config (setq go-test-args "-timeout 60s -race -v")
   ;; (setq go-test-args "-timeout 60s -race -v -ldflags \"-X github.com/confluentinc/cc-scheduler-service.Environment=devel\"")
   (defun tj-go-err ()
     (interactive)
     (if (region-active-p)
-      (let
-        ((body (buffer-substring-no-properties (region-beginning) (region-end))))
-        (goto-char (region-beginning))
-        (delete-char (string-width body))
-        (yas-expand-snippet
-          (concat "if err := ${1:" body "}; err != nil {\n" "$0\n" "}")))
+        (let
+            ((body (buffer-substring-no-properties (region-beginning) (region-end))))
+          (goto-char (region-beginning))
+          (delete-char (string-width body))
+          (yas-expand-snippet
+           (concat "if err := ${1:" body "}; err != nil {\n" "$0\n" "}")))
       (yas-expand-snippet (concat "if err != nil {\n$0\n}"))))
   
   (defun tj-try-go-mod (dir)
     "Find go project root for DIR."
     (if
-      (and
-        dir
-        (not
+        (and
+         dir
+         (not
           (f-descendant-of-p
-            dir
-            (or (getenv "GOPATH") (concat (getenv "HOME") "/go")))))
-      (let ((result (locate-dominating-file dir "go.mod")))
-        (if result
-          (cons 'transient (expand-file-name result))
-          (cons 'transient dir)))
+           dir
+           (or (getenv "GOPATH") (concat (getenv "HOME") "/go")))))
+        (let ((result (locate-dominating-file dir "go.mod")))
+          (if result
+              (cons 'transient (expand-file-name result))
+            (cons 'transient dir)))
       (when dir
         (cons 'transient dir))))
   
@@ -467,27 +467,27 @@
       "Launch go test on the current test."
       (interactive)
       (cl-destructuring-bind (test-suite test-name)
-        (go-test--get-current-test-info)
+          (go-test--get-current-test-info)
         (let
-          (
-            (test-flag
+            (
+             (test-flag
               (if (> (length test-suite) 0)
-                "-testify.m "
+                  "-testify.m "
                 "-run "))
-            (additional-arguments
+             (additional-arguments
               (if go-test-additional-arguments-function
-                (funcall go-test-additional-arguments-function test-suite test-name)
+                  (funcall go-test-additional-arguments-function test-suite test-name)
                 "")))
           (when test-name
             (if (go-test--is-gb-project)
-              (go-test--gb-start
-                (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
+                (go-test--gb-start
+                 (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
               (go-test--go-test
-                (s-concat test-flag test-name additional-arguments "\\$ .")))))))
+               (s-concat test-flag test-name additional-arguments "\\$ .")))))))
     (setq imenu-generic-expression
-      '
-      (("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
-        ("func" "^func *\\(.*\\)" 1)))
+          '
+          (("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
+           ("func" "^func *\\(.*\\)" 1)))
     (which-function-mode)
     (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
@@ -500,9 +500,9 @@
     (set-face-foreground 'go-test--ok-face "forest green")
     (set-face-foreground 'go-test--standard-face "dark orange")
     (if (not (string-match "go" compile-command))
-      (set
-        (make-local-variable 'compile-command)
-        "go build -v && go test -v && go vet")))
+        (set
+         (make-local-variable 'compile-command)
+         "go build -v && go test -v && go vet")))
   
   (add-hook 'go-mode-hook 'tj-go-hook)
   :hook
@@ -552,10 +552,10 @@
   
   :bind
   (("C-c t" . projectile-toggle-between-implementation-and-test)
-    ("C-c p p" . projectile-switch-project)
-    ("C-c p f" . projectile-find-file)
-    ("C-c p i" . projectile-invalidate-cache)
-    ("C-c C-p" . projectile-test-project)))
+   ("C-c p p" . projectile-switch-project)
+   ("C-c p f" . projectile-find-file)
+   ("C-c p i" . projectile-invalidate-cache)
+   ("C-c C-p" . projectile-test-project)))
 
 (use-package web-beautify)
 
@@ -570,7 +570,6 @@
   :bind ("C-=" . er/expand-region))
 
 (use-package elisp-slime-nav
-
   :diminish
   :config
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
@@ -607,7 +606,7 @@
                       (cons 'font (format "%s %d"
                                           (font-get tj-font :family)
                                           (font-get tj-font :size))))))
-	(set-frame-font tj-font nil t))
+  (set-frame-font tj-font nil t))
 
 (use-package saveplace
   :diminish
@@ -624,25 +623,25 @@
 (use-package savehist
   :config
   (setq
-    savehist-additional-variables
-    ;; search entries
-    '(search-ring regexp-search-ring)
-    ;; save every minute
-    savehist-autosave-interval 60
-    ;; keep the home clean
-    savehist-file (expand-file-name "savehist" savefile-dir))
+   savehist-additional-variables
+   ;; search entries
+   '(search-ring regexp-search-ring)
+   ;; save every minute
+   savehist-autosave-interval 60
+   ;; keep the home clean
+   savehist-file (expand-file-name "savehist" savefile-dir))
   (savehist-mode +1))
 
 (use-package recentf
   :config
   (setq
-    recentf-save-file
-    (expand-file-name "recentf" savefile-dir)
-    recentf-max-saved-items 500
-    recentf-max-menu-items 15
-    ;; disable recentf-cleanup on Emacs start, because it can cause
-    ;; problems with remote files
-    recentf-auto-cleanup 'never)
+   recentf-save-file
+   (expand-file-name "recentf" savefile-dir)
+   recentf-max-saved-items 500
+   recentf-max-menu-items 15
+   ;; disable recentf-cleanup on Emacs start, because it can cause
+   ;; problems with remote files
+   recentf-auto-cleanup 'never)
   (recentf-mode +1))
 
 (use-package windmove
@@ -663,20 +662,20 @@
   :bind (("C-x d" . dired-jump))
   :bind
   (:map
-    dired-mode-map
-    ("z" . delete-window)
-    ("e" . ora-ediff-files)
-    ("l" . dired-up-directory)
-    ("Y" . ora-dired-rsync)
-    ("<tab>" . tj-dired-switch-window)
-    ("M-!" . async-shell-command)
-    ("M-G"))
+   dired-mode-map
+   ("z" . delete-window)
+   ("e" . ora-ediff-files)
+   ("l" . dired-up-directory)
+   ("Y" . ora-dired-rsync)
+   ("<tab>" . tj-dired-switch-window)
+   ("M-!" . async-shell-command)
+   ("M-G"))
   :preface
   (defvar mark-files-cache (make-hash-table :test #'equal))
   (defun mark-similar-versions (name)
     (let ((pat name))
       (if (string-match "^\\(.+?\\)-[0-9._-]+$" pat)
-        (setq pat (match-string 1 pat)))
+          (setq pat (match-string 1 pat)))
       (or (gethash pat mark-files-cache) (ignore (puthash pat t mark-files-cache)))))
   (defun dired-mark-similar-version ()
     (interactive)
@@ -684,64 +683,64 @@
     (dired-mark-sexp '(mark-similar-versions name)))
   (defun dired-double-jump (first-dir second-dir)
     (interactive
-      (list
-        (read-directory-name
-          "First directory: "
-          (expand-file-name "~")
-          nil
-          nil
-          "dl/")
-        (read-directory-name
-          "Second directory: "
-          (expand-file-name "~")
-          nil
-          nil
-          "Archives/")))
+     (list
+      (read-directory-name
+       "First directory: "
+       (expand-file-name "~")
+       nil
+       nil
+       "dl/")
+      (read-directory-name
+       "Second directory: "
+       (expand-file-name "~")
+       nil
+       nil
+       "Archives/")))
     (dired first-dir)
     (dired-other-window second-dir))
   (defun tj-dired-switch-window ()
     (interactive)
     (if (eq major-mode 'sr-mode)
-      (call-interactively #'sr-change-window)
+        (call-interactively #'sr-change-window)
       (call-interactively #'other-window)))
   (defun ora-dired-rsync (dest)
     (interactive
-      (list
-        (expand-file-name
-          (read-file-name "Rsync to: " (dired-dwim-target-directory)))))
+     (list
+      (expand-file-name
+       (read-file-name "Rsync to: " (dired-dwim-target-directory)))))
     (let
-      (
-        (files (dired-get-marked-files nil current-prefix-arg))
-        (tmtxt/rsync-command "rsync -arvz --progress "))
+        (
+         (files (dired-get-marked-files nil current-prefix-arg))
+         (tmtxt/rsync-command "rsync -arvz --progress "))
       (dolist (file files)
         (setq tmtxt/rsync-command
-          (concat tmtxt/rsync-command (shell-quote-argument file) " ")))
+              (concat tmtxt/rsync-command (shell-quote-argument file) " ")))
       (setq tmtxt/rsync-command
-        (concat tmtxt/rsync-command (shell-quote-argument dest)))
+            (concat tmtxt/rsync-command (shell-quote-argument dest)))
       (async-shell-command tmtxt/rsync-command "*rsync*")
       (other-window 1)))
   (defun ora-ediff-files ()
     (interactive)
     (let
-      (
-        (files (dired-get-marked-files))
-        (wnd (current-window-configuration)))
+        (
+         (files (dired-get-marked-files))
+         (wnd (current-window-configuration)))
       (if (<= (length files) 2)
-        (let
-          (
-            (file1 (car files))
-            (file2
-              (if (cdr files)
-                (cadr files)
-                (read-file-name "file: " (dired-dwim-target-directory)))))
-          (if (file-newer-than-file-p file1 file2)
-            (ediff-files file2 file1)
-            (ediff-files file1 file2))
-          (add-hook 'ediff-after-quit-hook-internal
-            `
-            (lambda ()
-              (setq ediff-after-quit-hook-internal nil)
-              (set-window-configuration ,wnd))))
+          (let
+              (
+               (file1 (car files))
+               (file2
+                (if (cdr files)
+                    (cadr files)
+                  (read-file-name "file: " (dired-dwim-target-directory)))))
+            (if (file-newer-than-file-p file1 file2)
+                (ediff-files file2 file1)
+              (ediff-files file1 file2))
+            (add-hook 'ediff-after-quit-hook-internal
+                      `
+                      (lambda ()
+                        (setq ediff-after-quit-hook-internal nil)
+                        (set-window-configuration ,wnd))))
         (error "No more than 2 files should be marked"))))
   :config
   (defun dired-back-to-top ()
@@ -772,12 +771,12 @@
   (require 'dired-x)
   (ignore-errors (unbind-key "M-s f" dired-mode-map))
   (defadvice dired-omit-startup
-    (after diminish-dired-omit activate)
+      (after diminish-dired-omit activate)
     "Make sure to remove \"Omit\" from the modeline."
     (diminish 'dired-omit-mode)
     dired-mode-map)
   (defadvice dired-next-line
-    (around dired-next-line+ activate)
+      (around dired-next-line+ activate)
     "Replace current buffer if file is a directory."
     ad-do-it
     (while (and (not (eobp)) (not ad-return-value))
@@ -787,7 +786,7 @@
       (forward-line -1)
       (setq ad-return-value (dired-move-to-filename))))
   (defadvice dired-previous-line
-    (around dired-previous-line+ activate)
+      (around dired-previous-line+ activate)
     "Replace current buffer if file is a directory."
     ad-do-it
     (while (and (not (bobp)) (not ad-return-value))
@@ -800,47 +799,47 @@
   ;; Omit files that Git would ignore
   (defun dired-omit-regexp ()
     (let
-      (
-        (file (expand-file-name ".git"))
-        parent-dir)
+        (
+         (file (expand-file-name ".git"))
+         parent-dir)
       (while
-        (and
-          (not (file-exists-p file))
-          (progn
-            (setq parent-dir
-              (file-name-directory (directory-file-name (file-name-directory file))))
-            ;; Give up if we are already at the root dir.
-            (not (string= (file-name-directory file) parent-dir))))
+          (and
+           (not (file-exists-p file))
+           (progn
+             (setq parent-dir
+                   (file-name-directory (directory-file-name (file-name-directory file))))
+             ;; Give up if we are already at the root dir.
+             (not (string= (file-name-directory file) parent-dir))))
         ;; Move up to the parent dir and try again.
         (setq file (expand-file-name ".git" parent-dir)))
       ;; If we found a change log in a parent, use that.
       (if (file-exists-p file)
-        (let
-          (
-            (regexp (funcall dired-omit-regexp-orig))
-            (omitted-files (shell-command-to-string "git clean -d -x -n")))
-          (if (= 0 (length omitted-files))
-            regexp
-            (concat
-              regexp
-              (if (> (length regexp) 0)
-                "\\|"
-                "")
-              "\\("
-              (mapconcat
+          (let
+              (
+               (regexp (funcall dired-omit-regexp-orig))
+               (omitted-files (shell-command-to-string "git clean -d -x -n")))
+            (if (= 0 (length omitted-files))
+                regexp
+              (concat
+               regexp
+               (if (> (length regexp) 0)
+                   "\\|"
+                 "")
+               "\\("
+               (mapconcat
                 #'
                 (lambda (str)
                   (concat
-                    "^"
-                    (regexp-quote
-                      (substring
-                        str 13
-                        (if (= ?/ (aref str (1- (length str))))
-                          (1- (length str))
-                          nil)))
-                    "$"))
+                   "^"
+                   (regexp-quote
+                    (substring
+                     str 13
+                     (if (= ?/ (aref str (1- (length str))))
+                         (1- (length str))
+                       nil)))
+                   "$"))
                 (split-string omitted-files "\n" t) "\\|")
-              "\\)")))
+               "\\)")))
         (funcall dired-omit-regexp-orig)))))
 
 (use-package dired-narrow
@@ -851,10 +850,10 @@
 (use-package dired-ranger
   :bind
   (:map
-    dired-mode-map
-    ("W" . dired-ranger-copy)
-    ("X" . dired-ranger-move)
-    ("Y" . dired-ranger-paste)))
+   dired-mode-map
+   ("W" . dired-ranger-copy)
+   ("X" . dired-ranger-move)
+   ("Y" . dired-ranger-paste)))
 
 (use-package sh-mode
   :straight (:type built-in)
@@ -900,7 +899,7 @@
 (use-package exec-path-from-shell
   :init
   (setq exec-path-from-shell-variables
-    '("PATH" "MANPATH" "GOROOT" "GOPATH" "JAVA_HOME" "JAVA_OPTS" "RUST_SRC_PATH"))
+        '("PATH" "MANPATH" "GOROOT" "GOPATH" "JAVA_HOME" "JAVA_OPTS" "RUST_SRC_PATH"))
   :config (exec-path-from-shell-initialize))
 
 (use-package kubernetes-helm)
@@ -925,7 +924,7 @@
   (unless (executable-find "pandoc")
     (message "install pandoc"))
   (setq markdown-command
-    "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained -f markdown+smart --to=html5 --css=$HOME/.config/css/style.css")
+        "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained -f markdown+smart --to=html5 --css=$HOME/.config/css/style.css")
   :mode
   ("\\.markdown$" . markdown-mode)
   ("\\.md$" . markdown-mode)
@@ -938,55 +937,55 @@
 
 (use-package org
   :straight (:type built-in)
-  :hook (org-mode . font-lock-mode)
+  :hook ((org-mode . font-lock-mode)
+         (org-mode . auto-fill-mode)
+         (org-mode . org-indent-mode))
+  :bind
+  (("C-c m c" . org-capture)
+   ("C-c m t" . org-todo-list)
+   ("C-c m m" . orgs-tagsview)
+   :map org-mode-map
+   ("C-c C-d" . nil))
   :config
-  (add-hook 'org-mode-hook #'(lambda () (auto-fill-mode 1) (org-indent-mode 1)))
-  (define-key org-mode-map (kbd "C-c C-d") nil)
-  (add-to-list 'auto-mode-alist '("\\.txt\\'" . org-mode))
   (setq org-todo-keywords
-    (quote
-      ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-        (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+        (quote
+         ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+          (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+
+  ;; where to archive subtree
   (setq org-archive-location
-    (expand-file-name "~/Dropbox/notes/archive.org::* Archived Tasks"))
+        (expand-file-name "~/archive.org"))
   
   (setq org-src-lang-modes
-    '
-    (("screen" . sh)
-      ("ocaml" . tuareg)
-      ("elisp" . emacs-lisp)
-      ("lisp" . lisp)
-      ("ditaa" . artist)
-      ("asymptote" . asy)
-      ("cl" . lisp)
-      ("dot" . graphviz-dot)))
+        '
+        (("screen" . sh)
+         ("ocaml" . tuareg)
+         ("elisp" . emacs-lisp)
+         ("lisp" . lisp)
+         ("ditaa" . artist)
+         ("asymptote" . asy)
+         ("cl" . lisp)
+         ("dot" . graphviz-dot)))
   
   (setq org-startup-folded nil)
+  ;; enable org-indent-mode
   (setq org-startup-indented t)
+
+  ;; save clock history across emacs sessions
+  (setq org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
   
   (defun tj-org-capture ()
     (interactive)
     (find-file org-default-notes-file))
-  
-  (defun tj-org-replace-link-by-link-description ()
-    "Replace an org link by its description or if empty its address"
-    (interactive)
-    (if (org-in-regexp org-bracket-link-regexp 1)
-      (save-excursion
-        (let
-          (
-            (remove (list (match-beginning 0) (match-end 0)))
-            (description
-              (if (match-end 3)
-                (org-match-string-no-properties 3)
-                (org-match-string-no-properties 1))))
-          (apply 'delete-region remove)
-          (insert description)))))
+
+  ;; TAB in a code block behaves as if it were issues in the language major mode buffer.
   (setq org-src-tab-acts-natively t)
 
   (setq org-directory (expand-file-name "~/"))
-  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-default-notes-file (expand-file-name "~/notes.org"))
   (setq org-archive-location (expand-file-name "~/archive.org"))
+  (setq org-agenda-files '("~/"))
 
   ;; activate single letter commands at beginning of a headline.
   (setq org-use-speed-commands t)
@@ -996,91 +995,81 @@
   (setq org-use-fast-todo-selection t)
 
   (setq org-refile-targets
-    (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
+        (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
   (setq org-refile-use-outline-path t)
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-allow-creating-parent-nodes (quote confirm))
   (setq org-agenda-dim-blocked-tasks nil)
   (setq org-agenda-compact-blocks t)
   (setq org-agenda-custom-commands
-    (quote
-      (("d" todo nil)
-        ("c" todo "DONE|DEFERRED|CANCELLED" nil)
-        ("w" todo "WAITING" nil)
-        ("W" agenda "" ((org-agenda-ndays 21)))
-        ("A"
-          agenda ""
-          (
+        (quote
+         (("d" todo nil)
+          ("c" todo "DONE|DEFERRED|CANCELLED" nil)
+          ("w" todo "WAITING" nil)
+          ("W" agenda "" ((org-agenda-ndays 21)))
+          ("A"
+           agenda ""
+           (
             (org-agenda-skip-function
-              (lambda nil
-                (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]")))
+             (lambda nil
+               (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]")))
             (org-agenda-ndays 1)
             (org-agenda-overriding-header "Today's Priority #A tasks: ")))
-        ("u"
-          alltodo ""
-          (
+          ("u"
+           alltodo ""
+           (
             (org-agenda-skip-function
-              (lambda nil
-                (org-agenda-skip-entry-if
-                  (quote scheduled)
-                  (quote deadline)
-                  (quote regexp)
-                  "\n]+>")))
+             (lambda nil
+               (org-agenda-skip-entry-if
+                (quote scheduled)
+                (quote deadline)
+                (quote regexp)
+                "\n]+>")))
             (org-agenda-overriding-header "Unscheduled TODO entries: "))))))
-  :config
-  (defun tj-org-archive-done-tasks ()
-    (interactive)
-    (org-map-entries
-      (lambda ()
-        (org-archive-subtree)
-        (setq org-map-continue-from (outline-previous-heading)))
-      "/DONE" 'tree))
-  (require 'org-table)
-  :bind
-  (("C-c m c" . org-capture)
-    ("C-c m t" . org-todo-list)
-    ("C-c m m" . orgs-tagsview)))
 
-(use-package org-journal
-  :init
-  (setq org-journal-dir "~/journal")
-  (setq org-journal-file-format "%Y%m%d.org")
-  :config
   (defun org-journal-find-location ()
     ;; Open today's journal, but specify a non-nil prefix argument in order to
     ;; inhibit inserting the heading; org-capture will insert the heading.
     (org-journal-new-entry t)
-    ;; Position point on the journal's top-level heading so that org-capture
-    ;; will add the new entry as a child entry.
-    (goto-char (point-min)))
+    (unless (eq org-journal-file-type 'daily)
+      (org-narrow-to-subtree))
+    (goto-char (point-max)))
+
   (setq org-capture-templates
-    (quote
-      (
-        ("t"
-          "Todo"
-          entry
-          (file "~/capture.org")
-          "* TODO %?\n%U\n%a\n"
-          :clock-in t
-          :clock-resume t)
-        ("n"
-          "Note"
-          entry
-          (file "~/capture.org")
-          "* %? :NOTE:\n%U\n%a\n"
-          :clock-in t
-          :clock-resume t)
-        ("j"
-          "Journal"
-          entry
-          (function org-journal-find-location)
-          "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
-        ("w"
-          "org-protocol"
-          entry
-          (file "~/refile.org")
-          "* TODO Review %c\n%U\n"
-          :immediate-finish t)))))
+        (quote
+         (
+          ("t"
+           "Todo"
+           entry
+           (file "~/capture.org")
+           "* TODO %?\n%U\n%a\n"
+           :clock-in t
+           :clock-resume t)
+          ("n"
+           "Note"
+           entry
+           (file "~/capture.org")
+           "* %? :NOTE:\n%U\n%a\n"
+           :clock-in t
+           :clock-resume t)
+          ("j"
+           "Journal"
+           entry
+           (function org-journal-find-location)
+           "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
+          ))))
+
+
+(use-package org-wild-notifier
+  :config
+  (setq alert-default-style 'libnotify)
+  (org-wild-notifier-mode +1))
+
+(use-package org-journal
+  :after org
+  :config
+  (setq org-journal-dir "~/journal")
+  (setq org-journal-file-format "%Y%m%d.org"))
 
 (use-package org-web-tools
   :defer t)
@@ -1089,19 +1078,20 @@
   :commands (alert)
   :init (setq alert-default-style 'notifier))
 
+(use-package ert)
+
 (use-package ace-link
+  :after ert
   :defer 10
   :config
   (ace-link-setup-default)
-  (add-hook 'org-mode-hook
-    #'(lambda () (bind-key "C-c C-o" #'ace-link-org org-mode-map)))
-  (add-hook 'gnus-summary-mode-hook
-    #'(lambda () (bind-key "M-o" #'ace-link-gnus gnus-summary-mode-map)))
-  (add-hook 'gnus-article-mode-hook
-    #'(lambda () (bind-key "M-o" #'ace-link-gnus gnus-article-mode-map)))
-  (add-hook 'ert-results-mode-hook
-    #'(lambda () (bind-key "o" #'ace-link-help ert-results-mode-map)))
-  (bind-key "C-c M-o" 'ace-link-addr))
+  :bind (("C-c M-o" . #'ace-link-addr)
+         :map org-mode-map
+         ("C-c C-o" . #'ace-link-org)
+         :map gnus-summary-mode-map
+         ("M-o" . #'ace-link-gnus)
+         :map ert-results-mode-map
+         ("o" . #'ace-link-help)))
 
 (use-package ace-mc
   :bind (("C-; h" . ace-mc-add-multiple-cursors) ("C-; M-h" . ace-mc-add-single-cursor)))
@@ -1116,27 +1106,27 @@
   :config (add-to-list 'mc/cursor-specific-vars 'iy-go-to-char-start-pos)
   :bind
   (("C-; C-;" . mc/edit-lines)
-    ("C-; C-e" . mc/edit-ends-of-lines)
-    ("C-; C-a" . mc/edit-beginnings-of-lines)
-    ("C-; a" . mc/mark-all-dwim)
-    ("C-; C-x" . reactivate-mark)
-    ("C-; C-SPC" . mc/mark-pop)
-    ("C-; <" . mc/mark-previous-like-this)
-    ("C-; >" . mc/mark-next-like-this)
-    ;; Extra multiple cursors stuff
-    ("C-; %" . mc/insert-numbers)
-    ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+   ("C-; C-e" . mc/edit-ends-of-lines)
+   ("C-; C-a" . mc/edit-beginnings-of-lines)
+   ("C-; a" . mc/mark-all-dwim)
+   ("C-; C-x" . reactivate-mark)
+   ("C-; C-SPC" . mc/mark-pop)
+   ("C-; <" . mc/mark-previous-like-this)
+   ("C-; >" . mc/mark-next-like-this)
+   ;; Extra multiple cursors stuff
+   ("C-; %" . mc/insert-numbers)
+   ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
 (use-package mc-extras
   :after multiple-cursors
   :bind
   (("C-; M-C-f" . mc/mark-next-sexps)
-    ("C-; M-C-b" . mc/mark-previous-sexps)
-    ("C-; C-d" . mc/remove-current-cursor)
-    ("C-; C-k" . mc/remove-cursors-at-eol)
-    ("C-; M-d" . mc/remove-duplicated-cursors)
-    ("C-; |" . mc/move-to-column)
-    ("C-; ~" . mc/compare-chars)))
+   ("C-; M-C-b" . mc/mark-previous-sexps)
+   ("C-; C-d" . mc/remove-current-cursor)
+   ("C-; C-k" . mc/remove-cursors-at-eol)
+   ("C-; M-d" . mc/remove-duplicated-cursors)
+   ("C-; |" . mc/move-to-column)
+   ("C-; ~" . mc/compare-chars)))
 
 (use-package phi-search
   :bind (:map mc/keymap ("C-r" . phi-search-backward) ("C-s" . phi-search)))
@@ -1151,15 +1141,15 @@
   "Insert current line at the end of the buffer."
   (interactive)
   (let
-    (
-      (command
+      (
+       (command
         (buffer-substring
-          (save-excursion
-            (beginning-of-line)
-            (point))
-          (save-excursion
-            (end-of-line)
-            (point)))))
+         (save-excursion
+           (beginning-of-line)
+           (point))
+         (save-excursion
+           (end-of-line)
+           (point)))))
     (eshell--execute-command command t)))
 
 (defun eshell-insert-command (text &optional func)
@@ -1170,9 +1160,9 @@
   (funcall (or func 'eshell-send-input)))
 
 (defun eshell--execute-command (command save-excursion?)
-  (let ((body #'(lambda nil (eshell-insert-command command))))
+  (let ((body (lambda nil (eshell-insert-command command))))
     (if save-excursion?
-      (save-excursion (funcall body))
+        (save-excursion (funcall body))
       (funcall body))))
 
 (defun eshell/clear ()
@@ -1208,9 +1198,9 @@
   (when (eq system-type 'windows-nt)
     (add-to-list 'exec-path "C:/Program Files (x86)/Aspell/bin/"))
   (setq
-    ispell-program-name
-    "aspell" ; use aspell instead of ispell
-    ispell-extra-args '("--sug-mode=ultra"))
+   ispell-program-name
+   "aspell" ; use aspell instead of ispell
+   ispell-extra-args '("--sug-mode=ultra"))
   (add-hook 'text-mode-hook #'flyspell-mode))
 
 (use-package flycheck
@@ -1234,28 +1224,28 @@
 (use-package crux
   :bind
   (("C-c d" . crux-duplicate-current-line-or-region)
-    ("C-c n" . crux-cleanup-buffer-or-region)
-    ("C-M-z" . crux-indent-defun)
-    ("C-c u" . crux-view-url)
-    ("C-c w" . crux-swap-windows)
-    ("C-c D" . crux-delete-file-and-buffer)
-    ("C-c r" . crux-rename-buffer-and-file)
-    ("C-c k" . crux-kill-other-buffers)
-    ("C-c TAB" . crux-indent-rigidly-and-copy-to-clipboard)
-    ("C-c I" . crux-find-user-init-file)
-    ("C-c S" . crux-find-shell-init-file)
-    ("s-r" . crux-recentf-find-file)
-    ("s-j" . crux-top-join-line)
-    ("C-^" . crux-top-join-line)
-    ("C-S-k" . crux-kill-whole-line)
-    ("C-k" . kill-line)
-    ("C-<backspace>" . crux-kill-line-backwards)
-    ("s-o" . crux-smart-open-line-above)
-    ([remap move-beginning-of-line] . crux-move-beginning-of-line)
-    ([(shift return)] . crux-smart-open-line)
-    ([(control shift return)] . crux-smart-open-line-above)
-    ([remap kill-whole-line] . crux-kill-whole-line)
-    ("C-c s" . crux-ispell-word-then-abbrev)))
+   ("C-c n" . crux-cleanup-buffer-or-region)
+   ("C-M-z" . crux-indent-defun)
+   ("C-c u" . crux-view-url)
+   ("C-c w" . crux-swap-windows)
+   ("C-c D" . crux-delete-file-and-buffer)
+   ("C-c r" . crux-rename-buffer-and-file)
+   ("C-c k" . crux-kill-other-buffers)
+   ("C-c TAB" . crux-indent-rigidly-and-copy-to-clipboard)
+   ("C-c I" . crux-find-user-init-file)
+   ("C-c S" . crux-find-shell-init-file)
+   ("s-r" . crux-recentf-find-file)
+   ("s-j" . crux-top-join-line)
+   ("C-^" . crux-top-join-line)
+   ("C-S-k" . crux-kill-whole-line)
+   ("C-k" . kill-line)
+   ("C-<backspace>" . crux-kill-line-backwards)
+   ("s-o" . crux-smart-open-line-above)
+   ([remap move-beginning-of-line] . crux-move-beginning-of-line)
+   ([(shift return)] . crux-smart-open-line)
+   ([(control shift return)] . crux-smart-open-line-above)
+   ([remap kill-whole-line] . crux-kill-whole-line)
+   ("C-c s" . crux-ispell-word-then-abbrev)))
 
 (use-package ctrlf
   :after elegance
@@ -1276,13 +1266,13 @@
   :config (which-key-mode +1))
 
 (setq
-  backup-by-copying
-  t
-  delete-old-versions t
-  kept-new-versions 10
-  kept-old-versions 2
-  vc-make-backup-files t
-  version-control t)
+ backup-by-copying
+ t
+ delete-old-versions t
+ kept-new-versions 10
+ kept-old-versions 2
+ vc-make-backup-files t
+ version-control t)
 
 (defun force-backup-of-buffer () (setq buffer-backed-up nil))
 
@@ -1302,33 +1292,34 @@
   :bind* ("<s-return>" . ace-window))
 
 (use-package smartparens
-  :diminish  
+  :diminish
   :config
   (defun tj-forward-sexp (arg)
-  "Move to forward sexp. If ARG is set, move to next sexp."
-  (interactive "P")
-  (if arg
-      (sp-next-sexp)
-    (sp-forward-sexp)))
+    "Move to forward sexp. With a non-nil ARG, move to next sexp."
+    (interactive "P")
+    (if arg
+        (sp-next-sexp)
+      (sp-forward-sexp)))
   
   (require 'smartparens-config)
   (setq sp-ignore-modes-list
         '(minibuffer-inactive-mode eval-expression-minibuffer-setup))
   :bind
   (:map
-    smartparens-mode-map
-    ("M-\"" . (lambda (&optional arg) (interactive "P") (sp-wrap-with-pair "\"")))
-    ("M-I" . sp-splice-sexp)
-    ("M-(" . sp-wrap-round)
-    ("C-)" . sp-forward-slurp-sexp)
-    ("C-}" . sp-forward-barf-sexp)
-    ("C-{" . sp-backward-barf-sexp)
-    ("C-(" . sp-backward-slurp-sexp)
-    ("C-'" . sp-rewrap-sexp)
-    ("M-S" . sp-split-sexp)
-    ("M-J" . sp-join-sexp)
-    ("M-W" . sp-copy-sexp)
-    ("C-M-f" . tj-forward-sexp))
+   smartparens-mode-map
+   ("M-\"" . (lambda (&optional arg) (interactive "P") (sp-wrap-with-pair "\"")))
+   ("M-I" . sp-splice-sexp)
+   ("M-(" . sp-wrap-round)
+   ("C-)" . sp-forward-slurp-sexp)
+   ("C-}" . sp-forward-barf-sexp)
+   ("C-{" . sp-backward-barf-sexp)
+   ("C-(" . sp-backward-slurp-sexp)
+   ("C-'" . sp-rewrap-sexp)
+   ("M-S" . sp-split-sexp)
+   ("M-s" . sp-splice-sexp)
+   ("M-J" . sp-join-sexp)
+   ("M-W" . sp-copy-sexp)
+   ("C-M-f" . tj-forward-sexp))
   :hook ((prog-mode . smartparens-mode)
          (emacs-lisp-mode . smartparens-strict-mode)
          (lisp-interaction-mode . smartparens-strict-mode)
@@ -1336,7 +1327,11 @@
          (lisp-mode . smartparens-strict-mode)
          (scheme-mode . smartparens-strict-mode)
          (eval-expression-minibuffer-setup . smartparens-strict-mode)))
-  
+
+(use-package pinboard
+  :config
+  (add-to-list 'auth-sources "~/authinfo" t))
+
 (use-package minibuffer
   :after tj
   :straight (:type built-in)
@@ -1347,8 +1342,8 @@
     (subword-mode)
     (setq truncate-lines nil)
     (set
-      (make-local-variable 'face-remapping-alist)
-      '((default :family (font-get tj-font :family) :size (font-get tj-font :size))))
+     (make-local-variable 'face-remapping-alist)
+     '((default :family (font-get tj-font :family) :size (font-get tj-font :size))))
     (setq gc-cons-threshold most-positive-fixnum))
   (defun tj-minibuffer-exit-hook ()
     (electric-pair-mode 1)
@@ -1368,13 +1363,13 @@
   :diminish selected-minor-mode
   :bind
   (:map
-    selected-keymap
-    ("s-[" . align-code)
-    ("s-f" . fill-region)
-    ("s-U" . unfill-region)
-    ("s-d" . downcase-region)
-    ("s-u" . upcase-region)
-    ("s-s" . sort-lines))
+   selected-keymap
+   ("s-[" . align-code)
+   ("s-f" . fill-region)
+   ("s-U" . unfill-region)
+   ("s-d" . downcase-region)
+   ("s-u" . upcase-region)
+   ("s-s" . sort-lines))
   :config (selected-global-mode 1))
 
 ;; temporarily highlight changes from yanking, etc
@@ -1425,11 +1420,11 @@
   (defun tj-eshell-here ()
     (interactive)
     (let*
-      (
-       (dir
-        (if (buffer-file-name)
-            (f-dirname (buffer-file-name))
-          (projectile-project-root))))
+        (
+         (dir
+          (if (buffer-file-name)
+              (f-dirname (buffer-file-name))
+            (projectile-project-root))))
       (eshell-buffer-name (ff-basename dir))
       (eshell dir)))
   
@@ -1469,8 +1464,8 @@
 (use-package avy-zap
   :bind
   (("C-c e" . zap-up-to-char)
-    ("C-c E" . avy-zap-up-to-char-dwim)
-    ("M-Z" . avy-zap-up-to-char-dwim)))
+   ("C-c E" . avy-zap-up-to-char-dwim)
+   ("M-Z" . avy-zap-up-to-char-dwim)))
 
 (use-package backup-walker
   :commands backup-walker-start)
@@ -1478,26 +1473,26 @@
 (use-package change-inner
   :bind
   (("M-i" . change-inner)
-    ("M-o" . change-outer)
-    ("C-c M-i" . copy-inner)
-    ("C-c M-o" . copy-outer)))
+   ("M-o" . change-outer)
+   ("C-c M-i" . copy-inner)
+   ("C-c M-o" . copy-outer)))
 
 (use-package protobuf-mode
   :mode "\\.proto\\'"
   :commands (protobuf-mode)
   :hook
   (protobuf-mode
-    .
-    #'(lambda ()
-      (subword-mode)
-      (electric-pair-mode)
-      (tj-protobuf-imenu-configure)
-      (c-add-style "tj-protobuf-style" tj-protobuf-style t)))
+   .
+   (lambda ()
+     (subword-mode)
+     (electric-pair-mode)
+     (tj-protobuf-imenu-configure)
+     (c-add-style "tj-protobuf-style" tj-protobuf-style t)))
   :config
   (setq tj-protobuf-imenu-generic-expression
-    '
-    (("Message" "^message *\\([a-zA-Z0-9_]+\\)" 1)
-      ("Service" "^service *\\([a-zA-Z0-9_]+\\)" 1)))
+        '
+        (("Message" "^message *\\([a-zA-Z0-9_]+\\)" 1)
+         ("Service" "^service *\\([a-zA-Z0-9_]+\\)" 1)))
   (defun tj-protobuf-imenu-configure ()
     (interactive)
     (setq imenu-generic-expression tj-protobuf-imenu-generic-expression))
@@ -1507,9 +1502,9 @@
 (use-package bm
   :bind
   (("C-c b b" . bm-toggle)
-    ("C-c b n" . bm-next)
-    ("C-c b l" . bm-show-all)
-    ("C-c b p" . bm-previous))
+   ("C-c b n" . bm-next)
+   ("C-c b l" . bm-show-all)
+   ("C-c b p" . bm-previous))
   :commands (bm-repository-load bm-buffer-save bm-buffer-save-all bm-buffer-restore)
   :init
   (add-hook 'after-init-hook 'bm-repository-load)
@@ -1519,7 +1514,7 @@
   (add-hook 'after-save-hook #'bm-buffer-save)
   (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
   (add-hook 'kill-emacs-hook
-    #'(lambda nil (bm-buffer-save-all) (bm-repository-save))))
+            (lambda nil (bm-buffer-save-all) (bm-repository-save))))
 
 (use-package magit-todos
   :commands (magit-todos-mode)
@@ -1570,10 +1565,10 @@
   :ensure t
   :config
   (lsp-register-custom-settings
-    '
-    (("gopls.allExperiments" t t)
-      ("gopls.completeUnimported" t t)
-      ("gopls.staticcheck" t t)))
+   '
+   (("gopls.allExperiments" t t)
+    ("gopls.completeUnimported" t t)
+    ("gopls.staticcheck" t t)))
   (setq lsp-auto-guess-root t)
   :bind (("C-c C-c" . lsp-describe-thing-at-point) ("C-c C-r" . lsp-rename))
   :commands (lsp lsp-deferred)
@@ -1652,10 +1647,10 @@
   (add-hook 'vterm-mode-hook 'with-editor-export-editor))
 
 (use-package go-mod
-    :straight (:type built-in))
+  :straight (:type built-in))
 
 (use-package prag-prog
-    :straight (:type built-in))
+  :straight (:type built-in))
 
 (use-package shim
   :commands shim-auto-set
@@ -1665,45 +1660,45 @@
 
 (use-package elisp-autofmt
   :straight (:type built-in)
-  :hook (emacs-lisp-mode-hook . #'(lambda () (elisp-autofmt-save-hook-for-this-buffer))))
+  :hook (emacs-lisp-mode-hook . (lambda () (elisp-autofmt-save-hook-for-this-buffer))))
 
 (use-package selectrum
   :config
   (selectrum-mode +1)
   (defun yank-pop+ (&optional arg)
- "Call `yank-pop' with ARG when appropriate, or offer completion."
- (interactive "*P")
- (if arg (yank-pop arg)
-   (let* ((old-last-command last-command)
-          (selectrum-should-sort-p nil)
-          (enable-recursive-minibuffers t)
-          (text (completing-read
-                 "Yank: "
-                 (cl-remove-duplicates
-                  kill-ring :test #'string= :from-end t)
-                 nil t nil nil))
-          ;; Find `text' in `kill-ring'.
-          (pos (cl-position text kill-ring :test #'string=))
-          ;; Translate relative to `kill-ring-yank-pointer'.
-          (n (+ pos (length kill-ring-yank-pointer))))
-     (unless (string= text (current-kill n t))
-       (error "Could not setup for `current-kill'"))
-     ;; Restore `last-command' over Selectrum commands.
-     (setq last-command old-last-command)
-     ;; Delegate to `yank-pop' if appropriate or just insert.
-     (if (eq last-command 'yank)
-         (yank-pop n) (insert-for-yank text)))))
+    "Call `yank-pop' with ARG when appropriate, or offer completion."
+    (interactive "*P")
+    (if arg (yank-pop arg)
+      (let* ((old-last-command last-command)
+             (selectrum-should-sort-p nil)
+             (enable-recursive-minibuffers t)
+             (text (completing-read
+                    "Yank: "
+                    (cl-remove-duplicates
+                     kill-ring :test #'string= :from-end t)
+                    nil t nil nil))
+             ;; Find `text' in `kill-ring'.
+             (pos (cl-position text kill-ring :test #'string=))
+             ;; Translate relative to `kill-ring-yank-pointer'.
+             (n (+ pos (length kill-ring-yank-pointer))))
+        (unless (string= text (current-kill n t))
+          (error "Could not setup for `current-kill'"))
+        ;; Restore `last-command' over Selectrum commands.
+        (setq last-command old-last-command)
+        ;; Delegate to `yank-pop' if appropriate or just insert.
+        (if (eq last-command 'yank)
+            (yank-pop n) (insert-for-yank text)))))
   :bind (("C-x C-z" . #'selectrum-repeat)
          ("M-y" . yank-pop+)))
 
 (defun tj-set-face (face style)
   "Reset a FACE and make it inherit STYLE."
   (set-face-attribute face nil
-   :foreground 'unspecified :background 'unspecified
-   :family     'unspecified :slant      'unspecified
-   :weight     'unspecified :height     'unspecified
-   :underline  'unspecified :overline   'unspecified
-   :box        'unspecified :inherit    style))
+                      :foreground 'unspecified :background 'unspecified
+                      :family     'unspecified :slant      'unspecified
+                      :weight     'unspecified :height     'unspecified
+                      :underline  'unspecified :overline   'unspecified
+                      :box        'unspecified :inherit    style))
 
 (use-package elegance
   :requires (org-agenda-property)

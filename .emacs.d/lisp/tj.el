@@ -10,6 +10,8 @@
 
 (setq tramp-default-method "ssh")
 
+(setq debugger-stack-frame-as-list t)
+
 (add-hook 'prog-mode-hook 'hs-minor-mode)
 ;; (add-hook 'prog-mode-hook 'disable-font-lock-mode)
 ;; (add-hook 'protobuf-mode-hook 'disable-font-lock-mode)
