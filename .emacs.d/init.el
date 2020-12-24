@@ -99,12 +99,11 @@
 (use-package org-agenda-property)
 
 (use-package clojure-mode
-  :after paredit
+  :after smartparens
   :hook
-  (clojure-mode . eldoc-mode)
-  (inf-clojure-mode . eldoc-mode)
-  (clojure-mode . clj-refactor-mode)
-  (clojure-mode . paredit-mode))
+  ((clojure-mode . eldoc-mode)
+   (inf-clojure-mode . eldoc-mode)
+   (clojure-mode . clj-refactor-mode)))
 
 (use-package dashboard
   :init (setq initial-buffer-choice #'(lambda () (switch-to-buffer "*dashboard*")))
@@ -577,21 +576,9 @@
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
     (add-hook hook #'elisp-slime-nav-mode)))
 
-(use-package paredit
-  :hook
-  ((emacs-lisp-mode . paredit-mode)
-    (lisp-interaction-mode . paredit-mode)
-    (ielm-mode . paredit-mode)
-    (lisp-mode . paredit-mode)
-    (scheme-mode . paredit-mode)
-    (eval-expression-minibuffer-setup . paredit-mode))
-  :diminish
-  :bind (:map paredit-mode-map ("M-;" . nil) ("M-r" . nil) ("M-I" . paredit-splice-sexp)))
-
 (use-package paren
   :diminish
   :config (show-paren-mode +1))
-
 
 (use-package uniquify
   :straight (:type built-in)
@@ -1315,10 +1302,23 @@
   :bind* ("<s-return>" . ace-window))
 
 (use-package smartparens
+  :diminish  
+  :config
+  (defun tj-forward-sexp (arg)
+  "Move to forward sexp. If ARG is set, move to next sexp."
+  (interactive "P")
+  (if arg
+      (sp-next-sexp)
+    (sp-forward-sexp)))
+  
+  (require 'smartparens-config)
+  (setq sp-ignore-modes-list
+        '(minibuffer-inactive-mode eval-expression-minibuffer-setup))
   :bind
   (:map
     smartparens-mode-map
     ("M-\"" . (lambda (&optional arg) (interactive "P") (sp-wrap-with-pair "\"")))
+    ("M-I" . sp-splice-sexp)
     ("M-(" . sp-wrap-round)
     ("C-)" . sp-forward-slurp-sexp)
     ("C-}" . sp-forward-barf-sexp)
@@ -1327,13 +1327,16 @@
     ("C-'" . sp-rewrap-sexp)
     ("M-S" . sp-split-sexp)
     ("M-J" . sp-join-sexp)
-    ("M-W" . sp-copy-sexp))
-  :config
-  (require 'smartparens-config)
-  (setq sp-ignore-modes-list
-    '(minibuffer-inactive-mode eval-expression-minibuffer-setup))  
-  :hook (prog-mode . smartparens-mode))
-
+    ("M-W" . sp-copy-sexp)
+    ("C-M-f" . tj-forward-sexp))
+  :hook ((prog-mode . smartparens-mode)
+         (emacs-lisp-mode . smartparens-strict-mode)
+         (lisp-interaction-mode . smartparens-strict-mode)
+         (ielm-mode . smartparens-strict-mode)
+         (lisp-mode . smartparens-strict-mode)
+         (scheme-mode . smartparens-strict-mode)
+         (eval-expression-minibuffer-setup . smartparens-strict-mode)))
+  
 (use-package minibuffer
   :after tj
   :straight (:type built-in)
@@ -1359,7 +1362,7 @@
   (defun eval-expr-minibuffer-setup ()
     (local-set-key (kbd "<tab>") #'lisp-complete-symbol)
     (set-syntax-table emacs-lisp-mode-syntax-table)
-    (paredit-mode)))
+    (smartparens-strict-mode)))
 
 (use-package selected
   :diminish selected-minor-mode
@@ -1381,7 +1384,7 @@
   :config (volatile-highlights-mode +1))
 
 (use-package geiser
-  :hook (geiser-repl-mode . paredit-mode))
+  :hook (geiser-repl-mode . smartparens-strict-mode))
 
 (use-package pcmpl-args)
 

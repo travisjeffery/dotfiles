@@ -159,47 +159,6 @@
   (interactive)
   (async-shell-command (format "goland %s" (projectile-project-root))))
 
-(defun tj-markdown-convert-code-blocks ()
-  (interactive)
-  (cl-letf
-    (
-      ((symbol-function 'kill-ticks)
-        (lambda ()
-          (search-forward "```")
-          (beginning-of-line)
-          (kill-whole-line)
-          (point))))
-    (string-rectangle (kill-ticks) (kill-ticks) "	")))
-
-(defun tj-eshell ()
-  (interactive)
-  (eshell 'N))
-
-(defun tj-eshell-execute-previous-input ()
-  (interactive)
-  (save-excursion
-    (switch-to-buffer-other-window eshell-buffer-name)
-    (call-interactively 'eshell-previous-matching-input-from-input)
-    (eshell-send-input)))
-
-(defun tj-goto (repo)
-  "Go to or clone the given dev REPO."
-  (interactive (list (ido-read-directory-name "Directory: " "~/dev/")))
-  (let*
-    (
-      (dev-dir "~/dev/")
-      (repo-dir repo))
-    (if (file-exists-p repo-dir)
-      (projectile-find-file-in-directory repo)
-      (shell-command
-        (format "cd %s; git clone git@github.com:travisjeffery/%s.git" dev-dir repo))
-      (projectile-find-file-in-directory repo))))
-
-(defun tj-marked ()
-  "Open this markdown file in Marked 2."
-  (interactive)
-  (shell-command (format "open -a \"Marked 2\" %s" (buffer-file-name))))
-
 (defun tj-newline-and-indent-up ()
   "Open a new line above the current line."
   (interactive)
@@ -281,7 +240,7 @@
         (set-window-buffer (next-window) next-win-buffer)
         (select-window first-win)
         (if this-win-2nd
-          (other-window 1))))))
+            (other-window 1))))))
 
 (defun tj-newline-and-indent ()
   "Newline under the current line."
@@ -536,9 +495,6 @@ them across multiple lines."
     (save-excursion
       (delete-region start end)
       (insert out))))
-
-(global-set-key (kbd "<s-right>") 'sp-up-sexp)
-(global-set-key (kbd "<s-left>") 'sp-down-sexp)
 
 (defun tj-wrap-with-tags ()
   "Generates an open and close HTML snippet using the current word."
