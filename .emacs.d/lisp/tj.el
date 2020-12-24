@@ -800,7 +800,7 @@ Otherwise split the current paragraph into one sentence per line."
                     (_ (not (string-empty-p line))))
           (puthash line (+ count 1) lines))
         (forward-line))
-      (if-let
+      (when-let
           ((lines (cl-loop for line being the hash-keys of lines
                            using (hash-values count)
                            when (> count 1)

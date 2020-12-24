@@ -43,8 +43,7 @@
 
 (eval-and-compile
   (mapc
-    #'
-    (lambda (entry)
+    #'(lambda (entry)
       (define-prefix-command (cdr entry))
       (bind-key (car entry) (cdr entry)))
     '
@@ -108,7 +107,7 @@
   (clojure-mode . paredit-mode))
 
 (use-package dashboard
-  :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
+  :init (setq initial-buffer-choice #'(lambda () (switch-to-buffer "*dashboard*")))
   :config
   (setq dashboard-banner-logo-title "Do the work.")
   (setq dashboard-startup-banner nil)
@@ -269,9 +268,8 @@
     ("M-<right>" . smart-forward)))
 
 (use-package ibuffer-projectile
-  :config
-  (add-hook 'ibuffer-hook
-    (lambda ()
+  :hook
+  (ibuffer . #'(lambda ()
       (ibuffer-projectile-set-filter-groups)
       (unless (eq ibuffer-sorting-mode 'alphabetic)
         (ibuffer-do-sort-by-alphabetic)))))
@@ -614,7 +612,6 @@
                    :size (if (string-equal "laptop" (system-name))
                              12.0
                            10.0)))
-  (face-attribute 'default :font)
   (setq default-frame-alist
         (append (list (cons 'width  72)
                       (cons 'height 40)
@@ -977,22 +974,12 @@
       ("cl" . lisp)
       ("dot" . graphviz-dot)))
   
-
-
-
-
-
-  
-
   (setq org-startup-folded nil)
   (setq org-startup-indented t)
   
   (defun tj-org-capture ()
     (interactive)
     (find-file org-default-notes-file))
-  
-  
-  
   
   (defun tj-org-replace-link-by-link-description ()
     "Replace an org link by its description or if empty its address"
@@ -1405,9 +1392,23 @@
   (unintern 'eshell/su nil)
   (unintern 'eshell/sudo nil))
 
+(use-package em-smart
+  :after eshell
+  :straight (:type built-in))
+
 (use-package eshell
   :commands (eshell eshell-command)
-  :preface
+  :bind (("C-x m" . eshell))
+  :hook (eshell-mode . (lambda () (yas-minor-mode -1)))
+  :config
+  (defun tj-eshell-prompt ()
+    "; ")
+  (setq eshell-prompt-function 'tj-eshell-prompt)
+  (setq eshell-prompt-regexp "^; ")
+  (setq eshell-where-to-jump 'end)
+  (setq eshell-review-quick-commands t)
+  (setq eshell-smart-space-goes-to-end t)
+
   (defvar eshell-isearch-map
     (let ((map (copy-keymap isearch-mode-map)))
       (define-key map [(control ?m)] 'eshell-isearch-return)
@@ -1422,43 +1423,23 @@
     (interactive)
     (let*
       (
-        (dir
-          (if (buffer-file-name)
+       (dir
+        (if (buffer-file-name)
             (f-dirname (buffer-file-name))
-            (projectile-project-root)))
-        (eshell-buffer-name (ff-basename dir)))
+          (projectile-project-root))))
+      (eshell-buffer-name (ff-basename dir))
       (eshell dir)))
-  (defun eshell-initialize ()
-    (defun eshell-spawn-external-command (beg end)
-      "Parse and expand any history references in current input."
-      (save-excursion
-        (goto-char end)
-        (when (looking-back "&!" beg)
-          (delete-region (match-beginning 0) (match-end 0))
-          (goto-char beg)
-          (insert "spawn ")))))
-  (add-hook 'eshell-expand-input-functions 'eshell-spawn-external-command)
-  :init
-  (add-hook 'eshell-first-time-mode-hook 'eshell-initialize)
-  (require 'em-smart)
-  :bind (("C-x m" . eshell))
-  :config
-  (defun tj-eshell-prompt ()
-    "; ")
-  (setq eshell-prompt-function 'tj-eshell-prompt)
-  (setq eshell-prompt-regexp "^; ")
-
-  (setq eshell-where-to-jump 'begin)
-  (setq eshell-review-quick-commands nil)
-  (setq eshell-smart-space-goes-to-end t)
+  
   (defun tj-eshell-mode-hook ()
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
   (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
 
 (use-package eshell-bookmark
+  :after eshell
   :hook (eshell-mode . eshell-bookmark-setup))
 
 (use-package eshell-up
+  :after eshell
   :commands eshell-up)
 
 (use-package eshell-z
@@ -1504,7 +1485,7 @@
   :hook
   (protobuf-mode
     .
-    (lambda ()
+    #'(lambda ()
       (subword-mode)
       (electric-pair-mode)
       (tj-protobuf-imenu-configure)
@@ -1681,7 +1662,7 @@
 
 (use-package elisp-autofmt
   :straight (:type built-in)
-  :hook (emacs-lisp-mode-hook . (lambda () (elisp-autofmt-save-hook-for-this-buffer))))
+  :hook (emacs-lisp-mode-hook . #'(lambda () (elisp-autofmt-save-hook-for-this-buffer))))
 
 (use-package selectrum
   :config
