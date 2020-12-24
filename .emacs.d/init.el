@@ -1062,6 +1062,8 @@
 
 (use-package org-wild-notifier
   :config
+  (setq org-wild-notifier-alert-time '(15 3 1))
+  (setq org-wild-notifier-alert-times-property "NOTIFY_BEFORE")
   (setq alert-default-style 'libnotify)
   (org-wild-notifier-mode +1))
 
@@ -1406,6 +1408,7 @@
   (setq eshell-where-to-jump 'end)
   (setq eshell-review-quick-commands t)
   (setq eshell-smart-space-goes-to-end t)
+  (add-to-list 'eshell-expand-input-functions 'eshell-expand-history-references)
 
   (defvar eshell-isearch-map
     (let ((map (copy-keymap isearch-mode-map)))
