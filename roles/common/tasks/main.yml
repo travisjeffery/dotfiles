@@ -79,6 +79,13 @@
     state: link
   with_items: "{{ orgfiles.files }}"
   when: sync_dir != ""
+- name: symlink draft dir
+  become: true
+  file:
+    src: "{{ sync_dir }}/Notes/Draft"
+    dest: "{{ ansible_env.HOME }}/draft"
+    state: link
+  when: sync_dir != ""
 - name: find homedirs
   find:
     paths: "{{ sync_dir }}"
