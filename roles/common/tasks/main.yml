@@ -70,6 +70,7 @@
     patterns:
       - "*.org"
   register: orgfiles
+  when: sync_dir != ""
 - name: install orgfiles
   become: true
   file:
@@ -77,13 +78,15 @@
     dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
     state: link
   with_items: "{{ orgfiles.files }}"
-- name: find home-level dirs
+  when: sync_dir != ""
+- name: find homedirs
   find:
     paths: "{{ sync_dir }}"
     hidden: true
     excludes:
       - ".stfolder"
   register: homedirs
+  when: sync_dir != ""
 - name: install homedirs
   become: true
   file:
@@ -91,3 +94,6 @@
     dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
     state: link
   with_items: "{{ homedirs.files }}"
+  when: sync_dir != ""
+
+  
