@@ -1,13 +1,14 @@
 Hey, these are [@travisjeffery's](http://twitter.com/travisjeffery) dotfiles.
 
-I use Emacs, Zsh, Linux.
-
-Run the following to set up your computer:
+I use Emacs, Arch Linux, Z shell.
 
 ``` sh
 $ git clone git://github.com/travisjeffery/dotfiles.git && 
     cd dotfiles && 
-    ./bin/hlink
+    ansible-playbook -K site.yaml
 ```
 
-And you should be good to go.
+Though you'll likely want to delete the sync_dir variable in site.yaml to disable tasks that depend on some
+private files I sync using Syncthing.
+
+
