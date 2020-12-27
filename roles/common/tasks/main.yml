@@ -1,7 +1,9 @@
 - name: current user
   debug: msg="{{ lookup('env','USER') }}"
-- name: home dir 
+- name: home dir
   debug: msg="{{ ansible_env.HOME }}"
+- name: playbook dir
+  debug: msg="{{ playbook_dir }}"
 - name: install packages
   become: yes
   yay:
@@ -49,3 +51,43 @@
     version: master
     dest: "{{ ansible_env.HOME }}/.goenv"
     accept_hostkey: yes
+- name: find dotfiles
+  find:
+    paths: "{{ playbook_dir }}"
+    hidden: true
+  register: dotfiles
+- name: install dotfiles
+  become: true
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
+    state: link
+  with_items: "{{ dotfiles.files }}"
+- name: find org files
+  find:
+    paths: "{{ sync_dir }}"
+    hidden: true
+    patterns:
+      - "*.org"
+  register: orgfiles
+- name: install orgfiles
+  become: true
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
+    state: link
+  with_items: "{{ orgfiles.files }}"
+- name: find home-level dirs
+  find:
+    paths: "{{ sync_dir }}"
+    hidden: true
+    excludes:
+      - ".stfolder"
+  register: homedirs
+- name: install homedirs
+  become: true
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
+    state: link
+  with_items: "{{ homedirs.files }}"

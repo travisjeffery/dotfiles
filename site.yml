@@ -1,3 +1,5 @@
 - hosts: localhost
   roles:
-    - common  
+    - common
+  vars:
+    sync_dir: "{{ ansible_env.HOME }}/Sync"
