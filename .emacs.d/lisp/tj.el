@@ -1,7 +1,3 @@
-(defun disable-font-lock-mode ()
-  "Disable font lock mode."
-  (font-lock-mode -1))
-
 (menu-bar-mode -1)
 
 (global-so-long-mode 1)
@@ -12,17 +8,8 @@
 
 (setq debugger-stack-frame-as-list t)
 
-(add-hook 'prog-mode-hook 'hs-minor-mode)
-;; (add-hook 'prog-mode-hook 'disable-font-lock-mode)
-;; (add-hook 'protobuf-mode-hook 'disable-font-lock-mode)
-;; (add-hook 'text-mode-hook 'disable-font-lock-mode)
-;; (add-hook 'conf-mode-hook 'disable-font-lock-mode)
-;; (add-hook 'compilation-mode-hook 'disable-font-lock-mode)
-
-(setq
-  user-full-name
-  "Travis Jeffery"
-  user-mail-address "tj@travisjeffery.com")
+(setq user-full-name "Travis Jeffery")
+(setq user-mail-address "tj@travisjeffery.com")
 
 ;; config changes made through the customize UI will be stored here
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -31,6 +18,7 @@
 ;;   "Moves the point to the newly created window after splitting."
 ;;   (other-window 1))
 
+;; 'comment-indent-new-line continues comments
 (setq comment-multi-line t)
 
 (setq-default indent-tabs-mode nil)

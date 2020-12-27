@@ -620,6 +620,11 @@
   ;; activate it for all buffers
   (setq-default save-place t))
 
+(use-package hidesohw
+  :straight (:type built-in)
+  :hook
+  (prog-mode . hs-minor-mode))
+
 (use-package savehist
   :config
   (setq
@@ -883,7 +888,6 @@
   (define-key easy-kill-base-map (kbd "o") 'easy-kill-er-expand)
   (define-key easy-kill-base-map (kbd "i") 'easy-kill-er-unexpand)
 
-
   ;; Add the following tuples to `easy-kill-alist', preferrably by
   ;; using `customize-variable'.
   (add-to-list 'easy-kill-alist '(?^ backward-line-edge ""))
@@ -953,8 +957,7 @@
           (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
   ;; where to archive subtree
-  (setq org-archive-location
-        (expand-file-name "~/archive.org"))
+  (setq org-archive-location "~/.archive.org::* Archived Tasks")
   
   (setq org-src-lang-modes
         '
@@ -984,9 +987,9 @@
 
   (setq org-directory (expand-file-name "~/"))
   (setq org-default-notes-file (expand-file-name "~/notes.org"))
-  (setq org-archive-location (expand-file-name "~/archive.org"))
+  
   (setq org-agenda-files '("~/"))
-
+  
   ;; activate single letter commands at beginning of a headline.
   (setq org-use-speed-commands t)
 
@@ -1058,7 +1061,6 @@
            (function org-journal-find-location)
            "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
           ))))
-
 
 (use-package org-wild-notifier
   :config
