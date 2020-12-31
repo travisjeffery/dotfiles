@@ -24,6 +24,8 @@
 
 (use-package f)
 
+(use-package aurel)
+
 (eval-and-compile
   (let ((lisp-dir (format "%s%s" user-emacs-directory "lisp")))
     (setq load-path
@@ -451,19 +453,18 @@
   
   (defun tj-turn-on-gofmt-before-save ()
     (interactive)
-    (add-hook 'before-save-hook 'lsp-format-buffer t t)
-    (add-hook 'before-save-hook 'gofmt t t)
-    (add-hook 'before-save-hook 'lsp-organize-imports t t))
+    (add-hook 'before-save-hook 'eglot-format t t)
+    (add-hook 'before-save-hook 'gofmt t t))
   
   (defun tj-turn-off-gofmt-before-save ()
     (interactive)
-    (remove-hook 'before-save-hook 'lsp-format-buffer t)
-    (remove-hook 'before-save-hook 'gofmt t)
-    (remove-hook 'before-save-hook 'lsp-organize-imports t))
-  
-  (defun tj-go-hook ()
-    ;; override this func for testify
-    (defun go-test-current-test ()
+    (remove-hook 'before-save-hook 'eglot-format t)
+    (remove-hook 'before-save-hook 'gofmt t))
+
+  (set-face-foreground 'go-test--ok-face "forest green")
+  (set-face-foreground 'go-test--standard-face "dark orange")
+
+  (defun go-test-current-test ()
       "Launch go test on the current test."
       (interactive)
       (cl-destructuring-bind (test-suite test-name)
@@ -484,6 +485,8 @@
                  (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
               (go-test--go-test
                (s-concat test-flag test-name additional-arguments "\\$ .")))))))
+  
+  (defun tj-go-hook ()
     (setq imenu-generic-expression
           '
           (("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
@@ -497,8 +500,6 @@
     (electric-pair-mode 1)
     (selected-minor-mode 1)
     (whitespace-mode 0)
-    (set-face-foreground 'go-test--ok-face "forest green")
-    (set-face-foreground 'go-test--standard-face "dark orange")
     (if (not (string-match "go" compile-command))
         (set
          (make-local-variable 'compile-command)
@@ -593,19 +594,21 @@
   :after elegance
   :straight (:type built-in)
   :config
-  (setq tj-font
-	(font-spec :family "Hack"
-                   :size (if (string-equal "laptop" (system-name))
+  (setq tj-font-family "Hack")
+  (setq tj-font-size (if (string-equal "laptop" (system-name))
                              12.0
-                           10.0)))
+                           10.0))
+  (setq tj-font
+	(font-spec :family tj-font-family
+                   :size tj-font-size))
   (setq default-frame-alist
         (append (list (cons 'width  72)
                       (cons 'height 40)
                       (cons 'vertical-scroll-bars nil)
                       (cons 'internal-border-width 24)
                       (cons 'font (format "%s %d"
-                                          (font-get tj-font :family)
-                                          (font-get tj-font :size))))))
+                                          tj-font-family
+                                          tj-font-size)))))
   (set-frame-font tj-font nil t))
 
 (use-package saveplace
@@ -1345,9 +1348,6 @@
     (electric-pair-mode -1)
     (subword-mode)
     (setq truncate-lines nil)
-    (set
-     (make-local-variable 'face-remapping-alist)
-     '((default :family (font-get tj-font :family) :size (font-get tj-font :size))))
     (setq gc-cons-threshold most-positive-fixnum))
   (defun tj-minibuffer-exit-hook ()
     (electric-pair-mode 1)
@@ -1491,18 +1491,14 @@
    (lambda ()
      (subword-mode)
      (electric-pair-mode)
-     (tj-protobuf-imenu-configure)
-     (c-add-style "tj-protobuf-style" tj-protobuf-style t)))
+     (setq imenu-generic-expression tj-protobuf-imenu-generic-expression)))
   :config
+  (defconst tj-protobuf-style '((c-basic-offset . 2) (indent-tabs-mode . nil)))
+  (c-add-style "tj-protobuf-style" tj-protobuf-style t)
   (setq tj-protobuf-imenu-generic-expression
         '
         (("Message" "^message *\\([a-zA-Z0-9_]+\\)" 1)
-         ("Service" "^service *\\([a-zA-Z0-9_]+\\)" 1)))
-  (defun tj-protobuf-imenu-configure ()
-    (interactive)
-    (setq imenu-generic-expression tj-protobuf-imenu-generic-expression))
-  (progn
-    (defconst tj-protobuf-style '((c-basic-offset . 2) (indent-tabs-mode . nil)))))
+         ("Service" "^service *\\([a-zA-Z0-9_]+\\)" 1))))
 
 (use-package bm
   :bind
@@ -1561,23 +1557,6 @@
 
 (use-package unfill
   :bind (("M-Q" . unfill-paragraph)))
-
-(use-package company-lsp
-  :ensure t
-  :commands company-lsp)
-
-(use-package lsp-mode
-  :ensure t
-  :config
-  (lsp-register-custom-settings
-   '
-   (("gopls.allExperiments" t t)
-    ("gopls.completeUnimported" t t)
-    ("gopls.staticcheck" t t)))
-  (setq lsp-auto-guess-root t)
-  :bind (("C-c C-c" . lsp-describe-thing-at-point) ("C-c C-r" . lsp-rename))
-  :commands (lsp lsp-deferred)
-  :hook (go-mode . lsp-deferred))
 
 (autoload
   'zap-up-to-char "misc"
@@ -1716,6 +1695,13 @@
   (set-face 'font-lock-variable-name-face nil)
   (set-face 'font-lock-function-name-face nil)
   (set-face 'face-popout 'face-strong))
+
+(use-package eglot
+  :bind
+  (("C-c C-r" . eglot-rename)
+   ("C-c C-c" . eglot-help-at-point))
+  :hook
+  (go-mode . eglot-ensure))
 
 (use-package prescient
   :config (prescient-persist-mode +1))
