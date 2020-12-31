@@ -489,8 +489,7 @@
   
   (defun tj-go-hook ()
     (setq imenu-generic-expression
-          '
-          (("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
+          '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
            ("func" "^func *\\(.*\\)" 1)))
     (which-function-mode)
     (tj-turn-on-gofmt-before-save)

@@ -61,6 +61,7 @@
     src: "{{ item.path }}"
     dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
     state: link
+    force: true
   with_items: "{{ dotfiles.files }}"
 - name: find org files
   find:
@@ -75,6 +76,7 @@
     src: "{{ item.path }}"
     dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
     state: link
+    force: true
   with_items: "{{ orgfiles.files }}"
   when: sync_dir != ""
 - name: symlink draft dir
@@ -82,6 +84,7 @@
     src: "{{ sync_dir }}/Notes/Draft"
     dest: "{{ ansible_env.HOME }}/draft"
     state: link
+    force: true
   when: sync_dir != ""
 - name: find homedir symlinks
   find:
@@ -96,5 +99,6 @@
     src: "{{ item.path }}"
     dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
     state: link
+    force: true
   with_items: "{{ homedirs.files }}"
   when: sync_dir != ""
