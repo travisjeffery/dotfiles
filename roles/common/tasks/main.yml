@@ -26,6 +26,7 @@
   with_items:
     - rustup default nightly
     - rustup component add rust-src
+    - cargo +nightly install racer
 - name: make zsh default shell
   shell: chsh -s /bin/zsh tj
   tags: shellchange
@@ -102,5 +103,3 @@
     state: link
   with_items: "{{ homedirs.files }}"
   when: sync_dir != ""
-
-  
