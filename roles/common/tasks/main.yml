@@ -46,7 +46,6 @@
     - { line: 'gtk-key-theme-name="Emacs"', file: "{{ ansible_env.HOME }}/.gtkrc-2.0" }
     - { line: 'gtk-key-theme-name=Emacs', file: "{{ ansible_env.HOME }}/.config/gtk-3.0/settings.ini" }
 - name: clone goenv
-  become: no
   git:
     repo: https://github.com/syndbg/goenv.git
     version: master
@@ -58,7 +57,6 @@
     hidden: true
   register: dotfiles
 - name: install dotfiles
-  become: true
   file:
     src: "{{ item.path }}"
     dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
@@ -73,7 +71,6 @@
   register: orgfiles
   when: sync_dir != ""
 - name: install orgfiles
-  become: true
   file:
     src: "{{ item.path }}"
     dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
@@ -81,13 +78,12 @@
   with_items: "{{ orgfiles.files }}"
   when: sync_dir != ""
 - name: symlink draft dir
-  become: true
   file:
     src: "{{ sync_dir }}/Notes/Draft"
     dest: "{{ ansible_env.HOME }}/draft"
     state: link
   when: sync_dir != ""
-- name: find homedirs
+- name: find homedir symlinks
   find:
     paths: "{{ sync_dir }}"
     hidden: true
@@ -95,8 +91,7 @@
       - ".stfolder"
   register: homedirs
   when: sync_dir != ""
-- name: install homedirs
-  become: true
+- name: install homedir symlinks
   file:
     src: "{{ item.path }}"
     dest: "{{ ansible_env.HOME }}/{{ item.path | basename }}"
