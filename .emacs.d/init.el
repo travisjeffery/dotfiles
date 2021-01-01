@@ -466,31 +466,31 @@
   (set-face-foreground 'go-test--standard-face "dark orange")
 
   (defun go-test-current-test ()
-      "Launch go test on the current test."
-      (interactive)
-      (cl-destructuring-bind (test-suite test-name)
-          (go-test--get-current-test-info)
-        (let
-            (
-             (test-flag
-              (if (> (length test-suite) 0)
-                  "-testify.m "
-                "-run "))
-             (additional-arguments
-              (if go-test-additional-arguments-function
-                  (funcall go-test-additional-arguments-function test-suite test-name)
-                "")))
-          (when test-name
-            (if (go-test--is-gb-project)
-                (go-test--gb-start
-                 (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
-              (go-test--go-test
-               (s-concat test-flag test-name additional-arguments "\\$ .")))))))
+    "Launch go test on the current test."
+    (interactive)
+    (cl-destructuring-bind (test-suite test-name)
+        (go-test--get-current-test-info)
+      (let
+          (
+           (test-flag
+            (if (> (length test-suite) 0)
+                "-testify.m "
+              "-run "))
+           (additional-arguments
+            (if go-test-additional-arguments-function
+                (funcall go-test-additional-arguments-function test-suite test-name)
+              "")))
+        (when test-name
+          (if (go-test--is-gb-project)
+              (go-test--gb-start
+               (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
+            (go-test--go-test
+             (s-concat test-flag test-name additional-arguments "\\$ .")))))))
   
   (defun tj-go-hook ()
     (setq imenu-generic-expression
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
-           ("func" "^func *\\(.*\\)" 1)))
+            ("func" "^func *\\(.*\\)" 1)))
     (which-function-mode)
     (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
@@ -596,8 +596,8 @@
   :config
   (setq tj-font-family "Hack")
   (setq tj-font-size (if (string-equal "laptop" (system-name))
-                             12.0
-                           10.0))
+                         12.0
+                       10.0))
   (setq tj-font
 	(font-spec :family tj-font-family
                    :size tj-font-size))
@@ -1697,6 +1697,45 @@
   (set-face 'face-popout 'face-strong))
 
 (use-package eglot
+  :config
+  ;; eglot-organize-imports is hopefully a temporary stopgap until
+  ;; https://github.com/joaotavora/eglot/issues/574 is addressed.
+  (defun eglot-organize-imports ()
+    "Offer to execute the source.organizeImports code action."
+    (interactive)
+    (unless (eglot--server-capable :codeActionProvider)
+      (eglot--error "Server can't execute code actions!"))
+    (let* ((server (eglot--current-server-or-lose))
+           (actions (jsonrpc-request
+                     server
+                     :textDocument/codeAction
+                     (list :textDocument (eglot--TextDocumentIdentifier))))
+           (action (cl-find-if
+                    (jsonrpc-lambda (&key kind &allow-other-keys)
+                      (string-equal kind "source.organizeImports" ))
+                    actions)))
+      (when action
+        (eglot--dcase action
+          (((Command) command arguments)
+           (eglot-execute-command server (intern command) arguments))
+          (((CodeAction) edit command)
+           (when edit (eglot--apply-workspace-edit edit))
+           (when command
+             (eglot--dbind ((Command) command arguments) command
+               (eglot-execute-command server (intern command) arguments))))))))
+
+  (defun eglot-organize-imports-on-save ()
+    (defun eglot-organize-imports-nosignal ()
+      "Run eglot-organize-imports, but demote errors to messages."
+      ;; Demote errors to work around
+      ;; https://github.com/joaotavora/eglot/issues/411#issuecomment-749305401
+      ;; so that we do not prevent subsequent save hooks from running
+      ;; if we encounter a spurious error.
+      (with-demoted-errors "Error: %s" (eglot-organize-imports)))
+    (add-hook 'before-save-hook #'eglot-organize-imports-on-save))
+
+  (add-hook 'go-mode-hook #'eglot-organize-imports-on-save)
+
   :bind
   (("C-c C-r" . eglot-rename)
    ("C-c C-c" . eglot-help-at-point))
