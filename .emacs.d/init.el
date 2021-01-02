@@ -1742,6 +1742,13 @@
   :hook
   (go-mode . eglot-ensure))
 
+(use-package lice
+  :config
+  (define-derived-mode license-mode fundamental-mode "License"
+  "Major mode for editing LICENSE files."
+  (setq comment-start nil))
+  (add-to-list 'auto-mode-alist '("LICENSE\\'" . license-mode)))
+
 (use-package prescient
   :config (prescient-persist-mode +1))
 
