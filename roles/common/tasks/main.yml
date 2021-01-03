@@ -63,6 +63,14 @@
     state: link
     force: true
   with_items: "{{ dotfiles.files }}"
+- name: create gcal2org container with cron
+  # you need to have ran this before to do the initial authentication
+  cron:
+    name: "create gcal2org container"
+    user: tj
+    minute: "*/15"
+    job: docker run -it -u 1000 -v ~/.gcal2org:/data -v ~/agenda.org:/agenda.org -e GCAL2ORG_CREDENTIALS=/data/credentials.json -e GCAL2ORG_TOKEN_PATH=/data/token.json -e GCAL2ORG_AGENDA_PATH=/agenda.org travisjeffery/gcal2org:1.0.4
+# following tasks require sync_dir
 - name: find org files
   find:
     paths: "{{ sync_dir }}"
