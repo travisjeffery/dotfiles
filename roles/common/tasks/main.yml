@@ -20,13 +20,13 @@
       - ttf-roboto-mono
       - ttf-fira-code
       - libnotify
+      - chicken
     state: present
 - name: install rust
   shell: "{{ item }}"
   with_items:
     - rustup default nightly
     - rustup component add rust-src
-    - cargo +nightly install racer
 - name: make zsh default shell
   shell: chsh -s /bin/zsh tj
   tags: shellchange
@@ -63,8 +63,13 @@
     state: link
     force: true
   with_items: "{{ dotfiles.files }}"
+- name: stat gcal2org token
+  stat:
+    path: "{{ ansible_env.HOME }}/.gcal2org/token.json"
+  register: gcal2org_token
 - name: create gcal2org container with cron
   # you need to have ran this before to do the initial authentication
+  when: gcal2org_token.stat.exists
   cron:
     name: "create gcal2org container"
     user: tj
