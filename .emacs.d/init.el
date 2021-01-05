@@ -1383,6 +1383,10 @@
   :config (volatile-highlights-mode +1))
 
 (use-package geiser
+  :config
+  (setq geiser-mode-start-repl-p t)
+  (setq geiser-default-implementation 'chicken)
+  (setq geiser-chicken-binary "chicken-csi")
   :hook (geiser-repl-mode . smartparens-strict-mode))
 
 (use-package pcmpl-args)
@@ -1741,6 +1745,16 @@
    ("C-c C-c" . eglot-help-at-point))
   :hook
   (go-mode . eglot-ensure))
+
+(use-package slime
+  :config
+  (require 'slime-asdf)
+  (load (expand-file-name "/usr/lib/quicklisp/slime-helper.el"))
+  (setq inferior-lisp-program "sbcl")
+  (setq slime-lisp-implementations '((sbcl ("/usr/bin/sbcl"))))
+  :mode "\\.asd\\'"
+  :hook
+  (lisp-mode . slime-mode))
 
 (use-package lice
   :config
