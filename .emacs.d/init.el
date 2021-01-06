@@ -245,6 +245,8 @@
     (setq-local word-wrap nil))
   :hook (dired-toggle-mode . tj-dired-toggle-mode-hook))
 
+(use-package dired-hacks)
+
 (use-package yasnippet
   :diminish
   :config (yas-global-mode))
