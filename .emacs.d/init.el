@@ -645,9 +645,8 @@
 (use-package savehist
   :config
   (setq
-   savehist-additional-variables
    ;; search entries
-   '(search-ring regexp-search-ring)
+   savehist-additional-variables '(search-ring regexp-search-ring)
    ;; save every minute
    savehist-autosave-interval 60
    ;; keep the home clean
@@ -657,8 +656,7 @@
 (use-package recentf
   :config
   (setq
-   recentf-save-file
-   (expand-file-name "recentf" savefile-dir)
+   recentf-save-file (expand-file-name "recentf" savefile-dir)
    recentf-max-saved-items 500
    recentf-max-menu-items 15
    ;; disable recentf-cleanup on Emacs start, because it can cause
@@ -791,7 +789,7 @@
   ;; current subdir, instead of the current subdir of this dired buffer
   (setq dired-dwim-target t)
 
-  ;; enable some really cool extensions like C-x C-j(dired-jump)
+  ;; enable some really cool extensions like C-x C-j (dired-jump)
   (require 'dired-x)
   (ignore-errors (unbind-key "M-s f" dired-mode-map))
   (defadvice dired-omit-startup
@@ -887,7 +885,6 @@
   :mode ("\\.bats$" . sh-mode))
 
 (use-package anzu
-
   :diminish
   :bind (("M-%" . anzu-query-replace-regexp) ("C-M-%" . anzu-query-replace))
   :hook (prog-mode . anzu-mode))
