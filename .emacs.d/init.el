@@ -26,6 +26,13 @@
 
 (use-package aurel)
 
+;; add header and footers to files.
+(use-package header2)
+
+;; mainly use these two to hide regions matching regexps
+(use-package zones)
+(use-package isearch-prop)
+
 (eval-and-compile
   (let ((lisp-dir (format "%s%s" user-emacs-directory "lisp")))
     (setq load-path
@@ -40,8 +47,8 @@
 
 (use-package sqlformat
   :config
-  (setq sqlformat-command 'pgformatter)
-  (setq sqlformat-args '("-B" "-e")))
+  (setq sqlformat-command 'pgformatter
+        sqlformat-args '("-B" "-e")))
 
 (eval-and-compile
   (mapc
@@ -110,17 +117,17 @@
 (use-package dashboard
   :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
   :config
-  (setq dashboard-banner-logo-title "Do the work.")
-  (setq dashboard-startup-banner nil)
+  (setq dashboard-banner-logo-title "Do the work."
+        dashboard-startup-banner nil)
   (dashboard-setup-startup-hook))
 
 (use-package magit
   :config
   (add-hook 'after-save-hook 'magit-after-save-refresh-status)
   (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
-  (setq vc-follow-symlinks t)
-  (setq magit-refresh-status-buffer t)
-
+  (setq vc-follow-symlinks t
+        magit-refresh-status-buffer t)
+  
   (magit-define-section-jumper
     magit-jump-to-recent-commits
     "Recent commits"
@@ -241,11 +248,18 @@
   :preface
   (defun tj-dired-toggle-mode-hook ()
     (interactive)
-    (setq-local visual-line-fringe-indicators '(nil right-curly-arrow))
-    (setq-local word-wrap nil))
+    (setq-local visual-line-fringe-indicators '(nil right-curly-arrow)
+                word-wrap nil))
   :hook (dired-toggle-mode . tj-dired-toggle-mode-hook))
 
 (use-package dired-hacks)
+
+(use-package pdf-tools
+  :init
+  (setq pdf-view-use-scaling t
+        pdf-view-use-imagemagick nil
+        doc-view-resolution 1000)
+  :config (pdf-tools-install))
 
 (use-package yasnippet
   :diminish
@@ -320,8 +334,8 @@
     (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
   (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
   :init
-  (setq ediff-split-window-function 'split-window-vertically)
-  (setq ediff-merge-split-window-function 'split-window-vertically)
+  (setq ediff-split-window-function 'split-window-vertically
+        ediff-merge-split-window-function 'split-window-vertically)
   :bind
   (("C-c = b" . ediff-buffers)
    ("C-c = f" . ediff-files)
@@ -450,8 +464,8 @@
     (setq-local project-find-functions (list #'tj-try-go-mod #'project-try-vc)))
   
   (add-hook 'go-mode-hook #'tj-go-project-setup)
-  (setq gofmt-command "goimports")
-  (setq tab-width 8)
+  (setq gofmt-command "goimports"
+        tab-width 8)
   (setq-local compilation-read-command nil)
   
   (defun tj-turn-on-gofmt-before-save ()
@@ -536,12 +550,12 @@
   :after ripgrep
   :commands (projectile-switch-project projectile-commander)
   :config
-  (setq projectile-enable-caching t)
-  (setq projectile-indexing-method 'alien)
-  (setq projectile-mode-line nil)
-  (setq projectile-sort-order 'modification-time)
-
-  (setq projectile-switch-project-action #'projectile-commander)
+  (setq projectile-enable-caching t
+        projectile-indexing-method 'alien
+        projectile-mode-line nil
+        projectile-sort-order 'modification-time
+        projectile-switch-project-action #'projectile-commander)
+  
   (add-to-list 'projectile-globally-ignored-directories "Godeps/_workspace")
   (add-to-list 'projectile-globally-ignored-directories "vendor")
   (add-to-list 'projectile-globally-ignored-directories "_build")
@@ -585,32 +599,30 @@
 (use-package uniquify
   :straight (:type built-in)
   :config
-  (setq uniquify-buffer-name-style 'forward)
-  (setq uniquify-separator "/")
-  ;; rename after killing uniquified
-  (setq uniquify-after-kill-buffer-p t)
-  ;; don't muck with special buffers
-  (setq uniquify-ignore-buffers-re "^\\*"))
+  (setq uniquify-buffer-name-style 'forward
+        uniquify-separator "/"
+        ;; rename after killing uniquified
+        uniquify-after-kill-buffer-p t
+        ;; don't muck with special buffers
+        uniquify-ignore-buffers-re "^\\*"))
 
 (use-package tj
-  :after elegance
+  :after elegance projectile ag dired s
   :straight (:type built-in)
   :config
-  (setq tj-font-family "Hack")
-  (setq tj-font-size (if (string-equal "laptop" (system-name))
-                         12.0
-                       10.0))
-  (setq tj-font
-	(font-spec :family tj-font-family
-                   :size tj-font-size))
-  (setq default-frame-alist
-        (append (list (cons 'width  72)
-                      (cons 'height 40)
-                      (cons 'vertical-scroll-bars nil)
-                      (cons 'internal-border-width 24)
-                      (cons 'font (format "%s %d"
-                                          tj-font-family
-                                          tj-font-size)))))
+  (setq tj-font-family "Hack"
+         tj-font-size (if (string-equal "laptop" (system-name))
+                          12.0
+                        10.0)
+         tj-font (font-spec :family tj-font-family
+                            :size tj-font-size)
+         default-frame-alist (append (list (cons 'width  72)
+                                           (cons 'height 40)
+                                           (cons 'vertical-scroll-bars nil)
+                                           (cons 'internal-border-width 24)
+                                           (cons 'font (format "%s %d"
+                                                               tj-font-family
+                                                               tj-font-size)))))
   (set-frame-font tj-font nil t))
 
 (use-package saveplace
@@ -661,8 +673,10 @@
 
 (use-package highlight-symbol
   :diminish
-  :config (highlight-symbol-mode)
-  :bind (("M-p" . highlight-symbol-prev) ("M-n" . highlight-symbol-next)))
+  :config (setq highlight-symbol-idle-delay 0.1)
+  :bind (("M-p" . highlight-symbol-prev) ("M-n" . highlight-symbol-next))
+  :hook
+  (prog-mode . highlight-symbol-mode))
 
 (use-package diffview
   :commands (diffview-current diffview-region diffview-message))
@@ -1611,8 +1625,8 @@
   :bind (:map rust-mode-map ("C-c C-c" . rust-run))
   :config
   (defun tj-rust-hook ()
-    (setq rust-format-on-save t)
-    (setq indent-tabs-mode nil))
+    (setq rust-format-on-save t
+          indent-tabs-mode nil))
   :hook ((rust-mode . tj-rust-hook)))
 
 (use-package flycheck-vale
@@ -1752,8 +1766,8 @@
   :config
   (require 'slime-asdf)
   (load (expand-file-name "/usr/lib/quicklisp/slime-helper.el"))
-  (setq inferior-lisp-program "sbcl")
-  (setq slime-lisp-implementations '((sbcl ("/usr/bin/sbcl"))))
+  (setq inferior-lisp-program "sbcl"
+        slime-lisp-implementations '((sbcl ("/usr/bin/sbcl"))))
   :mode "\\.asd\\'"
   :hook
   (lisp-mode . slime-mode))
