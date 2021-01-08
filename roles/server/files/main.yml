@@ -61,6 +61,7 @@ spec:
   tls:
     - secretName: haus-travisjeffery-com-tls
       hosts:
+        - 'haus.travisjeffery.com'
         - '*.haus.travisjeffery.com'
   rules:
     - host: adguard.haus.travisjeffery.com
@@ -96,6 +97,40 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: showrss-to-magnet
+  namespace: homelab
+  labels:
+    app.kubernetes.io/name: showrss-to-magnet
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: showrss-to-magnet
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: showrss-to-magnet
+    spec:
+      containers:
+        - name: showrss-to-magnet
+          image: travisjeffery/showrss-to-magnet:0.0.7
+          args:
+            - --rss
+            - http://showrss.info./user/244543.rss?magnets=true&namespaces=true&name=null&quality=null&re=null
+          env:
+            - name: RUST_BACKTRACE
+              value: "1"
+          volumeMounts:
+            - mountPath: /dst
+              name: dst
+      volumes:
+        - name: dst
+          hostPath:
+            path: /mnt/data/Downloads/Magnets
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: plex
   namespace: homelab
   labels:
@@ -113,7 +148,7 @@ spec:
       hostNetwork: true
       containers:
         - name: plex
-          image: linuxserver/plex
+          image: linuxserver/plex:version-1.21.0.3711-b509cc236
           env:
             - name: PUID
               value: "1000"
@@ -178,7 +213,9 @@ spec:
               value: "1000"
             - name: PGID
               value: "1000"
-          image: linuxserver/deluge
+            - name: DELUGE_LOGLEVEL
+              value: "DEBUG"
+          image: linuxserver/deluge:version-2.0.3-2201906121747ubuntu18.04.1
           volumeMounts:
             - mountPath: /config
               name: config

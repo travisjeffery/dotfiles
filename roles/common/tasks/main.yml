@@ -20,7 +20,8 @@
       - ttf-roboto-mono
       - ttf-fira-code
       - libnotify
-      - chicken
+      - jq
+      - xsel
     state: present
 - name: install rust
   shell: "{{ item }}"
