@@ -33,6 +33,8 @@
 (use-package zones)
 (use-package isearch-prop)
 
+(require 'f)
+
 (eval-and-compile
   (let ((lisp-dir (format "%s%s" user-emacs-directory "lisp")))
     (setq load-path
@@ -249,7 +251,8 @@
                 word-wrap nil))
   :hook (dired-toggle-mode . tj-dired-toggle-mode-hook))
 
-(use-package dired-hacks)
+(use-package dired-narrow)
+(use-package dired-filter)
 
 (use-package pdf-tools
   :init
@@ -314,9 +317,6 @@
   (add-hook 'restclient-response-loaded-hook 'tj-response-loaded-hook)
   (defun tj-restclient-hook () (setq-local indent-line-function 'js-indent-line))
   (add-hook 'restclient-mode-hook 'tj-restclient-hook))
-
-(use-package osx-clipboard
-  :config (osx-clipboard-mode))
 
 (use-package ediff
   :config
@@ -525,7 +525,6 @@
 (use-package selected)
 
 (use-package winner
-
   :diminish
   :config (winner-mode +1)
   :bind (("M-[" . winner-undo) ("M-]" . winner-redo)))
@@ -602,25 +601,6 @@
         uniquify-after-kill-buffer-p t
         ;; don't muck with special buffers
         uniquify-ignore-buffers-re "^\\*"))
-
-(use-package tj
-  :after elegance projectile ag dired s
-  :straight (:type built-in)
-  :config
-  (setq tj-font-family "Hack"
-         tj-font-size (if (string-equal "laptop" (system-name))
-                          12.0
-                        10.0)
-         tj-font (font-spec :family tj-font-family
-                            :size tj-font-size)
-         default-frame-alist (append (list (cons 'width  72)
-                                           (cons 'height 40)
-                                           (cons 'vertical-scroll-bars nil)
-                                           (cons 'internal-border-width 24)
-                                           (cons 'font (format "%s %d"
-                                                               tj-font-family
-                                                               tj-font-size)))))
-  (set-frame-font tj-font nil t))
 
 (use-package saveplace
   :diminish
@@ -775,7 +755,6 @@
     (goto-char (point-max))
     (dired-next-line -1))
   (define-key dired-mode-map (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom)
-
 
   ;; dired - reuse current buffer by pressing 'a'
   (put 'dired-find-alternate-file 'disabled nil)
@@ -1098,26 +1077,26 @@
   :commands (alert)
   :init (setq alert-default-style 'notifier))
 
-(use-package ert)
+(use-package ert
+  :defer t
+  :bind
+  ((:map ert-results-mode-map
+         ("o" . #'ace-link-help))))
 
 (use-package ace-link
   :after ert
-  :defer 10
   :config
   (ace-link-setup-default)
   :bind (("C-c M-o" . #'ace-link-addr)
          :map org-mode-map
          ("C-c C-o" . #'ace-link-org)
          :map gnus-summary-mode-map
-         ("M-o" . #'ace-link-gnus)
-         :map ert-results-mode-map
-         ("o" . #'ace-link-help)))
+         ("M-o" . #'ace-link-gnus)))
 
 (use-package ace-mc
   :bind (("C-; h" . ace-mc-add-multiple-cursors) ("C-; M-h" . ace-mc-add-single-cursor)))
 
 (use-package multiple-cursors
-  :defer 5
   :after selected
   :preface
   (defun reactivate-mark ()
@@ -1234,13 +1213,6 @@
   (with-eval-after-load 'rust-mode
     (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
 
-(use-package racer
-  :config (setq company-tooltip-align-annotations t)
-  :hook
-  (rust-mode . racer-mode)
-  (racer-mode . eldoc-mode)
-  (racer-mode . company-mode))
-
 (use-package crux
   :bind
   (("C-c d" . crux-duplicate-current-line-or-region)
@@ -1286,8 +1258,7 @@
   :config (which-key-mode +1))
 
 (setq
- backup-by-copying
- t
+ backup-by-copying t
  delete-old-versions t
  kept-new-versions 10
  kept-old-versions 2
@@ -1619,6 +1590,9 @@
   :after (vterm))
 
 (use-package rust-mode
+  :ensure-system-package ((rls . "rustup component add rls")
+                          (rust-analysis . "rustup component add rust-analysis")
+                          (rust-src . "rustup component add rust-src"))
   :bind (:map rust-mode-map ("C-c C-c" . rust-run))
   :config
   (defun tj-rust-hook ()
@@ -1666,6 +1640,13 @@
 (use-package selectrum
   :config
   (selectrum-mode +1)
+
+  (defun recentf-open-files+ ()
+    "Use `completing-read' to open a recent file."
+    (interactive)
+    (let ((files (mapcar 'abbreviate-file-name recentf-list)))
+      (find-file (completing-read "Find recent file: " files nil t))))
+  
   (defun yank-pop+ (&optional arg)
     "Call `yank-pop' with ARG when appropriate, or offer completion."
     (interactive "*P")
@@ -1690,6 +1671,7 @@
         (if (eq last-command 'yank)
             (yank-pop n) (insert-for-yank text)))))
   :bind (("C-x C-z" . #'selectrum-repeat)
+         ("C-x C-r" . recentf-open-files+)
          ("M-y" . yank-pop+)))
 
 (defun tj-set-face (face style)
@@ -1757,7 +1739,8 @@
   (("C-c C-r" . eglot-rename)
    ("C-c C-c" . eglot-help-at-point))
   :hook
-  (go-mode . eglot-ensure))
+  (go-mode . eglot-ensure)
+  (rust-mode . eglot-ensure))
 
 (use-package slime
   :config
@@ -1782,9 +1765,30 @@
 (use-package selectrum-prescient
   :config (selectrum-prescient-mode +1))
 
+(defun tj-after-init ()
+  (use-package tj
+    :after dired projectile s
+    :straight (:type built-in)
+    :config
+    (setq tj-font-family "Hack"
+          tj-font-size (if (string-equal "laptop" (system-name))
+                           12.0
+                         10.0)
+          tj-font (font-spec :family tj-font-family
+                             :size tj-font-size)
+          default-frame-alist (append (list (cons 'width  72)
+                                            (cons 'height 40)
+                                            (cons 'vertical-scroll-bars nil)
+                                            (cons 'internal-border-width 24)
+                                            (cons 'font (format "%s %d"
+                                                                tj-font-family
+                                                                tj-font-size)))))
+    (set-frame-font tj-font nil t)))
+
 (use-package server
   :no-require
-  :hook (after-init . server-start))
+  :hook ((after-init . server-start)
+         (after-init . tj-after-init)))
 
 (put 'erase-buffer 'disabled nil)
 (put 'downcase-region 'disabled nil)
