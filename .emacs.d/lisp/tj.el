@@ -6,7 +6,7 @@
 ;; Maintainer: 
 ;; Created: Wed Jan  6 21:12:10 2021 (-0500)
 ;; Version: 
-;; Package-Requires: ((projectile) (ag) (dired) (s))
+;; Package-Requires: ((projectile) (dired) (s))
 ;; Last-Updated: 
 ;;           By: 
 ;;     Update #: 0
@@ -46,7 +46,6 @@
 ;;; Code:
 
 (require 'projectile)
-(require 'ag)
 (require 'dired)
 (require 's)
 
