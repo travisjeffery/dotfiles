@@ -104,6 +104,7 @@
   find:
     paths: "{{ sync_dir }}"
     hidden: true
+    file_type: any
     excludes:
       - ".stfolder"
   register: homedirs
