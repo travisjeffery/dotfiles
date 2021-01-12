@@ -918,6 +918,7 @@
   :config (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 
 (use-package markdown-mode
+  :defer 0
   :bind (:map markdown-mode-map ("C-c C-d" . nil))
   :config
   (unless (executable-find "pandoc")
@@ -1608,6 +1609,7 @@
   :bind (:map proced-mode-map ("/" . proced-narrow)))
 
 (use-package mw-thesaurus
+  :after markdown-mode
   :bind (:map markdown-mode-map ("C-c C-c d" . mw-thesaurus-lookup-at-point)))
 
 (use-package zoom
@@ -1767,7 +1769,7 @@
 
 (defun tj-after-init ()
   (use-package tj
-    :after dired projectile s
+    :after dired projectile s markdown-mode
     :straight (:type built-in)
     :config
     (setq tj-font-family "Hack"

@@ -6,7 +6,7 @@
 ;; Maintainer: 
 ;; Created: Wed Jan  6 21:12:10 2021 (-0500)
 ;; Version: 
-;; Package-Requires: ((projectile) (dired) (s))
+;; Package-Requires: ((projectile) (dired) (s) (markdown-mode))
 ;; Last-Updated: 
 ;;           By: 
 ;;     Update #: 0
