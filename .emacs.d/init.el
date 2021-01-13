@@ -22,6 +22,15 @@
 (use-package use-package-ensure-system-package
   :straight t)
 
+(use-package no-littering
+  :config
+  (add-to-list 'recentf-exclude no-littering-var-directory)
+  (add-to-list 'recentf-exclude no-littering-etc-directory)
+  (setq auto-save-file-name-transforms
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (setq backup-directory-alist
+        `((".*" . ,(no-littering-expand-var-file-name "backup/")))))
+
 (use-package f)
 
 (use-package aurel)
@@ -254,12 +263,12 @@
 (use-package dired-narrow)
 (use-package dired-filter)
 
-(use-package pdf-tools
-  :init
-  (setq pdf-view-use-scaling t
-        pdf-view-use-imagemagick nil
-        doc-view-resolution 1000)
-  :config (pdf-tools-install))
+;; (use-package pdf-tools
+;;   :init
+;;   (setq pdf-view-use-scaling t
+;;         pdf-view-use-imagemagick nil
+;;         doc-view-resolution 1000)
+;;   :config (pdf-tools-install))
 
 (use-package yasnippet
   :diminish
@@ -605,7 +614,9 @@
 (use-package saveplace
   :diminish
   :straight (:type built-in)
-  :config (defconst savefile-dir (expand-file-name "savefile" user-emacs-directory))
+  :config
+
+  (defconst savefile-dir (expand-file-name "savefile" no-littering-var-directory))
 
   ;; create the savefile dir if it doesn't exist
   (unless (file-exists-p savefile-dir)
@@ -1573,27 +1584,25 @@
 (use-package kubernetes
   :commands (kubernetes-overview))
 
-(use-package vterm
-  :custom (vterm-install t)
-  :config
-  (setq vterm-buffer-name-string "*vterm*")
-  (defun tj-vterm (title)
-    (interactive "sTitle: ")
-    (vterm (format "*%s*" title)))
-  (defun vterm--rename-buffer-as-title (title)
-    (when (ignore-errors (file-directory-p title))
-      (cd-absolute title))
-    (rename-buffer (format "term %s" title)))
-  (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
-  :bind (:map vterm-mode-map ("M-y" . vterm-yank)))
+;; (use-package vterm
+;;   :custom (vterm-install t)
+;;   :config
+;;   (setq vterm-buffer-name-string "*vterm*")
+;;   (defun tj-vterm (title)
+;;     (interactive "sTitle: ")
+;;     (vterm (format "*%s*" title)))
+;;   (defun vterm--rename-buffer-as-title (title)
+;;     (when (ignore-errors (file-directory-p title))
+;;       (cd-absolute title))
+;;     (rename-buffer (format "term %s" title)))
+;;   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
+;;   :bind (:map vterm-mode-map ("M-y" . vterm-yank)))
 
-(use-package vterm-toggle
-  :after (vterm))
+;; (use-package vterm-toggle
+;;   :after (vterm))
 
 (use-package rust-mode
-  :ensure-system-package ((rls . "rustup component add rls")
-                          (rust-analysis . "rustup component add rust-analysis")
-                          (rust-src . "rustup component add rust-src"))
+  :ensure-system-package ((rls . "rustup component add rls"))
   :bind (:map rust-mode-map ("C-c C-c" . rust-run))
   :config
   (defun tj-rust-hook ()

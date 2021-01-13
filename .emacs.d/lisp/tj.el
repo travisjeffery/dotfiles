@@ -116,7 +116,7 @@
 
       ;; store all backup and autosave files in the tmp dir
       backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+      
       markdown-command "multimarkdown"
       gc-cons-threshold 300000000)
 
