@@ -84,7 +84,7 @@
               (("C-/" . nil))))
 
 (use-package visual-fill-column
-  :config (add-hook 'markdown-mode-hook 'visual-line-mode))
+  :config (add-hook 'text-mode-hook 'visual-line-mode))
 
 (use-package lisp-mode
   :straight (:type built-in)
@@ -398,11 +398,13 @@
     'company
   '(define-key company-active-map (kbd "M-h") #'company-quickhelp-manual-begin))
 
-(use-package eldoc :diminish)
+(use-package eldoc :diminish
+  :bind
+  (("C-c C-c" . eldoc)))
 
 (use-package go-guru
   :after go-mode
-  :ensure-system-package ((gurr . "go get -u golang.org/x/tools/cmd/guru"))
+  :ensure-system-package ((guru . "go get -u golang.org/x/tools/cmd/guru"))
   :hook (go-mode . go-guru-hl-identifier-mode))
 
 (use-package godoctor
@@ -415,7 +417,7 @@
   :after go-mode)
 
 (use-package go-errcheck
-  :ensure-system-package ((errcheck . "go get -u github.com/kisielk/errcheck"))
+  :ensure-system-package ((go-errcheck . "go get -u github.com/kisielk/errcheck"))
   :after go-mode-abbrev-table
   :config
   (defun tj-go-errcheck ()
@@ -424,8 +426,9 @@
       (go-errcheck nil nil nil))))
 
 (use-package go-mode
-  :ensure-system-package ((goimports . "go get golang.org/x/tools/cmd/goimports")
-                          (gopls . "go get golang.org/x/tools/gopls@latest"))
+  :ensure-system-package ((goimports . "go install golang.org/x/tools/cmd/goimports@latest")
+                          (golint . "go install golang.org/x/lint/golint@latest")
+                          (gopls . "go install golang.org/x/tools/gopls@latest"))
   :bind
   (:map
    go-mode-map
@@ -1706,6 +1709,8 @@
   (set-face 'font-lock-function-name-face nil)
   (set-face 'face-popout 'face-strong))
 
+
+
 (use-package eglot
   :config
   ;; eglot-organize-imports is hopefully a temporary stopgap until
@@ -1747,8 +1752,7 @@
   (add-hook 'go-mode-hook #'eglot-organize-imports-on-save)
 
   :bind
-  (("C-c C-r" . eglot-rename)
-   ("C-c C-c" . eglot-help-at-point))
+  (("C-c C-r" . eglot-rename))
   :hook
   (go-mode . eglot-ensure)
   (rust-mode . eglot-ensure))
