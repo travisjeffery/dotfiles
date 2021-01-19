@@ -39,6 +39,8 @@ kind: Service
 metadata:
   name: adguard
   namespace: homelab
+  annotations:
+    external-dns.alpha.kubernetes.io/access: private
   labels:
     app.kubernetes.io/name: adguard
 spec:
@@ -62,7 +64,10 @@ spec:
     - secretName: haus-travisjeffery-com-tls
       hosts:
         - 'haus.travisjeffery.com'
-        - '*.haus.travisjeffery.com'
+        - 'adguard.haus.travisjeffery.com'
+        - 'deluge.haus.travisjeffery.com'
+        - 'plex.haus.travisjeffery.com'
+        - 'syncthing.haus.travisjeffery.com'
   rules:
     - host: adguard.haus.travisjeffery.com
       http:
@@ -179,6 +184,8 @@ kind: Service
 metadata:
   name: plex
   namespace: homelab
+  annotations:
+    external-dns.alpha.kubernetes.io/access: private
   labels:
     app.kubernetes.io/name: plex
 spec:
@@ -234,6 +241,8 @@ kind: Service
 metadata:
   name: deluge
   namespace: homelab
+  annotations:
+    external-dns.alpha.kubernetes.io/access: private
   labels:
     app.kubernetes.io/name: deluge
 spec:
@@ -284,6 +293,8 @@ kind: Service
 metadata:
   name: syncthing
   namespace: homelab
+  annotations:
+    external-dns.alpha.kubernetes.io/access: private
   labels:
     app.kubernetes.io/name: syncthing
 spec:

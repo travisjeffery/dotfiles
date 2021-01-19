@@ -9,8 +9,10 @@ Installation would go:
 ``` sh
 $ git clone git://github.com/travisjeffery/dotfiles.git && 
     cd dotfiles && # delete sync_dir var &&
+    yay -Sy ansible &&
     ansible-galaxy collection install community.kubernetes &&
     ansible-galaxy collection install ansible.posix &&
+    ansible-galaxy collection install community.general &&
     ansible-playbook -K site.yaml
 ```
 

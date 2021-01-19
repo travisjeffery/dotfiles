@@ -35,10 +35,12 @@ if [ -d "/opt/firefox" ]; then PATH="/opt/firefox:$PATH"; fi
 if [ -d "/opt/goland" ]; then PATH="/opt/goland/bin:$PATH"; fi
 if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
+if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin"; fi
 
 command -v rustup >/dev/null && export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
 
 command -v ruby >/dev/null && PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
+command -v ruby >/dev/null && export GEM_HOME=`ruby -e 'puts Gem.user_dir'`
 
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
@@ -51,13 +53,10 @@ export GZIP='--best --name --verbose'
 export GITHUB_USERNAME=travisjeffery
 export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
-export GEM_HOME=`ruby -e 'puts Gem.user_dir'`
 export PATH=$PATH:$HOME/.gem/bin
 
-if [ ! $(uname -s) = "Darwin" ]; then
-    alias pbcopy='xsel --clipboard --input'
-    alias pbpaste='xsel --clipboard --output'
-fi
+alias pbcopy='xsel --clipboard --input'
+alias pbpaste='xsel --clipboard --output'
 
 command -v hub >/dev/null && eval "$(hub alias -s)"
 
