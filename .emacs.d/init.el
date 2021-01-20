@@ -1283,10 +1283,6 @@
  vc-make-backup-files t
  version-control t)
 
-(defun force-backup-of-buffer () (setq buffer-backed-up nil))
-
-(add-hook 'before-save-hook 'force-backup-of-buffer)
-
 (use-package goto-chg
   :bind (("C-c ." . goto-last-change) ("C-c ," . goto-last-change-reverse)))
 
