@@ -341,7 +341,10 @@
   (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
   :init
   (setq ediff-split-window-function 'split-window-vertically
-        ediff-merge-split-window-function 'split-window-vertically)
+        ediff-merge-split-window-function 'split-window-vertically
+        ediff-window-setup-function 'ediff-setup-windows-plain
+        ediff-diff-options ""
+        ediff-custom-diff-options "-u")
   :bind
   (("C-c = b" . ediff-buffers)
    ("C-c = f" . ediff-files)
