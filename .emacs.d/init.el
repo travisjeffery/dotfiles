@@ -1648,7 +1648,7 @@
 
 (use-package elisp-autofmt
   :straight (:type built-in)
-  :hook (emacs-lisp-mode-hook . (lambda () (elisp-autofmt-save-hook-for-this-buffer))))
+  :hook (emacs-lisp-mode-hook . elisp-autofmt-save-hook-for-this-buffer))
 
 (use-package selectrum
   :config
