@@ -22,6 +22,9 @@
       - libnotify
       - jq
       - xsel
+      - pulseaudio-bluetooth
+      - google-cloud-sdk
+      - azure-cli
     state: present
 - name: install rust
   shell: "{{ item }}"
@@ -117,3 +120,9 @@
     force: true
   with_items: "{{ homedirs.files }}"
   when: sync_dir != ""
+- name: enable and run bluetooth
+  become: true
+  systemd:
+    state: started
+    name: bluetooth
+    enabled: yes
