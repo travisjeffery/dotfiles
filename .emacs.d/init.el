@@ -1785,18 +1785,15 @@
     :straight (:type built-in)
     :config
     (setq tj-font-family "Hack"
-          tj-font-size (if (string-equal "laptop" (system-name))
-                           12.0
-                         10.0)
           tj-font (font-spec :family tj-font-family
-                             :size tj-font-size)
+                             :size (tj-font-size))
           default-frame-alist (append (list (cons 'width  72)
                                             (cons 'height 40)
                                             (cons 'vertical-scroll-bars nil)
                                             (cons 'internal-border-width 24)
                                             (cons 'font (format "%s %d"
                                                                 tj-font-family
-                                                                tj-font-size)))))
+                                                                (tj-font-size))))))
     (set-frame-font tj-font nil t)))
 
 (use-package server

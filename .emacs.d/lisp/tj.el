@@ -116,7 +116,7 @@
 
       ;; store all backup and autosave files in the tmp dir
       backup-directory-alist `((".*" . ,temporary-file-directory))
-      
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
       markdown-command "multimarkdown"
       gc-cons-threshold 300000000)
 
@@ -758,6 +758,39 @@ Otherwise split the current paragraph into one sentence per line."
         (occur (format "\\(%s\\)"
                        (string-join lines "\\|")))))))
 
+(defun tj-font-size ()
+  "Font size for this computer."
+  (interactive)
+  (if (string-equal "laptop" (system-name))
+                           12.0
+                         10.0))
+
+(defun tj/zoom-reset ()
+  "Reset font size."
+  (interactive)
+  (set-face-attribute 'default nil
+                      :height
+                      (+ (face-attribute 'default :height)
+                         (* 10 (tj-font-size)))))
+
+(defun tj-zoom-in ()
+  "Increase font size by 10 points."
+  (interactive)
+  (set-face-attribute 'default nil
+                      :height
+                      (+ (face-attribute 'default :height)
+                         10)))
+
+(defun tj-zoom-out ()
+  "Decrease font size by 10 points."
+  (interactive)
+  (set-face-attribute 'default nil
+                      :height
+                      (- (face-attribute 'default :height)
+                         10)))
+(global-set-key (kbd "C-x C-+") 'tj-zoom-in)
+(global-set-key (kbd "C-x C--") 'tj-zoom-out)
+(global-set-key (kbd "C-x C-0") 'tj-zoom-reset)
 
 (provide 'tj)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
