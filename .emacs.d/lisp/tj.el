@@ -602,8 +602,6 @@ them across multiple lines."
 "
      "")))
 
-;; (define-key proced-mode-map (kbd "/") 'proced-narrow)
-
 (defun tj-arrayify (beg end)
   "Wrap each line from BEG to END in quotes and join them in a line."
   (interactive "r")
@@ -765,7 +763,7 @@ Otherwise split the current paragraph into one sentence per line."
                            12.0
                          10.0))
 
-(defun tj/zoom-reset ()
+(defun tj-zoom-reset ()
   "Reset font size."
   (interactive)
   (set-face-attribute 'default nil

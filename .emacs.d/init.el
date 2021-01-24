@@ -322,7 +322,7 @@
 (use-package restclient
   :mode ("\\.rest\\'" . restclient-mode)
   :config
-  (defun tj-response-loaded-hook () (flycheck-mode -1))
+  (defun tj-response-loaded-hook () (flycheck-mode 0))
   (add-hook 'restclient-response-loaded-hook 'tj-response-loaded-hook)
   (defun tj-restclient-hook () (setq-local indent-line-function 'js-indent-line))
   (add-hook 'restclient-mode-hook 'tj-restclient-hook))
@@ -389,7 +389,6 @@
 
 (use-package diminish
   :demand t)
-
 
 (use-package rjsx-mode
   :config (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode)))
@@ -955,8 +954,8 @@
 (use-package org
   :straight (:type built-in)
   :hook ((org-mode . font-lock-mode)
-         (org-mode . auto-fill-mode)
-         (org-mode . org-indent-mode))
+         (org-mode . visual-line-mode)
+         (org-mode . auto-fill-mode))
   :bind
   (("C-c m c" . org-capture)
    ("C-c m t" . org-todo-list)
@@ -986,6 +985,10 @@
   (setq org-startup-folded nil)
   ;; enable org-indent-mode
   (setq org-startup-indented t)
+  ;; but always to the left always
+  (setq org-indent-indentation-per-level 0)
+  ;; don't hide leading stars
+  (setq org-hide-leading-stars nil)
 
   ;; save clock history across emacs sessions
   (setq org-clock-persist 'history)
@@ -1072,8 +1075,7 @@
            "Journal"
            entry
            (function org-journal-find-location)
-           "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
-          ))))
+           "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))))
 
 (use-package org-wild-notifier
   :config
@@ -1257,13 +1259,13 @@
    ([remap kill-whole-line] . crux-kill-whole-line)
    ("C-c s" . crux-ispell-word-then-abbrev)))
 
-(use-package ctrlf
-  :after elegance
-  :config (ctrlf-mode +1)
-  (setq ctrlf-highlight-current-line nil)
-  (set-face-attribute 'ctrlf-highlight-active nil
-                      :foreground (face-foreground 'face-strong nil t)
-                      :background (face-background 'ctrlf-highlight-passive nil t)))
+;; (use-package ctrlf
+;;   :after elegance
+;;   :config (ctrlf-mode +1)
+;;   (setq ctrlf-highlight-current-line nil)
+;;   (set-face-attribute 'ctrlf-highlight-active nil
+;;                       :foreground (face-foreground 'face-strong nil t)
+;;                       :background (face-background 'ctrlf-highlight-passive nil t)))
 
 (use-package diff-hl
   :config
@@ -1342,8 +1344,8 @@
   :straight (:type built-in)
   :config
   (defun tj-minibuffer-setup-hook ()
-    (smartparens-mode -1)
-    (electric-pair-mode -1)
+    (smartparens-mode 0)
+    (electric-pair-mode 0)
     (subword-mode)
     (setq truncate-lines nil)
     (setq gc-cons-threshold most-positive-fixnum))
@@ -1403,7 +1405,7 @@
 (use-package eshell
   :commands (eshell eshell-command)
   :bind (("C-x m" . eshell))
-  :hook (eshell-mode . (lambda () (yas-minor-mode -1)))
+  :hook (eshell-mode . (lambda () (yas-minor-mode 0)))
   :config
   (defun tj-eshell-prompt ()
     "; ")
@@ -1586,22 +1588,22 @@
 (use-package kubernetes
   :commands (kubernetes-overview))
 
-;; (use-package vterm
-;;   :custom (vterm-install t)
-;;   :config
-;;   (setq vterm-buffer-name-string "*vterm*")
-;;   (defun tj-vterm (title)
-;;     (interactive "sTitle: ")
-;;     (vterm (format "*%s*" title)))
-;;   (defun vterm--rename-buffer-as-title (title)
-;;     (when (ignore-errors (file-directory-p title))
-;;       (cd-absolute title))
-;;     (rename-buffer (format "term %s" title)))
-;;   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
-;;   :bind (:map vterm-mode-map ("M-y" . vterm-yank)))
+(use-package vterm
+  :custom (vterm-install t)
+  :config
+  (setq vterm-buffer-name-string "*vterm*")
+  (defun tj-vterm (title)
+    (interactive "sTitle: ")
+    (vterm (format "*%s*" title)))
+  (defun vterm--rename-buffer-as-title (title)
+    (when (ignore-errors (file-directory-p title))
+      (cd-absolute title))
+    (rename-buffer (format "term %s" title)))
+  (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
+  :bind (:map vterm-mode-map ("M-y" . vterm-yank)))
 
-;; (use-package vterm-toggle
-;;   :after (vterm))
+(use-package vterm-toggle
+  :after (vterm))
 
 (use-package rust-mode
   :ensure-system-package ((rls . "rustup component add rls"))
@@ -1726,17 +1728,17 @@
                      (list :textDocument (eglot--TextDocumentIdentifier))))
            (action (cl-find-if
                     (jsonrpc-lambda (&key kind &allow-other-keys)
-                      (string-equal kind "source.organizeImports" ))
+                                    (string-equal kind "source.organizeImports" ))
                     actions)))
       (when action
         (eglot--dcase action
-          (((Command) command arguments)
-           (eglot-execute-command server (intern command) arguments))
-          (((CodeAction) edit command)
-           (when edit (eglot--apply-workspace-edit edit))
-           (when command
-             (eglot--dbind ((Command) command arguments) command
-               (eglot-execute-command server (intern command) arguments))))))))
+                      (((Command) command arguments)
+                       (eglot-execute-command server (intern command) arguments))
+                      (((CodeAction) edit command)
+                       (when edit (eglot--apply-workspace-edit edit))
+                       (when command
+                         (eglot--dbind ((Command) command arguments) command
+                                       (eglot-execute-command server (intern command) arguments))))))))
 
   (defun eglot-organize-imports-on-save ()
     (defun eglot-organize-imports-nosignal ()
@@ -1769,8 +1771,8 @@
 (use-package lice
   :config
   (define-derived-mode license-mode fundamental-mode "License"
-  "Major mode for editing LICENSE files."
-  (setq comment-start nil))
+    "Major mode for editing LICENSE files."
+    (setq comment-start nil))
   (add-to-list 'auto-mode-alist '("LICENSE\\'" . license-mode)))
 
 (use-package prescient
@@ -1803,5 +1805,4 @@
 
 (put 'erase-buffer 'disabled nil)
 (put 'downcase-region 'disabled nil)
-
 
