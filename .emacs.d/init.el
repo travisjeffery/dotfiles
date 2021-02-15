@@ -23,6 +23,7 @@
   :straight t)
 
 (use-package no-littering
+  :after recentf
   :config
   (add-to-list 'recentf-exclude no-littering-var-directory)
   (add-to-list 'recentf-exclude no-littering-etc-directory)
@@ -78,10 +79,38 @@
   :config (persistent-scratch-autosave-mode 1))
 
 (use-package undo-tree
+  :diminish undo-tree-mode
   :config
   (global-undo-tree-mode +1)
   :bind (:map undo-tree-map
               (("C-/" . nil))))
+
+(use-package projectile
+  :config
+
+  (setq projectile-enable-caching t
+        projectile-indexing-method 'alien
+        projectile-mode-line nil
+        projectile-sort-order 'modification-time
+        projectile-switch-project-action #'projectile-commander)
+  
+  (add-to-list 'projectile-globally-ignored-directories "Godeps/_workspace")
+  (add-to-list 'projectile-globally-ignored-directories "vendor")
+  (add-to-list 'projectile-globally-ignored-directories "_build")
+  (add-to-list 'projectile-globally-ignored-directories "deps")
+  (add-to-list 'projectile-globally-ignored-directories "node_modules")
+  
+  (projectile-global-mode 1)
+
+  (def-projectile-commander-method ?a
+    "Run ripgrep on project."
+    (call-interactively #'projectile-ripgrep))
+  
+  :bind
+  (("C-x p t" . projectile-toggle-between-implementation-and-test)
+   ("C-x p p" . projectile-switch-project)
+   ("C-x p f" . projectile-find-file)
+   ("C-x p i" . projectile-invalidate-cache)))
 
 (use-package visual-fill-column
   :config (add-hook 'text-mode-hook 'visual-line-mode))
@@ -119,8 +148,7 @@
   :after smartparens
   :hook
   ((clojure-mode . eldoc-mode)
-   (inf-clojure-mode . eldoc-mode)
-   (clojure-mode . clj-refactor-mode)))
+   (inf-clojure-mode . eldoc-mode)))
 
 (use-package dashboard
   :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
@@ -205,7 +233,7 @@
 
 (use-package abbrev
   :straight (:type built-in)
-  :diminish
+  :diminish abbrev-mode
   :config
   (setq save-abbrevs 'silently)
   (setq-default abbrev-mode t))
@@ -271,7 +299,7 @@
 ;;   :config (pdf-tools-install))
 
 (use-package yasnippet
-  :diminish
+  :diminish yas-minor-mode
   :config (yas-global-mode))
 
 (use-package auto-yasnippet
@@ -519,7 +547,7 @@
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
             ("func" "^func *\\(.*\\)" 1)))
     (which-function-mode)
-    (tj-turn-on-gofmt-before-save)
+    ;; (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
     (subword-mode)
     (flycheck-mode)
@@ -552,43 +580,15 @@
 
 (use-package embrace
   :config (setq embrace-show-help-p nil)
-  :bind ("C-c M-e" . embrace-commander))
+  :bind ("C-c C-y" . embrace-commander))
 
-(use-package ripgrep)
-
-(use-package projectile
-  :after ripgrep
-  :commands (projectile-switch-project projectile-commander)
+(use-package ripgrep
   :config
-  (setq projectile-enable-caching t
-        projectile-indexing-method 'alien
-        projectile-mode-line nil
-        projectile-sort-order 'modification-time
-        projectile-switch-project-action #'projectile-commander)
-  
-  (add-to-list 'projectile-globally-ignored-directories "Godeps/_workspace")
-  (add-to-list 'projectile-globally-ignored-directories "vendor")
-  (add-to-list 'projectile-globally-ignored-directories "_build")
-  (add-to-list 'projectile-globally-ignored-directories "deps")
-  (add-to-list 'projectile-globally-ignored-directories "node_modules")
-  (projectile-global-mode 1)
-
-  (def-projectile-commander-method ?a
-    "Run ripgrep on project."
-    (call-interactively #'projectile-ripgrep))
-  
+  (setq ripgrep-arguments '("--hidden"))
   :bind
-  (("C-c t" . projectile-toggle-between-implementation-and-test)
-   ("C-c p p" . projectile-switch-project)
-   ("C-c p f" . projectile-find-file)
-   ("C-c p i" . projectile-invalidate-cache)
-   ("C-c C-p" . projectile-test-project)))
+  :bind ("C-c a" . ripgrep-regexp))
 
 (use-package web-beautify)
-
-(use-package deadgrep
-  :config (setq deadgrep-executable "rg")
-  :bind ("C-c a" . deadgrep))
 
 (use-package pt)
 
@@ -1247,7 +1247,7 @@
    ("C-c I" . crux-find-user-init-file)
    ("C-c S" . crux-find-shell-init-file)
    ("s-r" . crux-recentf-find-file)
-   ("s-j" . crux-top-join-line)
+   ("C-S-j" . crux-top-join-line)
    ("C-^" . crux-top-join-line)
    ("C-S-k" . crux-kill-whole-line)
    ("C-k" . kill-line)
@@ -1258,14 +1258,6 @@
    ([(control shift return)] . crux-smart-open-line-above)
    ([remap kill-whole-line] . crux-kill-whole-line)
    ("C-c s" . crux-ispell-word-then-abbrev)))
-
-;; (use-package ctrlf
-;;   :after elegance
-;;   :config (ctrlf-mode +1)
-;;   (setq ctrlf-highlight-current-line nil)
-;;   (set-face-attribute 'ctrlf-highlight-active nil
-;;                       :foreground (face-foreground 'face-strong nil t)
-;;                       :background (face-background 'ctrlf-highlight-passive nil t)))
 
 (use-package diff-hl
   :config
@@ -1311,12 +1303,14 @@
   (require 'smartparens-config)
   (setq sp-ignore-modes-list
         '(minibuffer-inactive-mode eval-expression-minibuffer-setup))
-  :bind
+  :bind*
   (:map
    smartparens-mode-map
    ("M-\"" . (lambda (&optional arg) (interactive "P") (sp-wrap-with-pair "\"")))
    ("M-I" . sp-splice-sexp)
    ("M-(" . sp-wrap-round)
+   ("M-[" . sp-wrap-square)
+   ("C-M-'" . sp-wrap-curly)
    ("C-)" . sp-forward-slurp-sexp)
    ("C-}" . sp-forward-barf-sexp)
    ("C-{" . sp-backward-barf-sexp)
@@ -1331,6 +1325,8 @@
          (emacs-lisp-mode . smartparens-strict-mode)
          (lisp-interaction-mode . smartparens-strict-mode)
          (ielm-mode . smartparens-strict-mode)
+         (clojure-mode . smartparens-strict-mode)
+         (cider-repl-mode . smartparens-strict-mode)
          (lisp-mode . smartparens-strict-mode)
          (scheme-mode . smartparens-strict-mode)
          (eval-expression-minibuffer-setup . smartparens-strict-mode)))
@@ -1495,10 +1491,10 @@
    (lambda ()
      (subword-mode)
      (electric-pair-mode)
+     (c-add-style "tj-protobuf-style" tj-protobuf-style t)
      (setq imenu-generic-expression tj-protobuf-imenu-generic-expression)))
   :config
   (defconst tj-protobuf-style '((c-basic-offset . 2) (indent-tabs-mode . nil)))
-  (c-add-style "tj-protobuf-style" tj-protobuf-style t)
   (setq tj-protobuf-imenu-generic-expression
         '
         (("Message" "^message *\\([a-zA-Z0-9_]+\\)" 1)
@@ -1605,6 +1601,8 @@
 (use-package vterm-toggle
   :after (vterm))
 
+(use-package rainbow-delimiters)
+
 (use-package rust-mode
   :ensure-system-package ((rls . "rustup component add rls"))
   :bind (:map rust-mode-map ("C-c C-c" . rust-run))
@@ -1689,29 +1687,6 @@
          ("C-x C-r" . recentf-open-files+)
          ("M-y" . yank-pop+)))
 
-(defun tj-set-face (face style)
-  "Reset a FACE and make it inherit STYLE."
-  (set-face-attribute face nil
-                      :foreground 'unspecified :background 'unspecified
-                      :family     'unspecified :slant      'unspecified
-                      :weight     'unspecified :height     'unspecified
-                      :underline  'unspecified :overline   'unspecified
-                      :box        'unspecified :inherit    style))
-
-(use-package elegance
-  :requires (org-agenda-property)
-  :straight (:type git :host github :repo "rougier/elegant-emacs" :files ("elegance.el"))
-  :init (setq standard-display-table (make-display-table))
-  :config (elegance-light)
-  (set-default 'cursor-type '(box . 1))
-  (set-face-attribute 'face-strong nil :weight 'bold)
-  (set-face 'font-lock-string-face nil)
-  (set-face 'font-lock-variable-name-face nil)
-  (set-face 'font-lock-function-name-face nil)
-  (set-face 'face-popout 'face-strong))
-
-
-
 (use-package eglot
   :config
   ;; eglot-organize-imports is hopefully a temporary stopgap until
@@ -1748,9 +1723,10 @@
       ;; so that we do not prevent subsequent save hooks from running
       ;; if we encounter a spurious error.
       (with-demoted-errors "Error: %s" (eglot-organize-imports)))
-    (add-hook 'before-save-hook #'eglot-organize-imports-on-save))
+    (add-hook 'before-save-hook #'eglot-organize-imports-on-save)
+    )
 
-  (add-hook 'go-mode-hook #'eglot-organize-imports-on-save)
+  ;; (add-hook 'go-mode-hook #'eglot-organize-imports-on-save)
 
   :bind
   (("C-c C-r" . eglot-rename))
@@ -1778,30 +1754,33 @@
 (use-package prescient
   :config (prescient-persist-mode +1))
 
-(use-package selectrum-prescient
-  :config (selectrum-prescient-mode +1))
+(use-package selectrum-prescient)
 
-(defun tj-after-init ()
-  (use-package tj
-    :after dired projectile s markdown-mode
-    :straight (:type built-in)
-    :config
-    (setq tj-font-family "Hack"
-          tj-font (font-spec :family tj-font-family
-                             :size (tj-font-size))
-          default-frame-alist (append (list (cons 'width  72)
-                                            (cons 'height 40)
-                                            (cons 'vertical-scroll-bars nil)
-                                            (cons 'internal-border-width 24)
-                                            (cons 'font (format "%s %d"
-                                                                tj-font-family
-                                                                (tj-font-size))))))
-    (set-frame-font tj-font nil t)))
+(use-package hideshow
+  :straight (:type built-in)
+  :diminish hs-minor-mode)
+
+(use-package tj
+  :straight (:type built-in)
+  :diminish auto-revert-mode
+  :config
+  (setq comp-async-report-warnings-errors nil)
+  (setq tj-font-family "Hack"
+        tj-font (font-spec :family tj-font-family
+                           :size (tj-font-size))
+        default-frame-alist (append (list (cons 'width  72)
+                                          (cons 'height 40)
+                                          (cons 'vertical-scroll-bars nil)
+                                          (cons 'internal-border-width 24)
+                                          (cons 'font (format "%s %d"
+                                                              tj-font-family
+                                                              (tj-font-size))))))
+  (set-frame-font tj-font nil t)
+  (add-hook 'after-init-hook 'tj-theme))
 
 (use-package server
   :no-require
-  :hook ((after-init . server-start)
-         (after-init . tj-after-init)))
+  :hook ((after-init . server-start)))
 
 (put 'erase-buffer 'disabled nil)
 (put 'downcase-region 'disabled nil)
