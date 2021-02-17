@@ -34,8 +34,6 @@
 
 (use-package f)
 
-(use-package aurel)
-
 ;; add header and footers to files.
 (use-package header2)
 
@@ -603,8 +601,12 @@
     (add-hook hook #'elisp-slime-nav-mode)))
 
 (use-package paren
-  :diminish
-  :config (show-paren-mode +1))
+  :diminish show-paren-mode
+  :config
+  (set-face-attribute 'show-paren-match nil :weight 'bold)
+  (setq show-paren-style 'parenthesis)
+  (setq show-paren-when-point-inside-paren t)
+  (show-paren-mode +1))
 
 (use-package uniquify
   :straight (:type built-in)
@@ -657,7 +659,14 @@
    ;; disable recentf-cleanup on Emacs start, because it can cause
    ;; problems with remote files
    recentf-auto-cleanup 'never)
-  (recentf-mode +1))
+  (recentf-mode +1)
+  :bind
+  (("C-x C-r" . recentf-open-files)))
+
+(use-package icomplete
+  :straight (:type built-in)
+  :config
+  (fido-mode +1))
 
 (use-package windmove
   :config
@@ -1223,6 +1232,7 @@
   (add-hook 'text-mode-hook #'flyspell-mode))
 
 (use-package flycheck
+  :diminish
   :config
   (setq flycheck-check-syntax-automatically '(save mode-enable))
   (setq flycheck-idle-change-delay 4)
@@ -1249,7 +1259,6 @@
    ("s-r" . crux-recentf-find-file)
    ("C-S-j" . crux-top-join-line)
    ("C-^" . crux-top-join-line)
-   ("C-S-k" . crux-kill-whole-line)
    ("C-k" . kill-line)
    ("C-<backspace>" . crux-kill-line-backwards)
    ("s-o" . crux-smart-open-line-above)
@@ -1266,7 +1275,7 @@
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
 (use-package which-key
-  :diminish
+  :diminish which-key-mode
   :config (which-key-mode +1))
 
 (setq
@@ -1310,6 +1319,7 @@
    ("M-I" . sp-splice-sexp)
    ("M-(" . sp-wrap-round)
    ("M-[" . sp-wrap-square)
+   ("C-S-K" . sp-kill-sexp)
    ("C-M-'" . sp-wrap-curly)
    ("C-)" . sp-forward-slurp-sexp)
    ("C-}" . sp-forward-barf-sexp)
@@ -1374,8 +1384,7 @@
 
 ;; temporarily highlight changes from yanking, etc
 (use-package volatile-highlights
-
-  :diminish
+  :diminish volatile-highlights-mode
   :config (volatile-highlights-mode +1))
 
 (use-package geiser
@@ -1624,7 +1633,7 @@
   :bind (:map markdown-mode-map ("C-c C-c d" . mw-thesaurus-lookup-at-point)))
 
 (use-package zoom
-  :diminish
+  :diminish zoom-mode
   :config (zoom-mode t))
 
 (use-package with-editor
@@ -1649,43 +1658,6 @@
 (use-package elisp-autofmt
   :straight (:type built-in)
   :hook (emacs-lisp-mode-hook . elisp-autofmt-save-hook-for-this-buffer))
-
-(use-package selectrum
-  :config
-  (selectrum-mode +1)
-
-  (defun recentf-open-files+ ()
-    "Use `completing-read' to open a recent file."
-    (interactive)
-    (let ((files (mapcar 'abbreviate-file-name recentf-list)))
-      (find-file (completing-read "Find recent file: " files nil t))))
-  
-  (defun yank-pop+ (&optional arg)
-    "Call `yank-pop' with ARG when appropriate, or offer completion."
-    (interactive "*P")
-    (if arg (yank-pop arg)
-      (let* ((old-last-command last-command)
-             (selectrum-should-sort-p nil)
-             (enable-recursive-minibuffers t)
-             (text (completing-read
-                    "Yank: "
-                    (cl-remove-duplicates
-                     kill-ring :test #'string= :from-end t)
-                    nil t nil nil))
-             ;; Find `text' in `kill-ring'.
-             (pos (cl-position text kill-ring :test #'string=))
-             ;; Translate relative to `kill-ring-yank-pointer'.
-             (n (+ pos (length kill-ring-yank-pointer))))
-        (unless (string= text (current-kill n t))
-          (error "Could not setup for `current-kill'"))
-        ;; Restore `last-command' over Selectrum commands.
-        (setq last-command old-last-command)
-        ;; Delegate to `yank-pop' if appropriate or just insert.
-        (if (eq last-command 'yank)
-            (yank-pop n) (insert-for-yank text)))))
-  :bind (("C-x C-z" . #'selectrum-repeat)
-         ("C-x C-r" . recentf-open-files+)
-         ("M-y" . yank-pop+)))
 
 (use-package eglot
   :config
@@ -1723,8 +1695,7 @@
       ;; so that we do not prevent subsequent save hooks from running
       ;; if we encounter a spurious error.
       (with-demoted-errors "Error: %s" (eglot-organize-imports)))
-    (add-hook 'before-save-hook #'eglot-organize-imports-on-save)
-    )
+    (add-hook 'before-save-hook #'eglot-organize-imports-on-save))
 
   ;; (add-hook 'go-mode-hook #'eglot-organize-imports-on-save)
 
@@ -1750,11 +1721,6 @@
     "Major mode for editing LICENSE files."
     (setq comment-start nil))
   (add-to-list 'auto-mode-alist '("LICENSE\\'" . license-mode)))
-
-(use-package prescient
-  :config (prescient-persist-mode +1))
-
-(use-package selectrum-prescient)
 
 (use-package hideshow
   :straight (:type built-in)
