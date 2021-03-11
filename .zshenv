@@ -67,8 +67,8 @@ if type goenv &> /dev/null; then
   eval "$(goenv init -)"
 fi
 
+export PATH="$GOROOT/bin:$PATH"
 export PATH="$GOPATH/bin:$PATH"
-export GO111MODULE=on
 
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
 

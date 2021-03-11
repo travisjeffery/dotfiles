@@ -1039,13 +1039,13 @@ function is a convenience wrapper used by `describe-package-1'."
     (tj-set-face 'diff-refine-added            '(face-salient face-strong))
     (tj-set-face 'diff-refine-changed                         'face-popout)
     (tj-set-face 'diff-refine-removed                          'face-faded)
-    (tj-set-face-attribute     'diff-refine-removed nil :strike-through t))
+    (set-face-attribute     'diff-refine-removed nil :strike-through t))
 
   ;; Term
   (with-eval-after-load 'term
     ;; (setq eterm-256color-disable-bold nil)
     (tj-set-face 'term-bold                                   'face-strong)
-    (tj-set-face-attribute 'term-color-black nil
+    (set-face-attribute 'term-color-black nil
                            :foreground (face-foreground 'default)
                            :background (face-foreground 'default))
     (set-face-attribute 'term-color-white nil

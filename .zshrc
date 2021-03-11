@@ -418,8 +418,6 @@ alias trash="rmtrash"
 alias magit='emacsclient -n -e \(magit-status\)'
 alias wget='noglob wget'
 
-
-
 function git-ignore() {
   local lang=$1
   curl https://raw.githubusercontent.com/github/gitignore/master/$lang.gitignore > .gitignore

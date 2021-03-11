@@ -99,6 +99,11 @@
     state: started
     name: smb
     enabled: yes
+- name: add smb user
+  become: true
+  when: sync_dir != ""
+  shell: "cat {{ sync_dir }}/.smbcredentials | cut -d= -f2 | xargs | read username password && echo -ne \"$password\n$password\n\" | smbpasswd -a -s $username"
+    
 - name: enable and run sshd
   become: true
   systemd:

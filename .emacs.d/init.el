@@ -1,7 +1,6 @@
 (defvar bootstrap-version)
 (let
-    (
-     (bootstrap-file
+    ((bootstrap-file
       (expand-file-name
        "straight/repos/straight.el/bootstrap.el"
        user-emacs-directory))
@@ -36,6 +35,8 @@
 
 ;; add header and footers to files.
 (use-package header2)
+
+
 
 ;; mainly use these two to hide regions matching regexps
 (use-package zones)
@@ -129,6 +130,19 @@
   (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
 
+(use-package browse-kill-ring
+  :config
+  (defun tj-replace-blank-kill (args)
+    (let ((string (car args))
+          (replace (cdr args))
+          (last (car-safe kill-ring)))
+      (when (and last (string-blank-p last))
+        (setq replace t))
+      (list string replace)))
+  (advice-add 'kill-new :filter-args #'tj-replace-blank-kill)
+  :bind
+  (("M-y" . browse-kill-ring)))
+
 (use-package ielm
   :config (add-hook 'ielm-mode-hook #'eldoc-mode))
 
@@ -144,6 +158,9 @@
 
 (use-package clojure-mode
   :after smartparens
+  :after flycheck-clj-kondo
+  :config
+  (setq clojure-indent-style 'always-align)
   :hook
   ((clojure-mode . eldoc-mode)
    (inf-clojure-mode . eldoc-mode)))
@@ -398,6 +415,8 @@
 (use-package gitpatch
   :commands gitpatch-mail)
 
+(use-package flycheck-clj-kondo)
+
 (use-package google-this
   :bind ("C-c /" . google-this-search))
 
@@ -454,6 +473,8 @@
       (go-errcheck nil nil nil))))
 
 (use-package go-mode
+  :init
+  (put 'go-test-args 'safe-local-variable (lambda (_) t))
   :ensure-system-package ((goimports . "go install golang.org/x/tools/cmd/goimports@latest")
                           (golint . "go install golang.org/x/lint/golint@latest")
                           (gopls . "go install golang.org/x/tools/gopls@latest"))
@@ -467,7 +488,8 @@
    ("C-c C-t" . go-test-current-file)
    ("C-c M-t" . go-test-current-test)
    ("C-c C-e" . tj-go-err))
-  :config (setq go-test-args "-timeout 60s -race -v")
+  :config  
+  (setq go-test-args "-timeout 60s -race -v")
   ;; (setq go-test-args "-timeout 60s -race -v -ldflags \"-X github.com/confluentinc/cc-scheduler-service.Environment=devel\"")
   (defun tj-go-err ()
     (interactive)
@@ -545,7 +567,7 @@
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
             ("func" "^func *\\(.*\\)" 1)))
     (which-function-mode)
-    ;; (tj-turn-on-gofmt-before-save)
+    (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
     (subword-mode)
     (flycheck-mode)
@@ -1159,6 +1181,8 @@
 (use-package phi-search
   :bind (:map mc/keymap ("C-r" . phi-search-backward) ("C-s" . phi-search)))
 
+(use-package journalctl-mode)
+
 (use-package ace-jump-mode
   :defer t)
 
@@ -1446,6 +1470,8 @@
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
   (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
 
+(use-package multi-eshell)
+
 (use-package eshell-bookmark
   :after eshell
   :hook (eshell-mode . eshell-bookmark-setup))
@@ -1721,6 +1747,8 @@
     "Major mode for editing LICENSE files."
     (setq comment-start nil))
   (add-to-list 'auto-mode-alist '("LICENSE\\'" . license-mode)))
+
+(use-package restclient)
 
 (use-package hideshow
   :straight (:type built-in)
