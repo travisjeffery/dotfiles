@@ -36,8 +36,6 @@
 ;; add header and footers to files.
 (use-package header2)
 
-
-
 ;; mainly use these two to hide regions matching regexps
 (use-package zones)
 (use-package isearch-prop)
@@ -155,6 +153,8 @@
 (use-package cider)
 
 (use-package org-agenda-property)
+
+(use-package clj-refactor)
 
 (use-package clojure-mode
   :after smartparens
@@ -336,12 +336,21 @@
    ("M-<left>" . smart-backward)
    ("M-<right>" . smart-forward)))
 
-(use-package ibuffer-projectile
-  :hook
-  (ibuffer . (lambda ()
-               (ibuffer-projectile-set-filter-groups)
-               (unless (eq ibuffer-sorting-mode 'alphabetic)
-                 (ibuffer-do-sort-by-alphabetic)))))
+(use-package ibuffer
+  :straight (:type built-in)
+  :config
+  (setq ibuffer-show-empty-filter-groups nil)
+  (setq ibuffer-formats '((mark " "
+                                (name 16 -1)
+                                " " filename)
+                          (mark modified read-only locked " "
+                                (name 18 18 :left :elide)
+                                " "
+                                (size 9 -1 :right)
+                                " "
+                                (mode 16 16 :left :elide)
+                                " " filename-and-process)))
+  (setq ibuffer-saved-filter-groups nil))
 
 (use-package re-builder
   :bind (:map reb-mode-map ("M-%" . reb-query-replace))
@@ -445,7 +454,8 @@
     'company
   '(define-key company-active-map (kbd "M-h") #'company-quickhelp-manual-begin))
 
-(use-package eldoc :diminish
+(use-package eldoc
+  :diminish
   :bind
   (("C-c C-c" . eldoc)))
 
@@ -481,6 +491,7 @@
   :bind
   (:map
    go-mode-map
+   ("C-c C-c" . godoc-at-point)
    ("M-j" . comment-indent-new-line)
    ("M-b" . subword-backward)
    ("M-f" . subword-forward)
@@ -659,18 +670,6 @@
   :hook
   (prog-mode . hs-minor-mode))
 
-(use-package savehist
-  :config
-  (setq
-   savehist-additional-variables
-   ;; search entries
-   '(search-ring regexp-search-ring)
-   ;; save every minute
-   savehist-autosave-interval 60
-   ;; keep the home clean
-   savehist-file (expand-file-name "savehist" savefile-dir))
-  (savehist-mode +1))
-
 (use-package recentf
   :config
   (setq
@@ -684,11 +683,6 @@
   (recentf-mode +1)
   :bind
   (("C-x C-r" . recentf-open-files)))
-
-(use-package icomplete
-  :straight (:type built-in)
-  :config
-  (fido-mode +1))
 
 (use-package windmove
   :config
@@ -1676,11 +1670,10 @@
   :straight (:type built-in))
 
 (use-package shim
-  :commands shim-auto-set
+  :after projectile
   :straight (:type built-in)
-  :config (shim-init-go)
-  :hook (go-mode . shim-auto-set))
-
+  :config (shim-init-go))
+  
 (use-package elisp-autofmt
   :straight (:type built-in)
   :hook (emacs-lisp-mode-hook . elisp-autofmt-save-hook-for-this-buffer))
