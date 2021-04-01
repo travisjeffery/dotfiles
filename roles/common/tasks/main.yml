@@ -14,6 +14,7 @@
       - docker
       - docker-compose
       - zoom
+      - chrony
       - ripgrep
       - rustup
       - cups
@@ -125,4 +126,17 @@
   systemd:
     state: started
     name: bluetooth
+    enabled: yes
+- name: configure chrony
+  become: true
+  file:
+    src: ../files/chrony.conf
+    dest: /etc/chrony.conf
+    state: link
+    force: true
+- name: enable and run chrony
+  become: true
+  systemd:
+    state: started
+    name: chrony
     enabled: yes
