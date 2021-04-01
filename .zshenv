@@ -33,6 +33,7 @@ if [ -d "/opt/idea/bin" ]; then PATH="/opt/idea/bin:$PATH"; fi
 if [ -d "/opt/tfenv/bin" ]; then PATH="/opt/tfenv/bin:$PATH"; fi
 if [ -d "/opt/firefox" ]; then PATH="/opt/firefox:$PATH"; fi
 if [ -d "/opt/goland" ]; then PATH="/opt/goland/bin:$PATH"; fi
+if [ -d "/opt/visualvm" ]; then PATH="/opt/visualvm/bin:$PATH"; fi
 if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
 if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin"; fi
@@ -47,7 +48,6 @@ if [ -f /etc/os-release ]; then source /etc/os-release; fi
 export EDITOR="emacsclient"
 export PAGER=less
 export SHELL=$(which zsh)
-export TZ=EST
 export TERM=xterm-256color
 export GZIP='--best --name --verbose'
 export GITHUB_USERNAME=travisjeffery
