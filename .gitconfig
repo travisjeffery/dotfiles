@@ -59,7 +59,7 @@
 	statusHints = false
 [core]
 	excludesfile = ~/.gitignore-common
-	editor = "emacs -Q"
+	editor = "emacsclient -c"
 	whitespace = warn
 	legacyheaders = false
 	pager = less
