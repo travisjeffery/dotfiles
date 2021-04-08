@@ -1616,7 +1616,7 @@
 (use-package vterm
   :custom (vterm-install t)
   :config
-  (setq vterm-buffer-name-string "*vterm*")
+  (setq vterm-buffer-name-string "*shell*")
   (defun tj-vterm (title)
     (interactive "sTitle: ")
     (vterm (format "*%s*" title)))
