@@ -27,6 +27,12 @@
   (shell-command "go mod graph"))
 
 ;;;###autoload
+(defun go-mod-download ()
+  "Run go mod download"
+  (interactive)
+  (shell-command "go mod download"))
+
+;;;###autoload
 (defun go-mod-init (name)
   "Run go mod init"
   (interactive "sName: ")
