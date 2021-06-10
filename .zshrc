@@ -451,7 +451,7 @@ esac
 
 gam() { "/home/tj/bin/gam/gam" "$@" ; }
 
-vterm_printf(){
+vterm_printf() {
     if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
         # Tell tmux to pass the escape sequences through
         printf "\ePtmux;\e\e]%s\007\e\\" "$1"
