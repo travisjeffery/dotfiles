@@ -349,7 +349,6 @@ alias wodim="wodim driveropts=burnfree"
 # alias yaourt="yaourt --tmp /home/tmp"
 alias display="display -geometry +0+0"
 alias rhino="rlwrap java -jar /usr/share/java/js.jar"
-alias node="env NODE_NO_READLINE=1 rlwrap node"
 alias curl="noglob curl"
 alias wget="noglob wget
 "
@@ -468,3 +467,4 @@ vterm_prompt_end() {
 }
 setopt PROMPT_SUBST
 PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
+

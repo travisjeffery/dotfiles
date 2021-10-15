@@ -70,6 +70,8 @@ fi
 export PATH="$GOROOT/bin:$PATH"
 export PATH="$GOPATH/bin:$PATH"
 
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin" 
+
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
 
 [[ -f $HOME/work.sh ]] && source $HOME/work.sh

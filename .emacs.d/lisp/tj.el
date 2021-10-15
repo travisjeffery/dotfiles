@@ -737,6 +737,13 @@ Otherwise split the current paragraph into one sentence per line."
       (kill-region beg end)
       (insert resulting-text))))
 
+(defun tj-vterm ()
+  "Switch to current vterm buffer if exists or create and switch otherwise."
+  (interactive)
+  (if (get-buffer vterm-buffer-name)
+      (switch-to-buffer vterm-buffer-name)
+    (vterm)))
+
 (defun tj-find-duplicate-lines ()
   "Show all duplicate lines in the current buffer."
   (interactive)
