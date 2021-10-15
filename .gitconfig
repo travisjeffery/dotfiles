@@ -126,3 +126,6 @@
 	keepBackup = false
 [pull]
 	ff = only
+[credential "https://github.com"]
+	helper = 
+	helper = !/home/tj/.local/bin/gh auth git-credential
