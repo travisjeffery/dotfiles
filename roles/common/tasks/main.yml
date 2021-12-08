@@ -4,6 +4,31 @@
   debug: msg="{{ ansible_env.HOME }}"
 - name: playbook dir
   debug: msg="{{ playbook_dir }}"
+- name: install packages
+  become: yes
+  yay:
+    name:
+      - google-chrome
+      - zsh
+      - redshift
+      - docker
+      - docker-compose
+      - zoom
+      - ripgrep
+      - rustup
+      - cups
+      - pgformatter-git
+      - ttf-roboto-mono
+      - ttf-fira-code
+      - libnotify
+      - jq
+      - xsel
+    state: present
+- name: install rust
+  shell: "{{ item }}"
+  with_items:
+    - rustup default nightly
+    - rustup component add rust-src
 - name: make zsh default shell
   shell: chsh -s /bin/zsh tj
   tags: shellchange

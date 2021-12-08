@@ -1,55 +1,3 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: adguard
-  namespace: homelab
-  labels:
-    app.kubernetes.io/name: adguard
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: adguard
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: adguard
-    spec:
-      hostNetwork: true
-      containers:
-        - name: adguard-home
-          ports:
-            - containerPort: 3000
-          image: adguard/adguardhome
-          volumeMounts:
-            - mountPath: /opt/adguardhome/conf
-              name: config
-            - mountPath: /opt/adguardhome/work
-              name: work
-      volumes:
-        - name: config
-          hostPath:
-            path: /home/tj/.local/adguard/config
-        - name: work
-          hostPath:
-            path: /home/tj/.local/adguard/work
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: adguard
-  namespace: homelab
-  annotations:
-    external-dns.alpha.kubernetes.io/access: private
-  labels:
-    app.kubernetes.io/name: adguard
-spec:
-  ports:
-    - port: 80
-      targetPort: 3000
-  selector:
-    app.kubernetes.io/name: adguard
----
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -64,19 +12,10 @@ spec:
     - secretName: haus-travisjeffery-com-tls
       hosts:
         - 'haus.travisjeffery.com'
-        - 'adguard.haus.travisjeffery.com'
         - 'deluge.haus.travisjeffery.com'
         - 'plex.haus.travisjeffery.com'
         - 'syncthing.haus.travisjeffery.com'
   rules:
-    - host: adguard.haus.travisjeffery.com
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: adguard
-              servicePort: 80
-          
     - host: plex.haus.travisjeffery.com
       http:
         paths:
