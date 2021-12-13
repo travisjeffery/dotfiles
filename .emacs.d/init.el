@@ -1778,7 +1778,7 @@
   :straight (:type built-in)
   :diminish auto-revert-mode
   :config
-  (setq comp-async-report-warnings-errors nil)
+  (setq native-comp-async-report-warnings-errors nil)
   (setq tj-font-family "Hack"
         tj-font (font-spec :family tj-font-family
                            :size (tj-font-size))
