@@ -427,7 +427,7 @@ function install-emacs (){
   cd ~/code/emacs && \
     git pull && \
     ./autogen.sh && \
-    ./configure --with-modules --with-mailutils --with-json && \
+    ./configure --with-modules --with-mailutils --with-json --with-native-compilation && \
     make && \
     make install
 }
