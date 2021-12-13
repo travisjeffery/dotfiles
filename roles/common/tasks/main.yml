@@ -4,34 +4,6 @@
   debug: msg="{{ ansible_env.HOME }}"
 - name: playbook dir
   debug: msg="{{ playbook_dir }}"
-- name: install packages
-  become: yes
-  yay:
-    name:
-      - google-chrome
-      - zsh
-      - redshift
-      - docker
-      - docker-compose
-      - zoom
-      - chrony
-      - ripgrep
-      - rustup
-      - cups
-      - ttf-roboto-mono
-      - ttf-fira-code
-      - libnotify
-      - jq
-      - xsel
-      - pulseaudio-bluetooth
-      - google-cloud-sdk
-      - azure-cli
-    state: present
-- name: install rust
-  shell: "{{ item }}"
-  with_items:
-    - rustup default nightly
-    - rustup component add rust-src
 - name: make zsh default shell
   shell: chsh -s /bin/zsh tj
   tags: shellchange
@@ -41,15 +13,6 @@
     name: docker
     state: started
   become: true
-- name: use emacs keybinds
-  lineinfile:
-    dest="{{ item.file }}"
-    regexp="{{ item.line }}"
-    line="{{ item.line }}"
-    state=present
-  with_items:
-    - { line: 'gtk-key-theme-name="Emacs"', file: "{{ ansible_env.HOME }}/.gtkrc-2.0" }
-    - { line: 'gtk-key-theme-name=Emacs', file: "{{ ansible_env.HOME }}/.config/gtk-3.0/settings.ini" }
 - name: clone goenv
   git:
     repo: https://github.com/syndbg/goenv.git
@@ -68,19 +31,6 @@
     state: link
     force: true
   with_items: "{{ dotfiles.files }}"
-- name: stat gcal2org token
-  stat:
-    path: "{{ ansible_env.HOME }}/.gcal2org/token.json"
-  register: gcal2org_token
-- name: create gcal2org container with cron
-  # you need to have ran this before to do the initial authentication
-  when: gcal2org_token.stat.exists
-  cron:
-    name: "create gcal2org container"
-    user: tj
-    minute: "*/15"
-    job: docker run -it -u 1000 -v ~/.gcal2org:/data -v ~/agenda.org:/agenda.org -e GCAL2ORG_CREDENTIALS=/data/credentials.json -e GCAL2ORG_TOKEN_PATH=/data/token.json -e GCAL2ORG_AGENDA_PATH=/agenda.org travisjeffery/gcal2org:1.0.4
-# following tasks require sync_dir
 - name: find org files
   find:
     paths: "{{ sync_dir }}"
@@ -121,22 +71,3 @@
     force: true
   with_items: "{{ homedirs.files }}"
   when: sync_dir != ""
-- name: enable and run bluetooth
-  become: true
-  systemd:
-    state: started
-    name: bluetooth
-    enabled: yes
-- name: configure chrony
-  become: true
-  file:
-    src: ../files/chrony.conf
-    dest: /etc/chrony.conf
-    state: link
-    force: true
-- name: enable and run chrony
-  become: true
-  systemd:
-    state: started
-    name: chrony
-    enabled: yes
