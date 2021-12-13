@@ -769,7 +769,7 @@ Otherwise split the current paragraph into one sentence per line."
   "Font size for this computer."
   (interactive)
   (if (string-equal "laptop" (system-name))
-      12.0
+      18.0
     10.0))
 
 (defun tj-zoom-reset ()
