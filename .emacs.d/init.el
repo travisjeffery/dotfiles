@@ -487,7 +487,8 @@
 (use-package go-mode
   :init
   (put 'go-test-args 'safe-local-variable (lambda (_) t))
-  :ensure-system-package ((goimports . "go install golang.org/x/tools/cmd/goimports@latest")
+  :ensure-system-package ((godef . "go install github.com/rogpeppe/godef@latest")
+                          (goimports . "go install golang.org/x/tools/cmd/goimports@latest")
                           (golint . "go install golang.org/x/lint/golint@latest")
                           (gopls . "go install golang.org/x/tools/gopls@latest"))
   :bind
@@ -1680,7 +1681,8 @@
 (use-package shim
   :after projectile
   :straight (:type built-in)
-  :config (shim-init-go))
+  :config (shim-init-go)
+  :hook (go-mode . shim-mode))
   
 (use-package elisp-autofmt
   :straight (:type built-in)

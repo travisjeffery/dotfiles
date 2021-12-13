@@ -12,14 +12,17 @@
 (cl-defstruct (prag-prog-tag
                (:constructor prag-prog-tag-create)
                (:copier nil))
-  name highlight edit)
+  name highlight edit type)
+
+(defconst prag-prag-editor-tag-type :editor)
 
 (defvar prag-prog-tags
   (list
    (prag-prog-tag-create :name "filename")
    (prag-prog-tag-create :name "dir")
-   (prag-prog-tag-create :name "ed" :highlight 'hi-yellow :edit t)
-   (prag-prog-tag-create :name "author" :highlight 'hi-blue :edit t)))
+   (prag-prog-tag-create :name "ed" :highlight 'hi-yellow :edit t :type 'prag-prog-editor-tag-type)
+   (prag-prog-tag-create :name "ce" :highlight 'hi-yellow :edit t :type 'prag-prog-editor-tag-type)
+   (prag-prog-tag-create :name "author" :highlight 'hi-blue :edit t :type 'prag-prog-editor-tag-type)))
 
 (defun prag-prog--edit-tags ()
   (cl-remove-if (lambda (tag) (not (prag-prog-tag-edit tag))) prag-prog-tags))
@@ -137,8 +140,8 @@
   "Mode for writing Prag Prog markdown."
   :lighter " prag-prog-mode"
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "M-p") 'prag-prog-prev-ed-tag)
-            (define-key map (kbd "M-n") 'prag-prog-next-ed-tag)
+            (define-key map (kbd "M-p") 'prag-prog-prev-editor-tag)
+            (define-key map (kbd "M-n") 'prag-prog-next-editor-tag)
             (define-key map (kbd "C-c C-c a") 'prag-prog-insert-author-tag)
             (define-key map (kbd "C-c C-c f") 'prag-prog-insert-filename-tag)
             (define-key map (kbd "C-c C-c d") 'prag-prog-insert-dir-tag)
