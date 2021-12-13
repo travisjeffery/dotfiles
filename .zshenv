@@ -40,9 +40,6 @@ if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin"; fi
 
 command -v rustup >/dev/null && export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
 
-command -v ruby >/dev/null && PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
-command -v ruby >/dev/null && export GEM_HOME=`ruby -e 'puts Gem.user_dir'`
-
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
 export EDITOR="emacsclient"
