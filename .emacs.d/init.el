@@ -152,6 +152,8 @@
   (avy-setup-default)
   (setq avy-background t))
 
+(use-package ipcalc)
+
 (use-package cider)
 
 (use-package org-agenda-property)
@@ -411,17 +413,17 @@
   :commands (git-link git-link-commit git-link-homepage)
   :bind ("C-c G" . git-link))
 
-(use-package gitattributes-mode
-  :defer 5)
+;; (use-package gitattributes-mode
+;;   :defer 5)
 
-(use-package gitconfig-mode
-  :defer 5)
+;; (use-package gitconfig-mode
+;;   :defer 5)
+
+;; (use-package gitignore-mode
+;;   :defer 5)
 
 (use-package github-pullrequest
   :commands (github-pullrequest-new github-pullrequest-checkout))
-
-(use-package gitignore-mode
-  :defer 5)
 
 (use-package gitpatch
   :commands gitpatch-mail)
@@ -1633,8 +1635,10 @@
     (rename-buffer (format "term %s" title)))
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
   :bind
-  (:map vterm-mode-map ("M-y" . vterm-yank)
-        nil ("C-x m" . tj-vterm)))
+  
+  (("C-x m" . tj-vterm)
+   :map vterm-mode-map ("M-y" . vterm-yank)
+        ))
 
 (use-package vterm-toggle
   :after (vterm))

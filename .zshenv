@@ -42,7 +42,7 @@ command -v rustup >/dev/null && export RUST_SRC_PATH="$(rustc --print sysroot)/l
 
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
-export EDITOR="emacsclient"
+export EDITOR="emacsclient -c"
 export PAGER=less
 export SHELL=$(which zsh)
 export TERM=xterm-256color
