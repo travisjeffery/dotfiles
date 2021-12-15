@@ -413,14 +413,7 @@
   :commands (git-link git-link-commit git-link-homepage)
   :bind ("C-c G" . git-link))
 
-;; (use-package gitattributes-mode
-;;   :defer 5)
-
-;; (use-package gitconfig-mode
-;;   :defer 5)
-
-;; (use-package gitignore-mode
-;;   :defer 5)
+(use-package git-modes)
 
 (use-package github-pullrequest
   :commands (github-pullrequest-new github-pullrequest-checkout))
