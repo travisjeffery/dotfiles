@@ -23,6 +23,7 @@ if [ -d "$HOME/info" ]; then INFOPATH="$HOME/info:$INFOPATH"; fi
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
 if [ -d "$HOME/.local/google-cloud-sdk/bin" ]; then PATH="$HOME/.local/google-cloud-sdk/bin:$PATH"; fi
 if [ -d "$HOME/.cargo/bin" ]; then PATH="$HOME/.cargo/bin:$PATH"; fi
+if [ -d "$HOME/.pulumi/bin" ]; then PATH="$HOME/.pulumi//bin:$PATH"; fi
 if [ -d "/usr/local/protobuf/bin" ]; then PATH="/usr/local/protobuf/bin:$PATH"; fi
 if [ -d "$HOME/.tfenv/bin" ]; then PATH="$HOME/.tfenv/bin:$PATH"; fi
 if [ -d "$HOME/.local/istio/bin" ]; then PATH="$HOME/.local/istio/bin:$PATH"; fi
