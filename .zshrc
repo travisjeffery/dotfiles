@@ -427,8 +427,8 @@ function install-emacs (){
   cd ~/code/emacs && \
     git pull && \
     ./autogen.sh && \
-    ./configure --with-modules --with-mailutils --with-json --with-native-compilation && \
-    make && \
+    ./configure --with-json --with-cairo --with-rsvg --with-native-compilation --with-modules --with-mailutils --with-pgtk && \
+    make -j8 && \
     make install
 }
 
