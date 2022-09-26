@@ -28,11 +28,13 @@ if [ -d "/usr/bin" ]; then PATH="$PATH:/usr/bin"; fi
 if [ -d "/usr/local/bin" ]; then PATH="$PATH:/usr/local/bin"; fi
 if [ -d "/usr/local/sbin" ]; then PATH="$PATH:/usr/local/sbin"; fi
 if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
+if [ -d "$HOME/.pulumi//bin" ]; then PATH="$HOME/.pulumi/bin:$PATH"; fi
 if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
 if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
 
 
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
+if [ -d "$HOME/.local/share/JetBrains/Toolbox/scripts" ]; then PATH="$HOME/.local/share/JetBrains/Toolbox/scripts:$PATH"; fi
 if [ -d "$HOME/.local/google-cloud-sdk/bin" ]; then PATH="$HOME/.local/google-cloud-sdk/bin:$PATH"; fi
 if [ -d "$HOME/.cargo/bin" ]; then PATH="$HOME/.cargo/bin:$PATH"; fi
 if [ -d "$HOME/.pulumi/bin" ]; then PATH="$HOME/.pulumi//bin:$PATH"; fi
@@ -55,7 +57,7 @@ command -v rustup >/dev/null && export RUST_SRC_PATH="$(rustc --print sysroot)/l
 
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
-export EDITOR="emacsclient -c"
+export EDITOR="emacs -q"
 export PAGER=less
 export SHELL=$(which zsh)
 export TERM=xterm-256color
@@ -64,11 +66,15 @@ export GITHUB_USERNAME=travisjeffery
 export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 export PATH=$PATH:$HOME/.gem/bin
+export HELM_EXPERIMENTAL_OCI=1
 
 alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
 
-export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin" 
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
+
+source ~/work.sh
 
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
+
 

@@ -30,6 +30,7 @@
   (setq backup-directory-alist
         `((".*" . ,(no-littering-expand-var-file-name "backup/")))))
 
+;; utility functions e.g. f-directory? etc.
 (use-package f)
 
 (use-package bufler)
@@ -72,9 +73,6 @@
     ("C-c o" . tj-ctrl-c-o-map) ;; for occur
     ("C-c y" . tj-ctrl-c-y-map) ;; aya
     ("C-c C-d" . tj-ctrl-c-c-c-d-map) ("M-i" . tj-m-i-map) ("M-o" . tj-m-o-map))))
-
-(use-package persistent-scratch
-  :config (persistent-scratch-autosave-mode 1))
 
 (use-package undo-tree
   :diminish undo-tree-mode
@@ -188,29 +186,6 @@
     recent
     "HEAD~10..HEAD")
   
-  (defun tj-semaphore-open-branch ()
-    "Open branch in Semaphore CI"
-    (interactive)
-    (let*
-        (
-         (branch (magit-get-current-branch))
-         (group
-          (thread-first
-              (magit-get "remote" "origin" "url")
-            (split-string ":")
-            last
-            first
-            (split-string "\\.")
-            first))
-         (group
-          (if (string-prefix-p "confluentinc" group)
-              (replace-regexp-in-string "confluentinc" "confluent" group)
-            group)))
-      (browse-url (format "https://semaphoreci.com/%s/branches/%s" group branch))))
-  (eval-after-load
-      'magit
-    '(define-key magit-mode-map "S" #'tj-semaphore-open-branch))
-
   (defun tj-visit-pull-request-url ()
     "Visit the current branch's PR on Github."
     (interactive)
@@ -307,25 +282,8 @@
   :hook (dired-toggle-mode . tj-dired-toggle-mode-hook))
 
 (use-package dired-narrow)
+
 (use-package dired-filter)
-
-;; (use-package pdf-tools
-;;   :init
-;;   (setq pdf-view-use-scaling t
-;;         pdf-view-use-imagemagick nil
-;;         doc-view-resolution 1000)
-;;   :config (pdf-tools-install))
-
-(use-package yasnippet
-  :diminish yas-minor-mode
-  :config (yas-global-mode))
-
-(use-package auto-yasnippet
-  :after yasnippet
-  :bind (("C-c y a" . aya-create) ("C-c y e" . aya-expand) ("C-c y o" . aya-open-line)))
-
-(use-package gist
-  :requires (gh))
 
 (use-package git-timemachine
   :commands git-timemachine
@@ -372,6 +330,7 @@
 (use-package edit-indirect
   :bind (("C-c '" . edit-indirect-region)))
 
+;; hashicorp config language
 (use-package hcl-mode)
 
 (use-package restclient
@@ -437,14 +396,12 @@
 (use-package shift-number
   :bind (("C-c -" . shift-number-down) ("C-c +" . shift-number-up)))
 
-(use-package diminish
-  :demand t)
+(use-package diminish :demand t)
 
 (use-package rjsx-mode
   :config (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode)))
 
-(use-package company-quickhelp
-  :defer t)
+(use-package company-quickhelp :defer t)
 
 (eval-after-load
     'company
@@ -457,7 +414,7 @@
 
 (use-package go-guru
   :after go-mode
-  :ensure-system-package ((guru . "go get -u golang.org/x/tools/cmd/guru"))
+  :ensure-system-package ((guru . "go install golang.org/x/tools/cmd/guru@latest"))
   :hook (go-mode . go-guru-hl-identifier-mode))
 
 (use-package godoctor
@@ -470,7 +427,7 @@
   :after go-mode)
 
 (use-package go-errcheck
-  :ensure-system-package ((go-errcheck . "go get -u github.com/kisielk/errcheck"))
+  :ensure-system-package ((go-errcheck . "go install github.com/kisielk/errcheck@latest"))
   :after go-mode-abbrev-table
   :config
   (defun tj-go-errcheck ()
@@ -496,7 +453,7 @@
    ("C-c C-t" . go-test-current-file)
    ("C-c M-t" . go-test-current-test)
    ("C-c C-e" . tj-go-err))
-  :config  
+  :config
   (setq go-test-args "-timeout 60s -race -v")
   ;; (setq go-test-args "-timeout 60s -race -v -ldflags \"-X github.com/confluentinc/cc-scheduler-service.Environment=devel\"")
   (defun tj-go-err ()
@@ -510,7 +467,7 @@
            (concat "if err := ${1:" body "}; err != nil {\n" "$0\n" "}")))
       (yas-expand-snippet (concat "if err != nil {\n$0\n}"))))
   
-  (defun tj-try-go-mod (dir)
+  (defun tj-find-go-project-root (dir)
     "Find go project root for DIR."
     (if
         (and
@@ -526,28 +483,17 @@
       (when dir
         (cons 'transient dir))))
   
-  (defun tj-go-project-setup ()
-    "Set project root for go project."
-    (setq-local project-find-functions (list #'tj-try-go-mod #'project-try-vc)))
-  
-  (add-hook 'go-mode-hook #'tj-go-project-setup)
   (setq gofmt-command "goimports"
         tab-width 8)
   (setq-local compilation-read-command nil)
   
   (defun tj-turn-on-gofmt-before-save ()
     (interactive)
-    (add-hook 'before-save-hook 'eglot-format t t)
-         ;; (add-hook 'before-save-hook 'lsp-format-buffer t t)
-         ;; (add-hook 'before-save-hook 'gofmt t t)
-         )
+    (add-hook 'before-save-hook 'gofmt t t))
   
   (defun tj-turn-off-gofmt-before-save ()
     (interactive)
-    ;; (remove-hook 'before-save-hook 'lsp-format-buffer t)
-    (remove-hook 'before-save-hook 'eglot-format t)
-    ;; (remove-hook 'before-save-hook 'gofmt t)
-    )
+    (remove-hook 'before-save-hook 'gofmt t))
 
   (set-face-foreground 'go-test--ok-face "forest green")
   (set-face-foreground 'go-test--standard-face "dark orange")
@@ -578,21 +524,24 @@
     (setq imenu-generic-expression
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
             ("func" "^func *\\(.*\\)" 1)))
-    (which-function-mode)
+
+    (setq-local project-find-functions (list #'tj-find-go-project-root #'project-try-vc))
+    
+    (which-function-mode -1)
     (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
     (subword-mode)
     (flycheck-mode)
     (electric-indent-mode)
-    (electric-pair-mode 1)
+    (electric-pair-mode 0)
     (selected-minor-mode 1)
     (whitespace-mode 0)
+    
     (if (not (string-match "go" compile-command))
         (set
          (make-local-variable 'compile-command)
          "go build -v && go test -v && go vet")))
   
-  (add-hook 'go-mode-hook 'tj-go-hook)
   :hook
   (go-mode . tj-go-hook))
 
@@ -666,7 +615,7 @@
   ;; activate it for all buffers
   (setq-default save-place t))
 
-(use-package hidesohw
+(use-package hideshow
   :straight (:type built-in)
   :hook
   (prog-mode . hs-minor-mode))
@@ -905,7 +854,6 @@
   :mode ("\\.bats$" . sh-mode))
 
 (use-package anzu
-
   :diminish
   :bind (("M-%" . anzu-query-replace-regexp) ("C-M-%" . anzu-query-replace))
   :hook (prog-mode . anzu-mode))
@@ -943,7 +891,7 @@
         '("PATH" "MANPATH" "GOROOT" "GOPATH" "JAVA_HOME" "JAVA_OPTS" "RUST_SRC_PATH" "VAULT_ADDR" "GOPRIVATE"))
   :config (exec-path-from-shell-initialize))
 
-(use-package kubernetes-helm)
+(use-package kubedoc)
 
 (use-package move-text
   :bind (("M-P" . move-text-up) ("M-N" . move-text-down)))
@@ -987,8 +935,10 @@
    ("C-c m t" . org-todo-list)
    ("C-c m m" . orgs-tagsview)
    :map org-mode-map
-   ("C-c C-d" . nil))
+   ("C-c C-d" . nil))  
   :config
+  (defun tj-org-hook ()
+    (setq org-hide-leading-stars nil))
   (setq org-todo-keywords
         (quote
          ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -1009,10 +959,13 @@
          ("dot" . graphviz-dot)))
   
   (setq org-startup-folded nil)
+  
   ;; enable org-indent-mode
   (setq org-startup-indented t)
+  
   ;; but always to the left always
   (setq org-indent-indentation-per-level 0)
+  
   ;; don't hide leading stars
   (setq org-hide-leading-stars nil)
 
@@ -1101,14 +1054,15 @@
            "Journal"
            entry
            (function org-journal-find-location)
-           "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))))
+           "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))))
+  :hook (org-mode . tj-org-hook))
 
-(use-package org-wild-notifier
-  :config
-  (setq org-wild-notifier-alert-time '(15 3 1))
-  (setq org-wild-notifier-alert-times-property "NOTIFY_BEFORE")
-  (setq alert-default-style 'libnotify)
-  (org-wild-notifier-mode +1))
+;; (use-package org-wild-notifier
+;;   :config
+;;   (setq org-wild-notifier-alert-time '(15 3 1))
+;;   (setq org-wild-notifier-alert-times-property "NOTIFY_BEFORE")
+;;   (setq alert-default-style 'libnotify)
+;;   (org-wild-notifier-mode +1))
 
 (use-package org-journal
   :after org
@@ -1156,8 +1110,8 @@
    ("C-; a" . mc/mark-all-dwim)
    ("C-; C-x" . reactivate-mark)
    ("C-; C-SPC" . mc/mark-pop)
-   ("C-; <" . mc/mark-previous-like-this)
-   ("C-; >" . mc/mark-next-like-this)
+   ("C-; f" . mc/mark-next-like-this-symbol)
+   ("C-; b" . mc/mark-previous-like-this-symbol)
    ;; Extra multiple cursors stuff
    ("C-; %" . mc/insert-numbers)
    ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
@@ -1219,7 +1173,6 @@
     (erase-buffer)))
 
 (add-to-list 'completion-styles 'initials t)
-(add-to-list 'completion-styles 'subwords t)
 (add-to-list 'completion-styles 'substring t)
 
 (use-package company
@@ -1360,10 +1313,6 @@
          (scheme-mode . smartparens-strict-mode)
          (eval-expression-minibuffer-setup . smartparens-strict-mode)))
 
-(use-package pinboard
-  :config
-  (add-to-list 'auth-sources "~/authinfo" t))
-
 (use-package minibuffer
   :after tj
   :straight (:type built-in)
@@ -1406,13 +1355,6 @@
   :diminish volatile-highlights-mode
   :config (volatile-highlights-mode +1))
 
-(use-package geiser
-  :config
-  (setq geiser-mode-start-repl-p t)
-  (setq geiser-default-implementation 'chicken)
-  (setq geiser-chicken-binary "chicken-csi")
-  :hook (geiser-repl-mode . smartparens-strict-mode))
-
 (use-package pcmpl-args)
 
 (use-package em-unix
@@ -1432,8 +1374,8 @@
   :config
   (defun tj-eshell-prompt ()
     "; ")
-  (setq eshell-prompt-function 'tj-eshell-prompt)
-  (setq eshell-prompt-regexp "^; ")
+  (setq eshell-prompt-function 'tj-eshell-prompt) 
+ (setq eshell-prompt-regexp "^; ")
   (setq eshell-where-to-jump 'end)
   (setq eshell-review-quick-commands t)
   (setq eshell-smart-space-goes-to-end t)
@@ -1485,10 +1427,6 @@
 (use-package string-edit)
 
 (use-package json-snatcher)
-
-(use-package wgrep-ag
-  :config (autoload 'wgrep-ag-setup "wgrep-ag")
-  :hook (ag-mode-hook . wgrep-ag-setup))
 
 (use-package visual-regexp
   :bind
@@ -1545,10 +1483,6 @@
   (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
   (add-hook 'kill-emacs-hook
             (lambda nil (bm-buffer-save-all) (bm-repository-save))))
-
-(use-package magit-todos
-  :commands (magit-todos-mode)
-  :config (setq magit-todos-exclude-globs '("dist" "node_modules")))
 
 (use-package terraform-mode
   :config (add-hook 'terraform-mode-hook 'terraform-format-on-save-mode))
@@ -1653,10 +1587,6 @@
   :after proced
   :bind (:map proced-mode-map ("/" . proced-narrow)))
 
-(use-package mw-thesaurus
-  :after markdown-mode
-  :bind (:map markdown-mode-map ("C-c C-c d" . mw-thesaurus-lookup-at-point)))
-
 (use-package zoom
   :diminish zoom-mode
   :config (zoom-mode t))
@@ -1671,14 +1601,10 @@
 (use-package go-mod
   :straight (:type built-in))
 
-(use-package prag-prog
-  :straight (:type built-in))
-
 (use-package shim
   :after projectile
   :straight (:type built-in)
-  :config (shim-init-go)
-  :hook (go-mode . shim-mode))
+  :config (shim-init-go))
   
 (use-package elisp-autofmt
   :straight (:type built-in)
@@ -1730,33 +1656,6 @@
   (go-mode . eglot-ensure)
   (rust-mode . eglot-ensure))
 
-;; (use-package company-lsp
-;;   :ensure t
-;;   :commands company-lsp)
-
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :config
-;;   (lsp-register-custom-settings
-;;    '
-;;    (("gopls.allExperiments" t t)
-;;     ("gopls.completeUnimported" t t)
-;;     ("gopls.staticcheck" t t)))
-;;   (setq lsp-auto-guess-root t)
-;;   :bind (("C-c C-c" . lsp-describe-thing-at-point) ("C-c C-r" . lsp-rename))
-;;   :commands (lsp lsp-deferred)
-;;   :hook (go-mode . lsp-deferred))
-
-(use-package slime
-  :config
-  (require 'slime-asdf)
-  (load (expand-file-name "/usr/lib/quicklisp/slime-helper.el"))
-  (setq inferior-lisp-program "sbcl"
-        slime-lisp-implementations '((sbcl ("/usr/bin/sbcl"))))
-  :mode "\\.asd\\'"
-  :hook
-  (lisp-mode . slime-mode))
-
 (use-package lice
   :config
   (define-derived-mode license-mode fundamental-mode "License"
@@ -1774,6 +1673,15 @@
   :straight (:type built-in)
   :diminish auto-revert-mode
   :config
+
+  (condition-case err
+    (let ((buffer (get-buffer-create "*todo*")))
+      (with-current-buffer buffer
+        (insert-file-contents "~/todo.org")
+        (org-mode))
+      (setq initial-buffer-choice buffer))
+    (error (message "%s" error-message-string err)))
+  
   (setq native-comp-async-report-warnings-errors nil)
   (setq tj-font-family "Hack"
         tj-font (font-spec :family tj-font-family
@@ -1788,10 +1696,17 @@
   (set-frame-font tj-font nil t)
   (add-hook 'after-init-hook 'tj-theme))
 
-(use-package server
-  :no-require
-  :hook ((after-init . server-start)))
+(defun tj-raise-frame-and-give-focus ()
+  (when window-system
+    (let ((mouse-autoselect-window 1))
+      (select-frame-set-input-focus (selected-frame)))))
+
+(add-hook 'server-switch-hook 'tj-raise-frame-and-give-focus)
 
 (put 'erase-buffer 'disabled nil)
 (put 'downcase-region 'disabled nil)
+
+(use-package server
+  :no-require
+  :hook ((after-init . server-start)))
 

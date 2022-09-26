@@ -53,6 +53,14 @@
 
 (global-so-long-mode 1)
 
+(condition-case err
+    (let ((buffer (get-buffer-create "*todo*")))
+      (with-current-buffer buffer
+        (insert-file-contents "~/todo.org")
+        (org-mode))
+      (setq initial-buffer-choice buffer))
+    (error (message "%s" error-message-string err)))
+
 (setq initial-major-mode 'org-mode
       tramp-default-method "ssh"
       debugger-stack-frame-as-list t
@@ -175,6 +183,16 @@
          (end-of-visible-line))
        (point)))))
 
+(defun tj-gist (&optional arg)
+  "Gist current buffer. If ARG set, then post to public."
+  (interactive "P")
+  (let* ((cmd (list "gh gist create" (buffer-file-name)))
+         (cmd (if arg (nconc cmd (list "--public")) cmd))
+         (cmd (string-join cmd " ")))
+    (async-shell-command cmd)))
+
+
+
 (defun tj-goland ()
   "Open current project in Goland."
   (interactive)
@@ -274,6 +292,13 @@
   (call-interactively #'comment-line)
   (unless (region-active-p)
     (forward-line -1)))
+
+(defun tj-kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (mapc 'kill-buffer 
+          (delq (current-buffer) 
+                (remove-if-not 'buffer-file-name (buffer-list)))))
 
 (defun tj-kill-other-buffer ()
   "Kill the other window's buffer."
@@ -417,6 +442,8 @@ Current position is preserved."
 
 ;; smart tab behavior - indent or complete
 (setq tab-always-indent 'complete)
+
+(setq-default grep-command "rg --no-heading")
 
 ;; improve find file at point to handle line numbers
 (defvar ffap-file-at-point-line-number nil

@@ -297,7 +297,7 @@ fi
 
 alias e='emacsclient'
 alias pr='git pull-request'
-alias rg='rg --hidden'
+alias rg='rg --ignore-case --hidden'
 
 #
 # Set aliases
@@ -345,8 +345,6 @@ alias du="du -h"
 alias gprof="gprof -b"
 alias cdrecord="cdrecord driveropts=burnfree"
 alias wodim="wodim driveropts=burnfree"
-# alias emacs="emacs -nw"
-# alias yaourt="yaourt --tmp /home/tmp"
 alias display="display -geometry +0+0"
 alias rhino="rlwrap java -jar /usr/share/java/js.jar"
 alias curl="noglob curl"
@@ -460,6 +458,10 @@ vterm_printf() {
     else
         printf "\e]%s\e\\" "$1"
     fi
+}
+
+function hostname() {
+	cat /etc/hostname
 }
 
 vterm_prompt_end() {
