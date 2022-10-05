@@ -532,8 +532,6 @@
     (highlight-symbol-mode)
     (subword-mode)
     (flycheck-mode)
-    (electric-indent-mode)
-    (electric-pair-mode 0)
     (selected-minor-mode 1)
     (whitespace-mode 0)
     
@@ -1319,12 +1317,10 @@
   :config
   (defun tj-minibuffer-setup-hook ()
     (smartparens-mode 0)
-    (electric-pair-mode 0)
     (subword-mode)
     (setq truncate-lines nil)
     (setq gc-cons-threshold most-positive-fixnum))
   (defun tj-minibuffer-exit-hook ()
-    (electric-pair-mode 1)
     (setq gc-cons-threshold 800000))
   (add-hook 'minibuffer-setup-hook #'tj-minibuffer-setup-hook)
   (add-hook 'minibuffer-exit-hook #'tj-minibuffer-exit-hook))
@@ -1457,7 +1453,6 @@
    .
    (lambda ()
      (subword-mode)
-     (electric-pair-mode)
      (c-add-style "tj-protobuf-style" tj-protobuf-style t)
      (setq imenu-generic-expression tj-protobuf-imenu-generic-expression)))
   :config
