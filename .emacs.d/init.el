@@ -543,8 +543,6 @@
   :hook
   (go-mode . tj-go-hook))
 
-(use-package selected)
-
 (use-package winner
   :diminish
   :config (winner-mode +1)
