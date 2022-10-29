@@ -412,11 +412,6 @@
   :bind
   (("C-c C-c" . eldoc)))
 
-(use-package go-guru
-  :after go-mode
-  :ensure-system-package ((guru . "go install golang.org/x/tools/cmd/guru@latest"))
-  :hook (go-mode . go-guru-hl-identifier-mode))
-
 (use-package godoctor
   :after go-mode)
 
