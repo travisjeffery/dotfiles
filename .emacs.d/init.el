@@ -1413,8 +1413,6 @@
 
 (use-package wgrep)
 
-(use-package string-edit)
-
 (use-package json-snatcher)
 
 (use-package visual-regexp
