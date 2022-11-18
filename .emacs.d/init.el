@@ -41,6 +41,14 @@
 ;; mainly use these two to hide regions matching regexps
 (use-package zones)
 (use-package isearch-prop)
+(use-package isearch
+  :straight (:type built-in)
+  :hook (isearch-mode-end . (lambda ()
+                              (when (and isearch-forward
+                                         (number-or-marker-p isearch-other-end)
+                                         (not mark-active)
+                                         (not isearch-mode-end-hook-quit))
+                                (goto-char isearch-other-end)))))
 
 (require 'f)
 
@@ -409,6 +417,8 @@
 
 (use-package eldoc
   :diminish
+  :config
+  (setq eldoc-echo-area-use-multiline-p nil)
   :bind
   (("C-c C-c" . eldoc)))
 
@@ -432,7 +442,6 @@
 
 (use-package go-mode
   :init
-  (put 'go-test-args 'safe-local-variable (lambda (_) t))
   :ensure-system-package ((godef . "go install github.com/rogpeppe/godef@latest")
                           (goimports . "go install golang.org/x/tools/cmd/goimports@latest")
                           (golint . "go install golang.org/x/lint/golint@latest")
@@ -449,8 +458,8 @@
    ("C-c M-t" . go-test-current-test)
    ("C-c C-e" . tj-go-err))
   :config
-  (setq go-test-args "-timeout 60s -race -v")
-  ;; (setq go-test-args "-timeout 60s -race -v -ldflags \"-X github.com/confluentinc/cc-scheduler-service.Environment=devel\"")
+  
+  
   (defun tj-go-err ()
     (interactive)
     (if (region-active-p)
@@ -521,14 +530,18 @@
             ("func" "^func *\\(.*\\)" 1)))
 
     (setq-local project-find-functions (list #'tj-find-go-project-root #'project-try-vc))
-    
+    (setq case-fold-search t)
+    (setq go-test-args "-timeout 60s -race -v")
+    (font-lock-mode -1)
     (which-function-mode -1)
+    (flycheck-mode 1)
     (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
     (subword-mode)
-    (flycheck-mode)
     (selected-minor-mode 1)
-    (whitespace-mode 0)
+    (whitespace-mode -1)
+    (electric-pair-mode 1)
+    (smartparens-mode -1)
     
     (if (not (string-match "go" compile-command))
         (set
@@ -909,7 +922,7 @@
   :mode
   ("\\.markdown$" . markdown-mode)
   ("\\.md$" . markdown-mode)
-  :hook ((markdown-mode . font-lock-mode) (markdown-mode . writegood-mode)))
+  :hook ((markdown-mode . writegood-mode)))
 
 (use-package writegood-mode)
 
@@ -918,8 +931,7 @@
 
 (use-package org
   :straight (:type built-in)
-  :hook ((org-mode . font-lock-mode)
-         (org-mode . visual-line-mode)
+  :hook ((org-mode . visual-line-mode)
          (org-mode . auto-fill-mode))
   :bind
   (("C-c m c" . org-capture)
@@ -1170,13 +1182,11 @@
   :diminish
   :hook (prog-mode . company-mode)
   :config (define-key company-active-map (kbd "<tab>") 'yas-next-field)
+  (setq company-idle-delay nil)
   ;; Ignore go test -c output files
   (add-to-list 'completion-ignored-extensions ".test"))
 
 (use-package cask-mode)
-
-(use-package hl-todo
-  :config (global-hl-todo-mode))
 
 (use-package zop-to-char
   :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char)))
@@ -1198,8 +1208,7 @@
   :diminish
   :config
   (setq flycheck-check-syntax-automatically '(save mode-enable))
-  (setq flycheck-idle-change-delay 4)
-  (add-hook 'after-init-hook #'global-flycheck-mode))
+  (setq flycheck-idle-change-delay 4))
 
 (use-package flycheck-rust
   :config
@@ -1260,7 +1269,7 @@
 
 (use-package ace-window
   :diminish
-  :bind* ("<s-return>" . ace-window))
+  :bind* ("<M-return>" . ace-window))
 
 (use-package smartparens
   :diminish
@@ -1572,10 +1581,6 @@
 (use-package proced-narrow
   :after proced
   :bind (:map proced-mode-map ("/" . proced-narrow)))
-
-(use-package zoom
-  :diminish zoom-mode
-  :config (zoom-mode t))
 
 (use-package with-editor
   :config

@@ -51,8 +51,6 @@
 
 (menu-bar-mode -1)
 
-(global-so-long-mode 1)
-
 (condition-case err
     (let ((buffer (get-buffer-create "*todo*")))
       (with-current-buffer buffer
@@ -340,7 +338,6 @@
                              ("s->" . end-of-buffer)
                              ("s-q" . fill-paragraph)
                              ("s-x" . execute-extended-command)
-                             ("C-c C-w" . tj-wrap-with-tags)
                              ("C-c <" . tj-insert-open-and-close-tag))
          do
          (global-set-key (kbd key) fn))
@@ -439,6 +436,11 @@ Current position is preserved."
 (defun tj-sql-mode-hook () (add-hook 'after-save-hook 'tj-format-sql-buffer nil t))
 ;; (add-hook 'sql-mode-hook 'tj-sql-mode-hook)
 (remove-hook 'sql-mode-hook 'tj-sql-mode-hook)
+
+(defun tj-prog-mode-hook ()
+  (setq font-lock-maximum-decoration 1)
+  (font-lock-mode -1))
+(add-hook 'prog-mode-hook 'tj-prog-mode-hook)
 
 ;; smart tab behavior - indent or complete
 (setq tab-always-indent 'complete)
