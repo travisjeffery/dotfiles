@@ -83,7 +83,7 @@
     ("C-c C-d" . tj-ctrl-c-c-c-d-map) ("M-i" . tj-m-i-map) ("M-o" . tj-m-o-map))))
 
 (use-package undo-tree
-  :diminish undo-tree-mode
+  :diminish
   :config
   (global-undo-tree-mode +1)
   :bind (:map undo-tree-map
@@ -234,7 +234,7 @@
 
 (use-package abbrev
   :straight (:type built-in)
-  :diminish abbrev-mode
+  :diminish 
   :config
   (setq save-abbrevs 'silently)
   (setq-default abbrev-mode t))
