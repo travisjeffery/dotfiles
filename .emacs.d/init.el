@@ -15,6 +15,7 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
+(straight-use-package 'diminish)
 (setq straight-use-package-by-default t)
 
 (use-package use-package-ensure-system-package
@@ -82,12 +83,12 @@
     ("C-c y" . tj-ctrl-c-y-map) ;; aya
     ("C-c C-d" . tj-ctrl-c-c-c-d-map) ("M-i" . tj-m-i-map) ("M-o" . tj-m-o-map))))
 
-(use-package undo-tree
-  :diminish
+(use-package undo-tree  
   :config
   (global-undo-tree-mode +1)
   :bind (:map undo-tree-map
-              (("C-/" . nil))))
+              (("C-/" . nil)))
+  :diminish)
 
 (use-package projectile
   :config
@@ -233,11 +234,11 @@
   :init (setq copy-as-format-default "github"))
 
 (use-package abbrev
-  :straight (:type built-in)
-  :diminish 
+  :straight (:type built-in)  
   :config
   (setq save-abbrevs 'silently)
-  (setq-default abbrev-mode t))
+  (setq-default abbrev-mode t)
+  :diminish)
 
 (use-package compile
   :init (require 'grep)
