@@ -53,11 +53,9 @@ if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
 if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin"; fi
 
-command -v rustup >/dev/null && export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
-
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
-export EDITOR="emacs -q"
+export EDITOR="emacs -q -nw"
 export PAGER=less
 export SHELL=$(which zsh)
 export TERM=xterm-256color
@@ -77,4 +75,4 @@ source ~/work.sh
 
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
 
-
+eval $(ssh-agent) &>/dev/null
