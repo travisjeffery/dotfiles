@@ -1530,7 +1530,7 @@
 (use-package dot-mode
   :config
   (setq dot-mode-global-mode t)
-  (dot-mode))
+  (dot-mode 1))
 
 (use-package iedit
   :config (setq iedit-toggle-key-default (kbd "C-:")))
