@@ -284,11 +284,11 @@
 
 (use-package dired-toggle
   :preface
-  (defun tj-dired-toggle-mode-hook ()
+  (defun tj-dired-toggle-hook ()
     (interactive)
     (setq-local visual-line-fringe-indicators '(nil right-curly-arrow)
                 word-wrap nil))
-  :hook (dired-toggle-mode . tj-dired-toggle-mode-hook))
+  :hook (dired-toggle-mode . tj-dired-toggle--hook))
 
 (use-package dired-narrow)
 
@@ -458,9 +458,8 @@
    ("C-c C-t" . go-test-current-file)
    ("C-c M-t" . go-test-current-test)
    ("C-c C-e" . tj-go-err))
+  
   :config
-  
-  
   (defun tj-go-err ()
     (interactive)
     (if (region-active-p)
@@ -1401,9 +1400,9 @@
       (eshell-buffer-name (ff-basename dir))
       (eshell dir)))
   
-  (defun tj-eshell-mode-hook ()
+  (defun tj-eshell-hook ()
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
-  (add-hook 'eshell-mode-hook 'tj-eshell-mode-hook))
+  (add-hook 'eshell-mode-hook 'tj-eshell-hook))
 
 (use-package multi-eshell)
 
@@ -1567,7 +1566,6 @@
   :after (vterm))
 
 (use-package rainbow-delimiters)
-
 
 (use-package tree-sitter
   :diminish
