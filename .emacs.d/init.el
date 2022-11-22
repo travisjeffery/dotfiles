@@ -1545,7 +1545,10 @@
 
 (use-package vterm
   :custom (vterm-install t)
+  :hook ((vterm-mode . tj-vterm-hook))
   :config
+  (defun tj-vterm-hook ()
+    (font-lock-mode -1))
   (setq vterm-buffer-name "*shell*")
   (setq vterm-buffer-name-string "*shell*")
   (defun tj-vterm (title)
@@ -1556,16 +1559,21 @@
       (cd-absolute title))
     (rename-buffer (format "term %s" title)))
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
-  :bind
-  
+  :bind  
   (("C-x m" . tj-vterm)
-   :map vterm-mode-map ("M-y" . vterm-yank)
-        ))
+   :map vterm-mode-map ("M-y" . vterm-yank)))
 
 (use-package vterm-toggle
   :after (vterm))
 
 (use-package rainbow-delimiters)
+
+(use-package tree-sitter
+  :init
+  (setq tsc-dyn-get-from '(:compilation))
+  :config
+  (global-tree-sitter-mode 1))
+(use-package tree-sitter-langs)
 
 (use-package rust-mode
   :ensure-system-package ((rls . "rustup component add rls"))
