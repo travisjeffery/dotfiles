@@ -153,27 +153,12 @@
   :config (add-hook 'ielm-mode-hook #'eldoc-mode))
 
 (use-package avy
-  :bind (("M-T" . avy-goto-word-1) ("<C-return>" . avy-goto-char-timer))
+  :bind (("<C-return>" . avy-goto-char-timer))
   :config
   (avy-setup-default)
   (setq avy-background t))
 
 (use-package ipcalc)
-
-(use-package cider)
-
-(use-package org-agenda-property)
-
-(use-package clj-refactor)
-
-(use-package clojure-mode
-  :after smartparens
-  :after flycheck-clj-kondo
-  :config
-  (setq clojure-indent-style 'always-align)
-  :hook
-  ((clojure-mode . eldoc-mode)
-   (inf-clojure-mode . eldoc-mode)))
 
 (use-package dashboard
   :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
@@ -293,10 +278,6 @@
 (use-package dired-narrow)
 
 (use-package dired-filter)
-
-(use-package git-timemachine
-  :commands git-timemachine
-  :bind (("s-g" . git-timemachine)))
 
 (use-package smart-forward
   :config
@@ -423,9 +404,6 @@
   :bind
   (("C-c C-c" . eldoc)))
 
-(use-package godoctor
-  :after go-mode)
-
 (use-package go-add-tags
   :after go-mode)
 
@@ -525,6 +503,14 @@
              (s-concat test-flag test-name additional-arguments "\\$ .")))))))
   
   (defun tj-go-hook ()
+    ;; (setq-local treesit-mode-supported t)
+    ;; (setq-local treesit-required-languages '(go))
+    ;; (setq-local treesit-font-lock-feature-list
+    ;;             '((full)))
+    ;; (setq-local treesit-font-lock-settings
+    ;;             treesit-font-lock-rules-go)
+    ;; (treesit-major-mode-setup)
+    
     (setq imenu-generic-expression
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
             ("func" "^func *\\(.*\\)" 1)))
@@ -1192,7 +1178,7 @@
   :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char)))
 
 (use-package imenu-anywhere
-  :bind (("C-c i" . imenu-anywhere) ("s-i" . imenu-anywhere)))
+  :bind (("C-c i" . imenu-anywhere)))
 
 (use-package flyspell
   :config
@@ -1228,12 +1214,10 @@
    ("C-c TAB" . crux-indent-rigidly-and-copy-to-clipboard)
    ("C-c I" . crux-find-user-init-file)
    ("C-c S" . crux-find-shell-init-file)
-   ("s-r" . crux-recentf-find-file)
    ("C-S-j" . crux-top-join-line)
    ("C-^" . crux-top-join-line)
    ("C-k" . kill-line)
    ("C-<backspace>" . crux-kill-line-backwards)
-   ("s-o" . crux-smart-open-line-above)
    ([remap move-beginning-of-line] . crux-move-beginning-of-line)
    ([(shift return)] . crux-smart-open-line)
    ([(control shift return)] . crux-smart-open-line-above)
@@ -1337,15 +1321,6 @@
 
 (use-package selected
   :diminish selected-minor-mode
-  :bind
-  (:map
-   selected-keymap
-   ("s-[" . align-code)
-   ("s-f" . fill-region)
-   ("s-U" . unfill-region)
-   ("s-d" . downcase-region)
-   ("s-u" . upcase-region)
-   ("s-s" . sort-lines))
   :config (selected-global-mode 1))
 
 ;; temporarily highlight changes from yanking, etc
@@ -1567,20 +1542,23 @@
 
 (use-package rainbow-delimiters)
 
-(use-package tree-sitter
-  :diminish
-  :init
-  (setq tsc-dyn-get-from '(:compilation))
-  :config
-  (defun tj-tree-sitter-hook ()
-    (setq font-lock-defaults '(nil))
-    (setq tree-sitter-hl-use-font-lock-keywords nil)
-    (tree-sitter-mode 1)
-    (tree-sitter-hl-mode 1))
-  :hook
-  ((go-mode . tj-tree-sitter-hook)))
+(use-package treesit
+  :straight (:type built-in))
+
+;; (use-package tree-sitter
+;;   :diminish
+;;   :init
+;;   (setq tsc-dyn-get-from '(:compilation))
+;;   :config
+;;   (defun tj-tree-sitter-hook ()
+;;     (setq font-lock-defaults '(nil))
+;;     (setq tree-sitter-hl-use-font-lock-keywords nil)
+;;     (tree-sitter-mode 1)
+;;     (tree-sitter-hl-mode 1))
+;;   :hook
+;;   ((go-mode . tj-tree-sitter-hook)))
    
-(use-package tree-sitter-langs)
+;; (use-package tree-sitter-langs)
 
 (use-package rust-mode
   :ensure-system-package ((rls . "rustup component add rls"))
@@ -1618,6 +1596,9 @@
   :hook (emacs-lisp-mode-hook . elisp-autofmt-save-hook-for-this-buffer))
 
 (use-package eglot
+  :config
+  (setq eglot-extend-to-xref t)
+  (setq eglot-confirm-server-initiated-edits nil)
   :bind
   (("C-c C-r" . eglot-rename))
   :hook

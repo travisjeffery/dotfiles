@@ -189,8 +189,6 @@
          (cmd (string-join cmd " ")))
     (async-shell-command cmd)))
 
-
-
 (defun tj-goland ()
   "Open current project in Goland."
   (interactive)
@@ -324,8 +322,6 @@
                              ("C-c q" . tj-kill-other-buffer)
                              ;; use hippie-expand instead of dabbrev
                              ("C-/" . hippie-expand)
-                             ("s-b" . backward-to-word)
-                             ("s-f" . forward-to-word)
                              ;; replace buffer-menu with ibuffer
                              ("C-x C-b" . ibuffer)
                              ("C-h A" . apropos)
@@ -334,10 +330,6 @@
                              ("C-x \\" . align-regexp)
                              ("C-h C-f" . find-function)
                              ;; misc useful keybindings
-                             ("s-<" . beginning-of-buffer)
-                             ("s->" . end-of-buffer)
-                             ("s-q" . fill-paragraph)
-                             ("s-x" . execute-extended-command)
                              ("C-c <" . tj-insert-open-and-close-tag))
          do
          (global-set-key (kbd key) fn))
@@ -969,11 +961,6 @@ background color that is barely perceptible."
     (tj-set-face 'info-title-2                                'face-strong)
     (tj-set-face 'info-title-3                                'face-strong)
     (tj-set-face 'info-title-4                               'face-strong))
-
-  ;; Bookmarks
-  (with-eval-after-load 'bookmark
-    (tj-set-face 'bookmark-menu-heading                       'face-strong)
-    (tj-set-face 'bookmark-menu-bookmark                    'face-salient))
 
   ;; Message
   (with-eval-after-load 'message
