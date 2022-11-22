@@ -1568,11 +1568,20 @@
 
 (use-package rainbow-delimiters)
 
+
 (use-package tree-sitter
+  :diminish
   :init
   (setq tsc-dyn-get-from '(:compilation))
   :config
-  (global-tree-sitter-mode 1))
+  (defun tj-tree-sitter-hook ()
+    (setq font-lock-defaults '(nil))
+    (setq tree-sitter-hl-use-font-lock-keywords nil)
+    (tree-sitter-mode 1)
+    (tree-sitter-hl-mode 1))
+  :hook
+  ((go-mode . tj-tree-sitter-hook)))
+   
 (use-package tree-sitter-langs)
 
 (use-package rust-mode
