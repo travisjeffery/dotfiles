@@ -1522,7 +1522,7 @@
   :hook ((vterm-mode . tj-vterm-hook))
   :config
   (defun tj-vterm-hook ()
-    (font-lock-mode -1))
+    (font-lock-mode 1))
   (setq vterm-buffer-name "*shell*")
   (setq vterm-buffer-name-string "*shell*")
   (defun tj-vterm (title)

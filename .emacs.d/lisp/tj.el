@@ -1005,6 +1005,10 @@ background color that is barely perceptible."
     (tj-set-face 'custom-state                               'face-salient)
     (tj-set-face 'custom-link                               'face-salient))
 
+  (with-eval-after-load 'term
+    (set-face-attribute 'term-color-yellow nil
+                        :foreground "#A2734C"))
+
   ;; Package
   (with-eval-after-load 'package
     (tj-set-face 'package-description                             'default)
@@ -1063,28 +1067,6 @@ function is a convenience wrapper used by `describe-package-1'."
     (tj-set-face 'diff-refine-changed                         'face-popout)
     (tj-set-face 'diff-refine-removed                          'face-faded)
     (set-face-attribute     'diff-refine-removed nil :strike-through t))
-
-  ;; Term
-  (with-eval-after-load 'term
-    ;; (setq eterm-256color-disable-bold nil)
-    (tj-set-face 'term-bold                                   'face-strong)
-    (set-face-attribute 'term-color-black nil
-                           :foreground (face-foreground 'default)
-                           :background (face-foreground 'default))
-    (set-face-attribute 'term-color-white nil
-                        :foreground "white" :background "white")
-    (set-face-attribute 'term-color-blue nil
-                        :foreground "#42A5F5" :background "#BBDEFB")
-    (set-face-attribute 'term-color-cyan nil
-                        :foreground "#26C6DA" :background "#B2EBF2")
-    (set-face-attribute 'term-color-green nil
-                        :foreground "#66BB6A" :background "#C8E6C9")
-    (set-face-attribute 'term-color-magenta nil
-                        :foreground "#AB47BC" :background "#E1BEE7")
-    (set-face-attribute 'term-color-red nil
-                        :foreground "#EF5350" :background "#FFCDD2")
-    (set-face-attribute 'term-color-yellow nil
-                        :foreground "#FFEE58" :background "#FFF9C4"))
 
   ;; org-agende
   (with-eval-after-load 'org-agenda
