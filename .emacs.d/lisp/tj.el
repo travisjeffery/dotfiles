@@ -791,7 +791,7 @@ Otherwise split the current paragraph into one sentence per line."
   (interactive)
   (if (string-equal "laptop" (system-name))
       10.0
-    10.0))
+    11.0))
 
 (defun tj-zoom-reset ()
   "Reset font size."

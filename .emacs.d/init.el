@@ -92,7 +92,6 @@
 
 (use-package projectile
   :config
-
   (setq projectile-enable-caching t
         projectile-indexing-method 'alien
         projectile-mode-line nil
@@ -115,6 +114,7 @@
   (("C-x p t" . projectile-toggle-between-implementation-and-test)
    ("C-x p p" . projectile-switch-project)
    ("C-x p f" . projectile-find-file)
+   ("C-x p c" . projectile-compile-project)
    ("C-x p i" . projectile-invalidate-cache)))
 
 (use-package visual-fill-column
@@ -438,6 +438,7 @@
    ("C-c C-e" . tj-go-err))
   
   :config
+
   (defun tj-go-err ()
     (interactive)
     (if (region-active-p)
@@ -503,14 +504,6 @@
              (s-concat test-flag test-name additional-arguments "\\$ .")))))))
   
   (defun tj-go-hook ()
-    ;; (setq-local treesit-mode-supported t)
-    ;; (setq-local treesit-required-languages '(go))
-    ;; (setq-local treesit-font-lock-feature-list
-    ;;             '((full)))
-    ;; (setq-local treesit-font-lock-settings
-    ;;             treesit-font-lock-rules-go)
-    ;; (treesit-major-mode-setup)
-    
     (setq imenu-generic-expression
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
             ("func" "^func *\\(.*\\)" 1)))
@@ -523,11 +516,10 @@
     (flycheck-mode 1)
     (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
-    (subword-mode)
+    (subword-mode 1)
     (selected-minor-mode 1)
     (whitespace-mode -1)
     (electric-pair-mode 1)
-    (smartparens-mode -1)
     
     (if (not (string-match "go" compile-command))
         (set
@@ -1255,54 +1247,11 @@
   :diminish
   :bind* ("<M-return>" . ace-window))
 
-(use-package smartparens
-  :diminish
-  :config
-  (defun tj-forward-sexp (arg)
-    "Move to forward sexp. With a non-nil ARG, move to next sexp."
-    (interactive "P")
-    (if arg
-        (sp-next-sexp)
-      (sp-forward-sexp)))
-  
-  (require 'smartparens-config)
-  (setq sp-ignore-modes-list
-        '(minibuffer-inactive-mode eval-expression-minibuffer-setup))
-  :bind*
-  (:map
-   smartparens-mode-map
-   ("M-\"" . (lambda (&optional arg) (interactive "P") (sp-wrap-with-pair "\"")))
-   ("M-I" . sp-splice-sexp)
-   ("M-(" . sp-wrap-round)
-   ("M-[" . sp-wrap-square)
-   ("C-S-K" . sp-kill-sexp)
-   ("C-M-'" . sp-wrap-curly)
-   ("C-)" . sp-forward-slurp-sexp)
-   ("C-}" . sp-forward-barf-sexp)
-   ("C-{" . sp-backward-barf-sexp)
-   ("C-(" . sp-backward-slurp-sexp)
-   ("C-'" . sp-rewrap-sexp)
-   ("M-S" . sp-split-sexp)
-   ("M-s" . sp-splice-sexp)
-   ("M-J" . sp-join-sexp)
-   ("M-W" . sp-copy-sexp)
-   ("C-M-f" . tj-forward-sexp))
-  :hook ((prog-mode . smartparens-mode)
-         (emacs-lisp-mode . smartparens-strict-mode)
-         (lisp-interaction-mode . smartparens-strict-mode)
-         (ielm-mode . smartparens-strict-mode)
-         (clojure-mode . smartparens-strict-mode)
-         (cider-repl-mode . smartparens-strict-mode)
-         (lisp-mode . smartparens-strict-mode)
-         (scheme-mode . smartparens-strict-mode)
-         (eval-expression-minibuffer-setup . smartparens-strict-mode)))
-
 (use-package minibuffer
   :after tj
   :straight (:type built-in)
   :config
   (defun tj-minibuffer-setup-hook ()
-    (smartparens-mode 0)
     (subword-mode)
     (setq truncate-lines nil)
     (setq gc-cons-threshold most-positive-fixnum))
@@ -1311,13 +1260,19 @@
   (add-hook 'minibuffer-setup-hook #'tj-minibuffer-setup-hook)
   (add-hook 'minibuffer-exit-hook #'tj-minibuffer-exit-hook))
 
+(use-package puni
+  :diminish
+  :config
+  (puni-global-mode)
+  (add-hook 'term-mode-hook #'puni-disable-puni-mode)
+  (add-hook 'vterm-mode-hook #'puni-disable-puni-mode))
+
 (use-package eval-expr
   :bind ("M-:" . eval-expr)
   :config
   (defun eval-expr-minibuffer-setup ()
     (local-set-key (kbd "<tab>") #'lisp-complete-symbol)
-    (set-syntax-table emacs-lisp-mode-syntax-table)
-    (smartparens-strict-mode)))
+    (set-syntax-table emacs-lisp-mode-syntax-table)))
 
 (use-package selected
   :diminish selected-minor-mode
@@ -1542,23 +1497,18 @@
 
 (use-package rainbow-delimiters)
 
-(use-package treesit
-  :straight (:type built-in))
-
-;; (use-package tree-sitter
-;;   :diminish
-;;   :init
-;;   (setq tsc-dyn-get-from '(:compilation))
-;;   :config
-;;   (defun tj-tree-sitter-hook ()
-;;     (setq font-lock-defaults '(nil))
-;;     (setq tree-sitter-hl-use-font-lock-keywords nil)
-;;     (tree-sitter-mode 1)
-;;     (tree-sitter-hl-mode 1))
-;;   :hook
-;;   ((go-mode . tj-tree-sitter-hook)))
+(use-package tree-sitter
+  :diminish
+  :config
+  (defun tj-tree-sitter-hook ()
+    (setq font-lock-defaults '(nil))
+    (setq tree-sitter-hl-use-font-lock-keywords nil)
+    (tree-sitter-mode 1)
+    (tree-sitter-hl-mode 1))
+  :hook
+  ((go-mode . tj-tree-sitter-hook)))
    
-;; (use-package tree-sitter-langs)
+(use-package tree-sitter-langs)
 
 (use-package rust-mode
   :ensure-system-package ((rls . "rustup component add rls"))
