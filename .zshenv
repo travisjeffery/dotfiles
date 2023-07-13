@@ -53,9 +53,11 @@ if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
 if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin"; fi
 
+export PATH="${PATH}:${HOME}/.krew/bin"
+
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
-export EDITOR="emacs -q -nw"
+export EDITOR="emacsclient -c"
 export PAGER=less
 export SHELL=$(which zsh)
 export TERM=xterm-256color

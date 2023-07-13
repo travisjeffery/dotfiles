@@ -317,13 +317,15 @@
 
 ;; global keybinds
 (cl-loop for (key . fn) in '(("M-;" . tj-comment-line)
+                             ("M-g M-c" . switch-to-completions)
                              ("C-RET" . other-window)
+                             ("C-x C-S-f" . find-file-at-point)
                              ("C-z" . delete-other-windows)
                              ("C-c q" . tj-kill-other-buffer)
                              ;; use hippie-expand instead of dabbrev
                              ("C-/" . hippie-expand)
                              ;; replace buffer-menu with ibuffer
-                             ("C-x C-b" . ibuffer)
+                             ("C-x C-b" . bufler)
                              ("C-h A" . apropos)
                              ("C-c C-k" . tj-kill-line-save)
                              ;; align code in a pretty way

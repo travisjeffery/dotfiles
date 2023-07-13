@@ -16,6 +16,8 @@
 
 (straight-use-package 'use-package)
 (straight-use-package 'diminish)
+
+(setq use-package-verbose t)
 (setq straight-use-package-by-default t)
 
 (use-package use-package-ensure-system-package
@@ -32,9 +34,24 @@
         `((".*" . ,(no-littering-expand-var-file-name "backup/")))))
 
 ;; utility functions e.g. f-directory? etc.
-(use-package f)
+(use-package f
+  :config
+  ;; this seems neccessary?
+  (require 'f))
 
-(use-package bufler)
+(use-package compat)
+
+(eval-and-compile
+  (let ((lisp-dir (format "%s%s" user-emacs-directory "lisp")))
+    (setq load-path
+          (append
+           (delete-dups load-path)
+           (list lisp-dir)
+           (f-directories lisp-dir)))))
+
+(use-package bufler
+  :bind
+  (("C-x C-b" . bufler)))
 
 ;; add header and footers to files.
 (use-package header2)
@@ -51,19 +68,7 @@
                                          (not isearch-mode-end-hook-quit))
                                 (goto-char isearch-other-end)))))
 
-(require 'f)
-
-(eval-and-compile
-  (let ((lisp-dir (format "%s%s" user-emacs-directory "lisp")))
-    (setq load-path
-          (append
-           (delete-dups load-path)
-           (list lisp-dir)
-           (f-directories lisp-dir)))))
-
 (use-package bind-key)
-
-(setq use-package-verbose t)
 
 (use-package sqlformat
   :config
@@ -85,6 +90,7 @@
 
 (use-package undo-tree  
   :config
+  (add-to-list 'undo-tree-history-directory-alist  '("." . "~/.emacs.d/var/undo-tree"))
   (global-undo-tree-mode +1)
   :bind (:map undo-tree-map
               (("C-/" . nil)))
@@ -107,8 +113,8 @@
   (projectile-global-mode 1)
 
   (def-projectile-commander-method ?a
-    "Run ripgrep on project."
-    (call-interactively #'projectile-ripgrep))
+                                   "Run ripgrep on project."
+                                   (call-interactively #'projectile-ripgrep))
   
   :bind
   (("C-x p t" . projectile-toggle-between-implementation-and-test)
@@ -159,6 +165,10 @@
   (setq avy-background t))
 
 (use-package ipcalc)
+
+(use-package jist
+  :config
+  (setq jist-enable-default-authorized t))
 
 (use-package dashboard
   :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
@@ -722,7 +732,7 @@
     (goto-char (point-min))
     (dired-next-line 4))
   (define-key dired-mode-map (vector 'remap 'beginning-of-buffer)
-    'dired-back-to-top)
+              'dired-back-to-top)
   (defun dired-jump-to-bottom ()
     (interactive)
     (goto-char (point-max))
@@ -1038,13 +1048,6 @@
            "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))))
   :hook (org-mode . tj-org-hook))
 
-;; (use-package org-wild-notifier
-;;   :config
-;;   (setq org-wild-notifier-alert-time '(15 3 1))
-;;   (setq org-wild-notifier-alert-times-property "NOTIFY_BEFORE")
-;;   (setq alert-default-style 'libnotify)
-;;   (org-wild-notifier-mode +1))
-
 (use-package org-journal
   :after org
   :config
@@ -1262,6 +1265,8 @@
 
 (use-package puni
   :diminish
+  :bind
+  (("M-S" . puni-splice))
   :config
   (puni-global-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode)
@@ -1303,7 +1308,7 @@
   (defun tj-eshell-prompt ()
     "; ")
   (setq eshell-prompt-function 'tj-eshell-prompt) 
- (setq eshell-prompt-regexp "^; ")
+  (setq eshell-prompt-regexp "^; ")
   (setq eshell-where-to-jump 'end)
   (setq eshell-review-quick-commands t)
   (setq eshell-smart-space-goes-to-end t)
@@ -1460,7 +1465,9 @@
 (use-package dot-mode
   :config
   (setq dot-mode-global-mode t)
-  (dot-mode 1))
+  (dot-mode 1)
+  :bind
+  (("C-." . dot-mode-execute)))
 
 (use-package iedit
   :config (setq iedit-toggle-key-default (kbd "C-:")))
@@ -1468,9 +1475,6 @@
 (use-package frog-jump-buffer)
 
 (use-package github-review)
-
-(use-package kubernetes
-  :commands (kubernetes-overview))
 
 (use-package vterm
   :custom (vterm-install t)
@@ -1495,8 +1499,6 @@
 (use-package vterm-toggle
   :after (vterm))
 
-(use-package rainbow-delimiters)
-
 (use-package tree-sitter
   :diminish
   :config
@@ -1507,7 +1509,7 @@
     (tree-sitter-hl-mode 1))
   :hook
   ((go-mode . tj-tree-sitter-hook)))
-   
+
 (use-package tree-sitter-langs)
 
 (use-package rust-mode
@@ -1537,10 +1539,10 @@
   :straight (:type built-in))
 
 (use-package shim
-  :after projectile
   :straight (:type built-in)
+  :after projectile
   :config (shim-init-go))
-  
+
 (use-package elisp-autofmt
   :straight (:type built-in)
   :hook (emacs-lisp-mode-hook . elisp-autofmt-save-hook-for-this-buffer))
@@ -1574,25 +1576,20 @@
   :config
 
   (condition-case err
-    (let ((buffer (get-buffer-create "*todo*")))
-      (with-current-buffer buffer
-        (insert-file-contents "~/todo.org")
-        (org-mode))
-      (setq initial-buffer-choice buffer))
+      (let ((buffer (get-buffer-create "*todo*")))
+        (with-current-buffer buffer
+          (insert-file-contents "~/todo.org")
+          (org-mode))
+        (setq initial-buffer-choice buffer))
     (error (message "%s" error-message-string err)))
   
   (setq native-comp-async-report-warnings-errors nil)
-  (setq tj-font-family "Hack"
-        tj-font (font-spec :family tj-font-family
-                           :size (tj-font-size))
-        default-frame-alist (append (list (cons 'width  72)
+  (set-face-attribute 'default nil :family "Hack")
+  (set-face-attribute 'default nil :height 105)
+  (setq default-frame-alist (append (list (cons 'width  72)
                                           (cons 'height 40)
                                           (cons 'vertical-scroll-bars nil)
-                                          (cons 'internal-border-width 24)
-                                          (cons 'font (format "%s %d"
-                                                              tj-font-family
-                                                              (tj-font-size))))))
-  (set-frame-font tj-font nil t)
+                                          (cons 'internal-border-width 24))))
   (add-hook 'after-init-hook 'tj-theme))
 
 (defun tj-raise-frame-and-give-focus ()
