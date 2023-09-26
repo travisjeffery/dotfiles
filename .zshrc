@@ -92,6 +92,10 @@ if type kubectl &> /dev/null; then
   source <(kubectl completion zsh)
 fi
 
+if type kubebuilder &> /dev/null; then
+  source <(kubebuilder completion zsh)
+fi
+
 if type helm &> /dev/null; then
   source <(helm completion zsh)
 fi

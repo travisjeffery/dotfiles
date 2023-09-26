@@ -57,8 +57,10 @@
 (use-package header2)
 
 ;; mainly use these two to hide regions matching regexps
-(use-package zones)
-(use-package isearch-prop)
+;; (use-package zones)
+
+;; (use-package isearch-prop)
+
 (use-package isearch
   :straight (:type built-in)
   :hook (isearch-mode-end . (lambda ()
@@ -895,9 +897,6 @@
   (setq whitespace-style '(face empty lines trailing)))
 
 (use-package docker)
-
-(use-package dockerfile-mode
-  :config (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 
 (use-package markdown-mode
   :defer 0
