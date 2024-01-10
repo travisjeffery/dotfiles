@@ -845,7 +845,8 @@
   :init
   (setq sh-basic-offset 2)
   (setq sh-basic-indentation 2)
-  :mode ("\\.bats$" . sh-mode))
+  :mode (("\\.bats$" . sh-mode)
+         ("Dockerfile" . sh-mode)))
 
 (use-package anzu
   :diminish
@@ -896,7 +897,6 @@
   :config (setq whitespace-line-column 76) ;; limit line length
   (setq whitespace-style '(face empty lines trailing)))
 
-(use-package docker)
 
 (use-package markdown-mode
   :defer 0
@@ -1583,8 +1583,8 @@
     (error (message "%s" error-message-string err)))
   
   (setq native-comp-async-report-warnings-errors nil)
-  (set-face-attribute 'default nil :family "Hack")
-  (set-face-attribute 'default nil :height 105)
+  (set-face-attribute 'default nil :family "IBM Plex Mono")
+  (set-face-attribute 'default nil :height 110)
   (setq default-frame-alist (append (list (cons 'width  72)
                                           (cons 'height 40)
                                           (cons 'vertical-scroll-bars nil)

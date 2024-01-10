@@ -133,7 +133,7 @@
 ;;   (other-window 1))
 
 (setq-default indent-tabs-mode nil
-              fill-column 84
+              fill-column 100
               ;; open help, ack, etc. in the same window
               ;; same-window-regexps '(".")
               same-window-regexps nil)
