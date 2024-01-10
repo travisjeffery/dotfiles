@@ -51,15 +51,7 @@
 
 (menu-bar-mode -1)
 
-(condition-case err
-    (let ((buffer (get-buffer-create "*todo*")))
-      (with-current-buffer buffer
-        (insert-file-contents "~/todo.org")
-        (org-mode))
-      (setq initial-buffer-choice buffer))
-    (error (message "%s" error-message-string err)))
-
-(setq initial-major-mode 'org-mode
+(setq initial-major-mode 'fundamental-mode
       tramp-default-method "ssh"
       debugger-stack-frame-as-list t
       user-full-name "Travis Jeffery"
