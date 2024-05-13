@@ -1,11 +1,9 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: http-ingress
-  namespace: homelab
   annotations:
-    isskubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    isskubernetes.io/ingress.class: "traefik"
     cert-manager.io/cluster-issuer: "lets-encrypt-issuer"
 spec:
   tls:
@@ -20,29 +18,37 @@ spec:
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: plex
-              servicePort: 80
+              service:
+                name: plex
+                port:
+                  number: 80
     - host: deluge.haus.travisjeffery.com
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: deluge
-              servicePort: 80
+              service:
+                name: deluge
+                port:
+                  number: 80
     - host: syncthing.haus.travisjeffery.com
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: syncthing
-              servicePort: 80
+              service:
+                name: syncthing
+                port:
+                  number: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: showrss-to-magnet
-  namespace: homelab
   labels:
     app.kubernetes.io/name: showrss-to-magnet
 spec:
@@ -76,7 +82,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: plex
-  namespace: homelab
   labels:
     app.kubernetes.io/name: plex
 spec:
@@ -122,7 +127,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: plex
-  namespace: homelab
   annotations:
     external-dns.alpha.kubernetes.io/access: private
   labels:
@@ -138,7 +142,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deluge
-  namespace: homelab
   labels:
     app.kubernetes.io/name: deluge
 spec:
@@ -161,7 +164,7 @@ spec:
               value: "1000"
             - name: DELUGE_LOGLEVEL
               value: "DEBUG"
-          image: linuxserver/deluge:version-2.0.3-2201906121747ubuntu18.04.1
+          image: linuxserver/deluge:2.1.1-r8-ls245
           volumeMounts:
             - mountPath: /config
               name: config
@@ -179,7 +182,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: deluge
-  namespace: homelab
   annotations:
     external-dns.alpha.kubernetes.io/access: private
   labels:
@@ -195,7 +197,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: syncthing
-  namespace: homelab
   labels:
     app.kubernetes.io/name: syncthing
 spec:
@@ -231,7 +232,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: syncthing
-  namespace: homelab
   annotations:
     external-dns.alpha.kubernetes.io/access: private
   labels:
