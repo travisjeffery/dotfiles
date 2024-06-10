@@ -2,12 +2,6 @@ export PATH
 export MANPATH
 export INFOPATH
 
-export GOENV_ROOT=$HOME/.goenv
-export PATH="$GOENV_ROOT/bin:$PATH"
-
-if type goenv &> /dev/null; then
-  eval "$(goenv init -)"
-fi
 
 if [ -d "/usr/man" ]; then MANPATH="$MANPATH:/usr/man"; fi
 if [ -d "/usr/share/man" ]; then MANPATH="$MANPATH:/usr/share/man"; fi
@@ -24,14 +18,12 @@ if [ -d "/bin" ]; then PATH="$PATH":/bin; fi
 if [ -d "/sbin" ]; then PATH="$PATH:/sbin"; fi
 if [ -d "/usr/bin" ]; then PATH="$PATH:/usr/bin"; fi
 
-
 if [ -d "/usr/local/bin" ]; then PATH="$PATH:/usr/local/bin"; fi
 if [ -d "/usr/local/sbin" ]; then PATH="$PATH:/usr/local/sbin"; fi
 if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
 if [ -d "$HOME/.pulumi//bin" ]; then PATH="$HOME/.pulumi/bin:$PATH"; fi
 if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
 if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
-
 
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
 if [ -d "$HOME/.local/share/JetBrains/Toolbox/scripts" ]; then PATH="$HOME/.local/share/JetBrains/Toolbox/scripts:$PATH"; fi
@@ -76,5 +68,14 @@ export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PR
 source ~/work.sh
 
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
+
+export GOENV_ROOT=$HOME/.goenv
+export PATH="$GOENV_ROOT/bin:$PATH"
+
+if type goenv &> /dev/null; then
+  eval "$(goenv init -)"
+  export PATH="$GOROOT/bin:$PATH"
+  export PATH="$PATH:$GOPATH/bin"
+fi
 
 eval $(ssh-agent) &>/dev/null

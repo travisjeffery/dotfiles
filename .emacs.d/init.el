@@ -23,6 +23,10 @@
 (use-package use-package-ensure-system-package
   :straight t)
 
+(use-package treesit-auto
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all))
+
 (use-package no-littering
   :after recentf
   :config
@@ -180,10 +184,13 @@
   (dashboard-setup-startup-hook))
 
 (use-package magit
+  :diminish magit-wip-mode
   :config
+  (magit-wip-mode 1)
   (add-hook 'after-save-hook 'magit-after-save-refresh-status)
   (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
   (setq vc-follow-symlinks t
+        magit-commit-ask-to-stage 'stage
         magit-refresh-status-buffer t)
   
   (magit-define-section-jumper
@@ -930,9 +937,11 @@
   (defun tj-org-hook ()
     (setq org-hide-leading-stars nil))
   (setq org-todo-keywords
-        (quote
-         ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-          (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+        '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+          (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
+  (setq org-todo-keyword-faces
+        '(("TODO" . org-todo)
+          ("DONE". (:foreground "black" :weight bold))))
 
   ;; where to archive subtree
   (setq org-archive-location "~/.archive.org::* Archived Tasks")
@@ -1492,24 +1501,38 @@
     (rename-buffer (format "term %s" title)))
   (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
   :bind  
-  (("C-x m" . tj-vterm)
-   :map vterm-mode-map ("M-y" . vterm-yank)))
+  (:map vterm-mode-map ("M-y" . vterm-yank)))
 
 (use-package vterm-toggle
   :after (vterm))
 
-(use-package tree-sitter
-  :diminish
+(use-package vertico
+  :init
+  (vertico-mode 1)
   :config
-  (defun tj-tree-sitter-hook ()
-    (setq font-lock-defaults '(nil))
-    (setq tree-sitter-hl-use-font-lock-keywords nil)
-    (tree-sitter-mode 1)
-    (tree-sitter-hl-mode 1))
-  :hook
-  ((go-mode . tj-tree-sitter-hook)))
+  (setq vertico-multiform-commands
+    '((consult-line buffer)
+      (consult-line-thing-at-point buffer)
+      (consult-recent-file buffer)
+      (consult-mode-command buffer)
+      (consult-complex-command buffer)
+      (embark-bindings buffer)
+      (consult-locate buffer)
+      (consult-project-buffer buffer)
+      (consult-ripgrep buffer)
+      (consult-fd buffer)))
+  :bind (:map vertico-map
+          ("C-k" . kill-whole-line)
+          ("C-u" . kill-whole-line)
+          ("C-o" . vertico-next-group)
+          ("<tab>" . minibuffer-complete)
+          ("M-S-<return>" . vertico-exit-input)
+          ("M-<return>" . minibuffer-force-complete-and-exit)))
 
-(use-package tree-sitter-langs)
+;; save search history
+(use-package savehist
+  :init
+  (savehist-mode 1))
 
 (use-package rust-mode
   :ensure-system-package ((rls . "rustup component add rls"))
@@ -1568,6 +1591,13 @@
 (use-package hideshow
   :straight (:type built-in)
   :diminish hs-minor-mode)
+
+(use-package kubernetes
+  :ensure t
+  :commands (kubernetes-overview)
+  :config
+  (setq kubernetes-poll-frequency 3600
+        kubernetes-redraw-frequency 3600))
 
 (use-package tj
   :straight (:type built-in)

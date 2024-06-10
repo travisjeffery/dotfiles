@@ -161,6 +161,10 @@
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 
+(defun tj-base64-encode-region-no-break ()
+  (interactive)
+  (base64-encode-region (mark) (point) t))
+
 (defun tj-copy-line-as-kill (&optional arg)
   "Save the current line as if killed, but don't kill it. If ARG set, then save ARG lines."
   (interactive "p")
@@ -319,7 +323,6 @@
                              ;; replace buffer-menu with ibuffer
                              ("C-x C-b" . bufler)
                              ("C-h A" . apropos)
-                             ("C-c C-k" . tj-kill-line-save)
                              ;; align code in a pretty way
                              ("C-x \\" . align-regexp)
                              ("C-h C-f" . find-function)
@@ -784,24 +787,23 @@ Otherwise split the current paragraph into one sentence per line."
   "Font size for this computer."
   (interactive)
   (if (string-equal "laptop" (system-name))
-      10.0
-    11.0))
+      10
+    11))
 
 (defun tj-zoom-reset ()
   "Reset font size."
   (interactive)
   (set-face-attribute 'default nil
                       :height
-                      (+ (face-attribute 'default :height)
-                         (* 10 (tj-font-size)))))
+                      (* 10 (tj-font-size))))
 
 (defun tj-zoom-in ()
-  "Increase font size by 10 points."
+  "Increase font size by 25 points."
   (interactive)
   (set-face-attribute 'default nil
                       :height
                       (+ (face-attribute 'default :height)
-                         10)))
+                         25)))
 
 (defun tj-zoom-out ()
   "Decrease font size by 10 points."
@@ -809,7 +811,8 @@ Otherwise split the current paragraph into one sentence per line."
   (set-face-attribute 'default nil
                       :height
                       (- (face-attribute 'default :height)
-                         10)))
+                         25)))
+
 (global-set-key (kbd "C-x C-+") 'tj-zoom-in)
 (global-set-key (kbd "C-x C--") 'tj-zoom-out)
 (global-set-key (kbd "C-x C-0") 'tj-zoom-reset)
