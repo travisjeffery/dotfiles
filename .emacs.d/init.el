@@ -23,6 +23,19 @@
 (use-package use-package-ensure-system-package
   :straight t)
 
+;; needs to be up early because there's some issue around packages depending on it the wrong way.
+(use-package project)
+
+(straight-use-package
+ '(eat :type git
+       :host codeberg
+       :repo "akib/emacs-eat"
+       :files ("*.el" ("term" "term/*.el") "*.texi"
+               "*.ti" ("terminfo/e" "terminfo/e/*")
+               ("terminfo/65" "terminfo/65/*")
+               ("integration" "integration/*")
+               (:exclude ".dir-locals.el" "*-tests.el"))))
+
 (use-package treesit-auto
   :config
   (treesit-auto-add-to-auto-mode-alist 'all))
@@ -175,13 +188,6 @@
 (use-package jist
   :config
   (setq jist-enable-default-authorized t))
-
-(use-package dashboard
-  :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
-  :config
-  (setq dashboard-banner-logo-title "Do the work."
-        dashboard-startup-banner nil)
-  (dashboard-setup-startup-hook))
 
 (use-package magit
   :diminish magit-wip-mode
@@ -453,22 +459,10 @@
    ("M-f" . subword-forward)
    ("M-d" . subword-kill)
    ("C-c C-t" . go-test-current-file)
-   ("C-c M-t" . go-test-current-test)
-   ("C-c C-e" . tj-go-err))
+   ("C-c M-t" . go-test-current-test))
   
   :config
 
-  (defun tj-go-err ()
-    (interactive)
-    (if (region-active-p)
-        (let
-            ((body (buffer-substring-no-properties (region-beginning) (region-end))))
-          (goto-char (region-beginning))
-          (delete-char (string-width body))
-          (yas-expand-snippet
-           (concat "if err := ${1:" body "}; err != nil {\n" "$0\n" "}")))
-      (yas-expand-snippet (concat "if err != nil {\n$0\n}"))))
-  
   (defun tj-find-go-project-root (dir)
     "Find go project root for DIR."
     (if
@@ -603,6 +597,7 @@
         uniquify-ignore-buffers-re "^\\*"))
 
 (use-package saveplace
+  :after no-littering
   :diminish
   :straight (:type built-in)
   :config
@@ -1170,7 +1165,7 @@
 (use-package company
   :diminish
   :hook (prog-mode . company-mode)
-  :config (define-key company-active-map (kbd "<tab>") 'yas-next-field)
+  :config
   (setq company-idle-delay nil)
   ;; Ignore go test -c output files
   (add-to-list 'completion-ignored-extensions ".test"))
@@ -1205,6 +1200,8 @@
     (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
 
 (use-package crux
+  :config
+  (setq user-init-file (concat user-emacs-directory "init.el"))
   :bind
   (("C-c d" . crux-duplicate-current-line-or-region)
    ("C-c n" . crux-cleanup-buffer-or-region)
@@ -1276,9 +1273,7 @@
   :bind
   (("M-S" . puni-splice))
   :config
-  (puni-global-mode)
-  (add-hook 'term-mode-hook #'puni-disable-puni-mode)
-  (add-hook 'vterm-mode-hook #'puni-disable-puni-mode))
+  (puni-global-mode))
 
 (use-package eval-expr
   :bind ("M-:" . eval-expr)
@@ -1311,7 +1306,6 @@
 
 (use-package eshell
   :commands (eshell eshell-command)
-  :hook (eshell-mode . (lambda () (yas-minor-mode 0)))
   :config
   (defun tj-eshell-prompt ()
     "; ")
@@ -1477,34 +1471,12 @@
   :bind
   (("C-." . dot-mode-execute)))
 
-(use-package iedit
-  :config (setq iedit-toggle-key-default (kbd "C-:")))
+;; (use-package iedit
+;;   :config (setq iedit-toggle-key-default (kbd "C-:")))
 
 (use-package frog-jump-buffer)
 
 (use-package github-review)
-
-(use-package vterm
-  :custom (vterm-install t)
-  :hook ((vterm-mode . tj-vterm-hook))
-  :config
-  (defun tj-vterm-hook ()
-    (font-lock-mode 1))
-  (setq vterm-buffer-name "*shell*")
-  (setq vterm-buffer-name-string "*shell*")
-  (defun tj-vterm (title)
-    (interactive "sTitle: ")
-    (vterm (format "*%s*" title)))
-  (defun vterm--rename-buffer-as-title (title)
-    (when (ignore-errors (file-directory-p title))
-      (cd-absolute title))
-    (rename-buffer (format "term %s" title)))
-  (add-hook 'vterm-set-title-functions 'vterm--rename-buffer-as-title)
-  :bind  
-  (:map vterm-mode-map ("M-y" . vterm-yank)))
-
-(use-package vterm-toggle
-  :after (vterm))
 
 (use-package vertico
   :init
@@ -1552,10 +1524,8 @@
 
 (use-package with-editor
   :config
-  (add-hook 'shell-mode-hook 'with-editor-export-editor)
-  (add-hook 'term-exec-hook 'with-editor-export-editor)
   (add-hook 'eshell-mode-hook 'with-editor-export-editor)
-  (add-hook 'vterm-mode-hook 'with-editor-export-editor))
+  (add-hook 'eat-mode-hook 'with-editor-export-editor))
 
 (use-package go-mod
   :straight (:type built-in))
@@ -1596,8 +1566,8 @@
   :ensure t
   :commands (kubernetes-overview)
   :config
-  (setq kubernetes-poll-frequency 3600
-        kubernetes-redraw-frequency 3600))
+  (setq kubernetes-poll-frequency 5
+        kubernetes-redraw-frequency 5))
 
 (use-package tj
   :straight (:type built-in)
@@ -1635,3 +1605,4 @@
   :no-require
   :hook ((after-init . server-start)))
 
+(put 'narrow-to-region 'disabled nil)
