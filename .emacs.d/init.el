@@ -87,15 +87,13 @@
                          (:exclude ".dir-locals.el" "*-tests.el"))))
 
 (use-package no-littering
-  :after recentf
   :config
   (auto-save-mode 1)
-  (add-to-list 'recentf-exclude no-littering-var-directory)
-  (add-to-list 'recentf-exclude no-littering-etc-directory)
+  (add-to-list 'recentf-exclude user-emacs-var-directory)
   (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+        `((".*" ,(expand-file-name "auto-save/" user-emacs-var-directory) t)))
   (setq backup-directory-alist
-        `((".*" . ,(no-littering-expand-var-file-name "backup/"))))
+        `((".*" . ,(expand-file-name "backup/" user-emacs-var-directory))))
   :ensure t
   :demand t)
 
@@ -753,27 +751,22 @@
   :demand t)
 
 (use-package saveplace
-  :after no-littering
   :diminish
   :ensure nil
   :config
-
-  (defconst savefile-dir (expand-file-name "savefile" no-littering-var-directory))
-
+  (defconst savefile-dir (expand-file-name "savefile" user-emacs-var-directory))
   ;; create the savefile dir if it doesn't exist
   (unless (file-exists-p savefile-dir)
     (make-directory savefile-dir))
   (setq save-place-file (expand-file-name "saveplace" savefile-dir))
   ;; activate it for all buffers
   (setq-default save-place t)
-
   :demand t)
 
 (use-package hideshow
   :ensure nil
   :hook
   (prog-mode . hs-minor-mode)
-
   :demand t)
 
 (use-package recentf
