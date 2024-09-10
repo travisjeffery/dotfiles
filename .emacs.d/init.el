@@ -26,8 +26,11 @@
 ;; needs to be up early because there's some issue around packages depending on it the wrong way.
 (use-package project)
 
-(straight-use-package
- '(eat :type git
+(use-package eat
+  :config
+  (setq eat-enable-directory-tracking t)
+  :straight
+  '(eat :type git
        :host codeberg
        :repo "akib/emacs-eat"
        :files ("*.el" ("term" "term/*.el") "*.texi"
@@ -36,6 +39,7 @@
                ("integration" "integration/*")
                (:exclude ".dir-locals.el" "*-tests.el"))))
 
+
 (use-package treesit-auto
   :config
   (treesit-auto-add-to-auto-mode-alist 'all))
@@ -43,6 +47,7 @@
 (use-package no-littering
   :after recentf
   :config
+  (auto-save-mode 1))
   (add-to-list 'recentf-exclude no-littering-var-directory)
   (add-to-list 'recentf-exclude no-littering-etc-directory)
   (setq auto-save-file-name-transforms
@@ -77,6 +82,21 @@
 ;; (use-package zones)
 
 ;; (use-package isearch-prop)
+
+(use-package marginalia
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init section is always executed.
+  :init
+
+  ;; Marginalia must be activated in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode))
 
 (use-package isearch
   :straight (:type built-in)
@@ -916,6 +936,8 @@
 (use-package writegood-mode)
 
 (use-package yaml-mode
+  :bind
+  (("C-c y p" . tj-yaml-show-path-to-point))
   :mode ("\\.yaml" . yaml-mode))
 
 (use-package org
@@ -955,7 +977,7 @@
   (setq org-startup-folded nil)
   
   ;; enable org-indent-mode
-  (setq org-startup-indented t)
+  (setq org-startup-indented nil)
   
   ;; but always to the left always
   (setq org-indent-indentation-per-level 0)
@@ -1478,6 +1500,7 @@
 
 (use-package github-review)
 
+
 (use-package vertico
   :init
   (vertico-mode 1)
@@ -1522,10 +1545,10 @@
   :after proced
   :bind (:map proced-mode-map ("/" . proced-narrow)))
 
-(use-package with-editor
-  :config
-  (add-hook 'eshell-mode-hook 'with-editor-export-editor)
-  (add-hook 'eat-mode-hook 'with-editor-export-editor))
+;; (use-package with-editor
+;;   :config
+;;   (add-hook 'eshell-mode-hook 'with-editor-export-editor)
+;;   (add-hook 'eat-mode-hook 'with-editor-export-editor))
 
 (use-package go-mod
   :straight (:type built-in))

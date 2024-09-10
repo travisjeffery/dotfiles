@@ -53,6 +53,8 @@
 
 (setq initial-major-mode 'fundamental-mode
       tramp-default-method "ssh"
+      ;; show all buffers, otherwise, some can be hidden under C-x b
+      buffers-menu-max-size nil
       debugger-stack-frame-as-list t
       user-full-name "Travis Jeffery"
       user-mail-address "tj@travisjeffery.com"
@@ -564,32 +566,6 @@ them across multiple lines."
               "(match-string 0 yas-text))}>")
            (concat "<" tag "$1>$0</" tag ">"))))))))
 (define-key markdown-mode-map (kbd "C-c <") 'tj-insert-open-and-close-tag)
-
-(defun init-subword ()
-  (let
-      (
-       (adv
-        (cons
-         'advice
-         (lambda ()
-           (let ((os (char-syntax ?_)))
-             (modify-syntax-entry ?_ "_")
-             ad-do-it
-             (modify-syntax-entry ?_ (string os))))))
-       (fun
-        '
-        (subword-forward
-         subword-kill
-         subword-backward
-         subword-backward-kill
-         subword-downcase
-         subword-upcase
-         subword-transpose)))
-    (dolist (f fun)
-      (ad-add-advice f (list 'underscore-wrap nil t adv) 'around 'last)
-      (ad-activate f))))
-
-(add-hook 'after-init-hook #'init-subword)
 
 (add-hook 'focus-out-hook 'garbage-collect)
 
