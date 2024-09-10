@@ -45,11 +45,8 @@
 ;; 
 ;;; Code:
 
-(require 'projectile)
 (require 'dired)
 (require 's)
-
-(menu-bar-mode -1)
 
 (setq initial-major-mode 'fundamental-mode
       tramp-default-method "ssh"
@@ -527,7 +524,7 @@ them across multiple lines."
       body
       "</${1:$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text)"
       "(match-string 0 yas-text))}>"))))
-(define-key markdown-mode-map (kbd "C-c C-w") 'tj-wrap-with-tags)
+;;(define-key markdown-mode-map (kbd "C-c C-w") 'tj-wrap-with-tags)
 
 (defun tj-insert-open-and-close-tag ()
   "Generates an open and close HTML snippet using the current word."
@@ -565,7 +562,7 @@ them across multiple lines."
               "$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text) "
               "(match-string 0 yas-text))}>")
            (concat "<" tag "$1>$0</" tag ">"))))))))
-(define-key markdown-mode-map (kbd "C-c <") 'tj-insert-open-and-close-tag)
+;;(define-key markdown-mode-map (kbd "C-c <") 'tj-insert-open-and-close-tag)
 
 (add-hook 'focus-out-hook 'garbage-collect)
 
@@ -762,8 +759,8 @@ Otherwise split the current paragraph into one sentence per line."
 (defun tj-font-size ()
   "Font size for this computer."
   (interactive)
-  (if (string-equal "laptop" (system-name))
-      10
+  (if (equal (window-system) 'ns)
+      14
     11))
 
 (defun tj-zoom-reset ()
@@ -805,9 +802,10 @@ Otherwise split the current paragraph into one sentence per line."
 (defun tj-theme ()
   (interactive)  
   
-  (menu-bar-mode -1)
-  (toggle-scroll-bar -1)
-  (tool-bar-mode -1)
+  (when (display-graphic-p)
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1))
   
   (defgroup tj-theme nil
     "Faces for tj-theme."
