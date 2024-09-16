@@ -59,10 +59,6 @@
 
 (setq use-package-verbose t)
 
-;; (use-package use-package-ensure-system-package
-;;   :ensure t
-;;   :demand t)
-
 ;; needs to be up early because there's some issue around packages depending on it the wrong way.
 (use-package project
   :ensure t
@@ -1846,7 +1842,28 @@
   :demand t
   :config
   (add-hook 'eshell-mode-hook 'with-editor-export-editor)
-  (add-hook 'eat-mode-hook 'with-editor-export-editor))
+  
+  (cl-defun with-editor-export-editor-eat (process &optional (envvar "EDITOR"))
+  "Like `with-editor-export-editor', but for `eat-exec-hook'."
+  (cond
+   ((derived-mode-p 'eat-mode)
+    (if with-editor-emacsclient-executable
+        (let ((with-editor--envvar envvar)
+              (process-environment process-environment))
+          (with-editor--setup)
+          (while (accept-process-output process 0.1))
+          (when-let ((v (getenv envvar)))
+            (eat-term-send-string eat-terminal (format " export %s=%S" envvar v))
+            (eat-self-input 1 'return))
+          (when-let ((v (getenv "EMACS_SERVER_FILE")))
+            (eat-term-send-string eat-terminnal (format " export EMACS_SERVER_FILE=%S" v))
+            (eat-self-input 1 'return))
+          (eat-term-send-string eat-terminal "clear")
+          (eat-self-input 1 'return))
+      (error "Cannot use sleeping editor in this buffer")))
+   (t (error "Cannot export environment variables in this buffer")))
+  (message "Successfully exported %s" envvar))
+  (add-hook 'eat-exec-hook #'with-editor-export-editor-eat))
 
 (use-package go-mod
   :ensure nil
@@ -1856,7 +1873,6 @@
   :ensure nil
   :after projectile
   :config (shim-init-go)
-
   :demand t)
 
 (use-package elisp-autofmt
