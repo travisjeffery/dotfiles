@@ -665,12 +665,8 @@
   
   :hook
   (go-mode . tj-go-hook)
-  :ensure t
+  :ensure (:wait t)
   :demand t)
-
-;;
-:ensure t
-:demand t
 
 (use-package winner
   :diminish
@@ -1870,7 +1866,9 @@
   :demand t)
 
 (use-package shim
-  :ensure nil
+  :ensure (:type git
+                 :host github
+                 :repo "twlz0ne/shim.el")
   :after projectile
   :config (shim-init-go)
   :demand t)
