@@ -1804,9 +1804,10 @@
   :demand t)
 
 (use-package iedit
+  :init
+  (setq iedit-toggle-key-default (kbd "C-:"))
   :ensure t
-  :demand t
-  :config (setq iedit-toggle-key-default (kbd "C-:")))
+  :demand t)
 
 (use-package frog-jump-buffer
   :ensure t
@@ -1888,12 +1889,7 @@
   :hook (emacs-lisp-mode-hook . elisp-autofmt-save-hook-for-this-buffer)
   :demand t)
 
-(use-package track-changes
-  :ensure (:wait t)
-  :defer t)
-
 (use-package eglot
-  :after track-changes
   :config
   (setq eglot-extend-to-xref t)
   (setq eglot-confirm-server-initiated-edits nil)
