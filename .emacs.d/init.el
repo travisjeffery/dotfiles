@@ -87,7 +87,6 @@
 (use-package no-littering
   :config
   (auto-save-mode 1)
-  (add-to-list 'recentf-exclude user-emacs-var-directory)
   (setq auto-save-file-name-transforms
         `((".*" ,(expand-file-name "auto-save/" user-emacs-var-directory) t)))
   (setq backup-directory-alist
@@ -180,7 +179,7 @@
     ("C-c y" . tj-ctrl-c-y-map) ;; aya
     ("C-c C-d" . tj-ctrl-c-c-c-d-map) ("M-i" . tj-m-i-map) ("M-o" . tj-m-o-map))))
 
-(use-package undo-tree  
+(use-package undo-tree
   :config
   (add-to-list 'undo-tree-history-directory-alist  '("." . "~/.emacs.d/var/undo-tree"))
   (global-undo-tree-mode +1)
@@ -254,6 +253,34 @@
   :ensure t
   :demand t)
 
+(use-package with-editor
+  :ensure t
+  :demand t
+  :config
+  (add-hook 'eshell-mode-hook 'with-editor-export-editor)
+
+  (cl-defun with-editor-export-editor-eat (process &optional (envvar "EDITOR"))
+  "Like `with-editor-export-editor', but for `eat-exec-hook'."
+  (cond
+   ((derived-mode-p 'eat-mode)
+    (if with-editor-emacsclient-executable
+        (let ((with-editor--envvar envvar)
+              (process-environment process-environment))
+          (with-editor--setup)
+          (while (accept-process-output process 0.1))
+          (when-let ((v (getenv envvar)))
+            (eat-term-send-string eat-terminal (format " export %s=%S" envvar v))
+            (eat-self-input 1 'return))
+          (when-let ((v (getenv "EMACS_SERVER_FILE")))
+            (eat-term-send-string eat-terminnal (format " export EMACS_SERVER_FILE=%S" v))
+            (eat-self-input 1 'return))
+          (eat-term-send-string eat-terminal "clear")
+          (eat-self-input 1 'return))
+      (error "Cannot use sleeping editor in this buffer")))
+   (t (error "Cannot export environment variables in this buffer")))
+  (message "Successfully exported %s" envvar))
+  (add-hook 'eat-exec-hook #'with-editor-export-editor-eat))
+
 (use-package magit
   :diminish magit-wip-mode
   :config
@@ -263,13 +290,13 @@
   (setq vc-follow-symlinks t
         magit-commit-ask-to-stage 'stage
         magit-refresh-status-buffer t)
-  
+
   (magit-define-section-jumper
     magit-jump-to-recent-commits
     "Recent commits"
     recent
     "HEAD~10..HEAD")
-  
+
   (defun tj-visit-pull-request-url ()
     "Visit the current branch's PR on Github."
     (interactive)
@@ -298,18 +325,9 @@
   :ensure t
   :demand t)
 
-(use-package magit-diff-flycheck
-  :ensure t
-  :demand t)
 
-(use-package forge
-  :config
-  (setq
-   forge-topic-list-limit
-   '(3 . -1)
-   forge-pull-notifications nil)
-  :ensure t
-  :demand t)
+
+
 
 (use-package copy-as-format
   :init (setq copy-as-format-default "github")
@@ -381,6 +399,11 @@
   :demand t)
 
 (use-package dired-filter
+  :ensure t
+  :demand t)
+
+(use-package expand-region
+  :bind ("C-=" . er/expand-region)
   :ensure t
   :demand t)
 
@@ -495,7 +518,26 @@
   :ensure t
   :demand t)
 
+(use-package flycheck
+  :diminish
+  :config
+  (setq flycheck-check-syntax-automatically '(save mode-enable))
+  (setq flycheck-idle-change-delay 4)
+  :ensure t
+  :demand t)
+
+(use-package flycheck-rust
+  :config
+  (with-eval-after-load 'rust-mode
+    (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+  :ensure t
+  :demand t)
+
 (use-package flycheck-clj-kondo
+  :ensure t
+  :demand t)
+
+(use-package magit-diff-flycheck
   :ensure t
   :demand t)
 
@@ -533,9 +575,7 @@
   :ensure t
   :demand t)
 
-(use-package company-quickhelp
-  :ensure t
-  :demand t)
+
 
 (eval-after-load
     'company
@@ -585,7 +625,7 @@
    ("M-d" . subword-kill)
    ("C-c C-t" . go-test-current-file)
    ("C-c M-t" . go-test-current-test))
-  
+
   :config
 
   (defun tj-find-go-project-root (dir)
@@ -603,15 +643,15 @@
             (cons 'transient dir)))
       (when dir
         (cons 'transient dir))))
-  
+
   (setq gofmt-command "goimports"
         tab-width 8)
   (setq-local compilation-read-command nil)
-  
+
   (defun tj-turn-on-gofmt-before-save ()
     (interactive)
     (add-hook 'before-save-hook 'gofmt t t))
-  
+
   (defun tj-turn-off-gofmt-before-save ()
     (interactive)
     (remove-hook 'before-save-hook 'gofmt t))
@@ -640,7 +680,7 @@
                (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
             (go-test--go-test
              (s-concat test-flag test-name additional-arguments "\\$ .")))))))
-  
+
   (defun tj-go-hook ()
     (setq imenu-generic-expression
           '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
@@ -658,12 +698,12 @@
     (selected-minor-mode 1)
     (whitespace-mode 1)
     (electric-pair-mode 1)
-    
+
     (if (not (string-match "go" compile-command))
         (set
          (make-local-variable 'compile-command)
          "go build -v && go test -v && go vet")))
-  
+
   :hook
   (go-mode . tj-go-hook)
   :ensure (:wait t)
@@ -704,12 +744,6 @@
   :demand t)
 
 (use-package pt
-  :ensure t
-  :demand t)
-
-(use-package expand-region
-  :config (er/add-html-mode-expansions)
-  :bind ("C-=" . er/expand-region)
   :ensure t
   :demand t)
 
@@ -765,6 +799,7 @@
 (use-package recentf
   :after saveplace
   :config
+  (add-to-list 'recentf-exclude user-emacs-var-directory)
   (setq
    recentf-save-file
    (expand-file-name "recentf" savefile-dir)
@@ -1094,6 +1129,15 @@
   :ensure t
   :demand t)
 
+(use-package forge
+  :config
+  (setq
+   forge-topic-list-limit
+   '(3 . -1)
+   forge-pull-notifications nil)
+  :ensure t
+  :demand t)
+
 (use-package writegood-mode
   :ensure t
   :demand t)
@@ -1114,7 +1158,7 @@
    ("C-c m t" . org-todo-list)
    ("C-c m m" . orgs-tagsview)
    :map org-mode-map
-   ("C-c C-d" . nil))  
+   ("C-c C-d" . nil))
   :config
   (defun tj-org-hook ()
     (setq org-hide-leading-stars nil))
@@ -1127,7 +1171,7 @@
 
   ;; where to archive subtree
   (setq org-archive-location "~/.archive.org::* Archived Tasks")
-  
+
   (setq org-src-lang-modes
         '
         (("screen" . sh)
@@ -1138,22 +1182,22 @@
          ("asymptote" . asy)
          ("cl" . lisp)
          ("dot" . graphviz-dot)))
-  
+
   (setq org-startup-folded nil)
-  
+
   ;; enable org-indent-mode
   (setq org-startup-indented t)
-  
+
   ;; but always to the left always
   (setq org-indent-indentation-per-level 0)
-  
+
   ;; don't hide leading stars
   (setq org-hide-leading-stars nil)
 
   ;; save clock history across emacs sessions
   (setq org-clock-persist 'history)
   (org-clock-persistence-insinuate)
-  
+
   (defun tj-org-capture ()
     (interactive)
     (find-file org-default-notes-file))
@@ -1163,9 +1207,9 @@
 
   (setq org-directory (expand-file-name "~/"))
   (setq org-default-notes-file (expand-file-name "~/notes.org"))
-  
+
   (setq org-agenda-files '("~/"))
-  
+
   ;; activate single letter commands at beginning of a headline.
   (setq org-use-speed-commands t)
 
@@ -1377,6 +1421,10 @@
   :ensure t
   :demand t)
 
+(use-package company-quickhelp
+  :ensure t
+  :demand t)
+
 (use-package cask-mode
   :ensure t
   :demand t)
@@ -1403,20 +1451,7 @@
   :ensure nil
   :demand t)
 
-(use-package flycheck
-  :diminish
-  :config
-  (setq flycheck-check-syntax-automatically '(save mode-enable))
-  (setq flycheck-idle-change-delay 4)
-  :ensure t
-  :demand t)
 
-(use-package flycheck-rust
-  :config
-  (with-eval-after-load 'rust-mode
-    (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
-  :ensure t
-  :demand t)
 
 (use-package crux
   :config
@@ -1558,7 +1593,7 @@
   :config
   (defun tj-eshell-prompt ()
     "; ")
-  (setq eshell-prompt-function 'tj-eshell-prompt) 
+  (setq eshell-prompt-function 'tj-eshell-prompt)
   (setq eshell-prompt-regexp "^; ")
   (setq eshell-where-to-jump 'end)
   (setq eshell-review-quick-commands t)
@@ -1585,7 +1620,7 @@
   ;;            (projectile-project-root))))
   ;;      (eshell-buffer-name (ff-basename dir))
   ;;      (eshell dir)))
-  
+
   (defun tj-eshell-hook ()
     (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
   (add-hook 'eshell-mode-hook 'tj-eshell-hook)
@@ -1834,33 +1869,7 @@
   :ensure t
   :demand t)
 
-(use-package with-editor
-  :ensure t
-  :demand t
-  :config
-  (add-hook 'eshell-mode-hook 'with-editor-export-editor)
-  
-  (cl-defun with-editor-export-editor-eat (process &optional (envvar "EDITOR"))
-  "Like `with-editor-export-editor', but for `eat-exec-hook'."
-  (cond
-   ((derived-mode-p 'eat-mode)
-    (if with-editor-emacsclient-executable
-        (let ((with-editor--envvar envvar)
-              (process-environment process-environment))
-          (with-editor--setup)
-          (while (accept-process-output process 0.1))
-          (when-let ((v (getenv envvar)))
-            (eat-term-send-string eat-terminal (format " export %s=%S" envvar v))
-            (eat-self-input 1 'return))
-          (when-let ((v (getenv "EMACS_SERVER_FILE")))
-            (eat-term-send-string eat-terminnal (format " export EMACS_SERVER_FILE=%S" v))
-            (eat-self-input 1 'return))
-          (eat-term-send-string eat-terminal "clear")
-          (eat-self-input 1 'return))
-      (error "Cannot use sleeping editor in this buffer")))
-   (t (error "Cannot export environment variables in this buffer")))
-  (message "Successfully exported %s" envvar))
-  (add-hook 'eat-exec-hook #'with-editor-export-editor-eat))
+
 
 (use-package go-mod
   :ensure nil
@@ -1880,8 +1889,8 @@
   :demand t)
 
 (use-package track-changes
-  :ensure t
-  :demand t)
+  :ensure (:wait t)
+  :defer t)
 
 (use-package eglot
   :after track-changes
@@ -1926,19 +1935,19 @@
         projectile-mode-line nil
         projectile-sort-order 'modification-time
         projectile-switch-project-action #'projectile-commander)
-  
+
   (add-to-list 'projectile-globally-ignored-directories "Godeps/_workspace")
   (add-to-list 'projectile-globally-ignored-directories "vendor")
   (add-to-list 'projectile-globally-ignored-directories "_build")
   (add-to-list 'projectile-globally-ignored-directories "deps")
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
-  
+
   (projectile-global-mode 1)
 
   (def-projectile-commander-method ?a
                                    "Run ripgrep on project."
                                    (call-interactively #'projectile-ripgrep))
-  
+
   :bind
   (("C-x p t" . projectile-toggle-between-implementation-and-test)
    ("C-x p p" . projectile-switch-project)
@@ -1962,7 +1971,7 @@
           (org-mode))
         (setq initial-buffer-choice buffer))
     (error (message "%s" (error-message-string err))))
-  
+
   (setq native-comp-async-report-warnings-errors nil)
   (set-face-attribute 'default nil :family "IBM Plex Mono")
   (set-face-attribute 'default nil :height 110)
@@ -1970,7 +1979,7 @@
                                           (cons 'height 40)
                                           (cons 'vertical-scroll-bars nil)
                                           (cons 'internal-border-width 24))))
-  (add-hook 'after-init-hook 'tj-theme))  
+  (add-hook 'after-init-hook 'tj-theme))
 
 (defun tj-raise-frame-and-give-focus ()
   (when window-system
