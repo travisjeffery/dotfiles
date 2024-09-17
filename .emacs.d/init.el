@@ -52,9 +52,11 @@
 ;;Turns off elpaca-use-package-mode current declaration
 ;;Note this will cause evaluate the declaration immediately. It is not deferred.
 ;;Useful for configuring built-in emacs features.
+
 (use-package emacs
   :ensure nil
   :config
+  (setq async-shell-command-buffer 'new-buffer)
   (setq ring-bell-function #'ignore))
 
 (setq use-package-verbose t)
@@ -570,7 +572,6 @@
   :demand t)
 
 (use-package go-mode
-  :init
   :ensure-system-package ((godef . "go install github.com/rogpeppe/godef@latest")
                           (goimports . "go install golang.org/x/tools/cmd/goimports@latest")
                           (golint . "go install golang.org/x/lint/golint@latest")
