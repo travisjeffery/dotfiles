@@ -61,7 +61,7 @@
 
 ;; needs to be up early because there's some issue around packages depending on it the wrong way.
 (use-package project
-  :ensure t
+  :ensure (:wait t)
   :demand t)
 
 (use-package xclip
@@ -1876,7 +1876,7 @@
   :demand t)
 
 (use-package elisp-autofmt
-  :ensure nil
+  :ensure t
   :hook (emacs-lisp-mode-hook . elisp-autofmt-save-hook-for-this-buffer)
   :demand t)
 
