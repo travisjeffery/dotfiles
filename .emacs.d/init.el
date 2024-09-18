@@ -1111,6 +1111,7 @@
   ;; (add-hook 'before-save-hook #'whitespace-cleanup)
   :config (setq whitespace-line-column 76) ;; limit line length
   (setq whitespace-style '(face empty lines trailing))
+  (whitespace-mode 1)
   :ensure nil
   :demand t)
 
