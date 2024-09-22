@@ -84,6 +84,10 @@
                          ("integration" "integration/*")
                          (:exclude ".dir-locals.el" "*-tests.el"))))
 
+(use-package verb
+  :ensure t
+  :demand t)
+
 (use-package no-littering
   :config
   (auto-save-mode 1)
@@ -575,8 +579,6 @@
   :ensure t
   :demand t)
 
-
-
 (eval-after-load
     'company
   '(define-key company-active-map (kbd "M-h") #'company-quickhelp-manual-begin))
@@ -711,8 +713,7 @@
 
 (use-package winner
   :diminish
-  :config (winner-mode +1)
-  :bind (("M-[" . winner-undo) ("M-]" . winner-redo)))
+  :config (winner-mode +1))
 
 (use-package eacl
   :config (setq eacl-grep-program "grep --exclude-dir=.git --exclude-dir=vendor")
@@ -1157,10 +1158,12 @@
   :bind
   (("C-c m c" . org-capture)
    ("C-c m t" . org-todo-list)
-   ("C-c m m" . orgs-tagsview)
+   ("C-c m m" . orgs-tagsview)   
    :map org-mode-map
    ("C-c C-d" . nil))
   :config
+  (define-key org-mode-map (kbd "C-c C-r") verb-command-map)
+
   (defun tj-org-hook ()
     (setq org-hide-leading-stars nil))
   (setq org-todo-keywords
