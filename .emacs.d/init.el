@@ -646,17 +646,10 @@
       (when dir
         (cons 'transient dir))))
 
-  (setq gofmt-command "goimports"
-        tab-width 8)
+  (setq tab-width 8)
   (setq-local compilation-read-command nil)
 
-  (defun tj-turn-on-gofmt-before-save ()
-    (interactive)
-    (add-hook 'before-save-hook 'gofmt t t))
 
-  (defun tj-turn-off-gofmt-before-save ()
-    (interactive)
-    (remove-hook 'before-save-hook 'gofmt t))
 
   (set-face-foreground 'go-test--ok-face "forest green")
   (set-face-foreground 'go-test--standard-face "dark orange")
@@ -694,7 +687,6 @@
     (font-lock-mode -1)
     (which-function-mode -1)
     (flycheck-mode 1)
-    (tj-turn-on-gofmt-before-save)
     (highlight-symbol-mode)
     (subword-mode 1)
     (selected-minor-mode 1)
@@ -1893,6 +1885,7 @@
   :hook (emacs-lisp-mode-hook . elisp-autofmt-save-hook-for-this-buffer)
   :demand t)
 
+
 (use-package eglot
   :config
   (setq eglot-extend-to-xref t)
@@ -1998,3 +1991,4 @@
   :demand t)
 
 (put 'narrow-to-region 'disabled nil)
+
