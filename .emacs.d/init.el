@@ -72,17 +72,9 @@
   :ensure t
   :demand t)
 
-(use-package eat
-  :config
-  (setq eat-enable-directory-tracking t)
-  :ensure (:type git
-                 :host codeberg
-                 :repo "akib/emacs-eat"
-                 :files ("*.el" ("term" "term/*.el") "*.texi"
-                         "*.ti" ("terminfo/e" "terminfo/e/*")
-                         ("terminfo/65" "terminfo/65/*")
-                         ("integration" "integration/*")
-                         (:exclude ".dir-locals.el" "*-tests.el"))))
+(use-package vterm
+  :ensure t
+  :demand t)
 
 (use-package verb
   :ensure t
