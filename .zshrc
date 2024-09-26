@@ -236,7 +236,7 @@ afu-ad-delete-unambiguous-prefix afu+accept-line
 afu-ad-delete-unambiguous-prefix afu+accept-line-and-down-history
 afu-ad-delete-unambiguous-prefix afu+accept-and-hold
 
-PROMPT='; '
+PROMPT='$ '
 
 setopt EXTENDED_GLOB AUTO_PUSHD LISTPACKED \
        AUTOREMOVESLASH HIST_IGNORE_ALL_DUPS HIST_IGNORE_DUPS \
@@ -473,3 +473,8 @@ eval "$(pyenv init -)"
 
 [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
   source "$EAT_SHELL_INTEGRATION_DIR/zsh"
+
+if [[ $TERM == "dumb" ]]; then
+  unsetopt zle
+  PS1='$ '
+fi

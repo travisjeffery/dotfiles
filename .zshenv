@@ -52,7 +52,6 @@ if [ -f /etc/os-release ]; then source /etc/os-release; fi
 export EDITOR="emacsclient -c"
 export PAGER=less
 export SHELL=$(which zsh)
-export TERM=xterm-256color
 export GZIP='--best --name --verbose'
 export GITHUB_USERNAME=travisjeffery
 export JAVA_HOME=/usr
@@ -66,8 +65,6 @@ alias pbpaste='xsel --clipboard --output'
 export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
 
 source ~/work.sh
-
-[ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
 
 export GOENV_ROOT=$HOME/.goenv
 export PATH="$GOENV_ROOT/bin:$PATH"
