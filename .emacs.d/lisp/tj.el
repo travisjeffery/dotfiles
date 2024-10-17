@@ -318,7 +318,8 @@
                              ("C-z" . delete-other-windows)
                              ("C-c q" . tj-kill-other-buffer)
                              ;; use hippie-expand instead of dabbrev
-                             ("C-/" . hippie-expand)
+                             ("C-/" . undo)
+                             ("M-/" . hippie-expand)
                              ;; replace buffer-menu with ibuffer
                              ("C-x C-b" . bufler)
                              ("C-h A" . apropos)

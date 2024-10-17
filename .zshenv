@@ -54,9 +54,11 @@ export PAGER=less
 export SHELL=$(which zsh)
 export GZIP='--best --name --verbose'
 export GITHUB_USERNAME=travisjeffery
+export GEM_PATH=$HOME/.gem
+export GEM_HOME=$HOME/.gem
+export PATH=$PATH:$HOME/.gem/bin
 export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
-export PATH=$PATH:$HOME/.gem/bin
 export HELM_EXPERIMENTAL_OCI=1
 
 alias pbcopy='xsel --clipboard --input'
@@ -74,5 +76,10 @@ if type goenv &> /dev/null; then
   export PATH="$GOROOT/bin:$PATH"
   export PATH="$PATH:$GOPATH/bin"
 fi
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 eval $(ssh-agent) &>/dev/null

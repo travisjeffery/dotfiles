@@ -56,10 +56,22 @@
 (use-package emacs
   :ensure nil
   :config
+  (setq major-mode-remap-alist
+      '((python-mode . python-ts-mode)))
   (setq async-shell-command-buffer 'new-buffer)
   (setq ring-bell-function #'ignore))
 
 (setq use-package-verbose t)
+
+(use-package pyenv-mode
+  :ensure t
+  :demand t)
+
+(use-package direnv
+  :ensure t
+  :demand t
+  :config
+  (direnv-mode 1))
 
 ;; needs to be up early because there's some issue around packages depending on it the wrong way.
 (use-package project
@@ -91,7 +103,7 @@
   :demand t)
 
 (use-package compat
-  :ensure t
+  :ensure nil
   :demand t)
 
 (use-package hydra
@@ -179,8 +191,6 @@
   :config
   (add-to-list 'undo-tree-history-directory-alist  '("." . "~/.emacs.d/var/undo-tree"))
   (global-undo-tree-mode +1)
-  :bind (:map undo-tree-map
-              (("C-/" . nil)))
   :diminish
   :ensure t
   :demand t)
@@ -331,12 +341,11 @@
   :demand t)
 
 (use-package abbrev
+  :diminish
   :ensure nil
   :config
   (setq save-abbrevs 'silently)
   (setq-default abbrev-mode t)
-  :diminish
-
   :demand t)
 
 (use-package compile
@@ -690,8 +699,9 @@
          (make-local-variable 'compile-command)
          "go build -v && go test -v && go vet")))
 
-  :hook
-  (go-mode . tj-go-hook)
+  :hook  
+  ((go-mode . tj-go-hook)
+   (before-save . eglot-format))
   :ensure (:wait t)
   :demand t)
 
@@ -1530,8 +1540,6 @@
   :diminish
   :bind
   (("M-S" . puni-splice))
-  :config
-  (puni-global-mode)
   :ensure t
   :demand t)
 
@@ -1648,7 +1656,6 @@
 (use-package visual-regexp
   :bind
   ("M-&" . vr/query-replace)
-  ("M-/" . vr/replace)
   :ensure t
   :demand t)
 
@@ -1914,6 +1921,7 @@
   :demand t)
 
 (use-package projectile
+  :diminish
   :config
   (setq projectile-enable-caching t
         projectile-indexing-method 'alien
@@ -1942,6 +1950,15 @@
   :ensure t
   :demand t)
 
+(use-package ledger-mode
+  :ensure t
+  :demand t
+  :init
+  (setq ledger-clear-whole-transactions 1)
+  :mode (("\\.ledger\\'" . ledger-mode)
+         ("\\.dat\\'" . ledger-mode)))
+  
+
 (use-package tj
   :after projectile
   :ensure nil
@@ -1965,6 +1982,13 @@
                                           (cons 'vertical-scroll-bars nil)
                                           (cons 'internal-border-width 24))))
   (add-hook 'after-init-hook 'tj-theme))
+
+(use-package elmacro
+  :ensure t
+  :demand t
+  :diminish
+  :config
+  (elmacro-mode 1))
 
 (defun tj-raise-frame-and-give-focus ()
   (when window-system
