@@ -1812,6 +1812,13 @@
   :ensure t
   :demand t)
 
+(use-package orderless
+  :demand t
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
 (use-package consult
   :ensure t
   :demand t
@@ -1917,7 +1924,7 @@
   ;; Optionally make narrowing help available in the minibuffer.
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
-)
+  )
 
 (use-package vertico
   :init
@@ -1971,8 +1978,6 @@
   :bind (:map proced-mode-map ("/" . proced-narrow))
   :ensure t
   :demand t)
-
-
 
 (use-package go-mod
   :ensure nil
@@ -2064,7 +2069,6 @@
   (setq ledger-clear-whole-transactions 1)
   :mode (("\\.ledger\\'" . ledger-mode)
          ("\\.dat\\'" . ledger-mode)))
-  
 
 (use-package tj
   :after projectile
