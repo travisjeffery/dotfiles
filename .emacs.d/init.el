@@ -87,7 +87,7 @@
 (use-package vterm
   :ensure t
   :demand t)
-
+  
 (use-package verb
   :ensure t
   :demand t)
@@ -393,6 +393,7 @@
   :ensure nil
   :demand t)
 
+
 (use-package dired-toggle
   :preface
   (defun tj-dired-toggle-hook ()
@@ -400,6 +401,16 @@
     (setq-local visual-line-fringe-indicators '(nil right-curly-arrow)
                 word-wrap nil))
   :hook (dired-toggle-mode . tj-dired-toggle--hook)
+  :ensure t
+  :demand t)
+
+(use-package dired-quick-sort
+  :ensure t
+  :demand t
+  :config
+  (dired-quick-sort-setup))
+
+(use-package disk-usage
   :ensure t
   :demand t)
 
@@ -580,10 +591,6 @@
   :ensure t
   :demand t)
 
-(eval-after-load
-    'company
-  '(define-key company-active-map (kbd "M-h") #'company-quickhelp-manual-begin))
-
 (use-package eldoc
   :diminish
   :config
@@ -617,7 +624,9 @@
 (use-package go-mode
   :ensure-system-package ((godef . "go install github.com/rogpeppe/godef@latest")
                           (goimports . "go install golang.org/x/tools/cmd/goimports@latest")
+                          (staticcheck . "go install honnef.co/go/tools/cmd/staticcheck@latest")
                           (golint . "go install golang.org/x/lint/golint@latest")
+                          (errcheck . "github.com/kisielk/errcheck@latest")
                           (gopls . "go install golang.org/x/tools/gopls@latest"))
   :bind
   (:map
@@ -649,8 +658,6 @@
 
   (setq tab-width 8)
   (setq-local compilation-read-command nil)
-
-
 
   (set-face-foreground 'go-test--ok-face "forest green")
   (set-face-foreground 'go-test--standard-face "dark orange")
@@ -699,11 +706,18 @@
          (make-local-variable 'compile-command)
          "go build -v && go test -v && go vet")))
 
-  :hook  
+  :hook
   ((go-mode . tj-go-hook)
-   (before-save . eglot-format))
+   (before-save . eglot-code-action-organize-imports)
+   (before-save . eglot-format-buffer))
   :ensure (:wait t)
   :demand t)
+
+(use-package ws-butler
+  :ensure t
+  :demand t
+  :config
+  (add-hook 'prog-mode-hook #'ws-butler-mode))
 
 (use-package winner
   :diminish
@@ -738,10 +752,6 @@
   :ensure t
   :demand t)
 
-(use-package pt
-  :ensure t
-  :demand t)
-
 (use-package elisp-slime-nav
   :diminish
   :config
@@ -753,7 +763,7 @@
 (use-package paren
   :diminish show-paren-mode
   :config
-  (set-face-attribute 'show-paren-match nil :weight 'bold)
+  ;; (set-face-attribute 'show-paren-match nil :weight 'bold)
   (setq show-paren-style 'parenthesis)
   (setq show-paren-when-point-inside-paren t)
   (show-paren-mode +1)
@@ -1047,7 +1057,8 @@
 
 (use-package anzu
   :diminish
-  :bind (("M-%" . anzu-query-replace-regexp) ("C-M-%" . anzu-query-replace))
+  :bind (("M-%" . anzu-query-replace-regexp)
+         ("C-M-%" . anzu-query-replace))
   :hook (prog-mode . anzu-mode)
   :ensure t
   :demand t)
@@ -1083,7 +1094,6 @@
   :ensure t
   :demand t)
 
-
 (use-package exec-path-from-shell
   :init
   (setq exec-path-from-shell-variables
@@ -1097,7 +1107,8 @@
   :demand t)
 
 (use-package move-text
-  :bind (("M-P" . move-text-up) ("M-N" . move-text-down))
+  :bind (("M-P" . move-text-up)
+         ("M-N" . move-text-down))
   :ensure t
   :demand t)
 
@@ -1109,7 +1120,6 @@
   (whitespace-mode 1)
   :ensure nil
   :demand t)
-
 
 (use-package markdown-mode
   :bind (:map markdown-mode-map ("C-c C-d" . nil))
@@ -1409,20 +1419,6 @@
 (add-to-list 'completion-styles 'initials t)
 (add-to-list 'completion-styles 'substring t)
 
-(use-package company
-  :diminish
-  :hook (prog-mode . company-mode)
-  :config
-  (setq company-idle-delay nil)
-  ;; Ignore go test -c output files
-  (add-to-list 'completion-ignored-extensions ".test")
-  :ensure t
-  :demand t)
-
-(use-package company-quickhelp
-  :ensure t
-  :demand t)
-
 (use-package cask-mode
   :ensure t
   :demand t)
@@ -1448,8 +1444,6 @@
   (add-hook 'text-mode-hook #'flyspell-mode)
   :ensure nil
   :demand t)
-
-
 
 (use-package crux
   :config
@@ -1581,7 +1575,6 @@
 (use-package em-smart
   :after eshell
   :ensure nil
-
   :demand t)
 
 (use-package eshell
@@ -1926,6 +1919,36 @@
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
   )
 
+(use-package corfu
+  :ensure t
+  :demand t
+  :init
+  (global-corfu-mode))
+
+;; Add extensions
+(use-package cape
+  :ensure t
+  :demand t
+  ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
+  ;; Press C-c p ? to for help.
+  :bind ("C-c p" . cape-prefix-map) ;; Alternative keys: M-p, M-+, ...
+  ;; Alternatively bind Cape commands individually.
+  ;; :bind (("C-c p d" . cape-dabbrev)
+  ;;        ("C-c p h" . cape-history)
+  ;;        ("C-c p f" . cape-file)
+  ;;        ...)
+  :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-hook 'completion-at-point-functions #'cape-history)
+  ;; ...
+)
+
 (use-package vertico
   :init
   (vertico-mode 1)
@@ -2084,12 +2107,14 @@
           (org-mode))
         (setq initial-buffer-choice buffer))
     (error (message "%s" (error-message-string err))))
-
+  
   (setq native-comp-async-report-warnings-errors nil)
   (set-face-attribute 'default nil :family "IBM Plex Mono")
   (set-face-attribute 'default nil :height 110)
-  (setq default-frame-alist (append (list (cons 'width  72)
-                                          (cons 'height 40)
+
+  (setq default-frame-alist (append (list (cons 'width 60)
+                                          (cons 'height 250)
+                                          (cons 'font "-IBM -IBM Plex Mono-regular-normal-normal-*-15-*-*-*-m-0-iso10646-1")
                                           (cons 'vertical-scroll-bars nil)
                                           (cons 'internal-border-width 24))))
   (add-hook 'after-init-hook 'tj-theme))
