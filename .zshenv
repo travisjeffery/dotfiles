@@ -60,6 +60,7 @@ export PATH=$PATH:$HOME/.gem/bin
 export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 export HELM_EXPERIMENTAL_OCI=1
+export KALEIDOSCOPE_DIR="$HOME/code/Kaleidoscope"
 
 alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
