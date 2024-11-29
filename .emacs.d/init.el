@@ -83,7 +83,30 @@
  :config
  (setq major-mode-remap-alist '((python-mode . python-ts-mode)))
  (setq async-shell-command-buffer 'new-buffer)
- (setq ring-bell-function #'ignore))
+ (setq ring-bell-function #'ignore)
+
+ (setq
+  backup-by-copying t
+  delete-old-versions t
+  kept-new-versions 10
+  kept-old-versions 2
+  vc-make-backup-files t
+  version-control t)
+
+ (eval-and-compile
+   (mapc
+    (lambda (entry)
+      (define-prefix-command (cdr entry))
+      (bind-key (car entry) (cdr entry)))
+    '(("C-;" . tj-ctrl-semicolon-map) ;; mc
+      ("C-c b" . tj-ctrl-c-b-map) ;; for bm
+      ("C-c m" . tj-ctrl-c-m-map) ;; for org
+      ("C-c o" . tj-ctrl-c-o-map) ;; for occur
+      ("C-c y" . tj-ctrl-c-y-map) ;; aya
+      ("C-c C-d" . tj-ctrl-c-c-c-d-map)
+      ("M-j" . tj-m-j-map)
+      ("M-i" . tj-m-i-map)
+      ("M-o" . tj-m-o-map)))))
 
 (setq use-package-verbose t)
 
@@ -116,20 +139,6 @@
 (use-package major-mode-hydra :after hydra :ensure t :demand t)
 
 (use-package bufler :after major-mode-hydra :bind (("C-x C-b" . bufler)) :ensure t :demand t)
-
-;; add header and footers to files.
-;;(use-package header2
-;;:ensure t
-;;:demand t)
-
-;; mainly use these two to hide regions matching regexps
-;; (use-package zones
-;; :ensure t
-;; :demand t)
-
-;; (use-package isearch-prop
-;;:ensure t
-;;:demand t)
 
 (use-package
  marginalia
@@ -172,18 +181,6 @@
   sqlformat-args '("-B" "-e"))
  :ensure t
  :demand t)
-
-(eval-and-compile
-  (mapc
-   (lambda (entry)
-     (define-prefix-command (cdr entry))
-     (bind-key (car entry) (cdr entry)))
-   '(("C-;" . tj-ctrl-semicolon-map) ;; mc
-     ("C-c b" . tj-ctrl-c-b-map) ;; for bm
-     ("C-c m" . tj-ctrl-c-m-map) ;; for org
-     ("C-c o" . tj-ctrl-c-o-map) ;; for occur
-     ("C-c y" . tj-ctrl-c-y-map) ;; aya
-     ("C-c C-d" . tj-ctrl-c-c-c-d-map) ("M-i" . tj-m-i-map) ("M-o" . tj-m-o-map))))
 
 (use-package
  undo-tree
@@ -228,6 +225,7 @@
      (when (and last (string-blank-p last))
        (setq replace t))
      (list string replace)))
+
  (advice-add 'kill-new :filter-args #'tj-replace-blank-kill)
  :bind (("M-y" . browse-kill-ring))
  :ensure t
@@ -384,38 +382,6 @@
 (use-package dired-filter :ensure t :demand t)
 
 (use-package expand-region :bind ("C-=" . er/expand-region) :ensure t :demand t)
-
-(use-package
- smart-forward
- :config
- :bind
- (("M-<up>" . smart-up)
-  ("M-<down>" . smart-down)
-  ("M-<left>" . smart-backward)
-  ("M-<right>" . smart-forward))
- :ensure t
- :demand t)
-
-(use-package
- ibuffer
- :ensure nil
- :config (setq ibuffer-show-empty-filter-groups nil)
- (setq ibuffer-formats
-       '((mark " " (name 16 -1) " " filename)
-         (mark
-          modified
-          read-only
-          locked
-          " "
-          (name 18 18 :left :elide)
-          " "
-          (size 9 -1 :right)
-          " "
-          (mode 16 16 :left :elide)
-          " "
-          filename-and-process)))
- (setq ibuffer-saved-filter-groups nil)
- :demand t)
 
 (use-package
  re-builder
@@ -636,8 +602,6 @@
  :ensure (:wait t)
  :demand t)
 
-(use-package lispy :ensure t :demand t :hook ((emacs-lisp-mode-hook . lispy-mode)))
-
 (use-package ws-butler :ensure t :demand t :config (add-hook 'prog-mode-hook #'ws-butler-mode))
 
 (use-package winner :diminish :config (winner-mode +1))
@@ -846,10 +810,9 @@
  ;; current subdir, instead of the current subdir of this dired buffer
  (setq dired-dwim-target t)
 
- ;; enable some really cool extensions like C-x C-j(dired-jump)
+ ;; enable some really cool extensions like C-x C-j (dired-jump)
  (require 'dired-x)
- (ignore-errors
-   (unbind-key "M-s f" dired-mode-map))
+
  (defadvice dired-omit-startup (after diminish-dired-omit activate)
    "Make sure to remove \"Omit\" from the modeline."
    (diminish 'dired-omit-mode)
@@ -1262,11 +1225,6 @@
   (let ((inhibit-read-only t))
     (erase-buffer)))
 
-(add-to-list 'completion-styles 'initials t)
-(add-to-list 'completion-styles 'substring t)
-
-(use-package cask-mode :ensure t :demand t)
-
 (use-package zop-to-char :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char)) :ensure t :demand t)
 
 (use-package imenu-anywhere :bind (("C-c i" . imenu-anywhere)) :ensure t :demand t)
@@ -1322,13 +1280,6 @@
 
 (use-package which-key :diminish which-key-mode :config (which-key-mode +1) :ensure t :demand t)
 
-(setq
- backup-by-copying t
- delete-old-versions t
- kept-new-versions 10
- kept-old-versions 2
- vc-make-backup-files t
- version-control t)
 
 (use-package
  goto-chg
@@ -1546,6 +1497,8 @@
 
  :demand t)
 
+(use-package paredit :ensure t :demand t :hook ((emacs-lisp-mode . paredit-mode)))
+
 (use-package wordswitch :ensure nil :demand t)
 
 (use-package titlecase :ensure nil :demand t)
@@ -1579,7 +1532,8 @@
  :ensure t
  :custom
  (completion-styles '(orderless basic))
- (completion-category-overrides '((file (styles basic partial-completion)))))
+ (setq completion-category-defaults nil)
+ (setq completion-category-overrride nil))
 
 (use-package
  consult
@@ -1593,6 +1547,9 @@
   ("C-c k" . consult-kmacro)
   ("C-c m" . consult-man)
   ("C-c i" . consult-info)
+  ("C-c f" . consult-find)
+  ("C-c a" . consult-ripgrep)
+  ("C-c l" . consult-line)
   ([remap Info-search] . consult-info)
   ;; C-x bindings in `ctl-x-map'
   ("C-x M-:" . consult-complex-command) ;; orig. repeat-complex-command
@@ -1606,8 +1563,10 @@
   ("M-#" . consult-register-load)
   ("M-'" . consult-register-store) ;; orig. abbrev-prefix-mark (unrelated)
   ("C-M-#" . consult-register)
+
   ;; Other custom bindings
   ("M-y" . consult-yank-pop) ;; orig. yank-pop
+
   ;; M-g bindings in `goto-map'
   ("M-g e" . consult-compile-error)
   ("M-g f" . consult-flymake) ;; Alternative: consult-flycheck
@@ -1618,28 +1577,14 @@
   ("M-g k" . consult-global-mark)
   ("M-g i" . consult-imenu)
   ("M-g I" . consult-imenu-multi)
-  ;; M-s bindings in `search-map'
-  ("M-s d" . consult-find) ;; Alternative: consult-fd
-  ("M-s c" . consult-locate)
-  ("M-s g" . consult-grep)
-  ("M-s G" . consult-git-grep)
-  ("M-s r" . consult-ripgrep)
-  ("M-s l" . consult-line)
-  ("M-s L" . consult-line-multi)
-  ("M-s k" . consult-keep-lines)
-  ("M-s u" . consult-focus-lines)
-  ;; Isearch integration
-  ("M-s e" . consult-isearch-history)
+
   :map
   isearch-mode-map
-  ("M-e" . consult-isearch-history) ;; orig. isearch-edit-string
-  ("M-s e" . consult-isearch-history) ;; orig. isearch-edit-string
-  ("M-s l" . consult-line) ;; needed by consult-line to detect isearch
-  ("M-s L" . consult-line-multi) ;; needed by consult-line to detect isearch
+  ("M-e" . consult-isearch-history) ;;  isearch-edit-string
+
   ;; Minibuffer history
   :map
   minibuffer-local-map
-  ("M-s" . consult-history) ;; orig. next-matching-history-element
   ("M-r" . consult-history)) ;; orig. previous-matching-history-element
 
  ;; Enable automatic preview at point in the *Completions* buffer. This is
@@ -1702,7 +1647,23 @@
  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
  )
 
-(use-package corfu :ensure t :demand t :init (global-corfu-mode))
+(use-package
+ corfu
+ :ensure t
+ :hook (after-init . global-corfu-mode)
+ :bind (:map corfu-map ("<tab>" . corfu-complete))
+ :config
+ (setq tab-always-indent 'complete)
+ (setq corfu-preview-current nil)
+ (setq corfu-min-width 20)
+
+ (setq corfu-popupinfo-delay '(1.25 . 0.5))
+ (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+
+ ;; Sort by input history (no need to modify `corfu-sort-function').
+ (with-eval-after-load 'savehist
+   (corfu-history-mode 1)
+   (add-to-list 'savehist-additional-variables 'corfu-history)))
 
 ;; Add extensions
 (use-package
@@ -1748,7 +1709,6 @@
  (:map
   vertico-map
   ("C-k" . kill-whole-line)
-  ("C-u" . kill-whole-line)
   ("C-o" . vertico-next-group)
   ("<tab>" . minibuffer-complete)
   ("M-S-<return>" . vertico-exit-input)
@@ -1827,12 +1787,7 @@
  :ensure t
  :demand t)
 
-(use-package
- hideshow
- :ensure nil
- :diminish hs-minor-mode
-
- :demand t)
+(use-package hideshow :ensure nil :diminish hs-minor-mode :demand t)
 
 (use-package
  kubernetes
@@ -1899,17 +1854,17 @@
    (error (message "%s" (error-message-string err))))
 
  (setq native-comp-async-report-warnings-errors nil)
- (set-face-attribute 'default nil :family "IBM Plex Mono")
- (set-face-attribute 'default nil :height 110)
 
- (setq default-frame-alist
-       (append
-        (list
-         (cons 'width 60) (cons 'height 250)
-         (cons
-          'font "-IBM -IBM Plex Mono-regular-normal-normal-*-15-*-*-*-m-0-iso10646-1")
-         (cons 'vertical-scroll-bars nil) (cons 'internal-border-width 24))))
+ (set-face-attribute 'default nil :family "IBM Plex Mono" :height 110)
+ (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 1.0)
+ (set-face-attribute 'fixed-pitch nil :family "IBM Plex Sans" :height 1.0)
+
  (add-hook 'after-init-hook 'tj-theme))
+
+(use-package
+ delsel
+ :ensure nil ; no need to install it as it is built-in
+ :hook (after-init . delete-selection-mode))
 
 (use-package elmacro :ensure t :demand t :diminish :config (elmacro-mode 1))
 
