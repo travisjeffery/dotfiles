@@ -1,8 +1,12 @@
-;; Example Elpaca configuration -*- lexical-binding: t; -*-
-(defvar elpaca-installer-version 0.7)
-(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+;; -*- fill-column: 65; -*-
+
+(defvar elpaca-installer-version 0.8)
+(defvar elpaca-directory
+  (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory
+  (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory
+  (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order
   '(elpaca
     :repo "https://github.com/progfolio/elpaca.git"
@@ -11,7 +15,8 @@
     :files (:defaults "elpaca-test.el" (:exclude "extensions"))
     :build (:not elpaca--activate-package)))
 (let* ((repo (expand-file-name "elpaca/" elpaca-repos-directory))
-       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (build
+        (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
        (default-directory repo))
   (add-to-list
@@ -24,36 +29,50 @@
     (when (< emacs-major-version 28)
       (require 'subr-x))
     (condition-case-unless-debug err
-        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop
-                   (apply #'call-process
-                          `("git" nil ,buffer t "clone" ,@
-                            (when-let ((depth (plist-get order :depth)))
-                              (list (format "--depth=%d" depth) "--no-single-branch"))
-                            ,(plist-get order :repo) ,repo))))
-                 ((zerop
-                   (call-process "git" nil buffer t "checkout" (or (plist-get order :ref) "--"))))
-                 (emacs (concat invocation-directory invocation-name))
-                 ((zerop
-                   (call-process emacs
-                                 nil
-                                 buffer
-                                 nil
-                                 "-Q"
-                                 "-L"
-                                 "."
-                                 "--batch"
-                                 "--eval"
-                                 "(byte-recompile-directory \".\" 0 'force)")))
-                 ((require 'elpaca))
-                 ((elpaca-generate-autoloads "elpaca" repo)))
+        (if-let*
+            ((buffer
+              (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+             ((zerop
+               (apply #'call-process
+                      `("git" nil ,buffer t "clone" ,@
+                        (when-let* ((depth
+                                     (plist-get order :depth)))
+                          (list
+                           (format "--depth=%d" depth)
+                           "--no-single-branch"))
+                        ,(plist-get order :repo) ,repo))))
+             ((zerop
+               (call-process "git"
+                             nil
+                             buffer
+                             t
+                             "checkout"
+                             (or (plist-get order :ref) "--"))))
+             (emacs
+              (concat invocation-directory invocation-name))
+             ((zerop
+               (call-process
+                emacs
+                nil
+                buffer
+                nil
+                "-Q"
+                "-L"
+                "."
+                "--batch"
+                "--eval"
+                "(byte-recompile-directory \".\" 0 'force)")))
+             ((require 'elpaca))
+             ((elpaca-generate-autoloads "elpaca" repo)))
           (progn
             (message "%s" (buffer-string))
             (kill-buffer buffer))
           (error "%s"
                  (with-current-buffer buffer
                    (buffer-string))))
-      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+      ((error)
+       (warn "%s" err)
+       (delete-directory repo 'recursive))))
   (unless (require 'elpaca-autoloads nil t)
     (require 'elpaca)
     (elpaca-generate-autoloads "elpaca" repo)
@@ -61,11 +80,11 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-;; Install use-package support
 (elpaca
  elpaca-use-package
  ;; Enable use-package :ensure support for Elpaca.
- (elpaca-use-package-mode))
+ (elpaca-use-package-mode)
+ (setq elpaca-use-package-by-default t))
 
 ;;When installing a package used in the init file itself,
 ;;e.g. a package which adds a use-package key word,
@@ -91,22 +110,7 @@
   kept-new-versions 10
   kept-old-versions 2
   vc-make-backup-files t
-  version-control t)
-
- (eval-and-compile
-   (mapc
-    (lambda (entry)
-      (define-prefix-command (cdr entry))
-      (bind-key (car entry) (cdr entry)))
-    '(("C-;" . tj-ctrl-semicolon-map) ;; mc
-      ("C-c b" . tj-ctrl-c-b-map) ;; for bm
-      ("C-c m" . tj-ctrl-c-m-map) ;; for org
-      ("C-c o" . tj-ctrl-c-o-map) ;; for occur
-      ("C-c y" . tj-ctrl-c-y-map) ;; aya
-      ("C-c C-d" . tj-ctrl-c-c-c-d-map)
-      ("M-j" . tj-m-j-map)
-      ("M-i" . tj-m-i-map)
-      ("M-o" . tj-m-o-map)))))
+  version-control t))
 
 (setq use-package-verbose t)
 
@@ -127,8 +131,13 @@
  no-littering
  :config (auto-save-mode 1)
  (setq auto-save-file-name-transforms
-       `((".*" ,(expand-file-name "auto-save/" user-emacs-var-directory) t)))
- (setq backup-directory-alist `((".*" . ,(expand-file-name "backup/" user-emacs-var-directory))))
+       `((".*" ,(expand-file-name "auto-save/"
+                             user-emacs-var-directory)
+          t)))
+ (setq backup-directory-alist
+       `((".*" .
+          ,(expand-file-name "backup/"
+                             user-emacs-var-directory))))
  :ensure t
  :demand t)
 
@@ -138,7 +147,12 @@
 
 (use-package major-mode-hydra :after hydra :ensure t :demand t)
 
-(use-package bufler :after major-mode-hydra :bind (("C-x C-b" . bufler)) :ensure t :demand t)
+(use-package
+ bufler
+ :after major-mode-hydra
+ :bind (("C-x C-b" . bufler))
+ :ensure t
+ :demand t)
 
 (use-package
  marginalia
@@ -156,6 +170,13 @@
  (marginalia-mode)
  :ensure t
  :demand t)
+
+(use-package
+ goto-last-point
+ :ensure t
+ :demand t
+ :config (goto-last-point-mode +1)
+ :bind (("C-x ." . goto-last-point)))
 
 (use-package
  isearch
@@ -185,7 +206,9 @@
 (use-package
  undo-tree
  :config
- (add-to-list 'undo-tree-history-directory-alist '("." . "~/.emacs.d/var/undo-tree"))
+ (add-to-list
+  'undo-tree-history-directory-alist
+  '("." . "~/.emacs.d/var/undo-tree"))
  (global-undo-tree-mode +1)
  :diminish
  :ensure t
@@ -231,7 +254,11 @@
  :ensure t
  :demand t)
 
-(use-package ielm :config (add-hook 'ielm-mode-hook #'eldoc-mode) :ensure nil :demand t)
+(use-package
+ ielm
+ :config (add-hook 'ielm-mode-hook #'eldoc-mode)
+ :ensure nil
+ :demand t)
 
 (use-package
  avy
@@ -244,7 +271,11 @@
 
 (use-package ipcalc :ensure t :demand t)
 
-(use-package jist :config (setq jist-enable-default-authorized t) :ensure t :demand t)
+(use-package
+ jist
+ :config (setq jist-enable-default-authorized t)
+ :ensure t
+ :demand t)
 
 (use-package transient :ensure t :demand t)
 
@@ -266,16 +297,20 @@
           (with-editor--setup)
           (while (accept-process-output process 0.1))
           (when-let ((v (getenv envvar)))
-            (eat-term-send-string eat-terminal (format " export %s=%S" envvar v))
+            (eat-term-send-string
+             eat-terminal (format " export %s=%S" envvar v))
             (eat-self-input 1 'return))
           (when-let ((v (getenv "EMACS_SERVER_FILE")))
-            (eat-term-send-string eat-terminnal (format " export EMACS_SERVER_FILE=%S" v))
+            (eat-term-send-string
+             eat-terminnal
+             (format " export EMACS_SERVER_FILE=%S" v))
             (eat-self-input 1 'return))
           (eat-term-send-string eat-terminal "clear")
           (eat-self-input 1 'return))
       (error "Cannot use sleeping editor in this buffer")))
    (t
-    (error "Cannot export environment variables in this buffer")))
+    (error
+     "Cannot export environment variables in this buffer")))
   (message "Successfully exported %s" envvar))
  (add-hook 'eat-exec-hook #'with-editor-export-editor-eat))
 
@@ -291,7 +326,11 @@
   magit-commit-ask-to-stage 'stage
   magit-refresh-status-buffer t)
 
- (magit-define-section-jumper magit-jump-to-recent-commits "Recent commits" recent "HEAD~10..HEAD")
+ (magit-define-section-jumper
+  magit-jump-to-recent-commits
+  "Recent commits"
+  recent
+  "HEAD~10..HEAD")
 
  (defun tj-visit-pull-request-url ()
    "Visit the current branch's PR on Github."
@@ -303,7 +342,9 @@
              "\\1"
              (magit-get "remote" (magit-get-push-remote) "url"))
             (magit-get-current-branch))))
- (eval-after-load 'magit '(define-key magit-mode-map "v" #'tj-visit-pull-request-url))
+ (eval-after-load
+     'magit
+   '(define-key magit-mode-map "v" #'tj-visit-pull-request-url))
 
  (defun magit-key-mode--add-default-options (arguments)
    (if (eq (car arguments) 'pulling)
@@ -312,13 +353,22 @@
    (if (eq (car arguments) 'pushing)
        (list 'pushing (list "-u"))
      arguments))
- (advice-add 'magit-key-mode :filter-args #'magit-key-mode--add-default-options)
- :bind (:map magit-diff-mode-map (("C-o" . magit-diff-visit-file-other-window)))
- :bind (("C-x g" . magit-status) ("C-c g" . magit-file-dispatch))
+ (advice-add
+  'magit-key-mode
+  :filter-args #'magit-key-mode--add-default-options)
+ :bind
+ (:map
+  magit-diff-mode-map
+  (("C-o" . magit-diff-visit-file-other-window)))
+ :bind (("C-x g" . magit-status))
  :ensure t
  :demand t)
 
-(use-package copy-as-format :init (setq copy-as-format-default "github") :ensure t :demand t)
+(use-package
+ copy-as-format
+ :init (setq copy-as-format-default "github")
+ :ensure t
+ :demand t)
 
 (use-package
  abbrev
@@ -334,34 +384,53 @@
  :ensure nil
  :init (require 'grep)
  :no-require
- :bind (("C-c c" . compile) ("M-O" . show-compilation))
- :bind (:map compilation-mode-map (("z" . delete-window) ("RET" . tj-compile-goto-error-same-window)))
- :bind (:map compilation-minor-mode-map ("RET" . tj-compile-goto-error-same-window))
- :bind (:map compilation-button-map ("RET" . tj-compile-goto-error-same-window))
+ :bind (("M-O" . show-compilation))
+ :bind
+ (:map
+  compilation-mode-map
+  (("z" . delete-window)
+   ("RET" . tj-compile-goto-error-same-window)))
+ :bind
+ (:map
+  compilation-minor-mode-map
+  ("RET" . tj-compile-goto-error-same-window))
+ :bind
+ (:map
+  compilation-button-map
+  ("RET" . tj-compile-goto-error-same-window))
  :bind (:map grep-mode-map ("RET" . tj-compile-goto-error-same-window))
  :preface
  (defun tj-compile-goto-error-same-window ()
    (interactive)
    (let ((display-buffer-overriding-action
-          '((display-buffer-reuse-window display-buffer-same-window) (inhibit-same-window . nil))))
+          '((display-buffer-reuse-window
+             display-buffer-same-window)
+            (inhibit-same-window . nil))))
      (call-interactively #'compile-goto-error)))
  (defun show-compilation ()
    (interactive)
    (let ((it
           (catch 'found
             (dolist (buf (buffer-list))
-              (when (string-match "\\*compilation\\*" (buffer-name buf))
+              (when (string-match
+                     "\\*compilation\\*" (buffer-name buf))
                 (throw 'found buf))))))
      (if it
          (display-buffer it)
        (call-interactively 'compile))))
  (defun compilation-ansi-color-process-output ()
    (ansi-color-process-output nil)
-   (set (make-local-variable 'comint-last-output-start) (point-marker)))
+   (set
+    (make-local-variable 'comint-last-output-start)
+    (point-marker)))
  :hook ((compilation-filter . compilation-ansi-color-process-output))
  :demand t)
 
-(use-package comint :config (setq shell-prompt-pattern "^; ") :ensure nil :demand t)
+(use-package
+ comint
+ :config (setq shell-prompt-pattern "^; ")
+ :ensure nil
+ :demand t)
 
 (use-package
  dired-toggle
@@ -375,13 +444,21 @@
  :ensure t
  :demand t)
 
-(use-package dired-quick-sort :ensure t :demand t :config (dired-quick-sort-setup))
+(use-package
+ dired-quick-sort
+ :ensure t
+ :demand t
+ :config (dired-quick-sort-setup))
 
 (use-package disk-usage :ensure t :demand t)
 
 (use-package dired-filter :ensure t :demand t)
 
-(use-package expand-region :bind ("C-=" . er/expand-region) :ensure t :demand t)
+(use-package
+ expand-region
+ :bind ("C-=" . er/expand-region)
+ :ensure t
+ :demand t)
 
 (use-package
  re-builder
@@ -392,12 +469,21 @@
    "Replace current RE from point with `query-replace-regexp'."
    (interactive (progn
                   (barf-if-buffer-read-only)
-                  (list (query-replace-read-to (reb-target-binding reb-regexp) "Query replace" t))))
+                  (list
+                   (query-replace-read-to
+                    (reb-target-binding reb-regexp)
+                    "Query replace"
+                    t))))
    (with-current-buffer reb-target-buffer
-     (query-replace-regexp (reb-target-binding reb-regexp) to-string)))
+     (query-replace-regexp
+      (reb-target-binding reb-regexp) to-string)))
  :demand t)
 
-(use-package edit-indirect :bind (("C-c '" . edit-indirect-region)) :ensure t :demand t)
+(use-package
+ edit-indirect
+ :bind (("C-x '" . edit-indirect-region))
+ :ensure t
+ :demand t)
 
 ;; hashicorp config language
 (use-package hcl-mode :ensure t :demand t)
@@ -408,7 +494,8 @@
  :config
  (defun tj-response-loaded-hook ()
    (flycheck-mode 0))
- (add-hook 'restclient-response-loaded-hook 'tj-response-loaded-hook)
+ (add-hook
+  'restclient-response-loaded-hook 'tj-response-loaded-hook)
  (defun tj-restclient-hook ()
    (setq-local indent-line-function 'js-indent-line))
  (add-hook 'restclient-mode-hook 'tj-restclient-hook)
@@ -424,31 +511,36 @@
    (ediff-copy-diff
     ediff-current-difference nil 'C nil
     (concat
-     (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
-     (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+     (ediff-get-region-contents
+      ediff-current-difference 'A ediff-control-buffer)
+     (ediff-get-region-contents
+      ediff-current-difference 'B ediff-control-buffer))))
  (defun add-d-to-ediff-mode-map ()
    (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
  (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
- :init
+ :init (defvar tj-ediff-keymap (make-sparse-keymap))
  (setq
   ediff-split-window-function 'split-window-vertically
   ediff-merge-split-window-function 'split-window-vertically
   ediff-window-setup-function 'ediff-setup-windows-plain
   ediff-diff-options ""
   ediff-custom-diff-options "-u")
+ :bind-keymap ("C-x C-=" . tj-ediff-keymap)
  :bind
- (("C-c = b" . ediff-buffers)
-  ("C-c = f" . ediff-files)
-  ("C-c = r" . ediff-revision)
-  ("C-c = l" . ediff-regions-linewise)
-  ("C-c = w" . ediff-regions-wordwise)
-  ("C-c = c" . compare-windows))
+ (:map
+  tj-ediff-keymap
+  ("b" . ediff-buffers)
+  ("f" . ediff-files)
+  ("r" . ediff-revision)
+  ("l" . ediff-regions-linewise)
+  ("w" . ediff-regions-wordwise)
+  ("c" . compare-windows))
  :demand t)
 
 (use-package
  git-link
  :commands (git-link git-link-commit git-link-homepage)
- :bind ("C-c G" . git-link)
+ :bind ("C-x G" . git-link)
  :ensure t
  :demand t)
 
@@ -460,7 +552,11 @@
  :ensure t
  :demand t)
 
-(use-package gitpatch :commands gitpatch-mail :ensure t :demand t)
+(use-package
+ gitpatch
+ :commands gitpatch-mail
+ :ensure t
+ :demand t)
 
 (use-package
  flycheck
@@ -483,17 +579,34 @@
 
 (use-package magit-diff-flycheck :ensure t :demand t)
 
-(use-package google-this :bind ("C-c /" . google-this-search) :ensure t :demand t)
+(use-package
+ google-this
+ :bind ("C-x /" . google-this-search)
+ :ensure t
+ :demand t)
 
-(use-package goto-last-change :bind ("C-x C-/" . goto-last-change) :ensure t :demand t)
+(use-package
+ goto-last-change
+ :bind ("C-x C-/" . goto-last-change)
+ :ensure t
+ :demand t)
 
-(use-package ialign :bind ("C-c [" . ialign-interactive-align) :ensure t :demand t)
+(use-package
+ ialign
+ :bind ("C-x C-a" . ialign-interactive-align)
+ :ensure t
+ :demand t)
 
-(use-package operate-on-number :bind ("C-c #" . operate-on-number-at-point) :ensure t :demand t)
+(use-package
+ operate-on-number
+ :bind ("C-# C-#" . operate-on-number-at-point)
+ :ensure t
+ :demand t)
 
 (use-package
  shift-number
- :bind (("C-c -" . shift-number-down) ("C-c +" . shift-number-up))
+ :bind
+ (("C-# -" . shift-number-down) ("C-# +" . shift-number-up))
  :ensure t
  :demand t)
 
@@ -513,7 +626,9 @@
 
 (use-package
  go-errcheck
- :ensure-system-package ((go-errcheck . "go install github.com/kisielk/errcheck@latest"))
+ :ensure-system-package
+ ((go-errcheck
+   . "go install github.com/kisielk/errcheck@latest"))
  :after go-mode-abbrev-table
  :config
  (defun tj-go-errcheck ()
@@ -527,8 +642,10 @@
  go-mode
  :ensure-system-package
  ((godef . "go install github.com/rogpeppe/godef@latest")
-  (goimports . "go install golang.org/x/tools/cmd/goimports@latest")
-  (staticcheck . "go install honnef.co/go/tools/cmd/staticcheck@latest")
+  (goimports
+   . "go install golang.org/x/tools/cmd/goimports@latest")
+  (staticcheck
+   . "go install honnef.co/go/tools/cmd/staticcheck@latest")
   (golint . "go install golang.org/x/lint/golint@latest")
   (errcheck . "github.com/kisielk/errcheck@latest")
   (gopls . "go install golang.org/x/tools/gopls@latest"))
@@ -546,7 +663,12 @@
 
  (defun tj-find-go-project-root (dir)
    "Find go project root for DIR."
-   (if (and dir (not (f-descendant-of-p dir (or (getenv "GOPATH") (concat (getenv "HOME") "/go")))))
+   (if (and dir
+            (not
+             (f-descendant-of-p
+              dir
+              (or (getenv "GOPATH")
+                  (concat (getenv "HOME") "/go")))))
        (let ((result (locate-dominating-file dir "go.mod")))
          (if result
              (cons 'transient (expand-file-name result))
@@ -571,19 +693,32 @@
              "-run "))
           (additional-arguments
            (if go-test-additional-arguments-function
-               (funcall go-test-additional-arguments-function test-suite test-name)
+               (funcall go-test-additional-arguments-function
+                        test-suite
+                        test-name)
              "")))
       (when test-name
         (if (go-test--is-gb-project)
-            (go-test--gb-start (s-concat "-test.v=true -test.run=" test-name "\\$ ."))
-          (go-test--go-test (s-concat test-flag test-name additional-arguments "\\$ .")))))))
+            (go-test--gb-start
+             (s-concat
+              "-test.v=true -test.run=" test-name "\\$ ."))
+          (go-test--go-test
+           (s-concat
+            test-flag
+            test-name
+            additional-arguments
+            "\\$ .")))))))
 
  (defun tj-go-hook ()
-   (setq imenu-generic-expression
-         '(("type" "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)" 1)
-           ("func" "^func *\\(.*\\)" 1)))
+   (setq
+    imenu-generic-expression
+    '(("type"
+       "^[ \t]*type *\\([^ \t\n\r\f]*[ \t]*\\(struct\\|interface\\)\\)"
+       1)
+      ("func" "^func *\\(.*\\)" 1)))
 
-   (setq-local project-find-functions (list #'tj-find-go-project-root #'project-try-vc))
+   (setq-local project-find-functions
+               (list #'tj-find-go-project-root #'project-try-vc))
    (setq case-fold-search t)
    (setq go-test-args "-timeout 60s -race -v")
    (font-lock-mode -1)
@@ -596,19 +731,27 @@
    (electric-pair-mode 1))
 
  (if (not (string-match "go" compile-command))
-     (set (make-local-variable 'compile-command) "go build -v && go test -v && go vet"))
+     (set
+      (make-local-variable 'compile-command)
+      "go build -v && go test -v && go vet"))
 
  :hook ((go-mode . tj-go-hook))
  :ensure (:wait t)
  :demand t)
 
-(use-package ws-butler :ensure t :demand t :config (add-hook 'prog-mode-hook #'ws-butler-mode))
+(use-package
+ ws-butler
+ :ensure t
+ :demand t
+ :config (add-hook 'prog-mode-hook #'ws-butler-mode))
 
-(use-package winner :diminish :config (winner-mode +1))
+;; (use-package winner :ensure t :demand t :diminish :config (winner-mode +1))
 
 (use-package
  eacl
- :config (setq eacl-grep-program "grep --exclude-dir=.git --exclude-dir=vendor")
+ :config
+ (setq eacl-grep-program
+       "grep --exclude-dir=.git --exclude-dir=vendor")
  :bind (("C-x C-l" . eacl-complete-line))
  :ensure t
  :demand t)
@@ -618,15 +761,13 @@
 (use-package
  embrace
  :config (setq embrace-show-help-p nil)
- :bind ("C-c C-y" . embrace-commander)
+ :bind ("C-x C-y" . embrace-commander)
  :ensure t
  :demand t)
 
 (use-package
  ripgrep
  :config (setq ripgrep-arguments '("--hidden"))
- :bind
- :bind ("C-c a" . ripgrep-regexp)
  :ensure t
  :demand t)
 
@@ -670,16 +811,23 @@
  saveplace
  :diminish
  :ensure nil
- :config (defconst savefile-dir (expand-file-name "savefile" user-emacs-var-directory))
+ :config
+ (defconst savefile-dir
+   (expand-file-name "savefile" user-emacs-var-directory))
  ;; create the savefile dir if it doesn't exist
  (unless (file-exists-p savefile-dir)
    (make-directory savefile-dir))
- (setq save-place-file (expand-file-name "saveplace" savefile-dir))
+ (setq save-place-file
+       (expand-file-name "saveplace" savefile-dir))
  ;; activate it for all buffers
  (setq-default save-place t)
  :demand t)
 
-(use-package hideshow :ensure nil :hook (prog-mode . hs-minor-mode) :demand t)
+(use-package
+ hideshow
+ :ensure nil
+ :hook (prog-mode . hs-minor-mode)
+ :demand t)
 
 (use-package
  recentf
@@ -709,7 +857,9 @@
  highlight-symbol
  :diminish
  :config (setq highlight-symbol-idle-delay 0.1)
- :bind (("M-p" . highlight-symbol-prev) ("M-n" . highlight-symbol-next))
+ :bind
+ (("C-x C-h p" . highlight-symbol-prev)
+  ("C-x C-h n" . highlight-symbol-next))
  :hook (prog-mode . highlight-symbol-mode)
  :ensure t
  :demand t)
@@ -734,19 +884,25 @@
   ("<tab>" . tj-dired-switch-window)
   ("M-!" . async-shell-command)
   ("M-G"))
- :preface (defvar mark-files-cache (make-hash-table :test #'equal))
+ :preface
+ (defvar mark-files-cache (make-hash-table :test #'equal))
  (defun mark-similar-versions (name)
    (let ((pat name))
      (if (string-match "^\\(.+?\\)-[0-9._-]+$" pat)
          (setq pat (match-string 1 pat)))
-     (or (gethash pat mark-files-cache) (ignore (puthash pat t mark-files-cache)))))
+     (or (gethash pat mark-files-cache)
+         (ignore (puthash pat t mark-files-cache)))))
  (defun dired-mark-similar-version ()
    (interactive)
    (setq mark-files-cache (make-hash-table :test #'equal))
    (dired-mark-sexp '(mark-similar-versions name)))
  (defun dired-double-jump (first-dir second-dir)
    (interactive (list
-                 (read-directory-name "First directory: " (expand-file-name "~") nil nil "dl/")
+                 (read-directory-name "First directory: "
+                                      (expand-file-name "~")
+                                      nil
+                                      nil
+                                      "dl/")
                  (read-directory-name "Second directory: "
                                       (expand-file-name "~")
                                       nil
@@ -761,12 +917,21 @@
      (call-interactively #'other-window)))
  (defun ora-dired-rsync (dest)
    (interactive (list
-                 (expand-file-name (read-file-name "Rsync to: " (dired-dwim-target-directory)))))
+                 (expand-file-name
+                  (read-file-name
+                   "Rsync to: "
+                   (dired-dwim-target-directory)))))
    (let ((files (dired-get-marked-files nil current-prefix-arg))
          (tmtxt/rsync-command "rsync -arvz --progress "))
      (dolist (file files)
-       (setq tmtxt/rsync-command (concat tmtxt/rsync-command (shell-quote-argument file) " ")))
-     (setq tmtxt/rsync-command (concat tmtxt/rsync-command (shell-quote-argument dest)))
+       (setq tmtxt/rsync-command
+             (concat
+              tmtxt/rsync-command
+              (shell-quote-argument file)
+              " ")))
+     (setq tmtxt/rsync-command
+           (concat
+            tmtxt/rsync-command (shell-quote-argument dest)))
      (async-shell-command tmtxt/rsync-command "*rsync*")
      (other-window 1)))
  (defun ora-ediff-files ()
@@ -778,7 +943,9 @@
                (file2
                 (if (cdr files)
                     (cadr files)
-                  (read-file-name "file: " (dired-dwim-target-directory)))))
+                  (read-file-name
+                   "file: "
+                   (dired-dwim-target-directory)))))
            (if (file-newer-than-file-p file1 file2)
                (ediff-files file2 file1)
              (ediff-files file1 file2))
@@ -793,18 +960,25 @@
    (interactive)
    (goto-char (point-min))
    (dired-next-line 4))
- (define-key dired-mode-map (vector 'remap 'beginning-of-buffer) 'dired-back-to-top)
+ (define-key
+  dired-mode-map
+  (vector 'remap 'beginning-of-buffer)
+  'dired-back-to-top)
  (defun dired-jump-to-bottom ()
    (interactive)
    (goto-char (point-max))
    (dired-next-line -1))
- (define-key dired-mode-map (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom)
+ (define-key
+  dired-mode-map
+  (vector 'remap 'end-of-buffer)
+  'dired-jump-to-bottom)
 
  ;; dired - reuse current buffer by pressing 'a'
  (put 'dired-find-alternate-file 'disabled nil)
 
  ;; always delete and copy recursively
- (setq dired-recursive-deletes 'always) (setq dired-recursive-copies 'always)
+ (setq dired-recursive-deletes 'always)
+ (setq dired-recursive-copies 'always)
 
  ;; if there is a dired buffer displayed in the next window, use its
  ;; current subdir, instead of the current subdir of this dired buffer
@@ -813,7 +987,8 @@
  ;; enable some really cool extensions like C-x C-j (dired-jump)
  (require 'dired-x)
 
- (defadvice dired-omit-startup (after diminish-dired-omit activate)
+ (defadvice dired-omit-startup
+     (after diminish-dired-omit activate)
    "Make sure to remove \"Omit\" from the modeline."
    (diminish 'dired-omit-mode)
    dired-mode-map)
@@ -826,7 +1001,8 @@
    (when (eobp)
      (forward-line -1)
      (setq ad-return-value (dired-move-to-filename))))
- (defadvice dired-previous-line (around dired-previous-line+ activate)
+ (defadvice dired-previous-line
+     (around dired-previous-line+ activate)
    "Replace current buffer if file is a directory."
    ad-do-it
    (while (and (not (bobp)) (not ad-return-value))
@@ -834,7 +1010,8 @@
      (setq ad-return-value (dired-move-to-filename)))
    (when (bobp)
      (call-interactively 'dired-next-line)))
- (defvar dired-omit-regexp-orig (symbol-function 'dired-omit-regexp))
+ (defvar dired-omit-regexp-orig
+   (symbol-function 'dired-omit-regexp))
 
  ;; Omit files that Git would ignore
  (defun dired-omit-regexp ()
@@ -843,15 +1020,20 @@
      (while (and (not (file-exists-p file))
                  (progn
                    (setq parent-dir
-                         (file-name-directory (directory-file-name (file-name-directory file))))
+                         (file-name-directory
+                          (directory-file-name
+                           (file-name-directory file))))
                    ;; Give up if we are already at the root dir.
-                   (not (string= (file-name-directory file) parent-dir))))
+                   (not
+                    (string=
+                     (file-name-directory file) parent-dir))))
        ;; Move up to the parent dir and try again.
        (setq file (expand-file-name ".git" parent-dir)))
      ;; If we found a change log in a parent, use that.
      (if (file-exists-p file)
          (let ((regexp (funcall dired-omit-regexp-orig))
-               (omitted-files (shell-command-to-string "git clean -d -x -n")))
+               (omitted-files
+                (shell-command-to-string "git clean -d -x -n")))
            (if (= 0 (length omitted-files))
                regexp
              (concat
@@ -866,7 +1048,11 @@
                               (regexp-quote
                                (substring str
                                           13
-                                          (if (= ?/ (aref str (1- (length str))))
+                                          (if (= ?/
+                                                 (aref
+                                                  str
+                                                  (1- (length
+                                                       str))))
                                               (1- (length str))
                                             nil)))
                               "$"))
@@ -877,7 +1063,11 @@
 
  :demand t)
 
-(use-package dired-narrow :bind (:map dired-mode-map ("/" . dired-narrow)) :ensure t :demand t)
+(use-package
+ dired-narrow
+ :bind (:map dired-mode-map ("/" . dired-narrow))
+ :ensure t
+ :demand t)
 
 (use-package package-lint :ensure t :demand t)
 
@@ -885,7 +1075,10 @@
  dired-ranger
  :bind
  (:map
-  dired-mode-map ("W" . dired-ranger-copy) ("X" . dired-ranger-move) ("Y" . dired-ranger-paste))
+  dired-mode-map
+  ("W" . dired-ranger-copy)
+  ("X" . dired-ranger-move)
+  ("Y" . dired-ranger-paste))
  :ensure t
  :demand t)
 
@@ -900,7 +1093,9 @@
 (use-package
  anzu
  :diminish
- :bind (("M-%" . anzu-query-replace-regexp) ("C-M-%" . anzu-query-replace))
+ :bind
+ (("M-%" . anzu-query-replace-regexp)
+  ("C-M-%" . anzu-query-replace))
  :hook (prog-mode . anzu-mode)
  :ensure t
  :demand t)
@@ -932,9 +1127,11 @@
  (add-to-list 'easy-kill-alist '(?< buffer-before-point ""))
  (add-to-list 'easy-kill-alist '(?> buffer-after-point ""))
  (add-to-list 'easy-kill-alist '(?f string-to-char-forward ""))
- (add-to-list 'easy-kill-alist '(?F string-up-to-char-forward ""))
+ (add-to-list
+  'easy-kill-alist '(?F string-up-to-char-forward ""))
  (add-to-list 'easy-kill-alist '(?t string-to-char-backward ""))
- (add-to-list 'easy-kill-alist '(?T string-up-to-char-backward ""))
+ (add-to-list
+  'easy-kill-alist '(?T string-up-to-char-backward ""))
  :ensure t
  :demand t)
 
@@ -957,27 +1154,33 @@
 
 (use-package kubedoc :ensure t :demand t)
 
-(use-package move-text :bind (("M-P" . move-text-up) ("M-N" . move-text-down)) :ensure t :demand t)
+(use-package
+ move-text
+ :bind (("M-P" . move-text-up) ("M-N" . move-text-down))
+ :ensure t
+ :demand t)
 
 (use-package
  whitespace
  :config
  ;; (add-hook 'before-save-hook #'whitespace-cleanup)
  :config (setq whitespace-line-column 76) ;; limit line length
- (setq whitespace-style '(face empty lines trailing)) (whitespace-mode 1)
+ (setq whitespace-style '(face empty lines trailing))
+ (whitespace-mode 1)
  :ensure nil
  :demand t)
 
 (use-package
  markdown-mode
- :bind (:map markdown-mode-map ("C-c C-d" . nil))
  :config
  (unless (executable-find "pandoc")
    (message "install pandoc"))
  (setq
   markdown-command
   "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained -f markdown+smart --to=html5 --css=$HOME/.config/css/style.css")
- :mode ("\\.markdown$" . markdown-mode) ("\\.md$" . markdown-mode)
+ :mode
+ ("\\.markdown$" . markdown-mode)
+ ("\\.md$" . markdown-mode)
  :hook ((markdown-mode . writegood-mode))
  :ensure t
  :demand t)
@@ -995,7 +1198,7 @@
 
 (use-package
  yaml-mode
- :bind (("C-c y p" . tj-yaml-show-path-to-point))
+ :bind (("C-c C-t" . tj-yaml-show-path-to-point))
  :mode ("\\.yaml" . yaml-mode)
  :ensure t
  :demand t)
@@ -1005,20 +1208,20 @@
  :ensure nil
  :hook ((org-mode . visual-line-mode) (org-mode . auto-fill-mode))
  :bind
- (("C-c m c" . org-capture)
-  ("C-c m t" . org-todo-list)
-  ("C-c m m" . orgs-tagsview)
-  :map
-  org-mode-map
-  ("C-c C-d" . nil))
- :config (define-key org-mode-map (kbd "C-c C-r") verb-command-map)
+ (("C-x C-g c" . org-capture)
+  ("C-x C-g t" . org-todo-list)
+  ("C-x C-g m" . orgs-tagsview))
+ :config
 
  (defun tj-org-hook ()
    (setq org-hide-leading-stars nil))
  (setq org-todo-keywords
        '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-         (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
- (setq org-todo-keyword-faces '(("TODO" . org-todo) ("DONE" . (:foreground "black" :weight bold))))
+         (sequence
+          "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
+ (setq org-todo-keyword-faces
+       '(("TODO" . org-todo)
+         ("DONE" . (:foreground "black" :weight bold))))
 
  ;; where to archive subtree
  (setq org-archive-location "~/.archive.org::* Archived Tasks")
@@ -1067,7 +1270,9 @@
  ;; use fast todo selection with C-c C-t
  (setq org-use-fast-todo-selection t)
 
- (setq org-refile-targets (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
+ (setq org-refile-targets
+       (quote ((nil :maxlevel . 9)
+               (org-agenda-files :maxlevel . 9))))
  (setq org-refile-use-outline-path t)
  (setq org-outline-path-complete-in-steps nil)
  (setq org-refile-allow-creating-parent-nodes (quote confirm))
@@ -1080,14 +1285,22 @@
                ("W" agenda "" ((org-agenda-ndays 21)))
                ("A" agenda ""
                 ((org-agenda-skip-function
-                  (lambda nil (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]")))
-                 (org-agenda-ndays 1) (org-agenda-overriding-header "Today's Priority #A tasks: ")))
+                  (lambda nil
+                    (org-agenda-skip-entry-if
+                     (quote notregexp) "\\=.*\\[#A\\]")))
+                 (org-agenda-ndays 1)
+                 (org-agenda-overriding-header
+                  "Today's Priority #A tasks: ")))
                ("u" alltodo ""
                 ((org-agenda-skip-function
                   (lambda nil
                     (org-agenda-skip-entry-if
-                     (quote scheduled) (quote deadline) (quote regexp) "\n]+>")))
-                 (org-agenda-overriding-header "Unscheduled TODO entries: "))))))
+                     (quote scheduled)
+                     (quote deadline)
+                     (quote regexp)
+                     "\n]+>")))
+                 (org-agenda-overriding-header
+                  "Unscheduled TODO entries: "))))))
 
  (defun org-journal-find-location ()
    ;; Open today's journal, but specify a non-nil prefix argument in order to
@@ -1097,26 +1310,28 @@
      (org-narrow-to-subtree))
    (goto-char (point-max)))
 
- (setq org-capture-templates
-       (quote (("t"
-                "Todo"
-                entry
-                (file "~/capture.org")
-                "* TODO %?\n%U\n%a\n"
-                :clock-in t
-                :clock-resume t)
-               ("n"
-                "Note"
-                entry
-                (file "~/capture.org")
-                "* %? :NOTE:\n%U\n%a\n"
-                :clock-in t
-                :clock-resume t)
-               ("j"
-                "Journal"
-                entry
-                (function org-journal-find-location)
-                "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))))
+ (setq
+  org-capture-templates
+  (quote
+   (("t"
+     "Todo"
+     entry
+     (file "~/capture.org")
+     "* TODO %?\n%U\n%a\n"
+     :clock-in t
+     :clock-resume t)
+    ("n"
+     "Note"
+     entry
+     (file "~/capture.org")
+     "* %? :NOTE:\n%U\n%a\n"
+     :clock-in t
+     :clock-resume t)
+    ("j"
+     "Journal"
+     entry
+     (function org-journal-find-location)
+     "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))))
  :hook (org-mode . tj-org-hook)
 
  :demand t)
@@ -1132,15 +1347,35 @@
 
 (use-package org-web-tools :demand t :ensure t)
 
-(use-package alert :commands (alert) :init (setq alert-default-style 'notifier) :ensure t :demand t)
+(use-package
+ alert
+ :commands (alert)
+ :init (setq alert-default-style 'notifier)
+ :ensure t
+ :demand t)
 
-(use-package ert :demand t :bind ((:map ert-results-mode-map ("o" . #'ace-link-help))) :ensure nil)
+(use-package
+ ert
+ :demand t
+ :bind
+ ((:map ert-results-mode-map ("o" . #'ace-link-help)))
+ :ensure nil)
 
-(use-package ace-link :after ert :config (ace-link-setup-default) :ensure t :demand t)
+(use-package
+ ace-link
+ :after ert
+ :config (ace-link-setup-default)
+ :ensure t
+ :demand t)
 
 (use-package
  ace-mc
- :bind (("C-; h" . ace-mc-add-multiple-cursors) ("C-; M-h" . ace-mc-add-single-cursor))
+ :after multiple-cursors
+ :bind
+ (:map
+  tj-mc-keymap
+  ("h" . ace-mc-add-multiple-cursors)
+  ("M-h" . ace-mc-add-single-cursor))
  :ensure t
  :demand t)
 
@@ -1152,18 +1387,21 @@
    (interactive)
    (activate-mark))
  :config (add-to-list 'mc/cursor-specific-vars 'iy-go-to-char-start-pos)
+ :init (defvar tj-mc-keymap (make-sparse-keymap))
+ :bind-keymap ("C-;" . tj-mc-keymap)
  :bind
- (("C-; C-;" . mc/edit-lines)
-  ("C-; C-e" . mc/edit-ends-of-lines)
-  ("C-; C-a" . mc/edit-beginnings-of-lines)
-  ("C-; a" . mc/mark-all-dwim)
-  ("C-; C-x" . reactivate-mark)
-  ("C-; C-SPC" . mc/mark-pop)
-  ("C-; f" . mc/mark-next-like-this-symbol)
-  ("C-; b" . mc/mark-previous-like-this-symbol)
+ (:map
+  tj-mc-keymap
+  ("C-;" . mc/edit-lines)
+  ("C-e" . mc/edit-ends-of-lines)
+  ("C-a" . mc/edit-beginnings-of-lines)
+  ("a" . mc/mark-all-dwim)
+  ("C-x" . reactivate-mark)
+  ("C-SPC" . mc/mark-pop)
+  ("f" . mc/mark-next-like-this-symbol)
+  ("b" . mc/mark-previous-like-this-symbol)
   ;; Extra multiple cursors stuff
-  ("C-; %" . mc/insert-numbers)
-  ("C-S-<mouse-1>" . mc/add-cursor-on-click))
+  ("%" . mc/insert-numbers))
  :ensure t
  :demand t)
 
@@ -1171,19 +1409,24 @@
  mc-extras
  :after multiple-cursors
  :bind
- (("C-; M-C-f" . mc/mark-next-sexps)
-  ("C-; M-C-b" . mc/mark-previous-sexps)
-  ("C-; C-d" . mc/remove-current-cursor)
-  ("C-; C-k" . mc/remove-cursors-at-eol)
-  ("C-; M-d" . mc/remove-duplicated-cursors)
-  ("C-; |" . mc/move-to-column)
-  ("C-; ~" . mc/compare-chars))
+ (:map
+  tj-mc-keymap
+  ("M-C-f" . mc/mark-next-sexps)
+  ("M-C-b" . mc/mark-previous-sexps)
+  ("C-d" . mc/remove-current-cursor)
+  ("C-k" . mc/remove-cursors-at-eol)
+  ("M-d" . mc/remove-duplicated-cursors)
+  ("|" . mc/move-to-column)
+  ("~" . mc/compare-chars))
  :ensure t
  :demand t)
 
 (use-package
  phi-search
- :bind (:map mc/keymap ("C-r" . phi-search-backward) ("C-s" . phi-search))
+ :after multiple-cusors
+ :bind
+ (:map
+  mc/keymap ("C-r" . phi-search-backward) ("C-s" . phi-search))
  :ensure t
  :demand t)
 
@@ -1191,7 +1434,11 @@
 
 (use-package ace-jump-mode :demand t :ensure t)
 
-(use-package browse-url :bind (("C-c x" . browse-url-at-point)) :ensure nil :demand t)
+(use-package
+ browse-url
+ :bind (("C-x x" . browse-url-at-point))
+ :ensure nil
+ :demand t)
 
 (defun eshell-execute-current-line ()
   "Insert current line at the end of the buffer."
@@ -1225,9 +1472,11 @@
   (let ((inhibit-read-only t))
     (erase-buffer)))
 
-(use-package zop-to-char :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char)) :ensure t :demand t)
-
-(use-package imenu-anywhere :bind (("C-c i" . imenu-anywhere)) :ensure t :demand t)
+(use-package
+ zop-to-char
+ :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char))
+ :ensure t
+ :demand t)
 
 (use-package
  flyspell
@@ -1244,19 +1493,20 @@
 
 (use-package
  crux
- :config (setq user-init-file (concat user-emacs-directory "init.el"))
+ :config
+ (setq user-init-file (concat user-emacs-directory "init.el"))
  :bind
- (("C-c d" . crux-duplicate-current-line-or-region)
-  ("C-c n" . crux-cleanup-buffer-or-region)
+ (("C-x C-m d" . crux-duplicate-current-line-or-region)
+  ("C-x C-m n" . crux-cleanup-buffer-or-region)
   ("C-M-z" . crux-indent-defun)
-  ("C-c u" . crux-view-url)
-  ("C-c w" . crux-swap-windows)
-  ("C-c D" . crux-delete-file-and-buffer)
-  ("C-c r" . crux-rename-buffer-and-file)
-  ("C-c k" . crux-kill-other-buffers)
-  ("C-c TAB" . crux-indent-rigidly-and-copy-to-clipboard)
-  ("C-c I" . crux-find-user-init-file)
-  ("C-c S" . crux-find-shell-init-file)
+  ("C-x C-m u" . crux-view-url)
+  ("C-x C-m w" . crux-swap-windows)
+  ("C-x C-m D" . crux-delete-file-and-buffer)
+  ("C-x C-m r" . crux-rename-buffer-and-file)
+  ("C-x C-m k" . crux-kill-other-buffers)
+  ("C-x C-m TAB" . crux-indent-rigidly-and-copy-to-clipboard)
+  ("C-x C-m I" . crux-find-user-init-file)
+  ("C-x C-m S" . crux-find-shell-init-file)
   ("C-S-j" . crux-top-join-line)
   ("C-^" . crux-top-join-line)
   ("C-k" . kill-line)
@@ -1265,7 +1515,7 @@
   ([(shift return)] . crux-smart-open-line)
   ([(control shift return)] . crux-smart-open-line-above)
   ([remap kill-whole-line] . crux-kill-whole-line)
-  ("C-c s" . crux-ispell-word-then-abbrev))
+  ("C-x C-m s" . crux-ispell-word-then-abbrev))
  :ensure t
  :demand t)
 
@@ -1278,20 +1528,36 @@
  :ensure t
  :demand t)
 
-(use-package which-key :diminish which-key-mode :config (which-key-mode +1) :ensure t :demand t)
+(use-package
+ which-key
+ :diminish which-key-mode
+ :config (which-key-mode +1)
+ :ensure t
+ :demand t)
 
 
 (use-package
  goto-chg
- :bind (("C-c ." . goto-last-change) ("C-c ," . goto-last-change-reverse))
+ :bind
+ (("C-x C-m ." . goto-last-change)
+  ("C-x C-m ," . goto-last-change-reverse))
  :ensure t
  :demand t)
 
-(use-package color-moccur :bind (("C-c o o" . occur) ("C-c o O" . moccur)) :ensure t :demand t)
+(use-package
+ color-moccur
+ :bind (("C-x C-m o" . occur) ("C-x C-m O" . moccur))
+ :ensure t
+ :demand t)
 
-(use-package moccur-edit :after color-moccur :ensure nil :demand t)
+; (use-package moccur-edit :after color-moccur :ensure t :demand t)
 
-(use-package ace-window :diminish :bind* ("<C-M-return>" . ace-window) :ensure t :demand t)
+(use-package
+ ace-window
+ :diminish
+ :bind* ("<C-M-return>" . ace-window)
+ :ensure t
+ :demand t)
 
 (use-package
  minibuffer
@@ -1309,7 +1575,12 @@
 
  :demand t)
 
-(use-package puni :diminish :bind (("M-S" . puni-splice)) :ensure t :demand t)
+(use-package
+ puni
+ :diminish
+ :bind (("M-S" . puni-splice))
+ :ensure t
+ :demand t)
 
 (use-package
  eval-expr
@@ -1353,19 +1624,21 @@
  :commands (eshell eshell-command)
  :config
  (defun tj-eshell-prompt ()
-   "; ")
+   "$ ")
  (setq eshell-prompt-function 'tj-eshell-prompt)
- (setq eshell-prompt-regexp "^; ")
  (setq eshell-where-to-jump 'end)
  (setq eshell-review-quick-commands t)
  (setq eshell-smart-space-goes-to-end t)
- (add-to-list 'eshell-expand-input-functions 'eshell-expand-history-references)
+ (add-to-list
+  'eshell-expand-input-functions
+  'eshell-expand-history-references)
 
  (defvar eshell-isearch-map
    (let ((map (copy-keymap isearch-mode-map)))
      (define-key map [(control ?m)] 'eshell-isearch-return)
      (define-key map [return] 'eshell-isearch-return)
-     (define-key map [(control ?s)] 'eshell-isearch-repeat-forward)
+     (define-key
+      map [(control ?s)] 'eshell-isearch-repeat-forward)
      (define-key map [(control ?g)] 'eshell-isearch-abort)
      (define-key map [backspace] 'eshell-isearch-delete-char)
      (define-key map [delete] 'eshell-isearch-delete-char)
@@ -1383,7 +1656,8 @@
  ;;      (eshell dir)))
 
  (defun tj-eshell-hook ()
-   (setq eshell-path-env (concat "/usr/local/bin:" eshell-path-env)))
+   (setq eshell-path-env
+         (concat "/usr/local/bin:" eshell-path-env)))
  (add-hook 'eshell-mode-hook 'tj-eshell-hook)
  :ensure nil
  :demand t)
@@ -1395,31 +1669,53 @@
  :ensure t
  :demand t)
 
-(use-package eshell-up :after eshell :commands eshell-up :ensure t :demand t)
+(use-package
+ eshell-up
+ :after eshell
+ :commands eshell-up
+ :ensure t
+ :demand t)
 
 (use-package eshell-z :after eshell :ensure t :demand t)
 
-(use-package fancy-narrow :commands (fancy-narrow-to-region fancy-widen) :ensure t :demand t)
+(use-package
+ fancy-narrow
+ :commands (fancy-narrow-to-region fancy-widen)
+ :ensure t
+ :demand t)
 
 (use-package wgrep :ensure t :demand t)
 
 (use-package json-snatcher :ensure t :demand t)
 
-(use-package visual-regexp :bind ("M-&" . vr/query-replace) :ensure t :demand t)
+(use-package
+ visual-regexp
+ :bind ("M-&" . vr/query-replace)
+ :ensure t
+ :demand t)
 
 (use-package
  avy-zap
  :bind
- (("C-c e" . zap-up-to-char) ("C-c E" . avy-zap-up-to-char-dwim) ("M-Z" . avy-zap-up-to-char-dwim))
+ (("C-x C-m e" . zap-up-to-char)
+  ("C-x C-m E" . avy-zap-up-to-char-dwim)
+  ("M-Z" . avy-zap-up-to-char-dwim))
  :ensure t
  :demand t)
 
-(use-package backup-walker :commands backup-walker-start :ensure t :demand t)
+(use-package
+ backup-walker
+ :commands backup-walker-start
+ :ensure t
+ :demand t)
 
 (use-package
  change-inner
  :bind
- (("M-i" . change-inner) ("M-o" . change-outer) ("C-c M-i" . copy-inner) ("C-c M-o" . copy-outer))
+ (("M-i" . change-inner)
+  ("M-o" . change-outer)
+  ("C-x C-m M-i" . copy-inner)
+  ("C-x C-m M-o" . copy-outer))
  :ensure t
  :demand t)
 
@@ -1433,8 +1729,11 @@
   (lambda ()
     (subword-mode)
     (c-add-style "tj-protobuf-style" tj-protobuf-style t)
-    (setq imenu-generic-expression tj-protobuf-imenu-generic-expression)))
- :config (defconst tj-protobuf-style '((c-basic-offset . 2) (indent-tabs-mode . nil)))
+    (setq imenu-generic-expression
+          tj-protobuf-imenu-generic-expression)))
+ :config
+ (defconst tj-protobuf-style
+   '((c-basic-offset . 2) (indent-tabs-mode . nil)))
  (setq tj-protobuf-imenu-generic-expression
        '(("Message" "^message *\\([a-zA-Z0-9_]+\\)" 1)
          ("Service" "^service *\\([a-zA-Z0-9_]+\\)" 1)))
@@ -1443,8 +1742,9 @@
 
 (use-package
  bm
- :bind (("C-c b b" . bm-toggle) ("C-c b n" . bm-next) ("C-c b l" . bm-show-all) ("C-c b p" . bm-previous))
- :commands (bm-repository-load bm-buffer-save bm-buffer-save-all bm-buffer-restore)
+ :commands
+ (bm-repository-load
+  bm-buffer-save bm-buffer-save-all bm-buffer-restore)
  :init
  (add-hook 'after-init-hook 'bm-repository-load)
  (add-hook 'find-file-hooks 'bm-buffer-restore)
@@ -1462,15 +1762,25 @@
 
 (use-package
  terraform-mode
- :config (add-hook 'terraform-mode-hook 'terraform-format-on-save-mode)
+ :config
+ (add-hook 'terraform-mode-hook 'terraform-format-on-save-mode)
  :ensure t
  :demand t)
 
-(use-package multifiles :bind ("C-!" . mf/mirror-region-in-multifile) :ensure t :demand t)
+(use-package
+ multifiles
+ :bind ("C-!" . mf/mirror-region-in-multifile)
+ :ensure t
+ :demand t)
 
-(use-package toggle-quotes :bind ("C-\"" . toggle-quotes) :ensure t :demand t)
+(use-package
+ toggle-quotes
+ :bind ("C-\"" . toggle-quotes)
+ :ensure t
+ :demand t)
 
-(define-key occur-mode-map (kbd "v") 'occur-mode-display-occurrence)
+(define-key
+ occur-mode-map (kbd "v") 'occur-mode-display-occurrence)
 (define-key occur-mode-map (kbd "n") 'next-line)
 (define-key occur-mode-map (kbd "p") 'previous-line)
 
@@ -1478,9 +1788,11 @@
  highlight-indentation
  :config
  (set-face-background 'highlight-indentation-face "#e3e3d3")
- (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
+ (set-face-background
+  'highlight-indentation-current-column-face "#c3b3b3")
  (add-hook 'yaml-mode-hook 'highlight-indentation-mode)
- (add-hook 'yaml-mode-hook 'highlight-indentation-current-column-mode)
+ (add-hook
+  'yaml-mode-hook 'highlight-indentation-current-column-mode)
  :ensure t
  :demand t)
 
@@ -1494,16 +1806,23 @@
  resmacro
  :ensure nil
  :bind (("C-x (" . resmacro-start-macro))
-
  :demand t)
 
-(use-package paredit :ensure t :demand t :hook ((emacs-lisp-mode . paredit-mode)))
+(use-package
+ paredit
+ :ensure t
+ :demand t
+ :hook ((emacs-lisp-mode . paredit-mode)))
 
 (use-package wordswitch :ensure nil :demand t)
 
 (use-package titlecase :ensure nil :demand t)
 
-(use-package unfill :bind (("M-Q" . unfill-paragraph)) :ensure t :demand t)
+(use-package
+ unfill
+ :bind (("M-Q" . unfill-paragraph))
+ :ensure t
+ :demand t)
 
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.
@@ -1520,7 +1839,11 @@
  :ensure t
  :demand t)
 
-(use-package iedit :init (setq iedit-toggle-key-default (kbd "C-:")) :ensure t :demand t)
+(use-package
+ iedit
+ :init (setq iedit-toggle-key-default (kbd "C-:"))
+ :ensure t
+ :demand t)
 
 (use-package frog-jump-buffer :ensure t :demand t)
 
@@ -1541,22 +1864,20 @@
  :demand t
  ;; Replace bindings. Lazily loaded by `use-package'.
  :bind
- ( ;; C-c bindings in `mode-specific-map'
-  ("C-c M-x" . consult-mode-command)
-  ("C-c h" . consult-history)
+ (
+  ;; C-c bindings in `mode-specific-map'
   ("C-c k" . consult-kmacro)
-  ("C-c m" . consult-man)
   ("C-c i" . consult-info)
-  ("C-c f" . consult-find)
-  ("C-c a" . consult-ripgrep)
-  ("C-c l" . consult-line)
+
   ([remap Info-search] . consult-info)
+
   ;; C-x bindings in `ctl-x-map'
+  ("C-x C-l" . consult-line)
+  ("C-x C-a" . consult-ripgrep)
   ("C-x M-:" . consult-complex-command) ;; orig. repeat-complex-command
   ("C-x b" . consult-buffer) ;; orig. switch-to-buffer
   ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
   ("C-x 5 b" . consult-buffer-other-frame) ;; orig. switch-to-buffer-other-frame
-  ("C-x t b" . consult-buffer-other-tab) ;; orig. switch-to-buffer-other-tab
   ("C-x r b" . consult-bookmark) ;; orig. bookmark-jump
   ("C-x p b" . consult-project-buffer) ;; orig. project-switch-to-buffer
   ;; Custom M-# bindings for fast register access
@@ -1603,7 +1924,9 @@
 
  ;; Optionally tweak the register preview window.
  ;; This adds thin lines, sorting and hides the mode line of the window.
- (advice-add #'register-preview :override #'consult-register-window)
+ (advice-add
+  #'register-preview
+  :override #'consult-register-window)
 
  ;; Use Consult to select xref locations with preview
  (setq
@@ -1717,7 +2040,17 @@
  :demand t)
 
 ;; save search history
-(use-package savehist :init (savehist-mode 1) :ensure nil :demand t)
+(use-package
+ savehist
+ :init (savehist-mode 1)
+ :ensure nil
+ :demand t)
+
+(use-package
+ tiny
+ :demand t
+ :ensure t
+ :bind (("C-x t" . tiny-expand)))
 
 (use-package
  rust-mode
@@ -1731,7 +2064,11 @@
  :ensure t
  :demand t)
 
-(use-package flycheck-vale :config (flycheck-vale-setup) :ensure t :demand t)
+(use-package
+ flycheck-vale
+ :config (flycheck-vale-setup)
+ :ensure t
+ :demand t)
 
 (use-package
  proced-narrow
@@ -1761,7 +2098,8 @@
  :config
  (setq eglot-extend-to-xref t)
  (setq eglot-confirm-server-initiated-edits nil)
- (setq-default eglot-workspace-configuration '((:gopls . ((gofumpt . t) (staticcheck . t)))))
+ (setq-default eglot-workspace-configuration
+               '((:gopls . ((gofumpt . t) (staticcheck . t)))))
  (defun tj-eglot-organize-imports ()
    (interactive)
    (eglot-code-actions nil nil "source.organizeImports" t))
@@ -1787,7 +2125,11 @@
  :ensure t
  :demand t)
 
-(use-package hideshow :ensure nil :diminish hs-minor-mode :demand t)
+(use-package
+ hideshow
+ :ensure nil
+ :diminish hs-minor-mode
+ :demand t)
 
 (use-package
  kubernetes
@@ -1810,16 +2152,20 @@
   projectile-sort-order 'modification-time
   projectile-switch-project-action #'projectile-commander)
 
- (add-to-list 'projectile-globally-ignored-directories "Godeps/_workspace")
+ (add-to-list
+  'projectile-globally-ignored-directories "Godeps/_workspace")
  (add-to-list 'projectile-globally-ignored-directories "vendor")
  (add-to-list 'projectile-globally-ignored-directories "_build")
  (add-to-list 'projectile-globally-ignored-directories "deps")
- (add-to-list 'projectile-globally-ignored-directories "node_modules")
+ (add-to-list
+  'projectile-globally-ignored-directories "node_modules")
 
  (projectile-global-mode 1)
 
  (def-projectile-commander-method
-  ?a "Run ripgrep on project." (call-interactively #'projectile-ripgrep))
+  ?a
+  "Run ripgrep on project."
+  (call-interactively #'projectile-ripgrep))
 
  :bind
  (("C-x p t" . projectile-toggle-between-implementation-and-test)
@@ -1835,7 +2181,8 @@
  :ensure t
  :demand t
  :init (setq ledger-clear-whole-transactions 1)
- :mode (("\\.ledger\\'" . ledger-mode) ("\\.dat\\'" . ledger-mode)))
+ :mode
+ (("\\.ledger\\'" . ledger-mode) ("\\.dat\\'" . ledger-mode)))
 
 (use-package
  tj
@@ -1855,9 +2202,15 @@
 
  (setq native-comp-async-report-warnings-errors nil)
 
- (set-face-attribute 'default nil :family "IBM Plex Mono" :height 110)
- (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 1.0)
- (set-face-attribute 'fixed-pitch nil :family "IBM Plex Sans" :height 1.0)
+ (set-face-attribute 'default nil
+                     :family "IBM Plex Mono"
+                     :height 110)
+ (set-face-attribute 'fixed-pitch nil
+                     :family "IBM Plex Mono"
+                     :height 1.0)
+ (set-face-attribute 'fixed-pitch nil
+                     :family "IBM Plex Sans"
+                     :height 1.0)
 
  (add-hook 'after-init-hook 'tj-theme))
 
@@ -1866,7 +2219,12 @@
  :ensure nil ; no need to install it as it is built-in
  :hook (after-init . delete-selection-mode))
 
-(use-package elmacro :ensure t :demand t :diminish :config (elmacro-mode 1))
+(use-package
+ elmacro
+ :ensure t
+ :demand t
+ :diminish
+ :config (elmacro-mode 1))
 
 (use-package typit :ensure t :demand t)
 
@@ -1880,6 +2238,11 @@
 (put 'erase-buffer 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-(use-package server :no-require :hook ((after-init . server-start)) :ensure nil :demand t)
+(use-package
+ server
+ :no-require
+ :hook ((after-init . server-start))
+ :ensure nil
+ :demand t)
 
 (put 'narrow-to-region 'disabled nil)

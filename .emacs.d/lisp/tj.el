@@ -338,8 +338,6 @@
    ;; use hippie-expand instead of dabbrev
    ("C-/" . undo)
    ("M-/" . hippie-expand)
-   ;; replace buffer-menu with ibuffer
-   ("C-x C-b" . bufler)
    ("C-h A" . apropos)
    ;; align code in a pretty way
    ("C-x \\" . align-regexp)
