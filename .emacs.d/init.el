@@ -808,7 +808,6 @@
   uniquify-after-kill-buffer-p t
   ;; don't muck with special buffers
   uniquify-ignore-buffers-re "^\\*")
-
  :demand t)
 
 (use-package
@@ -1718,8 +1717,8 @@
  :bind
  (("M-i" . change-inner)
   ("M-o" . change-outer)
-  ("C-x C-m M-i" . copy-inner)
-  ("C-x C-m M-o" . copy-outer))
+  ("C-x M-i" . copy-inner)
+  ("C-x M-o" . copy-outer))
  :ensure t
  :demand t)
 
