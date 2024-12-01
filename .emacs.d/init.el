@@ -381,6 +381,10 @@
 
 (use-package
  compile
+ :config
+ (setq compilation-scroll-output t)
+ (setq compilation-auto-jump-to-first-error t)
+ (setq compilation-max-output-line-length nil)
  :ensure nil
  :init (require 'grep)
  :no-require
