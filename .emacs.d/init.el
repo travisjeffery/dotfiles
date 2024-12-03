@@ -861,8 +861,8 @@
  :diminish
  :config (setq highlight-symbol-idle-delay 0.1)
  :bind
- (("C-x C-h p" . highlight-symbol-prev)
-  ("C-x C-h n" . highlight-symbol-next))
+ (("C-x C-m p" . highlight-symbol-prev)
+  ("C-x C-m n" . highlight-symbol-next))
  :hook (prog-mode . highlight-symbol-mode)
  :ensure t
  :demand t)
@@ -1500,7 +1500,7 @@
  (setq user-init-file (concat user-emacs-directory "init.el"))
  :bind
  (("C-x C-m d" . crux-duplicate-current-line-or-region)
-  ("C-x C-m n" . crux-cleanup-buffer-or-region)
+  ("C-x C-m H" . crux-cleanup-buffer-or-region)
   ("C-M-z" . crux-indent-defun)
   ("C-x C-m u" . crux-view-url)
   ("C-x C-m w" . crux-swap-windows)
@@ -1538,7 +1538,6 @@
  :ensure t
  :demand t)
 
-
 (use-package
  goto-chg
  :bind
@@ -1552,8 +1551,6 @@
  :bind (("C-x C-m o" . occur) ("C-x C-m O" . moccur))
  :ensure t
  :demand t)
-
-; (use-package moccur-edit :after color-moccur :ensure t :demand t)
 
 (use-package
  ace-window
