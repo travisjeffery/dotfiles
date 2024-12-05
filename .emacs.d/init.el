@@ -318,6 +318,8 @@
  magit
  :diminish magit-wip-mode
  :config
+ (setq magit-log-margin-width 18)
+ (setq magit-refs-margin '(t age magit-log-margin-width t 18))
  (magit-wip-mode 1)
  (add-hook 'after-save-hook 'magit-after-save-refresh-status)
  (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
