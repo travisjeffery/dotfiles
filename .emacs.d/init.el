@@ -1876,7 +1876,7 @@
 
   ;; C-x bindings in `ctl-x-map'
   ("C-x C-l" . consult-line)
-  ("C-x C-a" . consult-ripgrep)
+  ("C-x C-a" . ripgrep-regexp)
   ("C-x M-:" . consult-complex-command) ;; orig. repeat-complex-command
   ("C-x b" . consult-buffer) ;; orig. switch-to-buffer
   ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
