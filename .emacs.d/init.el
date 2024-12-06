@@ -173,10 +173,11 @@
 
 (use-package
  goto-last-point
+ :diminish
  :ensure t
  :demand t
  :config (goto-last-point-mode +1)
- :bind (("C-x ." . goto-last-point)))
+ :bind (("C-x C-m ," . goto-last-point)))
 
 (use-package
  isearch
@@ -1544,7 +1545,7 @@
  goto-chg
  :bind
  (("C-x C-m ." . goto-last-change)
-  ("C-x C-m ," . goto-last-change-reverse))
+  ("C-x C-m /" . goto-last-change-reverse))
  :ensure t
  :demand t)
 
