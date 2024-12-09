@@ -1626,6 +1626,39 @@
  eshell
  :commands (eshell eshell-command)
  :config
+ (setq eshell-history-file-name "~/.zsh_history")
+
+ (defun tj-hist-load ()
+  (cl-flet ((unmetafy (input)
+              (let ((i 0) output)
+                (while-let ((char (nth i input))
+                            (inc-and-char
+                             (if (= char #x83)
+                                 ;; Skip meta character and unmetafy.
+                                 `(2 . ,(logxor (nth (1+ i) input) 32))
+                               ;; Advance as usual.
+                               `(1 . ,char))))
+                  (cl-incf i (car inc-and-char))
+                  (setq output (cons (cdr inc-and-char) output)))
+                (decode-coding-string
+                 (apply #'unibyte-string (nreverse output))
+                 'utf-8-unix
+                 t))))
+    (let ((hist-file eshell-history-file-name))
+      (with-temp-buffer
+        (insert (mapconcat (-compose #'unmetafy #'string-to-list)
+                           (s-lines (f-read-bytes hist-file))
+                           "\n"))
+        (write-file hist-file)))))
+
+ (defun tj-eshell-exit (&optional arg)
+  "Exit eshell and kill the current frame."
+  (interactive "P")
+  (slot/unmetafy)
+  (eshell-write-history)
+  (save-buffers-kill-terminal))
+
+ 
  (defun tj-eshell-prompt ()
    "$ ")
  (setq eshell-prompt-function 'tj-eshell-prompt)
@@ -1661,16 +1694,19 @@
  (defun tj-eshell-hook ()
    (setq eshell-path-env
          (concat "/usr/local/bin:" eshell-path-env)))
- (add-hook 'eshell-mode-hook 'tj-eshell-hook)
+ :bind (eshell-mode-map)
+ :hook (eshell-mode . tj-eshell-hook)
+ :hook (eshell-hist-load . tj-hist-load)
+ :hook (eshell-exit-hook . tj-eshell-exit)
  :ensure nil
  :demand t)
 
 (use-package
- eshell-bookmark
- :after eshell
- :hook (eshell-mode . eshell-bookmark-setup)
- :ensure t
- :demand t)
+  eshell-bookmark
+  :after eshell
+  :hook (eshell-mode . eshell-bookmark-setup)
+  :ensure t
+  :demand t)
 
 (use-package
  eshell-up
