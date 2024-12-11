@@ -95,6 +95,75 @@
  emacs
  :ensure nil
  :custom
+ (initial-major-mode 'fundamental-mode)
+ (tramp-default-method "ssh")
+ ;; show all buffers, otherwise, some can be hidden under C-x b)
+ (buffers-menu-max-size nil)
+ (debugger-stack-frame-as-list t)
+ (user-full-name "Travis Jeffery")
+ (user-mail-address "tj@travisjeffery.com")
+ ;; rescan the buffer contents to update jump targets
+ (imenu-auto-rescan t)
+ ;; config changes made through the customize UI will be stored here
+ (custom-file
+  (expand-file-name "custom.el" user-emacs-directory))
+ ;; 'comment-indent-new-line continues comments
+ (comment-multi-line t)
+ ;; Save whatever's in the system clipboard before replcaing it with the Emacs' txt.
+ (save-interprogram-paste-before-kill t)
+ (read-process-output-max (* 1024 1024))
+ ;; Always load newest byte code
+ (load-prefer-newer t)
+ ;; warn when opening files bigger than 100MB
+ (large-file-warning-threshold 100000000)
+ (sentence-end-double-space nil)
+ ;; disable the annoying bell ring
+ (ring-bell-function 'ignore)
+ ;; disable startup screen
+ (inhibit-startup-screen t)
+ (eldoc-idle-delay 0)
+ ;; nice scrolling
+ (scroll-margin 0)
+ (scroll-conservatively 100000)
+ (scroll-preserve-screen-position 1)
+ (native-comp-async-report-warnings-errors nil)
+ ;; more useful frame title, that show either a file or a
+ ;; buffer name (if the buffer isn't visiting a file
+ (frame-title-format
+  ('((:eval)
+     ((if (buffer-file-name))
+      ((abbreviate-file-name (buffer-file-name)))
+      ("%b")))))
+ ;; Emacs modes typically provide a standard means to change the
+ ;; indentation width -- eg. c-basic-offset: use that to adjust your
+ ;; personal indentation width, while maintaining the style (and
+ ;; meaning) of any files you load.
+ (indent-tabs-mode nil) ;; don't use tabs to indent
+ (tab-width 8) ;; but maintain correct appearance
+ ;; smart tab behavior - indent or complete
+ (grep-command "rg --no-heading")
+ (tab-always-indent 'complete)
+ (fill-column 100)
+ (same-window-regexps nil)
+ ;; Newline at end of file
+ (require-final-newline t)
+ ;; hippie expand is dabbrev expand on steroids)
+ (hippie-expand-try-functions-list
+  ('(try-expand-dabbrev)
+   (try-expand-dabbrev-all-buffers)
+   (try-expand-dabbrev-from-kill)
+   (try-complete-file-name-partially)
+   (try-complete-file-name)
+   (try-expand-all-abbrevs)
+   (try-expand-list)
+   (try-expand-line)
+   (try-complete-lisp-symbol-partially)
+   (try-complete-lisp-symbol)))
+ ;; store all backup and autosave files in the tmp dir)
+ (backup-directory-alist `((".*" . ,temporary-file-directory)))
+ (auto-save-file-name-transforms
+  `((".*" ,temporary-file-directory t)))
+ (gc-cons-threshold 300000000)
  (major-mode-remap-alist '((python-mode . python-ts-mode)))
  (async-shell-command-buffer 'new-buffer)
  (ring-bell-function #'ignore)
@@ -103,7 +172,679 @@
  (kept-new-versions 10)
  (kept-old-versions 2)
  (vc-make-backup-files t)
- (version-control t))
+ (version-control t)
+ :diminish auto-revert-mode
+ :config
+ ;; handle long lines
+ (global-so-long-mode t)
+ ;; the toolbar is just a waste of valuable screen estate
+ ;; in a tty tool-bar-mode does not properly auto-load, and is
+ ;; already disabled anyway
+ (when (fboundp 'tool-bar-mode)
+   (tool-bar-mode -1))
+ ;; keep cursor static
+ (blink-cursor-mode -1)
+
+ ;; mode line settings
+ (line-number-mode t)
+ (column-number-mode t)
+ (size-indication-mode t)
+
+ ;; enable y/n answers
+ (fset 'yes-or-no-p 'y-or-n-p)
+
+ ;; delete the selection with a keypress
+ (delete-selection-mode t)
+
+ ;; revert buffers automatically when underlying files are changed externally
+ (global-auto-revert-mode t)
+
+ (prefer-coding-system 'utf-8)
+ (set-default-coding-systems 'utf-8)
+ (set-terminal-coding-system 'utf-8)
+ (set-keyboard-coding-system 'utf-8)
+
+ (defun tj-base64-encode-region-no-break ()
+   (interactive)
+   (base64-encode-region (mark) (point) t))
+
+ (defun tj-copy-line-as-kill (&optional arg)
+   "Save the current line as if killed, but don't kill it. If ARG set, then save ARG lines."
+   (interactive "p")
+   (save-excursion
+     (copy-region-as-kill
+      (point)
+      (progn
+        (if arg
+            (forward-visible-line arg)
+          (end-of-visible-line))
+        (point)))))
+
+ (defun tj-gist (&optional arg)
+   "Gist current buffer. If ARG set, then post to public."
+   (interactive "P")
+   (let* ((cmd (list "gh gist create" (buffer-file-name)))
+          (cmd
+           (if arg
+               (nconc cmd (list "--public"))
+             cmd))
+          (cmd (string-join cmd " ")))
+     (async-shell-command cmd)))
+
+ (defun tj-keyboard-quit-dwim ()
+   (interactive)
+   (cond
+    ((region-active-p)
+     (keyboard-quit))
+    ((derived-mode-p 'completion-list-mode)
+     (delete-completion-window))
+    ((> (minibuffer-depth) 0)
+     (abort-recursive-edit))
+    (t
+     (keyboard-quit))))
+
+ (defun tj-newline-and-indent-up ()
+   "Open a new line above the current line."
+   (interactive)
+   (line-move -1)
+   (end-of-line)
+   (newline-and-indent))
+
+ (defun tj-reload-dir-locals-for-current-buffer ()
+   "Reload dir locals for the current buffer."
+   (interactive)
+   (let ((enable-local-variables :all))
+     (hack-dir-local-variables-non-file-buffer)))
+
+ (defun tj-reload-dir-locals-for-all-buffer-in-this-directory ()
+   "For every buffer with the same `default-directory` as the current buffer's, reload dir-locals."
+   (interactive)
+   (let ((dir (projectile-project-root)))
+     (dolist (buffer (buffer-list))
+       (with-current-buffer buffer
+         (when (equal default-directory dir))
+         (tj-reload-dir-locals-for-current-buffer)))))
+
+ (defun tj-what-hexadecimal-value ()
+   "Prints the decimal value of a hexadecimal string under cursor."
+   (interactive)
+   (let (input
+         tmp
+         p1
+         p2)
+     (save-excursion
+       (re-search-backward "[^0-9A-Fa-fx#]" nil t)
+       (forward-char)
+       (setq p1 (point))
+       (re-search-forward "[^0-9A-Fa-fx#]" nil t)
+       (backward-char)
+       (setq p2 (point)))
+
+     (setq input (buffer-substring-no-properties p1 p2))
+
+     (let ((case-fold-search nil))
+       (setq tmp (replace-regexp-in-string "^0x" "" input))
+       (setq tmp (replace-regexp-in-string "^#x" "" tmp))
+       (setq tmp (replace-regexp-in-string "^#" "" tmp)))
+
+     (message "Hex %s is %d" tmp (string-to-number tmp 16))))
+
+ (defun tj-toggle-window-split ()
+   "Toggle window split."
+   (interactive)
+   (if (= (count-windows) 2)
+       (let* ((this-win-buffer (window-buffer))
+              (next-win-buffer (window-buffer (next-window)))
+              (this-win-edges (window-edges (selected-window)))
+              (next-win-edges (window-edges (next-window)))
+              (this-win-2nd
+               (not
+                (and (<= (car this-win-edges)
+                         (car next-win-edges))
+                     (<= (cadr this-win-edges)
+                         (cadr next-win-edges)))))
+              (splitter
+               (if (= (car this-win-edges)
+                      (car (window-edges (next-window))))
+                   'split-window-horizontally
+                 'split-window-vertically)))
+         (delete-other-windows)
+         (let ((first-win (selected-window)))
+           (funcall splitter)
+           (if this-win-2nd
+               (other-window 1))
+           (set-window-buffer (selected-window) this-win-buffer)
+           (set-window-buffer (next-window) next-win-buffer)
+           (select-window first-win)
+           (if this-win-2nd
+               (other-window 1))))))
+
+ (defun tj-newline-and-indent ()
+   "Newline under the current line."
+   (interactive)
+   (end-of-line)
+   (newline-and-indent))
+
+ (defun tj-eval-and-replace (value)
+   "Evaluate the sexp at point and replace it with its VALUE."
+   (interactive (list (eval-last-sexp nil)))
+   (kill-sexp -1)
+   (insert (format "%S" value)))
+
+ (defun tj-comment-line ()
+   "Comment the current line or region."
+   (interactive)
+   (call-interactively #'comment-line)
+   (unless (region-active-p)
+     (forward-line -1)))
+
+ (defun tj-kill-other-buffers ()
+   "Kill all other buffers."
+   (interactive)
+   (mapc
+    'kill-buffer
+    (delq
+     (current-buffer)
+     (remove-if-not 'buffer-file-name (buffer-list)))))
+
+ (defun tj-kill-other-buffer ()
+   "Kill the other window's buffer."
+   (interactive)
+   (other-window 1)
+   (kill-buffer)
+   (other-window 1))
+
+ (defun tj-toggle-fold ()
+   "Toggle fold all lines larger than indentation on current line."
+   (interactive)
+   (let ((col 1))
+     (save-excursion
+       (back-to-indentation)
+       (setq col (+ 1 (current-column)))
+       (set-selective-display
+        (if selective-display
+            nil
+          (or col 1))))))
+
+ (defun tj-multi-line-to-one-line (beg end)
+   "Convert the lines between BEG and END into one line and copy \
+it in to the kill ring, when 'transient-mark-mode' is enabled. If
+no region is active then only the current line is acted upon.
+
+If the region begins or ends in the middle of a line, that entire line is
+copied, even if the region is narrowed to the middle of a line.
+
+Current position is preserved."
+   (interactive "r")
+   (let (str
+         (orig-pos (point-marker)))
+     (save-restriction
+       (widen)
+       (when (and transient-mark-mode (not (use-region-p)))
+         (setq
+          beg (line-beginning-position)
+          end (line-beginning-position 2)))
+
+       (goto-char beg)
+       (setq beg (line-beginning-position))
+       (goto-char end)
+       (unless (= (point) (line-beginning-position))
+         (setq end (line-beginning-position 2)))
+
+       (goto-char beg)
+       (setq str
+             (replace-regexp-in-string
+              "[ \t]*\n" ""
+              (replace-regexp-in-string
+               "^[ \t]+"
+               ""
+               (buffer-substring-no-properties beg end))))
+       ;; (message "str=%s" str)
+       (kill-new str)
+       (goto-char orig-pos))))
+
+ (defun tj-spongebob (start end)
+   "Convert string from START to END to SpOnGeBoB meme."
+   (interactive "r")
+   (save-excursion
+     (goto-char start)
+     (let ((upcase?
+            (not (s-uppercase? (char-to-string (char-after))))))
+       (while (not (eq end (point)))
+         (setq upcase? (not upcase?))
+         (let* ((curchar (char-after))
+                (newchar
+                 (if upcase?
+                     (upcase curchar)
+                   (downcase curchar))))
+           (delete-char 1)
+           (insert-char newchar))))))
+
+ (defun tj-multi-line-to-one-line (beg end)
+   "Convert the lines between BEG and END into one line and copy \
+it in to the kill ring, when 'transient-mark-mode' is enabled. If
+no region is active then only the current line is acted upon.
+
+If the region begins or ends in the middle of a line, that entire line is
+copied, even if the region is narrowed to the middle of a line.
+
+Current position is preserved."
+   (interactive "r")
+   (let (str
+         (orig-pos (point-marker)))
+     (save-restriction
+       (widen)
+       (when (and transient-mark-mode (not (use-region-p)))
+         (setq
+          beg (line-beginning-position)
+          end (line-beginning-position 2)))
+
+       (goto-char beg)
+       (setq beg (line-beginning-position))
+       (goto-char end)
+       (unless (= (point) (line-beginning-position))
+         (setq end (line-beginning-position 2)))
+
+       (goto-char beg)
+       (setq str
+             (replace-regexp-in-string
+              "[ \t]*\n" ""
+              (replace-regexp-in-string
+               "^[ \t]+"
+               ""
+               (buffer-substring-no-properties beg end))))
+       ;; (message "str=%s" str)
+       (kill-new str)
+       (goto-char orig-pos))))
+
+ (defun tj-spongebob (start end)
+   "Convert string from START to END to SpOnGeBoB meme."
+   (interactive "r")
+   (save-excursion
+     (goto-char start)
+     (let ((upcase?
+            (not (s-uppercase? (char-to-string (char-after))))))
+       (while (not (eq end (point)))
+         (setq upcase? (not upcase?))
+         (let* ((curchar (char-after))
+                (newchar
+                 (if upcase?
+                     (upcase curchar)
+                   (downcase curchar))))
+           (delete-char 1)
+           (insert-char newchar))))))
+
+ (defun tj-thesaurus ()
+   "Browse thesaurus."
+   (interactive)
+   (tj--browse-word
+    "https://www.merriam-webster.com/thesaurus/%s"))
+
+ (defun tj-dictionary ()
+   "Browse dictionary."
+   (interactive)
+   (tj--browse-word "https://merriam-webster.com/dictionary/%s"))
+
+ (defun tj--browse-word (url)
+   (let ((word
+          (or (and (region-active-p)
+                   (buffer-substring-no-properties
+                    (region-beginning) (region-end)))
+              (read-string "Word: "))))
+     (browse-url (format url word))))
+
+ (defun tj-prog-mode-hook ()
+   (setq font-lock-maximum-decoration 1)
+   (font-lock-mode -1))
+
+ ;; improve find file at point to handle line numbers
+ (defvar ffap-file-at-point-line-number nil
+   "Variable to hold line number from the last `ffap-file-at-point' call.")
+
+ (defadvice ffap-file-at-point
+     (after ffap-store-line-number activate)
+   "Search `ffap-string-at-point' for a line number pattern and save it in `ffap-file-at-point-line-number' variable."
+   (let*
+       ((string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
+        (name
+         (or
+          (condition-case nil
+              (and
+               (not (string-match "//" string)) ; foo.com://bar
+               (substitute-in-file-name string))
+            (error nil))
+          string))
+        (line-number-string
+         (and (string-match ":[0-9]+" name)
+              (substring name
+                         (1+ (match-beginning 0))
+                         (match-end 0))))
+        (line-number
+         (and line-number-string
+              (string-to-number line-number-string))))
+     (if (and line-number (> line-number 0))
+         (setq ffap-file-at-point-line-number line-number)
+       (setq ffap-file-at-point-line-number nil))))
+
+ (defadvice ffap-guesser (after ffap-store-line-number activate)
+   "Search `ffap-string-at-point' for a line number pattern and save it in `ffap-file-at-point-line-number' variable."
+   (let*
+       ((string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
+        (name
+         (or
+          (condition-case nil
+              (and
+               (not (string-match "//" string)) ; foo.com://bar
+               (substitute-in-file-name string))
+            (error nil))
+          string))
+        (line-number-string
+         (and (string-match ":[0-9]+" name)
+              (substring name
+                         (1+ (match-beginning 0))
+                         (match-end 0))))
+        (line-number
+         (and line-number-string
+              (string-to-number line-number-string))))
+     (if (and line-number (> line-number 0))
+         (setq ffap-file-at-point-line-number line-number)
+       (setq ffap-file-at-point-line-number nil))))
+
+ (defadvice find-file (after ffap-goto-line-number activate)
+   "If `ffap-file-at-point-line-number' is non-nil goto this line."
+   (when ffap-file-at-point-line-number
+     (with-no-warnings
+       (goto-line ffap-file-at-point-line-number))
+     (setq ffap-file-at-point-line-number nil)))
+
+ (defadvice find-file-at-point
+     (after ffap-goto-line-number activate)
+   "If `ffap-file-at-point-line-number' is non-nil goto this line."
+   (when ffap-file-at-point-line-number
+     (with-no-warnings
+       (goto-line ffap-file-at-point-line-number))
+     (setq ffap-file-at-point-line-number nil)))
+
+ (defun tj-commas-to-new-lines (start end)
+   "Convert commas to commas with new-lines from START to END.
+Useful to take a long list of arguments on one-line and split
+them across multiple lines."
+   (interactive "r")
+   (let* ((in (buffer-substring-no-properties start end))
+          (out (s-replace ", " ",\n" in)))
+     (save-excursion
+       (delete-region start end)
+       (insert out))))
+
+ (defun tj-wrap-with-tags ()
+   "Generates an open and close HTML snippet using the current word."
+   (interactive)
+   (let ((body
+          (buffer-substring (region-beginning) (region-end))))
+     (goto-char (region-beginning))
+     (delete-char (string-width body))
+     (yas-expand-snippet
+      (concat
+       "<${1:tag}$2>"
+       body
+       "</${1:$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text)"
+       "(match-string 0 yas-text))}>"))))
+
+
+ (defun tj-insert-open-and-close-tag ()
+   "Generates an open and close HTML snippet using the current word."
+   (interactive)
+   (let ((inserting-new-tag nil))
+     (if (looking-back "[-A-Za-z0-9:_]")
+         (progn
+           (set-mark-command nil)
+           (while (looking-back "[-A-Za-z0-9:_]")
+             (backward-char)))
+       (setq inserting-new-tag t)
+       (set-mark-command nil)
+       (insert "p")
+       (exchange-point-and-mark))
+     (let ((tag
+            (buffer-substring (region-beginning) (region-end))))
+       (delete-char (string-width tag))
+       (cond
+        ((string-match "\\`[bh]r\\'" tag)
+         (insert (concat "<" tag ">")))
+        ((string-match
+          (concat
+           "\\`\\(?:img\\|meta\\|link\\|"
+           "input\\|base\\|area\\|col\\|"
+           "frame\\|param\\)\\'")
+          tag)
+         (yas-expand-snippet (concat "<" tag " $1>$0")))
+        (t
+         (yas-expand-snippet
+          (if inserting-new-tag
+              (concat
+               "<${1:"
+               tag
+               "}>$0</${1:"
+               "$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text) "
+               "(match-string 0 yas-text))}>")
+            (concat "<" tag "$1>$0</" tag ">"))))))))
+
+ (defun tj-format-prowritingaid-to-markdown ()
+   "Fix quotes after copying from ProWritingAid."
+   (interactive)
+   (let ((replacements
+          '(("“" . "\"")
+            ("”" . "\"")
+            ("’" . "'")
+            ("‘" . "'")
+            (" " . " "))))
+     (cl-loop
+      for (key . value) in replacements do
+      (progn
+        (goto-char 0)
+        (replace-string key value)))))
+
+ (defun tj-remove-prag-prog-code-tags ()
+   (interactive)
+   (save-excursion
+     (goto-char 0)
+     (replace-regexp
+      "^.*// END.*
+"
+      ""))
+
+   (save-excursion
+     (goto-char 0)
+     (replace-regexp
+      "^.*// START.*
+"
+      "")))
+
+ (defun tj-arrayify (beg end)
+   "Wrap each line from BEG to END in quotes and join them in a line."
+   (interactive "r")
+   (replace-region-contents
+    beg end
+    (lambda ()
+      (->
+       (buffer-substring-no-properties
+        beg end)
+       (split-string "\n")
+       (->>
+        (remove "")
+        (cl-mapcar (lambda (x) (format "\"\%s\"" x))))
+       (string-join ", "))))
+   (end-of-line))
+
+ (defun tj-browse-urls (beg end)
+   "Browse the URL on every line between BEG and END."
+   (interactive "r")
+   (goto-char beg)
+   (while (< (point) end)
+     (beginning-of-line)
+     (browse-url-at-point)
+     (forward-line)))
+
+ (defun tj-yank-prepend (space)
+   (interactive "sSpace: ")
+   (tj-yank-rectangle t space))
+
+ (defun tj-yank-append (space)
+   (interactive "sSpace: ")
+   (tj-yank-rectangle nil space))
+
+ (defun tj-yank-rectangle (prepend space)
+   (interactive)
+   (save-excursion
+     (let ((lines (split-string (current-kill 0) "\n")))
+       (dolist (line lines)
+         (goto-char
+          (if prepend
+              (line-beginning-position)
+            (line-end-position)))
+         (unless prepend
+           (insert space))
+         (insert line)
+         (if prepend
+             (insert space))
+         (unless (zerop (forward-line))
+           (insert "\n"))))))
+
+ (defun tj-revert-all-file-buffers ()
+   "Refresh all open file buffers without confirmation.
+Buffers in modified (not yet saved) state in Emacs will not be reverted. They
+will be reverted though if they were modified outside Emacs.
+Buffers visiting files which do not exist any more or are no longer readable
+will be killed."
+   (interactive)
+   (dolist (buf (buffer-list))
+     (let ((filename (buffer-file-name buf)))
+       ;; Revert only buffers containing files, which are not modified;
+       ;; do not try to revert non-file buffers like *Messages*.
+       (when (and filename (not (buffer-modified-p buf)))
+         (if (file-readable-p filename)
+             ;; If the file exists and is readable, revert the buffer.
+             (with-current-buffer buf
+               (revert-buffer
+                :ignore-auto
+                :noconfirm
+                :preserve-modes))
+           ;; Otherwise, kill the buffer.
+           (let
+               (kill-buffer-query-functions) ; No query done when killing buffer
+             (kill-buffer buf)
+             (message
+              "Killed non-existing/unreadable file buffer: %s"
+              filename))))))
+   (message
+    "Finished reverting buffers containing unmodified files."))
+
+ (defun tj-kill-file-name ()
+   "Put the current file name on the clipboard."
+   (interactive)
+   (let ((filename
+          (if (equal major-mode 'dired-mode)
+              default-directory
+            (buffer-file-name))))
+     (when filename
+       (with-temp-buffer
+         (insert filename)
+         (clipboard-kill-region (point-min) (point-max)))
+       (message filename))))
+
+ (defadvice backward-kill-word (around fix activate)
+   (cl-flet ((kill-region (b e) (delete-region b e))) ad-do-it))
+
+ (defun tj-fill-paragraph (&optional arg)
+   "When called with prefix argument ARG call `fill-paragraph'.
+Otherwise split the current paragraph into one sentence per line."
+   (interactive "P")
+   (if (not arg)
+       (save-excursion
+         (let
+             ((fill-column 12345678)) ;; relies on dynamic binding
+           (fill-paragraph) ;; this will not work correctly if the paragraph is
+           ;; longer than 12345678 characters (in which case the
+           ;; file must be at least 12MB long. This is unlikely.)
+           (let ((end
+                  (save-excursion
+                    (forward-paragraph 1)
+                    (backward-sentence)
+                    (point-marker)))) ;; remember where to stop
+             (beginning-of-line)
+             (while (progn
+                      (forward-sentence)
+                      (<= (point) (marker-position end)))
+               (just-one-space) ;; leaves only one space, point is after it
+               (delete-char -1) ;; delete the space
+               (newline) ;; and insert a newline
+               ))))
+     ;; otherwise do ordinary fill paragraph
+     (fill-paragraph P)))
+
+ (defun tj-apply-function-to-region (fn)
+   "Apply function FN to region."
+   (interactive "XFunction to apply to region: ")
+   (save-excursion
+     (let* ((beg (region-beginning))
+            (end (region-end))
+            (resulting-text
+             (funcall fn
+                      (buffer-substring-no-properties beg end))))
+       (kill-region beg end)
+       (insert resulting-text))))
+
+ (defun tj-find-duplicate-lines ()
+   "Show all duplicate lines in the current buffer."
+   (interactive)
+   (save-excursion
+     (goto-char 0)
+     (let ((lines (make-hash-table :test 'equal)))
+       (while (not (eobp))
+         (when-let* ((line
+                      (buffer-substring-no-properties
+                       (line-beginning-position)
+                       (line-end-position)))
+                     (count (gethash line lines 0))
+                     (_ (not (string-empty-p line))))
+           (puthash line (+ count 1) lines))
+         (forward-line))
+       (when-let ((lines
+                   (cl-loop
+                    for
+                    line
+                    being
+                    the
+                    hash-keys
+                    of
+                    lines
+                    using
+                    (hash-values count)
+                    when
+                    (> count 1)
+                    collect
+                    (format "^%s$" (regexp-quote line))))
+                  (empty (length lines)))
+         (occur
+          (format "\\(%s\\)" (string-join lines "\\|")))))))
+
+ :hook ((prog-mode . tj-prog-mode-hook) (focus-out . garbage-collect))
+ :bind
+ (("C-g" . tj-keyboard-quit-dwim)
+  ("M-;" . tj-comment-line)
+  ("M-g M-c" . switch-to-completions)
+  ("C-RET" . other-window)
+  ("C-x C-S-f" . find-file-at-point)
+  ("C-z" . delete-other-windows)
+  ("C-c q" . tj-kill-other-buffer)
+  ;; use hippie-expand instead of dabbrev
+  ("C-/" . undo)
+  ("M-/" . hippie-expand)
+  ("C-h A" . apropos)
+  ;; align code in a pretty way
+  ("C-x \\" . align-regexp)
+  ("C-h C-f" . find-function)
+  ;; misc useful keybindings
+  ("C-c <" . tj-insert-open-and-close-tag)))
 
 (use-package pyenv-mode :ensure t :demand t)
 
@@ -114,7 +855,17 @@
 
 (use-package xclip :config (xclip-mode 1) :ensure t :demand t)
 
-(use-package vterm :ensure t :demand t)
+(use-package
+ vterm
+ :ensure t
+ :demand t
+ :config
+ (defun tj-vterm ()
+   "Switch to current vterm buffer if exists or create and switch otherwise."
+   (interactive)
+   (if (get-buffer vterm-buffer-name)
+       (switch-to-buffer vterm-buffer-name)
+     (vterm))))
 
 (use-package verb :ensure t :demand t)
 
@@ -1138,22 +1889,21 @@
 
 (use-package
  whitespace
- :config
- ;; (add-hook 'before-save-hook #'whitespace-cleanup)
- :config (setq whitespace-line-column 76) ;; limit line length
- (setq whitespace-style '(face empty lines trailing))
- (whitespace-mode 1)
+ :custom
+ (whitespace-line-column 76) ;; limit line length
+ (whitespace-style '(face empty lines trailing))
+ :config (whitespace-mode 1)
  :ensure nil
  :demand t)
 
 (use-package
  markdown-mode
+ :custom
+ (markdown-command
+  "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained -f markdown+smart --to=html5 --css=$HOME/.config/css/style.css")
  :config
  (unless (executable-find "pandoc")
    (message "install pandoc"))
- (setq
-  markdown-command
-  "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained -f markdown+smart --to=html5 --css=$HOME/.config/css/style.css")
  :mode
  ("\\.markdown$" . markdown-mode)
  ("\\.md$" . markdown-mode)
@@ -1163,10 +1913,9 @@
 
 (use-package
  forge
- :config
- (setq
-  forge-topic-list-limit '(3 . -1)
-  forge-pull-notifications nil)
+ :custom
+ (forge-topic-list-limit '(3 . -1))
+ (forge-pull-notifications nil)
  :ensure t
  :demand t)
 
@@ -1183,111 +1932,73 @@
  org
  :ensure nil
  :hook ((org-mode . visual-line-mode) (org-mode . auto-fill-mode))
- :bind
- (("C-x C-g c" . org-capture)
-  ("C-x C-g t" . org-todo-list)
-  ("C-x C-g m" . orgs-tagsview))
- :config
-
- (defun tj-org-hook ()
-   (setq org-hide-leading-stars nil))
- (setq org-todo-keywords
-       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-         (sequence
-          "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
- (setq org-todo-keyword-faces
-       '(("TODO" . org-todo)
-         ("DONE" . (:foreground "black" :weight bold))))
-
- ;; where to archive subtree
- (setq org-archive-location "~/.archive.org::* Archived Tasks")
-
- (setq org-src-lang-modes
-       '(("screen" . sh)
-         ("ocaml" . tuareg)
-         ("elisp" . emacs-lisp)
-         ("lisp" . lisp)
-         ("ditaa" . artist)
-         ("asymptote" . asy)
-         ("cl" . lisp)
-         ("dot" . graphviz-dot)))
-
- (setq org-startup-folded nil)
-
- ;; enable org-indent-mode
- (setq org-startup-indented t)
-
- ;; but always to the left always
- (setq org-indent-indentation-per-level 0)
-
- ;; don't hide leading stars
- (setq org-hide-leading-stars nil)
-
- ;; save clock history across emacs sessions
- (setq org-clock-persist 'history)
- (org-clock-persistence-insinuate)
-
- (defun tj-org-capture ()
-   (interactive)
-   (find-file org-default-notes-file))
-
- ;; TAB in a code block behaves as if it were issues in the language major mode buffer.
- (setq org-src-tab-acts-natively t)
-
- (setq org-directory (expand-file-name "~/"))
- (setq org-default-notes-file (expand-file-name "~/notes.org"))
-
- (setq org-agenda-files '("~/"))
+ :custom
+ (org-todo-keywords
+  '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+    (sequence
+     "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
+ (org-todo-keyword-faces
+  '(("TODO" . org-todo)
+    ("DONE" . (:foreground "black" :weight bold))))
+ (org-archive-location "~/.archive.org::* Archived Tasks")
+ (org-src-lang-modes
+  '(("screen" . sh)
+    ("ocaml" . tuareg)
+    ("elisp" . emacs-lisp)
+    ("lisp" . lisp)
+    ("ditaa" . artist)
+    ("asymptote" . asy)
+    ("cl" . lisp)
+    ("dot" . graphviz-dot)))
+ (org-startup-folded nil)
+ (org-startup-indented t)
+ (org-indent-indentation-per-level 0)
+ (org-hide-leading-stars nil)
+ (org-clock-persist 'history)
+ (org-src-tab-acts-natively t)
+ (org-directory (expand-file-name "~/"))
+ (org-default-notes-file (expand-file-name "~/notes.org"))
+ (org-agenda-files '("~/"))
 
  ;; activate single letter commands at beginning of a headline.
- (setq org-use-speed-commands t)
+ (org-use-speed-commands t)
 
- (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+ (org-treat-S-cursor-todo-selection-as-state-change nil)
  ;; use fast todo selection with C-c C-t
- (setq org-use-fast-todo-selection t)
+ (org-use-fast-todo-selection t)
 
- (setq org-refile-targets
-       (quote ((nil :maxlevel . 9)
-               (org-agenda-files :maxlevel . 9))))
- (setq org-refile-use-outline-path t)
- (setq org-outline-path-complete-in-steps nil)
- (setq org-refile-allow-creating-parent-nodes (quote confirm))
- (setq org-agenda-dim-blocked-tasks nil)
- (setq org-agenda-compact-blocks t)
- (setq org-agenda-custom-commands
-       (quote (("d" todo nil)
-               ("c" todo "DONE|DEFERRED|CANCELLED" nil)
-               ("w" todo "WAITING" nil)
-               ("W" agenda "" ((org-agenda-ndays 21)))
-               ("A" agenda ""
-                ((org-agenda-skip-function
-                  (lambda nil
-                    (org-agenda-skip-entry-if
-                     (quote notregexp) "\\=.*\\[#A\\]")))
-                 (org-agenda-ndays 1)
-                 (org-agenda-overriding-header
-                  "Today's Priority #A tasks: ")))
-               ("u" alltodo ""
-                ((org-agenda-skip-function
-                  (lambda nil
-                    (org-agenda-skip-entry-if
-                     (quote scheduled)
-                     (quote deadline)
-                     (quote regexp)
-                     "\n]+>")))
-                 (org-agenda-overriding-header
-                  "Unscheduled TODO entries: "))))))
+ (org-refile-targets
+  (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
+ (org-refile-use-outline-path t)
+ (org-outline-path-complete-in-steps nil)
+ (org-refile-allow-creating-parent-nodes (quote confirm))
+ (org-agenda-dim-blocked-tasks nil)
+ (org-agenda-compact-blocks t)
+ (org-agenda-custom-commands
+  (quote (("d" todo nil)
+          ("c" todo "DONE|DEFERRED|CANCELLED" nil)
+          ("w" todo "WAITING" nil)
+          ("W" agenda "" ((org-agenda-ndays 21)))
+          ("A" agenda ""
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if
+                (quote notregexp) "\\=.*\\[#A\\]")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header
+             "Today's Priority #A tasks: ")))
+          ("u" alltodo ""
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if
+                (quote scheduled)
+                (quote deadline)
+                (quote regexp)
+                "\n]+>")))
+            (org-agenda-overriding-header
+             "Unscheduled TODO entries: "))))))
 
- (defun org-journal-find-location ()
-   ;; Open today's journal, but specify a non-nil prefix argument in order to
-   ;; inhibit inserting the heading; org-capture will insert the heading.
-   (org-journal-new-entry t)
-   (unless (eq org-journal-file-type 'daily)
-     (org-narrow-to-subtree))
-   (goto-char (point-max)))
-
- (setq
-  org-capture-templates
+ (org-capture-templates
   (quote
    (("t"
      "Todo"
@@ -1308,18 +2019,29 @@
      entry
      (function org-journal-find-location)
      "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))))
- :hook (org-mode . tj-org-hook)
-
+ :bind
+ (("C-x C-g c" . org-capture)
+  ("C-x C-g t" . org-todo-list)
+  ("C-x C-g m" . orgs-tagsview))
+ :config
+ (org-clock-persistence-insinuate)
+ (defun org-journal-find-location ()
+   ;; Open today's journal, but specify a non-nil prefix argument in order to
+   ;; inhibit inserting the heading; org-capture will insert the heading.
+   (org-journal-new-entry t)
+   (unless (eq org-journal-file-type 'daily)
+     (org-narrow-to-subtree))
+   (goto-char (point-max)))
  :demand t)
 
 (use-package
  org-roam
  :ensure t
  :demand t
- :init
- (defvar tj-org-roam-keymap (make-sparse-keymap))
- (setq org-roam-v2-ack t)
- :custom (org-roam-directory (file-truename "~/roam"))
+ :init (defvar tj-org-roam-keymap (make-sparse-keymap))
+ :custom
+ (org-roam-directory (file-truename "~/roam"))
+ (org-roam-v2-ack t)
  :bind-keymap ("C-x C-m C-r" . tj-org-roam-keymap)
  :bind
  (:map
@@ -1344,7 +2066,7 @@
 (use-package
  alert
  :commands (alert)
- :init (setq alert-default-style 'notifier)
+ :custom (alert-default-style 'notifier)
  :ensure t
  :demand t)
 
@@ -1495,36 +2217,33 @@
  fontaine
  :ensure t
  :demand t
+ :custom
+ (fontaine-presets
+  '((regular)
+    (large :default-height 140)
+    (presentation :default-height 160)
+    (t
+     :default-family "IBM Plex Mono"
+     :variable-pitch-family "IBM Plex Sans"
+     :default-height 120)))
  :config
- (setq fontaine-presets
-       '((regular)
-         (large :default-height 140)
-         (presentation :default-height 160)
-         (t
-          :default-family "IBM Plex Mono"
-          :variable-pitch-family "IBM Plex Sans"
-          :default-height 120)))
  (fontaine-set-preset
   (or (fontaine-restore-latest-preset) 'regular))
  (fontaine-mode 1))
 
 (use-package
  flyspell
- :config
- (when (eq system-type 'windows-nt)
-   (add-to-list 'exec-path "C:/Program Files (x86)/Aspell/bin/"))
- (setq
-  ispell-program-name
+ :custom
+ (ispell-program-name
   "aspell" ; use aspell instead of ispell
   ispell-extra-args '("--sug-mode=ultra"))
- (add-hook 'text-mode-hook #'flyspell-mode)
+ :config (add-hook 'text-mode-hook #'flyspell-mode)
  :ensure nil
  :demand t)
 
 (use-package
  crux
- :config
- (setq user-init-file (concat user-emacs-directory "init.el"))
+ :custom (user-init-file (concat user-emacs-directory "init.el"))
  :bind
  (("C-x C-m d" . crux-duplicate-current-line-or-region)
   ("C-x C-m H" . crux-cleanup-buffer-or-region)
@@ -1657,7 +2376,12 @@
 
 (use-package
  eshell
- :custom (eshell-history-file-name (file-truename "~/.zsh_history"))
+ :custom
+ (eshell-history-file-name (file-truename "~/.zsh_history"))
+ (eshell-prompt-function 'tj-eshell-prompt)
+ (eshell-where-to-jump 'end)
+ (eshell-review-quick-commands t)
+ (eshell-smart-space-goes-to-end t)
  :config
  (defun tj-hist-load ()
    (cl-flet
@@ -1695,10 +2419,7 @@
 
  (defun tj-eshell-prompt ()
    "$ ")
- (setq eshell-prompt-function 'tj-eshell-prompt)
- (setq eshell-where-to-jump 'end)
- (setq eshell-review-quick-commands t)
- (setq eshell-smart-space-goes-to-end t)
+
  (add-to-list
   'eshell-expand-input-functions
   'eshell-expand-history-references)
@@ -2048,14 +2769,12 @@
  :ensure t
  :hook (after-init . global-corfu-mode)
  :bind (:map corfu-map ("<tab>" . corfu-complete))
+ :custom
+ (corfu-preview-current nil)
+ (corfu-min-width 20)
+ (corfu-popupinfo-delay '(1.25 . 0.5))
  :config
- (setq tab-always-indent 'complete)
- (setq corfu-preview-current nil)
- (setq corfu-min-width 20)
-
- (setq corfu-popupinfo-delay '(1.25 . 0.5))
  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
-
  ;; Sort by input history (no need to modify `corfu-sort-function').
  (with-eval-after-load 'savehist
    (corfu-history-mode 1)
@@ -2257,34 +2976,6 @@
  :init (setq ledger-clear-whole-transactions 1)
  :mode
  (("\\.ledger\\'" . ledger-mode) ("\\.dat\\'" . ledger-mode)))
-
-(use-package
- tj
- :after projectile
- :ensure nil
- :demand t
- :load-path (lambda () (expand-file-name "lisp/" user-emacs-directory))
- :diminish auto-revert-mode
- :config
- (condition-case err
-     (let ((buffer (get-buffer-create "*todo*")))
-       (with-current-buffer buffer
-         (insert-file-contents "~/todo.org")
-         (org-mode))
-       (setq initial-buffer-choice buffer))
-   (error (message "%s" (error-message-string err))))
-
- (setq native-comp-async-report-warnings-errors nil)
-
- (set-face-attribute 'default nil
-                     :family "IBM Plex Mono"
-                     :height 110)
- (set-face-attribute 'fixed-pitch nil
-                     :family "IBM Plex Mono"
-                     :height 1.0)
- (set-face-attribute 'fixed-pitch nil
-                     :family "IBM Plex Sans"
-                     :height 1.0))
 
 (use-package
  delsel
