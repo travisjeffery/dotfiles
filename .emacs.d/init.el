@@ -113,14 +113,13 @@
  no-littering
  :custom
  (auto-save-file-name-transforms
-       `((".*" ,(expand-file-name "auto-save/"
-                             user-emacs-var-directory)
-          t)))
+  `((".*" ,(expand-file-name "auto-save/"
+                        user-emacs-var-directory)
+     t)))
 
  (backup-directory-alist
-       `((".*" .
-          ,(expand-file-name "backup/"
-                             user-emacs-var-directory))))
+  `((".*" .
+     ,(expand-file-name "backup/" user-emacs-var-directory))))
  :config (auto-save-mode 1)
  :ensure t
  :demand t)
@@ -160,7 +159,7 @@
  :diminish
  :ensure t
  :demand t
- :config (goto-last-point-mode +1)
+ :config (goto-last-point-mode 1)
  :bind (("C-x C-m ," . goto-last-point)))
 
 (use-package
@@ -193,7 +192,7 @@
  (add-to-list
   'undo-tree-history-directory-alist
   '("." . "~/.emacs.d/var/undo-tree"))
- (global-undo-tree-mode +1)
+ (global-undo-tree-mode 1)
  :diminish
  :ensure t
  :demand t)
@@ -246,10 +245,8 @@
 (use-package
  avy
  :bind (("<C-return>" . avy-goto-char-timer))
- :config
- (avy-setup-default)
- :custom
- (avy-background t)
+ :config (avy-setup-default)
+ :custom (avy-background t)
  :ensure t
  :demand t)
 
@@ -305,13 +302,13 @@
  (magit-log-margin-width 18)
  (magit-refs-margin '(t age magit-log-margin-width t 18))
  (vc-follow-symlinks t)
-  (magit-commit-ask-to-stage 'stage)
-  (magit-refresh-status-buffer t)
- :config 
+ (magit-commit-ask-to-stage 'stage)
+ (magit-refresh-status-buffer t)
+ :config
  (magit-wip-mode 1)
  (add-hook 'after-save-hook 'magit-after-save-refresh-status)
  (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
- 
+
  (defun magit-key-mode--add-default-options (arguments)
    (if (eq (car arguments) 'pulling)
        (list 'pulling (list "--rebase"))
@@ -340,10 +337,8 @@
  abbrev
  :diminish
  :ensure nil
- :custom
- (save-abbrevs 'silently)
- :config
- (abbrev-mode 1)
+ :custom (save-abbrevs 'silently)
+ :config (abbrev-mode 1)
  :demand t)
 
 (use-package
@@ -399,8 +394,7 @@
 
 (use-package
  comint
- :custom
- (shell-prompt-pattern "^; ")
+ :custom (shell-prompt-pattern "^; ")
  :ensure nil
  :demand t)
 
@@ -436,9 +430,8 @@
  re-builder
  :ensure nil
  :bind (:map reb-mode-map ("M-%" . reb-query-replace))
- :custom
- (reb-re-syntax 'string)
- :config 
+ :custom (reb-re-syntax 'string)
+ :config
  (defun reb-query-replace (to-string)
    "Replace current RE from point with `query-replace-regexp'."
    (interactive (progn
@@ -589,8 +582,7 @@
 (use-package
  eldoc
  :diminish
- :custom
- (eldoc-echo-area-use-multiline-p nil)
+ :custom (eldoc-echo-area-use-multiline-p nil)
  :bind (("C-c C-c" . eldoc))
  :ensure nil
  :demand t)
@@ -720,7 +712,7 @@
  :demand t
  :config (add-hook 'prog-mode-hook #'ws-butler-mode))
 
-;; (use-package winner :ensure t :demand t :diminish :config (winner-mode +1))
+;; (use-package winner :ensure t :demand t :diminish :config (winner-mode 1))
 
 (use-package
  eacl
@@ -764,7 +756,7 @@
  ;; (set-face-attribute 'show-paren-match nil :weight 'bold)
  (setq show-paren-style 'parenthesis)
  (setq show-paren-when-point-inside-paren t)
- (show-paren-mode +1)
+ (show-paren-mode 1)
  :ensure nil
  :demand t)
 
@@ -814,7 +806,7 @@
   ;; disable recentf-cleanup on Emacs start, because it can cause
   ;; problems with remote files
   recentf-auto-cleanup 'never)
- (recentf-mode +1)
+ (recentf-mode 1)
  :bind (("C-x C-r" . recentf-open-files))
  :ensure nil
  :demand t)
@@ -1114,15 +1106,15 @@
  exec-path-from-shell
  :custom
  (exec-path-from-shell-variables
-       '("PATH"
-         "MANPATH"
-         "GOROOT"
-         "GOPATH"
-         "JAVA_HOME"
-         "JAVA_OPTS"
-         "RUST_SRC_PATH"
-         "VAULT_ADDR"
-         "GOPRIVATE"))
+  '("PATH"
+    "MANPATH"
+    "GOROOT"
+    "GOPATH"
+    "JAVA_HOME"
+    "JAVA_OPTS"
+    "RUST_SRC_PATH"
+    "VAULT_ADDR"
+    "GOPRIVATE"))
  :config (exec-path-from-shell-initialize)
  :ensure t
  :demand t)
@@ -1312,11 +1304,29 @@
  :demand t)
 
 (use-package
+ org-roam
+ :ensure t
+ :demand t
+ :init
+ (defvar tj-org-roam-keymap (make-sparse-keymap))
+ (setq org-roam-v2-ack t)
+ :custom (org-roam-directory (file-truename "~/roam"))
+ :bind-keymap ("C-x C-m C-r" . tj-org-roam-keymap)
+ :bind
+ (:map
+  tj-org-roam-keymap
+  ("g" . org-roam-graph)
+  ("i" . org-roam-node-insert)
+  ("f" . org-roam-node-find)
+  ("c" . org-roam-capture))
+ :config (org-roam-setup))
+
+(use-package
  org-journal
  :after org
- :config
- (setq org-journal-dir "~/journal")
- (setq org-journal-file-format "%Y%m%d.org")
+ :custom
+ (org-journal-dir "~/journal")
+ (org-journal-file-format "%Y%m%d.org")
  :ensure t
  :demand t)
 
@@ -1448,48 +1458,50 @@
     (erase-buffer)))
 
 (use-package
-  spacious-padding
-  :demand t
-  :ensure t
-  :config
-  (spacious-padding-mode 1))
+ spacious-padding
+ :demand t
+ :ensure t
+ :config (spacious-padding-mode 1))
 
 (use-package
-  standard-themes
-  :demand t
-  :ensure t
-  (load-theme 'standard-light :no-confirm))
+ standard-themes
+ :demand t
+ :ensure
+ t
+ (load-theme 'standard-light :no-confirm))
 
 (use-package
-  zop-to-char
-  :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char))
-  :ensure t
-  :demand t)
-
-(use-package fontaine
-  :ensure t
-  :demand t
-  :config
-  (setq fontaine-presets
-        '((regular)
-          (t
-           :default-family "IBM Plex Mono"
-           :default-height 140)))
-  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
-  (fontaine-mode 1))
+ zop-to-char
+ :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char))
+ :ensure t
+ :demand t)
 
 (use-package
-  flyspell
-  :config
-  (when (eq system-type 'windows-nt)
-    (add-to-list 'exec-path "C:/Program Files (x86)/Aspell/bin/"))
-  (setq
-   ispell-program-name
-   "aspell"                        ; use aspell instead of ispell
-   ispell-extra-args '("--sug-mode=ultra"))
-  (add-hook 'text-mode-hook #'flyspell-mode)
-  :ensure nil
-  :demand t)
+ fontaine
+ :ensure t
+ :demand t
+ :config
+ (setq fontaine-presets
+       '((regular)
+         (t
+          :default-family "IBM Plex Mono"
+          :default-height 140)))
+ (fontaine-set-preset
+  (or (fontaine-restore-latest-preset) 'regular))
+ (fontaine-mode 1))
+
+(use-package
+ flyspell
+ :config
+ (when (eq system-type 'windows-nt)
+   (add-to-list 'exec-path "C:/Program Files (x86)/Aspell/bin/"))
+ (setq
+  ispell-program-name
+  "aspell" ; use aspell instead of ispell
+  ispell-extra-args '("--sug-mode=ultra"))
+ (add-hook 'text-mode-hook #'flyspell-mode)
+ :ensure nil
+ :demand t)
 
 (use-package
  crux
@@ -1522,7 +1534,7 @@
 (use-package
  diff-hl
  :config
- (global-diff-hl-mode +1)
+ (global-diff-hl-mode 1)
  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
  :ensure t
@@ -1531,7 +1543,7 @@
 (use-package
  which-key
  :diminish which-key-mode
- :config (which-key-mode +1)
+ :config (which-key-mode 1)
  :ensure t
  :demand t)
 
@@ -1559,12 +1571,15 @@
 (use-package
  minibuffer
  :after tj
- :bind (:map completion-in-region-mode-map
-             ("C-n" . minibuffer-next-completion)
-             ("C-p" . minibuffer-previous-completion)
-             :map minibuffer-local-completion-map
-             ("C-n" . minibuffer-next-completion)
-             ("C-p" . minibuffer-previous-completion))
+ :bind
+ (:map
+  completion-in-region-mode-map
+  ("C-n" . minibuffer-next-completion)
+  ("C-p" . minibuffer-previous-completion)
+  :map
+  minibuffer-local-completion-map
+  ("C-n" . minibuffer-next-completion)
+  ("C-p" . minibuffer-previous-completion))
  :ensure nil
  :config
  (defun tj-minibuffer-setup-hook ()
@@ -1578,11 +1593,11 @@
  :demand t)
 
 (use-package
-  puni
-  :diminish
-  :bind (("M-S" . puni-splice))
-  :ensure t
-  :demand t)
+ puni
+ :diminish
+ :bind (("M-S" . puni-splice))
+ :ensure t
+ :demand t)
 
 (use-package
  eval-expr
@@ -1605,7 +1620,7 @@
 (use-package
  volatile-highlights
  :diminish volatile-highlights-mode
- :config (volatile-highlights-mode +1)
+ :config (volatile-highlights-mode 1)
  :ensure t
  :demand t)
 
@@ -1615,49 +1630,54 @@
  em-unix
  :after eshell
  :ensure nil
- :config (unintern 'eshell/su nil) (unintern 'eshell/sudo nil)
-
+ :config
+ (unintern 'eshell/su nil)
+ (unintern 'eshell/sudo nil)
  :demand t)
 
 (use-package em-smart :after eshell :ensure nil :demand t)
 
 (use-package
  eshell
- :commands (eshell eshell-command)
+ :custom (eshell-history-file-name (file-truename "~/.zsh_history"))
  :config
- (setq eshell-history-file-name "~/.zsh_history")
+ (set-face-attribute 'eshell-prompt nil
+                     :foreground (face-foreground 'default))
 
  (defun tj-hist-load ()
-  (cl-flet ((unmetafy (input)
-              (let ((i 0) output)
-                (while-let ((char (nth i input))
-                            (inc-and-char
-                             (if (= char #x83)
-                                 ;; Skip meta character and unmetafy.
-                                 `(2 . ,(logxor (nth (1+ i) input) 32))
-                               ;; Advance as usual.
-                               `(1 . ,char))))
-                  (cl-incf i (car inc-and-char))
-                  (setq output (cons (cdr inc-and-char) output)))
-                (decode-coding-string
-                 (apply #'unibyte-string (nreverse output))
-                 'utf-8-unix
-                 t))))
+   (cl-flet
+    ((unmetafy
+      (input)
+      (let ((i 0)
+            output)
+        (while-let ((char (nth i input))
+                    (inc-and-char
+                     (if (= char #x83)
+                         ;; Skip meta character and unmetafy.
+                         `(2 . ,(logxor (nth (1+ i) input) 32))
+                       ;; Advance as usual.
+                       `(1 . ,char))))
+          (cl-incf i (car inc-and-char))
+          (setq output (cons (cdr inc-and-char) output)))
+        (decode-coding-string (apply #'unibyte-string
+                                     (nreverse output))
+                              'utf-8-unix
+                              t))))
     (let ((hist-file eshell-history-file-name))
       (with-temp-buffer
-        (insert (mapconcat (-compose #'unmetafy #'string-to-list)
-                           (s-lines (f-read-bytes hist-file))
-                           "\n"))
+        (insert
+         (mapconcat (-compose #'unmetafy #'string-to-list)
+                    (s-lines (f-read-bytes hist-file))
+                    "\n"))
         (write-file hist-file)))))
 
  (defun tj-eshell-exit (&optional arg)
-  "Exit eshell and kill the current frame."
-  (interactive "P")
-  (slot/unmetafy)
-  (eshell-write-history)
-  (save-buffers-kill-terminal))
+   "Exit eshell and kill the current frame."
+   (interactive "P")
+   (slot/unmetafy)
+   (eshell-write-history)
+   (save-buffers-kill-terminal))
 
- 
  (defun tj-eshell-prompt ()
    "$ ")
  (setq eshell-prompt-function 'tj-eshell-prompt)
@@ -1693,8 +1713,7 @@
  (defun tj-eshell-hook ()
    (setq eshell-path-env
          (concat "/usr/local/bin:" eshell-path-env)))
- :bind (:map eshell-hist-mode-map
-             ("M-r" . consult-history))
+ :bind (:map eshell-hist-mode-map ("M-r" . consult-history))
  :hook (eshell-mode . tj-eshell-hook)
  :hook (eshell-hist-load . tj-hist-load)
  :hook (eshell-exit-hook . tj-eshell-exit)
@@ -1702,11 +1721,11 @@
  :demand t)
 
 (use-package
-  eshell-bookmark
-  :after eshell
-  :hook (eshell-mode . eshell-bookmark-setup)
-  :ensure t
-  :demand t)
+ eshell-bookmark
+ :after eshell
+ :hook (eshell-mode . eshell-bookmark-setup)
+ :ensure t
+ :demand t)
 
 (use-package
  eshell-up
@@ -2134,8 +2153,7 @@
 
 (use-package
  eglot
- :ensure-system-package
- ((gopls . "go install golang.org/x/tools/gopls@latest"))
+ :ensure-system-package ((gopls . "go install golang.org/x/tools/gopls@latest"))
  :config
  (setq eglot-extend-to-xref t)
  (setq eglot-confirm-server-initiated-edits nil)
