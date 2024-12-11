@@ -80,37 +80,19 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-(elpaca
- elpaca-use-package
- ;; Enable use-package :ensure support for Elpaca.
- (elpaca-use-package-mode)
- (setq elpaca-use-package-by-default t))
-
-;;When installing a package used in the init file itself,
-;;e.g. a package which adds a use-package key word,
-;;use the :wait recipe keyword to block until that package is installed/configured.
-;;For example:
-;;(use-package general :ensure (:wait t) :defer t
-
-;;Turns off elpaca-use-package-mode current declaration
-;;Note this will cause evaluate the declaration immediately. It is not deferred.
-;;Useful for configuring built-in emacs features.
-
 (use-package
  emacs
  :ensure nil
- :config
- (setq major-mode-remap-alist '((python-mode . python-ts-mode)))
- (setq async-shell-command-buffer 'new-buffer)
- (setq ring-bell-function #'ignore)
-
- (setq
-  backup-by-copying t
-  delete-old-versions t
-  kept-new-versions 10
-  kept-old-versions 2
-  vc-make-backup-files t
-  version-control t))
+ :custom
+ (major-mode-remap-alist '((python-mode . python-ts-mode)))
+ (async-shell-command-buffer 'new-buffer)
+ (ring-bell-function #'ignore)
+ (backup-by-copying t)
+ (delete-old-versions t)
+ (kept-new-versions 10)
+ (kept-old-versions 2)
+ (vc-make-backup-files t)
+ (version-control t))
 
 (setq use-package-verbose t)
 
@@ -129,15 +111,17 @@
 
 (use-package
  no-littering
- :config (auto-save-mode 1)
- (setq auto-save-file-name-transforms
+ :custom
+ (auto-save-file-name-transforms
        `((".*" ,(expand-file-name "auto-save/"
                              user-emacs-var-directory)
           t)))
- (setq backup-directory-alist
+
+ (backup-directory-alist
        `((".*" .
           ,(expand-file-name "backup/"
                              user-emacs-var-directory))))
+ :config (auto-save-mode 1)
  :ensure t
  :demand t)
 
@@ -197,10 +181,9 @@
 
 (use-package
  sqlformat
- :config
- (setq
-  sqlformat-command 'pgformatter
-  sqlformat-args '("-B" "-e"))
+ :custom
+ (sqlformat-command 'pgformatter)
+ (sqlformat-args '("-B" "-e"))
  :ensure t
  :demand t)
 
@@ -249,7 +232,6 @@
      (when (and last (string-blank-p last))
        (setq replace t))
      (list string replace)))
-
  (advice-add 'kill-new :filter-args #'tj-replace-blank-kill)
  :bind (("M-y" . browse-kill-ring))
  :ensure t
@@ -266,7 +248,8 @@
  :bind (("<C-return>" . avy-goto-char-timer))
  :config
  (avy-setup-default)
- (setq avy-background t)
+ :custom
+ (avy-background t)
  :ensure t
  :demand t)
 
@@ -274,7 +257,7 @@
 
 (use-package
  jist
- :config (setq jist-enable-default-authorized t)
+ :custom (jist-enable-default-authorized t)
  :ensure t
  :demand t)
 
@@ -318,37 +301,17 @@
 (use-package
  magit
  :diminish magit-wip-mode
- :config
- (setq magit-log-margin-width 18)
- (setq magit-refs-margin '(t age magit-log-margin-width t 18))
+ :custom
+ (magit-log-margin-width 18)
+ (magit-refs-margin '(t age magit-log-margin-width t 18))
+ (vc-follow-symlinks t)
+  (magit-commit-ask-to-stage 'stage)
+  (magit-refresh-status-buffer t)
+ :config 
  (magit-wip-mode 1)
  (add-hook 'after-save-hook 'magit-after-save-refresh-status)
  (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
- (setq
-  vc-follow-symlinks t
-  magit-commit-ask-to-stage 'stage
-  magit-refresh-status-buffer t)
-
- (magit-define-section-jumper
-  magit-jump-to-recent-commits
-  "Recent commits"
-  recent
-  "HEAD~10..HEAD")
-
- (defun tj-visit-pull-request-url ()
-   "Visit the current branch's PR on Github."
-   (interactive)
-   (browse-url
-    (format "https://github.com/%s/pull/new/%s"
-            (replace-regexp-in-string
-             "\\`.+github\\.com:\\(.+\\)\\.git\\'"
-             "\\1"
-             (magit-get "remote" (magit-get-push-remote) "url"))
-            (magit-get-current-branch))))
- (eval-after-load
-     'magit
-   '(define-key magit-mode-map "v" #'tj-visit-pull-request-url))
-
+ 
  (defun magit-key-mode--add-default-options (arguments)
    (if (eq (car arguments) 'pulling)
        (list 'pulling (list "--rebase"))
@@ -369,7 +332,7 @@
 
 (use-package
  copy-as-format
- :init (setq copy-as-format-default "github")
+ :custom (copy-as-format-default "github")
  :ensure t
  :demand t)
 
@@ -377,17 +340,18 @@
  abbrev
  :diminish
  :ensure nil
+ :custom
+ (save-abbrevs 'silently)
  :config
- (setq save-abbrevs 'silently)
- (setq-default abbrev-mode t)
+ (abbrev-mode 1)
  :demand t)
 
 (use-package
  compile
- :config
- (setq compilation-scroll-output t)
- (setq compilation-auto-jump-to-first-error t)
- (setq compilation-max-output-line-length nil)
+ :custom
+ (compilation-max-output-line-length nil)
+ (compilation-auto-jump-to-first-error t)
+ (compilation-scroll-output t)
  :ensure nil
  :init (require 'grep)
  :no-require
@@ -435,7 +399,8 @@
 
 (use-package
  comint
- :config (setq shell-prompt-pattern "^; ")
+ :custom
+ (shell-prompt-pattern "^; ")
  :ensure nil
  :demand t)
 
@@ -471,7 +436,9 @@
  re-builder
  :ensure nil
  :bind (:map reb-mode-map ("M-%" . reb-query-replace))
- :config (setq reb-re-syntax 'string)
+ :custom
+ (reb-re-syntax 'string)
+ :config 
  (defun reb-query-replace (to-string)
    "Replace current RE from point with `query-replace-regexp'."
    (interactive (progn
@@ -568,9 +535,9 @@
 (use-package
  flycheck
  :diminish
- :config
- (setq flycheck-check-syntax-automatically '(save mode-enable))
- (setq flycheck-idle-change-delay 4)
+ :custom
+ (flycheck-idle-change-delay 4)
+ (flycheck-check-syntax-automatically '(save mode-enable))
  :ensure t
  :demand t)
 
@@ -622,7 +589,8 @@
 (use-package
  eldoc
  :diminish
- :config (setq eldoc-echo-area-use-multiline-p nil)
+ :custom
+ (eldoc-echo-area-use-multiline-p nil)
  :bind (("C-c C-c" . eldoc))
  :ensure nil
  :demand t)
@@ -1091,9 +1059,10 @@
 (use-package
  sh-script
  :ensure nil
- :init (setq sh-basic-offset 2) (setq sh-basic-indentation 2)
+ :custom
+ (sh-basic-indentation 2)
+ (sh-basic-offset 2)
  :mode (("\\.bats$" . sh-mode) ("Dockerfile" . sh-mode))
-
  :demand t)
 
 (use-package
@@ -1143,8 +1112,8 @@
 
 (use-package
  exec-path-from-shell
- :init
- (setq exec-path-from-shell-variables
+ :custom
+ (exec-path-from-shell-variables
        '("PATH"
          "MANPATH"
          "GOROOT"
@@ -1479,23 +1448,48 @@
     (erase-buffer)))
 
 (use-package
- zop-to-char
- :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char))
- :ensure t
- :demand t)
+  spacious-padding
+  :demand t
+  :ensure t
+  :config
+  (spacious-padding-mode 1))
 
 (use-package
- flyspell
- :config
- (when (eq system-type 'windows-nt)
-   (add-to-list 'exec-path "C:/Program Files (x86)/Aspell/bin/"))
- (setq
-  ispell-program-name
-  "aspell" ; use aspell instead of ispell
-  ispell-extra-args '("--sug-mode=ultra"))
- (add-hook 'text-mode-hook #'flyspell-mode)
- :ensure nil
- :demand t)
+  standard-themes
+  :demand t
+  :ensure t
+  (load-theme 'standard-light :no-confirm))
+
+(use-package
+  zop-to-char
+  :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char))
+  :ensure t
+  :demand t)
+
+(use-package fontaine
+  :ensure t
+  :demand t
+  :config
+  (setq fontaine-presets
+        '((regular)
+          (t
+           :default-family "IBM Plex Mono"
+           :default-height 140)))
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+  (fontaine-mode 1))
+
+(use-package
+  flyspell
+  :config
+  (when (eq system-type 'windows-nt)
+    (add-to-list 'exec-path "C:/Program Files (x86)/Aspell/bin/"))
+  (setq
+   ispell-program-name
+   "aspell"                        ; use aspell instead of ispell
+   ispell-extra-args '("--sug-mode=ultra"))
+  (add-hook 'text-mode-hook #'flyspell-mode)
+  :ensure nil
+  :demand t)
 
 (use-package
  crux
@@ -1565,6 +1559,12 @@
 (use-package
  minibuffer
  :after tj
+ :bind (:map completion-in-region-mode-map
+             ("C-n" . minibuffer-next-completion)
+             ("C-p" . minibuffer-previous-completion)
+             :map minibuffer-local-completion-map
+             ("C-n" . minibuffer-next-completion)
+             ("C-p" . minibuffer-previous-completion))
  :ensure nil
  :config
  (defun tj-minibuffer-setup-hook ()
@@ -1575,15 +1575,14 @@
    (setq gc-cons-threshold 800000))
  (add-hook 'minibuffer-setup-hook #'tj-minibuffer-setup-hook)
  (add-hook 'minibuffer-exit-hook #'tj-minibuffer-exit-hook)
-
  :demand t)
 
 (use-package
- puni
- :diminish
- :bind (("M-S" . puni-splice))
- :ensure t
- :demand t)
+  puni
+  :diminish
+  :bind (("M-S" . puni-splice))
+  :ensure t
+  :demand t)
 
 (use-package
  eval-expr
@@ -1694,7 +1693,8 @@
  (defun tj-eshell-hook ()
    (setq eshell-path-env
          (concat "/usr/local/bin:" eshell-path-env)))
- :bind (eshell-mode-map)
+ :bind (:map eshell-hist-mode-map
+             ("M-r" . consult-history))
  :hook (eshell-mode . tj-eshell-hook)
  :hook (eshell-hist-load . tj-hist-load)
  :hook (eshell-exit-hook . tj-eshell-exit)
@@ -1894,8 +1894,8 @@
  :ensure t
  :custom
  (completion-styles '(orderless basic))
- (setq completion-category-defaults nil)
- (setq completion-category-overrride nil))
+ (completion-category-defaults nil)
+ (completion-category-overrride nil))
 
 (use-package
  consult
@@ -2134,6 +2134,8 @@
 
 (use-package
  eglot
+ :ensure-system-package
+ ((gopls . "go install golang.org/x/tools/gopls@latest"))
  :config
  (setq eglot-extend-to-xref t)
  (setq eglot-confirm-server-initiated-edits nil)
@@ -2249,9 +2251,7 @@
                      :height 1.0)
  (set-face-attribute 'fixed-pitch nil
                      :family "IBM Plex Sans"
-                     :height 1.0)
-
- (add-hook 'after-init-hook 'tj-theme))
+                     :height 1.0))
 
 (use-package
  delsel
