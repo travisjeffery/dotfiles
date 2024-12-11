@@ -1458,6 +1458,13 @@
     (erase-buffer)))
 
 (use-package
+ em-hist
+ :demand t
+ :ensure nil
+ :bind
+ (:map eshell-hist-mode-map ("M-r" . consult-history)))
+
+(use-package
  spacious-padding
  :demand t
  :ensure t
@@ -1466,9 +1473,8 @@
 (use-package
  standard-themes
  :demand t
- :ensure
- t
- (load-theme 'standard-light :no-confirm))
+ :ensure tn
+ :config (load-theme 'standard-light :no-confirm))
 
 (use-package
  zop-to-char
@@ -1483,9 +1489,12 @@
  :config
  (setq fontaine-presets
        '((regular)
+         (large :default-height 140)
+         (presentation :default-height 160)
          (t
           :default-family "IBM Plex Mono"
-          :default-height 140)))
+          :variable-pitch-family "IBM Plex Sans"
+          :default-height 120)))
  (fontaine-set-preset
   (or (fontaine-restore-latest-preset) 'regular))
  (fontaine-mode 1))
@@ -1641,9 +1650,6 @@
  eshell
  :custom (eshell-history-file-name (file-truename "~/.zsh_history"))
  :config
- (set-face-attribute 'eshell-prompt nil
-                     :foreground (face-foreground 'default))
-
  (defun tj-hist-load ()
    (cl-flet
     ((unmetafy
@@ -1713,7 +1719,7 @@
  (defun tj-eshell-hook ()
    (setq eshell-path-env
          (concat "/usr/local/bin:" eshell-path-env)))
- :bind (:map eshell-hist-mode-map ("M-r" . consult-history))
+
  :hook (eshell-mode . tj-eshell-hook)
  :hook (eshell-hist-load . tj-hist-load)
  :hook (eshell-exit-hook . tj-eshell-exit)
