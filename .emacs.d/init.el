@@ -177,11 +177,9 @@
  :config
  ;; handle long lines
  (global-so-long-mode t)
- ;; the toolbar is just a waste of valuable screen estate
- ;; in a tty tool-bar-mode does not properly auto-load, and is
- ;; already disabled anyway
- (when (fboundp 'tool-bar-mode)
-   (tool-bar-mode -1))
+ ;; hide ui noise
+ (tool-bar-mode -1)
+ (menu-bar-mode -1)
  ;; keep cursor static
  (blink-cursor-mode -1)
 
@@ -855,17 +853,7 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package xclip :config (xclip-mode 1) :ensure t :demand t)
 
-(use-package
- vterm
- :ensure t
- :demand t
- :config
- (defun tj-vterm ()
-   "Switch to current vterm buffer if exists or create and switch otherwise."
-   (interactive)
-   (if (get-buffer vterm-buffer-name)
-       (switch-to-buffer vterm-buffer-name)
-     (vterm))))
+(use-package vterm :ensure t :demand t)
 
 (use-package verb :ensure t :demand t)
 
