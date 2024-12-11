@@ -1,4 +1,4 @@
-;; -*- fill-column: 65; -*-
+;; -*- fill-column: 65; lexical-binding: t; -*-
 
 (defvar elpaca-installer-version 0.8)
 (defvar elpaca-directory
@@ -80,6 +80,17 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
+(setq package-enable-at-startup nil)
+
+(setq use-package-verbose t)
+
+(elpaca
+ elpaca-use-package
+ ;; Enable use-package :ensure support for Elpaca.
+ (elpaca-use-package-mode))
+
+;; Don't remove anything above.
+
 (use-package
  emacs
  :ensure nil
@@ -93,8 +104,6 @@
  (kept-old-versions 2)
  (vc-make-backup-files t)
  (version-control t))
-
-(setq use-package-verbose t)
 
 (use-package pyenv-mode :ensure t :demand t)
 
@@ -1473,7 +1482,7 @@
 (use-package
  standard-themes
  :demand t
- :ensure tn
+ :ensure t
  :config (load-theme 'standard-light :no-confirm))
 
 (use-package
