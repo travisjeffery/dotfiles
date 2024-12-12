@@ -1090,6 +1090,26 @@ Otherwise split the current paragraph into one sentence per line."
  :demand t)
 
 (use-package
+ jinx
+ :ensure t
+ :demand t
+ :hook (markdown-mode . jinx-mode)
+ :bind (("M-$" . jinx-correct) ("C-M-$" . jinx-languages)))
+
+(use-package
+ flymake-languagetool
+ :ensure t
+ :hook
+ ((text-mode . flymake-languagetool-load)
+  (latex-mode . flymake-languagetool-load)
+  (org-mode . flymake-languagetool-load)
+  (markdown-mode . flymake-languagetool-load))
+ :init
+ ;; Local Server Configuration
+ (setq flymake-languagetool-server-jar
+       "/usr/share/java/languagetool/languagetool-server.jar"))
+
+(use-package
  compile
  :custom
  (compilation-max-output-line-length nil)
@@ -1806,14 +1826,10 @@ Otherwise split the current paragraph into one sentence per line."
  :demand t)
 
 (use-package
- anzu
- :diminish
- :bind
- (("M-%" . anzu-query-replace-regexp)
-  ("C-M-%" . anzu-query-replace))
- :hook (prog-mode . anzu-mode)
+ visual-replace
  :ensure t
- :demand t)
+ :demand t
+ :config (visual-replace-global-mode 1))
 
 (use-package
  easy-kill
@@ -2196,6 +2212,12 @@ Otherwise split the current paragraph into one sentence per line."
  :config (load-theme 'standard-light :no-confirm))
 
 (use-package
+ modus-themes
+ :demand t
+ :ensure t
+ :config (load-theme 'modus-operandi-tinted :no-confirm))
+
+(use-package
  zop-to-char
  :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char))
  :ensure t
@@ -2295,7 +2317,6 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
  minibuffer
- :after tj
  :bind
  (:map
   completion-in-region-mode-map
@@ -2350,6 +2371,8 @@ Otherwise split the current paragraph into one sentence per line."
  :demand t)
 
 (use-package pcmpl-args :ensure t :demand t)
+
+(use-package eat :ensure t :demand t)
 
 (use-package
  em-unix
@@ -2469,6 +2492,8 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package wgrep :ensure t :demand t)
 
 (use-package json-snatcher :ensure t :demand t)
+
+(use-package ctrlf :ensure t :demand t :config (ctrlf-mode 1))
 
 (use-package
  visual-regexp
@@ -2751,6 +2776,7 @@ Otherwise split the current paragraph into one sentence per line."
  ;; You may want to use `embark-prefix-help-command' or which-key instead.
  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
  )
+
 
 (use-package
  corfu
