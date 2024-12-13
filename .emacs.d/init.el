@@ -853,8 +853,6 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package xclip :config (xclip-mode 1) :ensure t :demand t)
 
-(use-package vterm :ensure t :demand t)
-
 (use-package verb :ensure t :demand t)
 
 (use-package
@@ -2322,10 +2320,12 @@ Otherwise split the current paragraph into one sentence per line."
   completion-in-region-mode-map
   ("C-n" . minibuffer-next-completion)
   ("C-p" . minibuffer-previous-completion)
+  ("<return>" . minibuffer-choose-completion)
   :map
   minibuffer-local-completion-map
   ("C-n" . minibuffer-next-completion)
-  ("C-p" . minibuffer-previous-completion))
+  ("C-p" . minibuffer-previous-completion)
+  ("<return>" . minibuffer-choose-completion))
  :ensure nil
  :config
  (defun tj-minibuffer-setup-hook ()
