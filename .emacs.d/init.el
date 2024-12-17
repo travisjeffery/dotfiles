@@ -830,7 +830,6 @@ Otherwise split the current paragraph into one sentence per line."
  (("C-g" . tj-keyboard-quit-dwim)
   ("M-;" . tj-comment-line)
   ("M-g M-c" . switch-to-completions)
-  ("C-RET" . other-window)
   ("C-x C-S-f" . find-file-at-point)
   ("C-z" . delete-other-windows)
   ("C-c q" . tj-kill-other-buffer)
@@ -1092,6 +1091,7 @@ Otherwise split the current paragraph into one sentence per line."
  :ensure t
  :demand t
  :hook (markdown-mode . jinx-mode)
+ :hook (org-mode . jinx-mode)
  :bind (("M-$" . jinx-correct) ("C-M-$" . jinx-languages)))
 
 (use-package
