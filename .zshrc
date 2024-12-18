@@ -70,7 +70,6 @@ zstyle ':filter-select' max-lines -10
 zstyle ':filter-select' case-insensitive yes
 zstyle ':filter-select' extended-search yes
 
-
 backward-delete-to-slash() {
   integer pos=$CURSOR
   while (( pos > 1 )); do
@@ -373,7 +372,6 @@ TMUX_PROG="`whence tmux`"
 # ulimit -c unlimited
 umask 072
 
-
 if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
   eval `dircolors $HOME/.dir_colors`
 fi
@@ -421,12 +419,44 @@ function git-ignore() {
   curl https://raw.githubusercontent.com/github/gitignore/master/$lang.gitignore > .gitignore
 }
 
+function install-all() {
+  paru -Sy pyenv \
+       libgccjit \
+       zoom \
+       pyenv-virtualenv \
+       docker \
+       kubectl \
+       magewell-pro-capture-dkms \
+       docker-buildx \
+       google-chrome \
+       sqlite \
+       aws-cli \
+       aws-cli-v2 \
+       helm \
+       xkeysnail \
+       pulumi \
+       chromium
+}
+
 function install-emacs (){
   [[ -d ~/code/emacs ]] || git clone git://git.savannah.gnu.org/emacs.git ~/code/emacs
   cd ~/code/emacs && \
     git pull && \
     ./autogen.sh && \
-    ./configure --with-json --with-cairo --with-rsvg --with-native-compilation --with-modules --with-mailutils --with-pgtk && \
+    ./configure \
+      --enable-link-time-optimization \
+      --with-cairo \
+      --with-gnutls \
+      --with-harfbuzz \
+      --with-json \
+      --with-modules \
+      --with-native-compilation \
+      --with-x-toolkit=no \
+      --with-pgtk \
+      --with-small-ja-dic \
+      --with-threads \
+      --with-xml2 \
+      --with-zlib && \
     make -j8 && \
     make install
 }
