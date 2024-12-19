@@ -435,7 +435,9 @@ function install-all() {
        helm \
        xkeysnail \
        pulumi \
-       chromium
+       chromium \
+       xsel \
+       jq
 }
 
 function install-emacs (){
