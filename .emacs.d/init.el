@@ -95,6 +95,13 @@
  emacs
  :ensure nil
  :custom
+ (enable-recursive-minibuffers t)
+ (completions-max-height 20)
+ (completions-format 'one-column)
+ (completion-auto-help 'always)
+ (completion-auto-select 'second-tab)
+ (tab-always-indent 'complete)
+ ()
  (initial-major-mode 'fundamental-mode)
  (tramp-default-method "ssh")
  ;; show all buffers, otherwise, some can be hidden under C-x b)
@@ -142,7 +149,6 @@
  (tab-width 8) ;; but maintain correct appearance
  ;; smart tab behavior - indent or complete
  (grep-command "rg --no-heading")
- (tab-always-indent 'complete)
  (fill-column 100)
  (same-window-regexps nil)
  ;; Newline at end of file
@@ -830,18 +836,16 @@ Otherwise split the current paragraph into one sentence per line."
  (("C-g" . tj-keyboard-quit-dwim)
   ("M-;" . tj-comment-line)
   ("M-g M-c" . switch-to-completions)
-  ("C-x C-S-f" . find-file-at-point)
+  ("C-x C-m f" . find-file-at-point)
   ("C-z" . delete-other-windows)
   ("C-c q" . tj-kill-other-buffer)
-  ;; use hippie-expand instead of dabbrev
-  ("C-/" . undo)
   ("M-/" . hippie-expand)
   ("C-h A" . apropos)
   ;; align code in a pretty way
   ("C-x \\" . align-regexp)
   ("C-h C-f" . find-function)
   ;; misc useful keybindings
-  ("C-c <" . tj-insert-open-and-close-tag)))
+  ("C-x C-m <" . tj-insert-open-and-close-tag)))
 
 (use-package pyenv-mode :ensure t :demand t)
 
@@ -2234,16 +2238,6 @@ Otherwise split the current paragraph into one sentence per line."
  (fontaine-mode 1))
 
 (use-package
- flyspell
- :custom
- (ispell-program-name
-  "aspell" ; use aspell instead of ispell
-  ispell-extra-args '("--sug-mode=ultra"))
- :config (add-hook 'text-mode-hook #'flyspell-mode)
- :ensure nil
- :demand t)
-
-(use-package
  crux
  :custom (user-init-file (concat user-emacs-directory "init.el"))
  :bind
@@ -2428,32 +2422,6 @@ Otherwise split the current paragraph into one sentence per line."
  (add-to-list
   'eshell-expand-input-functions
   'eshell-expand-history-references)
-
- (defvar eshell-isearch-map
-   (let ((map (copy-keymap isearch-mode-map)))
-     (define-key map [(control ?m)] 'eshell-isearch-return)
-     (define-key map [return] 'eshell-isearch-return)
-     (define-key
-      map [(control ?s)] 'eshell-isearch-repeat-forward)
-     (define-key map [(control ?g)] 'eshell-isearch-abort)
-     (define-key map [backspace] 'eshell-isearch-delete-char)
-     (define-key map [delete] 'eshell-isearch-delete-char)
-     map)
-   "Keymap used in isearch in Eshell.")
- ;;  (defun tj-eshell-here ()
- ;;    (interactive)
- ;;    (let*
- ;;        (
- ;;         (dir
- ;;          (if (buffer-file-name)
- ;;              (f-dirname (buffer-file-name))
- ;;            (projectile-project-root))))
- ;;      (eshell-buffer-name (ff-basename dir))
- ;;      (eshell dir)))
-
- (defun tj-eshell-hook ()
-   (setq eshell-path-env
-         (concat "/usr/local/bin:" eshell-path-env)))
 
  :hook (eshell-mode . tj-eshell-hook)
  :hook (eshell-hist-load . tj-hist-load)
@@ -2771,6 +2739,11 @@ Otherwise split the current paragraph into one sentence per line."
  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
  )
 
+(use-package
+ subword
+ :ensure nil
+ :demand t
+ :config (global-superword-mode 1))
 
 (use-package
  corfu
