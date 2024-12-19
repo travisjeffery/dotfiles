@@ -2204,12 +2204,6 @@ Otherwise split the current paragraph into one sentence per line."
  :config (spacious-padding-mode 1))
 
 (use-package
- standard-themes
- :demand t
- :ensure t
- :config (load-theme 'standard-light :no-confirm))
-
-(use-package
  modus-themes
  :demand t
  :ensure t
