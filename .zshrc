@@ -437,7 +437,9 @@ function install-all() {
        pulumi \
        chromium \
        xsel \
-       jq
+       jq \
+       krecorder \
+       google-chrome
 }
 
 function install-emacs (){

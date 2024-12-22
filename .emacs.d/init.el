@@ -909,7 +909,7 @@ Otherwise split the current paragraph into one sentence per line."
  :ensure t
  :demand t
  :config (goto-last-point-mode 1)
- :bind (("C-x C-m ," . goto-last-point)))
+ :bind (("C-x ," . goto-last-point)))
 
 (use-package
  isearch
@@ -1009,40 +1009,14 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package transient :ensure t :demand t)
 
+(use-package vterm :ensure t :demand t)
+
 (use-package
  with-editor
  :ensure t
  :demand t
- :config (add-hook 'eshell-mode-hook 'with-editor-export-editor)
-
- (cl-defun
-  with-editor-export-editor-eat
-  (process &optional (envvar "EDITOR"))
-  "Like `with-editor-export-editor', but for `eat-exec-hook'."
-  (cond
-   ((derived-mode-p 'eat-mode)
-    (if with-editor-emacsclient-executable
-        (let ((with-editor--envvar envvar)
-              (process-environment process-environment))
-          (with-editor--setup)
-          (while (accept-process-output process 0.1))
-          (when-let ((v (getenv envvar)))
-            (eat-term-send-string
-             eat-terminal (format " export %s=%S" envvar v))
-            (eat-self-input 1 'return))
-          (when-let ((v (getenv "EMACS_SERVER_FILE")))
-            (eat-term-send-string
-             eat-terminnal
-             (format " export EMACS_SERVER_FILE=%S" v))
-            (eat-self-input 1 'return))
-          (eat-term-send-string eat-terminal "clear")
-          (eat-self-input 1 'return))
-      (error "Cannot use sleeping editor in this buffer")))
-   (t
-    (error
-     "Cannot export environment variables in this buffer")))
-  (message "Successfully exported %s" envvar))
- (add-hook 'eat-exec-hook #'with-editor-export-editor-eat))
+ :config
+ (add-hook 'eshell-mode-hook 'with-editor-export-editor))
 
 (use-package
  magit
@@ -1379,6 +1353,8 @@ Otherwise split the current paragraph into one sentence per line."
  go-mode
  :ensure-system-package
  ((godef . "go install github.com/rogpeppe/godef@latest")
+  (goreleaser
+   . "go install github.com/goreleaser/goreleaser/v2@latest")
   (goimports
    . "go install golang.org/x/tools/cmd/goimports@latest")
   (staticcheck
@@ -2283,8 +2259,8 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
  goto-chg
  :bind
- (("C-x C-m ." . goto-last-change)
-  ("C-x C-m /" . goto-last-change-reverse))
+ (("C-x ." . goto-last-change)
+  ("C-x /" . goto-last-change-reverse))
  :ensure t
  :demand t)
 
@@ -2317,10 +2293,11 @@ Otherwise split the current paragraph into one sentence per line."
  :ensure nil
  :config
  (defun tj-minibuffer-setup-hook ()
-   (subword-mode)
+   (electric-pair-mode 0)
    (setq truncate-lines nil)
    (setq gc-cons-threshold most-positive-fixnum))
  (defun tj-minibuffer-exit-hook ()
+   (electric-pair-mode 1)
    (setq gc-cons-threshold 800000))
  (add-hook 'minibuffer-setup-hook #'tj-minibuffer-setup-hook)
  (add-hook 'minibuffer-exit-hook #'tj-minibuffer-exit-hook)
@@ -2359,8 +2336,6 @@ Otherwise split the current paragraph into one sentence per line."
  :demand t)
 
 (use-package pcmpl-args :ensure t :demand t)
-
-(use-package eat :ensure t :demand t)
 
 (use-package
  em-unix
