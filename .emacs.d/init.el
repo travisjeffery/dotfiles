@@ -247,29 +247,29 @@
     (t
      (keyboard-quit))))
 
- (defun tj-newline-and-indent-up ()
+ (defun tj-newline-and-indent ()
    "Open a new line above the current line."
    (interactive)
    (line-move -1)
    (end-of-line)
    (newline-and-indent))
 
- (defun tj-reload-dir-locals-for-current-buffer ()
+ (defun tj-dir-locals-reload-buffer ()
    "Reload dir locals for the current buffer."
    (interactive)
    (let ((enable-local-variables :all))
      (hack-dir-local-variables-non-file-buffer)))
 
- (defun tj-reload-dir-locals-for-all-buffer-in-this-directory ()
+ (defun tj-dir-locals-reload-buffers ()
    "For every buffer with the same `default-directory` as the current buffer's, reload dir-locals."
    (interactive)
    (let ((dir (projectile-project-root)))
      (dolist (buffer (buffer-list))
        (with-current-buffer buffer
          (when (equal default-directory dir))
-         (tj-reload-dir-locals-for-current-buffer)))))
+         (dir-locals-reload-buffer)))))
 
- (defun tj-what-hexadecimal-value ()
+ (defun tj-hexadecimal-to-decimal-at-point ()
    "Prints the decimal value of a hexadecimal string under cursor."
    (interactive)
    (let (input
@@ -293,7 +293,7 @@
 
      (message "Hex %s is %d" tmp (string-to-number tmp 16))))
 
- (defun tj-toggle-window-split ()
+ (defun tj-window-split-toggle ()
    "Toggle window split."
    (interactive)
    (if (= (count-windows) 2)
@@ -322,18 +322,6 @@
            (select-window first-win)
            (if this-win-2nd
                (other-window 1))))))
-
- (defun tj-newline-and-indent ()
-   "Newline under the current line."
-   (interactive)
-   (end-of-line)
-   (newline-and-indent))
-
- (defun tj-eval-and-replace (value)
-   "Evaluate the sexp at point and replace it with its VALUE."
-   (interactive (list (eval-last-sexp nil)))
-   (kill-sexp -1)
-   (insert (format "%S" value)))
 
  (defun tj-comment-line ()
    "Comment the current line or region."
@@ -424,7 +412,7 @@ Current position is preserved."
            (delete-char 1)
            (insert-char newchar))))))
 
- (defun tj-multi-line-to-one-line (beg end)
+ (defun tj-convert-multi-line-to-one-line (beg end)
    "Convert the lines between BEG and END into one line and copy \
 it in to the kill ring, when 'transient-mark-mode' is enabled. If
 no region is active then only the current line is acted upon.
@@ -569,7 +557,7 @@ Current position is preserved."
        (goto-line ffap-file-at-point-line-number))
      (setq ffap-file-at-point-line-number nil)))
 
- (defun tj-commas-to-new-lines (start end)
+ (defun tj-convert-commas-to-new-lines (start end)
    "Convert commas to commas with new-lines from START to END.
 Useful to take a long list of arguments on one-line and split
 them across multiple lines."
@@ -713,7 +701,7 @@ them across multiple lines."
          (unless (zerop (forward-line))
            (insert "\n"))))))
 
- (defun tj-revert-all-file-buffers ()
+ (defun tj-revert-all-buffers ()
    "Refresh all open file buffers without confirmation.
 Buffers in modified (not yet saved) state in Emacs will not be reverted. They
 will be reverted though if they were modified outside Emacs.
@@ -742,7 +730,7 @@ will be killed."
    (message
     "Finished reverting buffers containing unmodified files."))
 
- (defun tj-kill-file-name ()
+ (defun tj-copy-file-name-as-kill ()
    "Put the current file name on the clipboard."
    (interactive)
    (let ((filename
