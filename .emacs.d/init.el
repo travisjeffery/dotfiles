@@ -103,6 +103,7 @@
  (tab-always-indent 'complete)
  ()
  (initial-major-mode 'fundamental-mode)
+ (mode-line-format "%b")
  (tramp-default-method "ssh")
  ;; show all buffers, otherwise, some can be hidden under C-x b)
  (buffers-menu-max-size nil)
@@ -2605,7 +2606,7 @@ Otherwise split the current paragraph into one sentence per line."
 
   ;; C-x bindings in `ctl-x-map'
   ("C-x C-l" . consult-line)
-  ("C-x C-a" . ripgrep-regexp)
+  ("C-x C-m C-a" . ripgrep-regexp)
   ("C-x M-:" . consult-complex-command) ;; orig. repeat-complex-command
   ("C-x b" . consult-buffer) ;; orig. switch-to-buffer
   ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
@@ -2709,20 +2710,20 @@ Otherwise split the current paragraph into one sentence per line."
  :config (global-superword-mode 1))
 
 (use-package
- corfu
- :ensure t
- :hook (after-init . global-corfu-mode)
- :bind (:map corfu-map ("<tab>" . corfu-complete))
- :custom
- (corfu-preview-current nil)
- (corfu-min-width 20)
- (corfu-popupinfo-delay '(1.25 . 0.5))
- :config
- (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
- ;; Sort by input history (no need to modify `corfu-sort-function').
- (with-eval-after-load 'savehist
-   (corfu-history-mode 1)
-   (add-to-list 'savehist-additional-variables 'corfu-history)))
+  corfu
+  :ensure t
+  :hook (after-init . global-corfu-mode)
+  :bind (:map corfu-map ("<tab>" . corfu-complete))
+  :custom
+  (corfu-preview-current nil)
+  (corfu-min-width 20)
+  (corfu-popupinfo-delay '(1.25 . 0.5))
+  :config
+  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+  ;; Sort by input history (no need to modify `corfu-sort-function').
+  (with-eval-after-load 'savehist
+    (corfu-history-mode 1)
+    (add-to-list 'savehist-additional-variables 'corfu-history)))
 
 ;; Add extensions
 (use-package
