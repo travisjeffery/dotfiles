@@ -436,7 +436,7 @@ function install-all() {
        xkeysnail \
        pulumi \
        chromium \
-       xsel \
+       wl-clipboard \
        jq \
        krecorder \
        google-chrome
