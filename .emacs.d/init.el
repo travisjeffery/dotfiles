@@ -1327,7 +1327,7 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
  go-errcheck
  :ensure-system-package
- ((go-errcheck
+ ((errcheck
    . "go install github.com/kisielk/errcheck@latest"))
  :after go-mode-abbrev-table
  :config
