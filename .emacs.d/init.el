@@ -101,9 +101,7 @@
  (completion-auto-help 'always)
  (completion-auto-select 'second-tab)
  (tab-always-indent 'complete)
- ()
  (initial-major-mode 'fundamental-mode)
- (mode-line-format "%b")
  (tramp-default-method "ssh")
  ;; show all buffers, otherwise, some can be hidden under C-x b)
  (buffers-menu-max-size nil)
@@ -1326,9 +1324,7 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
  go-errcheck
- :ensure-system-package
- ((errcheck
-   . "go install github.com/kisielk/errcheck@latest"))
+ :ensure-system-package ((errcheck . "go install github.com/kisielk/errcheck@latest"))
  :after go-mode-abbrev-table
  :config
  (defun tj-go-errcheck ()
@@ -1894,10 +1890,11 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
  yaml-mode
- :bind (("C-c C-t" . tj-yaml-show-path-to-point))
  :mode ("\\.yaml" . yaml-mode)
  :ensure t
  :demand t)
+
+(use-package yaml-pro :ensure t :demand t)
 
 (use-package
  org
@@ -2022,6 +2019,12 @@ Otherwise split the current paragraph into one sentence per line."
   ("f" . org-roam-node-find)
   ("c" . org-roam-capture))
  :config (org-roam-setup))
+
+(use-package
+ treesit-auto
+ :demand t
+ :ensure t
+ :config (global-treesit-auto-mode))
 
 (use-package
  org-journal
@@ -2176,7 +2179,7 @@ Otherwise split the current paragraph into one sentence per line."
  modus-themes
  :demand t
  :ensure t
- :config (load-theme 'modus-operandi-tinted :no-confirm))
+ :config (load-theme 'modus-operandi :no-confirm))
 
 (use-package
  zop-to-char
@@ -2710,20 +2713,20 @@ Otherwise split the current paragraph into one sentence per line."
  :config (global-superword-mode 1))
 
 (use-package
-  corfu
-  :ensure t
-  :hook (after-init . global-corfu-mode)
-  :bind (:map corfu-map ("<tab>" . corfu-complete))
-  :custom
-  (corfu-preview-current nil)
-  (corfu-min-width 20)
-  (corfu-popupinfo-delay '(1.25 . 0.5))
-  :config
-  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
-  ;; Sort by input history (no need to modify `corfu-sort-function').
-  (with-eval-after-load 'savehist
-    (corfu-history-mode 1)
-    (add-to-list 'savehist-additional-variables 'corfu-history)))
+ corfu
+ :ensure t
+ :hook (after-init . global-corfu-mode)
+ :bind (:map corfu-map ("<tab>" . corfu-complete))
+ :custom
+ (corfu-preview-current nil)
+ (corfu-min-width 20)
+ (corfu-popupinfo-delay '(1.25 . 0.5))
+ :config
+ (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+ ;; Sort by input history (no need to modify `corfu-sort-function').
+ (with-eval-after-load 'savehist
+   (corfu-history-mode 1)
+   (add-to-list 'savehist-additional-variables 'corfu-history)))
 
 ;; Add extensions
 (use-package
