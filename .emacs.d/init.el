@@ -1,78 +1,37 @@
 ;; -*- fill-column: 65; lexical-binding: t; -*-
 
-(defvar elpaca-installer-version 0.8)
-(defvar elpaca-directory
-  (expand-file-name "elpaca/" user-emacs-directory))
-(defvar elpaca-builds-directory
-  (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory
-  (expand-file-name "repos/" elpaca-directory))
-(defvar elpaca-order
-  '(elpaca
-    :repo "https://github.com/progfolio/elpaca.git"
-    :ref nil
-    :depth 1
-    :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-    :build (:not elpaca--activate-package)))
-(let* ((repo (expand-file-name "elpaca/" elpaca-repos-directory))
-       (build
-        (expand-file-name "elpaca/" elpaca-builds-directory))
+(defvar elpaca-installer-version 0.9)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil :depth 1 :inherit ignore
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
        (default-directory repo))
-  (add-to-list
-   'load-path
-   (if (file-exists-p build)
-       build
-     repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
-    (when (< emacs-major-version 28)
-      (require 'subr-x))
+    (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
-        (if-let*
-            ((buffer
-              (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-             ((zerop
-               (apply #'call-process
-                      `("git" nil ,buffer t "clone" ,@
-                        (when-let* ((depth
-                                     (plist-get order :depth)))
-                          (list
-                           (format "--depth=%d" depth)
-                           "--no-single-branch"))
-                        ,(plist-get order :repo) ,repo))))
-             ((zerop
-               (call-process "git"
-                             nil
-                             buffer
-                             t
-                             "checkout"
-                             (or (plist-get order :ref) "--"))))
-             (emacs
-              (concat invocation-directory invocation-name))
-             ((zerop
-               (call-process
-                emacs
-                nil
-                buffer
-                nil
-                "-Q"
-                "-L"
-                "."
-                "--batch"
-                "--eval"
-                "(byte-recompile-directory \".\" 0 'force)")))
-             ((require 'elpaca))
-             ((elpaca-generate-autoloads "elpaca" repo)))
-          (progn
-            (message "%s" (buffer-string))
-            (kill-buffer buffer))
-          (error "%s"
-                 (with-current-buffer buffer
-                   (buffer-string))))
-      ((error)
-       (warn "%s" err)
-       (delete-directory repo 'recursive))))
+        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                  ,@(when-let* ((depth (plist-get order :depth)))
+                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                  ,(plist-get order :repo) ,repo))))
+                  ((zerop (call-process "git" nil buffer t "checkout"
+                                        (or (plist-get order :ref) "--"))))
+                  (emacs (concat invocation-directory invocation-name))
+                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                  ((require 'elpaca))
+                  ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
   (unless (require 'elpaca-autoloads nil t)
     (require 'elpaca)
     (elpaca-generate-autoloads "elpaca" repo)
@@ -80,14 +39,10 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-(setq package-enable-at-startup nil)
-
-(setq use-package-verbose t)
-
-(elpaca
- elpaca-use-package
- ;; Enable use-package :ensure support for Elpaca.
- (elpaca-use-package-mode))
+;; Install use-package support
+(elpaca elpaca-use-package
+  ;; Enable use-package :ensure support for Elpaca.
+  (elpaca-use-package-mode))
 
 ;; Don't remove anything above.
 
@@ -898,20 +853,6 @@ Otherwise split the current paragraph into one sentence per line."
  :config (goto-last-point-mode 1)
  :bind (("C-x ," . goto-last-point)))
 
-(use-package
- isearch
- :ensure nil
- :hook
- (isearch-mode-end
-  .
-  (lambda ()
-    (when (and isearch-forward
-               (number-or-marker-p isearch-other-end)
-               (not mark-active)
-               (not isearch-mode-end-hook-quit))
-      (goto-char isearch-other-end))))
- :demand t)
-
 (use-package bind-key :ensure nil :demand t)
 
 (use-package
@@ -930,12 +871,6 @@ Otherwise split the current paragraph into one sentence per line."
   '("." . "~/.emacs.d/var/undo-tree"))
  (global-undo-tree-mode 1)
  :diminish
- :ensure t
- :demand t)
-
-(use-package
- visual-fill-column
- :config (add-hook 'text-mode-hook 'visual-line-mode)
  :ensure t
  :demand t)
 
@@ -1279,7 +1214,7 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
  google-this
- :bind ("C-x /" . google-this-search)
+ :bind ("C-x C-m /" . google-this-search)
  :ensure t
  :demand t)
 
@@ -2422,7 +2357,9 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package json-snatcher :ensure t :demand t)
 
-(use-package ctrlf :ensure t :demand t :config (ctrlf-mode 1))
+(use-package ctrlf :ensure t :demand t
+  :custom
+  (ctrlf-go-to-end-of-match nil) :config (ctrlf-mode 1))
 
 (use-package
  visual-regexp
@@ -2834,24 +2771,24 @@ Otherwise split the current paragraph into one sentence per line."
  :hook (emacs-lisp-mode . elisp-autofmt-mode))
 
 (use-package
- eglot
- :ensure-system-package ((gopls . "go install golang.org/x/tools/gopls@latest"))
- :config
- (setq eglot-extend-to-xref t)
- (setq eglot-confirm-server-initiated-edits nil)
- (setq-default eglot-workspace-configuration
-               '((:gopls . ((gofumpt . t) (staticcheck . t)))))
- (defun tj-eglot-organize-imports ()
-   (interactive)
-   (eglot-code-actions nil nil "source.organizeImports" t))
- (add-hook 'before-save-hook 'tj-eglot-organize-imports nil t)
- (add-hook 'before-save-hook 'eglot-format-buffer)
- :bind (("C-c C-r" . eglot-rename))
- :hook
- (go-mode . eglot-ensure)
- (rust-mode . eglot-ensure)
- :ensure t
- :demand t)
+  eglot
+  :ensure-system-package ((gopls . "go install golang.org/x/tools/gopls@latest"))
+  :config
+  (setq eglot-extend-to-xref t)
+  (setq eglot-confirm-server-initiated-edits nil)
+  (setq-default eglot-workspace-configuration
+                '((:gopls . ((gofumpt . t) (staticcheck . t)))))
+  (defun tj-eglot-organize-imports ()
+    (interactive)
+    (eglot-code-actions nil nil "source.organizeImports" t))
+  (add-hook 'before-save-hook 'tj-eglot-organize-imports nil t)
+  (add-hook 'before-save-hook 'eglot-format-buffer)
+  :bind (("C-c C-r" . eglot-rename))
+  :hook
+  (go-mode . eglot-ensure)
+  (rust-mode . eglot-ensure)
+  :ensure t
+  :demand t)
 
 (use-package
  lice
