@@ -281,9 +281,12 @@ git_dirty() {
   git diff --quiet --ignore-submodules HEAD 2>/dev/null; [ $? -eq 1 ] && echo '*'
 }
 
-HISTFILE="$HOME/.zsh_history"
-HISTSIZE="9999"
-SAVEHIST="9999"
+export HISTFILE="$HOME/.zsh_history"
+export HISTSIZE="9999"
+export SAVEHIST="9999"
+setopt HIST_IGNORE_DUPS
+setopt EXTENDED_HISTORY
+setopt INC_APPEND_HISTORY
 
 NULL="/dev/null"
 
