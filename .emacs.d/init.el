@@ -995,17 +995,24 @@ Otherwise split the current paragraph into one sentence per line."
  :bind (("M-$" . jinx-correct) ("C-M-$" . jinx-languages)))
 
 (use-package
- flymake-languagetool
+ elisp-autofmt
  :ensure t
- :hook
- ((text-mode . flymake-languagetool-load)
-  (latex-mode . flymake-languagetool-load)
-  (org-mode . flymake-languagetool-load)
-  (markdown-mode . flymake-languagetool-load))
- :init
- ;; Local Server Configuration
- (setq flymake-languagetool-server-jar
-       "/usr/share/java/languagetool/languagetool-server.jar"))
+ :demand t
+ :commands (elisp-autofmt-mode elisp-autofmt-buffer)
+ :hook (emacs-lisp-mode . elisp-autofmt-mode))
+
+(use-package
+  flymake-languagetool
+  :ensure t
+  :hook
+  ((text-mode . flymake-languagetool-load)
+   (latex-mode . flymake-languagetool-load)
+   (org-mode . flymake-languagetool-load)
+   (markdown-mode . flymake-languagetool-load))
+  :init
+  ;; Local Server Configuration
+  (setq flymake-languagetool-server-jar
+        "/usr/share/java/languagetool/languagetool-server.jar"))
 
 (use-package
  compile
@@ -2647,7 +2654,9 @@ Otherwise split the current paragraph into one sentence per line."
  subword
  :ensure nil
  :demand t
- :config (global-superword-mode 1))
+ :config
+ (global-superword-mode 1)
+ (diminish 'superword-mode))
 
 (use-package
  corfu
@@ -2762,13 +2771,6 @@ Otherwise split the current paragraph into one sentence per line."
  :after projectile
  :config (shim-init-go)
  :demand t)
-
-(use-package
- elisp-autofmt
- :ensure t
- :demand t
- :commands (elisp-autofmt-mode elisp-autofmt-buffer)
- :hook (emacs-lisp-mode . elisp-autofmt-mode))
 
 (use-package
   eglot
