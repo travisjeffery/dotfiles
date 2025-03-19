@@ -1,6 +1,6 @@
 ;; -*- fill-column: 65; lexical-binding: t; -*-
 
-(defvar elpaca-installer-version 0.9)
+(defvar elpaca-installer-version 0.10)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -15,7 +15,7 @@
   (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
+    (when (<= emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
@@ -50,14 +50,14 @@
  emacs
  :ensure nil
  :custom
- (enable-recursive-minibuffers t)
+ (enable-recursive-minibuffers nil)
  (completions-max-height 20)
  (completions-format 'one-column)
  (completion-auto-help 'always)
  (completion-auto-select 'second-tab)
  (tab-always-indent 'complete)
  (initial-major-mode 'fundamental-mode)
- (tramp-default-method "ssh")
+ (tramp-default-method "sshx")
  ;; show all buffers, otherwise, some can be hidden under C-x b)
  (buffers-menu-max-size nil)
  (debugger-stack-frame-as-list t)
@@ -135,6 +135,7 @@
  (version-control t)
  :diminish auto-revert-mode
  :config
+ (global-completion-preview-mode 1)
  ;; handle long lines
  (global-so-long-mode t)
  ;; hide ui noise
@@ -923,13 +924,12 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package ipcalc :ensure t :demand t)
 
-(use-package
- jist
- :custom (jist-enable-default-authorized t)
- :ensure t
- :demand t)
-
 (use-package transient :ensure t :demand t)
+
+(use-package
+  igist
+  :ensure t
+  :demand t)
 
 (use-package vterm :ensure t :demand t)
 
@@ -993,13 +993,6 @@ Otherwise split the current paragraph into one sentence per line."
  :hook (markdown-mode . jinx-mode)
  :hook (org-mode . jinx-mode)
  :bind (("M-$" . jinx-correct) ("C-M-$" . jinx-languages)))
-
-(use-package
- elisp-autofmt
- :ensure t
- :demand t
- :commands (elisp-autofmt-mode elisp-autofmt-buffer)
- :hook (emacs-lisp-mode . elisp-autofmt-mode))
 
 (use-package
   flymake-languagetool
@@ -1293,14 +1286,24 @@ Otherwise split the current paragraph into one sentence per line."
  (:map
   go-mode-map
   ("M-j" . comment-indent-new-line)
-  ("M-b" . subword-backward)
-  ("M-f" . subword-forward)
-  ("M-d" . subword-kill)
   ("C-c C-t" . go-test-current-file)
   ("C-c M-t" . go-test-current-test))
 
  :config
 
+ (defun eglot-format-and-organize-imports ()
+  "Update the imports and format the file, analogous to commands like Go's `goimports`
+but agnostic to language, mode, and server."
+  (interactive)
+  (let* ((actions (eglot-code-actions (point-min) (point-max) "source.organizeImports")))
+    (when actions
+      (eglot-execute (eglot--current-server-or-lose) (car actions)))
+    (eglot-format-buffer)))
+  
+ (add-hook 'go-mode-hook
+ (lambda ()
+   (add-hook 'before-save-hook #'eglot-format-and-organize-imports nil t)))
+ 
  (defun tj-find-go-project-root (dir)
    "Find go project root for DIR."
    (if (and dir
@@ -1365,7 +1368,6 @@ Otherwise split the current paragraph into one sentence per line."
    (which-function-mode -1)
    (flycheck-mode 1)
    (highlight-symbol-mode)
-   (subword-mode 1)
    (selected-minor-mode 1)
    (whitespace-mode 1)
    (electric-pair-mode 1))
@@ -1966,7 +1968,9 @@ Otherwise split the current paragraph into one sentence per line."
  treesit-auto
  :demand t
  :ensure t
- :config (global-treesit-auto-mode))
+ :config
+ (delete 'yaml treesit-auto-langs)
+ (global-treesit-auto-mode))
 
 (use-package
  org-journal
@@ -2407,7 +2411,6 @@ Otherwise split the current paragraph into one sentence per line."
  (protobuf-mode
   .
   (lambda ()
-    (subword-mode)
     (c-add-style "tj-protobuf-style" tj-protobuf-style t)
     (setq imenu-generic-expression
           tj-protobuf-imenu-generic-expression)))
@@ -2650,54 +2653,32 @@ Otherwise split the current paragraph into one sentence per line."
  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
  )
 
-(use-package
- subword
- :ensure nil
- :demand t
- :config
- (global-superword-mode 1)
- (diminish 'superword-mode))
-
-(use-package
- corfu
- :ensure t
- :hook (after-init . global-corfu-mode)
- :bind (:map corfu-map ("<tab>" . corfu-complete))
- :custom
- (corfu-preview-current nil)
- (corfu-min-width 20)
- (corfu-popupinfo-delay '(1.25 . 0.5))
- :config
- (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
- ;; Sort by input history (no need to modify `corfu-sort-function').
- (with-eval-after-load 'savehist
-   (corfu-history-mode 1)
-   (add-to-list 'savehist-additional-variables 'corfu-history)))
+(global-set-key (kbd "M-f") 'forward-to-word)
 
 ;; Add extensions
 (use-package
- cape
- :ensure t
- :demand t
- ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
- ;; Press C-c p ? to for help.
- :bind ("C-c p" . cape-prefix-map) ;; Alternative keys: M-p, M-+, ...
- ;; Alternatively bind Cape commands individually.
- ;; :bind (("C-c p d" . cape-dabbrev)
- ;;        ("C-c p h" . cape-history)
- ;;        ("C-c p f" . cape-file)
- ;;        ...)
- :init
- ;; Add to the global default value of `completion-at-point-functions' which is
- ;; used by `completion-at-point'.  The order of the functions matters, the
- ;; first function returning a result wins.  Note that the list of buffer-local
- ;; completion functions takes precedence over the global list.
- (add-hook 'completion-at-point-functions #'cape-dabbrev)
- (add-hook 'completion-at-point-functions #'cape-file)
- (add-hook 'completion-at-point-functions #'cape-elisp-block)
- ;; (add-hook 'completion-at-point-functions #'cape-history)
- ;; ...
- )
+  cape
+  :ensure t
+  :demand t
+  ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
+  ;; Press C-c p ? to for help.
+  :bind ("C-c p" . cape-prefix-map) ;; Alternative keys: M-p, M-+, ...
+  ;; Alternatively bind Cape commands individually.
+  ;; :bind (("C-c p d" . cape-dabbrev)
+  ;;        ("C-c p h" . cape-history)
+  ;;        ("C-c p f" . cape-file)
+  ;;        ...)
+  :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-hook 'completion-at-point-functions #'cape-history)
+  ;; ...
+  )
 
 (use-package
  vertico
@@ -2775,6 +2756,8 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
   eglot
   :ensure-system-package ((gopls . "go install golang.org/x/tools/gopls@latest"))
+  :custom
+  (eglot-report-progress nil)
   :config
   (setq eglot-extend-to-xref t)
   (setq eglot-confirm-server-initiated-edits nil)
@@ -2788,6 +2771,7 @@ Otherwise split the current paragraph into one sentence per line."
   :bind (("C-c C-r" . eglot-rename))
   :hook
   (go-mode . eglot-ensure)
+  (java-mode . eglot-ensure)
   (rust-mode . eglot-ensure)
   :ensure t
   :demand t)
