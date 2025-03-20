@@ -135,6 +135,7 @@
  (version-control t)
  :diminish auto-revert-mode
  :config
+ 
  (global-completion-preview-mode 1)
  ;; handle long lines
  (global-so-long-mode t)
@@ -779,23 +780,23 @@ Otherwise split the current paragraph into one sentence per line."
  (("C-g" . tj-keyboard-quit-dwim)
   ("M-;" . tj-comment-line)
   ("M-g M-c" . switch-to-completions)
-  ("C-x C-m f" . find-file-at-point)
-  ("C-z" . delete-other-windows)
-  ("C-c q" . tj-kill-other-buffer)
   ("M-/" . hippie-expand)
   ("C-h A" . apropos)
   ;; align code in a pretty way
   ("C-x \\" . align-regexp)
   ("C-h C-f" . find-function)
   ;; misc useful keybindings
-  ("C-x C-m <" . tj-insert-open-and-close-tag)))
+  ("C-c q" . tj-kill-other-buffer)
+  ("C-c <" . tj-insert-open-and-close-tag)
+  ("C-c f" . find-file-at-point)))
 
 (use-package pyenv-mode :ensure t :demand t)
 
 (use-package direnv :ensure t :demand t :config (direnv-mode 1))
 
 ;; needs to be up early because there's some issue around packages depending on it the wrong way.
-(use-package project :ensure (:wait t) :demand t)
+
+;; (use-package project :ensure (:wait t) :demand t)
 
 (use-package xclip :config (xclip-mode 1) :ensure t :demand t)
 
@@ -1214,7 +1215,7 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
  google-this
- :bind ("C-x C-m /" . google-this-search)
+ :bind ("C-c /" . google-this-search)
  :ensure t
  :demand t)
 
@@ -1499,8 +1500,8 @@ but agnostic to language, mode, and server."
  :diminish
  :config (setq highlight-symbol-idle-delay 0.1)
  :bind
- (("C-x C-m p" . highlight-symbol-prev)
-  ("C-x C-m n" . highlight-symbol-next))
+ (("M-p" . highlight-symbol-prev)
+  ("M-n" . highlight-symbol-next))
  :hook (prog-mode . highlight-symbol-mode)
  :ensure t
  :demand t)
@@ -1954,7 +1955,7 @@ but agnostic to language, mode, and server."
  :custom
  (org-roam-directory (file-truename "~/roam"))
  (org-roam-v2-ack t)
- :bind-keymap ("C-x C-m C-r" . tj-org-roam-keymap)
+ :bind-keymap ("C-c r" . tj-org-roam-keymap)
  :bind
  (:map
   tj-org-roam-keymap
@@ -2155,17 +2156,17 @@ but agnostic to language, mode, and server."
  crux
  :custom (user-init-file (concat user-emacs-directory "init.el"))
  :bind
- (("C-x C-m d" . crux-duplicate-current-line-or-region)
-  ("C-x C-m H" . crux-cleanup-buffer-or-region)
+ (("C-c d" . crux-duplicate-current-line-or-region)
+  ("C-c H" . crux-cleanup-buffer-or-region)
   ("C-M-z" . crux-indent-defun)
-  ("C-x C-m u" . crux-view-url)
-  ("C-x C-m w" . crux-swap-windows)
-  ("C-x C-m D" . crux-delete-file-and-buffer)
-  ("C-x C-m r" . crux-rename-buffer-and-file)
-  ("C-x C-m k" . crux-kill-other-buffers)
-  ("C-x C-m TAB" . crux-indent-rigidly-and-copy-to-clipboard)
-  ("C-x C-m I" . crux-find-user-init-file)
-  ("C-x C-m S" . crux-find-shell-init-file)
+  ("C-c u" . crux-view-url)
+  ("C-c w" . crux-swap-windows)
+  ("C-c D" . crux-delete-file-and-buffer)
+  ("C-c r" . crux-rename-buffer-and-file)
+  ("C-c k" . crux-kill-other-buffers)
+  ("C-c TAB" . crux-indent-rigidly-and-copy-to-clipboard)
+  ("C-c I" . crux-find-user-init-file)
+  ("C-c S" . crux-find-shell-init-file)
   ("C-S-j" . crux-top-join-line)
   ("C-^" . crux-top-join-line)
   ("C-k" . kill-line)
@@ -2174,7 +2175,7 @@ but agnostic to language, mode, and server."
   ([(shift return)] . crux-smart-open-line)
   ([(control shift return)] . crux-smart-open-line-above)
   ([remap kill-whole-line] . crux-kill-whole-line)
-  ("C-x C-m s" . crux-ispell-word-then-abbrev))
+  ("C-c s" . crux-ispell-word-then-abbrev))
  :ensure t
  :demand t)
 
@@ -2204,7 +2205,7 @@ but agnostic to language, mode, and server."
 
 (use-package
  color-moccur
- :bind (("C-x C-m o" . occur) ("C-x C-m O" . moccur))
+ :bind (("C-c o" . occur) ("C-c O" . moccur))
  :ensure t
  :demand t)
 
@@ -2381,8 +2382,8 @@ but agnostic to language, mode, and server."
 (use-package
  avy-zap
  :bind
- (("C-x C-m e" . zap-up-to-char)
-  ("C-x C-m E" . avy-zap-up-to-char-dwim)
+ (("C-c e" . zap-up-to-char)
+  ("C-c E" . avy-zap-up-to-char-dwim)
   ("M-Z" . avy-zap-up-to-char-dwim))
  :ensure t
  :demand t)
@@ -2556,7 +2557,7 @@ but agnostic to language, mode, and server."
 
   ;; C-x bindings in `ctl-x-map'
   ("C-x C-l" . consult-line)
-  ("C-x C-m C-a" . ripgrep-regexp)
+  ("C-c a" . ripgrep-regexp)
   ("C-x M-:" . consult-complex-command) ;; orig. repeat-complex-command
   ("C-x b" . consult-buffer) ;; orig. switch-to-buffer
   ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
@@ -2798,6 +2799,8 @@ but agnostic to language, mode, and server."
 (use-package
  kubernetes
  :commands (kubernetes-overview)
+ :bind
+ (("C-c K" . kubernetes-dispatch))
  :config
  (setq
   kubernetes-poll-frequency 5

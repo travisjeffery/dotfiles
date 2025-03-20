@@ -52,7 +52,6 @@ if [ -f /etc/os-release ]; then source /etc/os-release; fi
 export EDITOR="emacsclient"
 export PAGER=less
 export SHELL=$(which zsh)
-export GZIP='--best --name --verbose'
 export GITHUB_USERNAME=travisjeffery
 export GEM_PATH=$HOME/.gem
 export GEM_HOME=$HOME/.gem
