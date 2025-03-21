@@ -135,7 +135,7 @@
  (version-control t)
  :diminish auto-revert-mode
  :config
- 
+
  (global-completion-preview-mode 1)
  ;; handle long lines
  (global-so-long-mode t)
@@ -1274,16 +1274,16 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
  go-mode
  :ensure-system-package
- ((godef . "go install github.com/rogpeppe/godef@latest")
+ ((godef . "go get -tool github.com/rogpeppe/godef@latest")
   (goreleaser
-   . "go install github.com/goreleaser/goreleaser/v2@latest")
+   . "go get -tool github.com/goreleaser/goreleaser/v2@latest")
   (goimports
-   . "go install golang.org/x/tools/cmd/goimports@latest")
+   . "go get -tool golang.org/x/tools/cmd/goimports@latest")
   (staticcheck
-   . "go install honnef.co/go/tools/cmd/staticcheck@latest")
-  (golint . "go install golang.org/x/lint/golint@latest")
-  (errcheck . "github.com/kisielk/errcheck@latest")
-  (gopls . "go install golang.org/x/tools/gopls@latest"))
+   . "go get -tool honnef.co/go/tools/cmd/staticcheck@latest")
+  (golint . "go get -tool golang.org/x/lint/golint@latest")
+  (errcheck . "go get -tool github.com/kisielk/errcheck@latest")
+  (gopls . "go get -tool golang.org/x/tools/gopls@latest"))
  :bind
  (:map
   go-mode-map
@@ -1301,11 +1301,11 @@ but agnostic to language, mode, and server."
     (when actions
       (eglot-execute (eglot--current-server-or-lose) (car actions)))
     (eglot-format-buffer)))
-  
+
  (add-hook 'go-mode-hook
  (lambda ()
    (add-hook 'before-save-hook #'eglot-format-and-organize-imports nil t)))
- 
+
  (defun tj-find-go-project-root (dir)
    "Find go project root for DIR."
    (if (and dir
