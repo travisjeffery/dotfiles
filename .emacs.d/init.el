@@ -2126,7 +2126,7 @@ but agnostic to language, mode, and server."
  modus-themes
  :demand t
  :ensure t
- :config (load-theme 'modus-operandi :no-confirm))
+ :config (load-theme 'modus-vivendi :no-confirm))
 
 (use-package
  zop-to-char
