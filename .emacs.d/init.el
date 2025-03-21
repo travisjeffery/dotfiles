@@ -787,6 +787,7 @@ Otherwise split the current paragraph into one sentence per line."
   ("C-h C-f" . find-function)
   ;; misc useful keybindings
   ("C-c q" . tj-kill-other-buffer)
+  ("M-*" . dictionary-lookup-definition)
   ("C-c <" . tj-insert-open-and-close-tag)
   ("C-c f" . find-file-at-point)))
 
