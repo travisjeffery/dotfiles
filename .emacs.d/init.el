@@ -441,10 +441,6 @@ Current position is preserved."
               (read-string "Word: "))))
      (browse-url (format url word))))
 
- (defun tj-prog-mode-hook ()
-   (setq font-lock-maximum-decoration 1)
-   (font-lock-mode -1))
-
  ;; improve find file at point to handle line numbers
  (defvar ffap-file-at-point-line-number nil
    "Variable to hold line number from the last `ffap-file-at-point' call.")
@@ -775,7 +771,7 @@ Otherwise split the current paragraph into one sentence per line."
          (occur
           (format "\\(%s\\)" (string-join lines "\\|")))))))
 
- :hook ((prog-mode . tj-prog-mode-hook) (focus-out . garbage-collect))
+ :hook ((focus-out . garbage-collect))
  :bind
  (("C-g" . tj-keyboard-quit-dwim)
   ("M-;" . tj-comment-line)
@@ -1273,17 +1269,6 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
  go-mode
- :ensure-system-package
- ((godef . "go get -tool github.com/rogpeppe/godef@latest")
-  (goreleaser
-   . "go get -tool github.com/goreleaser/goreleaser/v2@latest")
-  (goimports
-   . "go get -tool golang.org/x/tools/cmd/goimports@latest")
-  (staticcheck
-   . "go get -tool honnef.co/go/tools/cmd/staticcheck@latest")
-  (golint . "go get -tool golang.org/x/lint/golint@latest")
-  (errcheck . "go get -tool github.com/kisielk/errcheck@latest")
-  (gopls . "go get -tool golang.org/x/tools/gopls@latest"))
  :bind
  (:map
   go-mode-map
@@ -1366,10 +1351,10 @@ but agnostic to language, mode, and server."
                (list #'tj-find-go-project-root #'project-try-vc))
    (setq case-fold-search t)
    (setq go-test-args "-timeout 60s -race -v")
-   (font-lock-mode -1)
    (which-function-mode -1)
    (flycheck-mode 1)
-   (highlight-symbol-mode)
+   (highlight-symbol-mode 1)
+   (paredit-mode 1)
    (selected-minor-mode 1)
    (whitespace-mode 1)
    (electric-pair-mode 1))
@@ -1387,7 +1372,7 @@ but agnostic to language, mode, and server."
  ws-butler
  :ensure t
  :demand t
- :config (add-hook 'prog-mode-hook #'ws-butler-mode))
+ :config (ws-butler-global-mode 1))
 
 ;; (use-package winner :ensure t :demand t :diminish :config (winner-mode 1))
 
@@ -1502,7 +1487,8 @@ but agnostic to language, mode, and server."
  :config (setq highlight-symbol-idle-delay 0.1)
  :bind
  (("M-p" . highlight-symbol-prev)
-  ("M-n" . highlight-symbol-next))
+  ("M-n" . highlight-symbol-next)
+  ("M-'" . highlight-symbol-query-replace))
  :hook (prog-mode . highlight-symbol-mode)
  :ensure t
  :demand t)
@@ -1805,28 +1791,36 @@ but agnostic to language, mode, and server."
  :custom
  (whitespace-line-column 76) ;; limit line length
  (whitespace-style '(face empty lines trailing))
- :config (whitespace-mode 1)
+ :config (global-whitespace-mode 1)
  :ensure nil
  :demand t)
 
+(use-package htmlize
+  :ensure t
+  :demand t)
+
 (use-package
- markdown-mode
- :custom
- (markdown-command
-  "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained -f markdown+smart --to=html5 --css=$HOME/.config/css/style.css")
- :config
- (unless (executable-find "pandoc")
-   (message "install pandoc"))
- :mode
- ("\\.markdown$" . markdown-mode)
- ("\\.md$" . markdown-mode)
- :hook ((markdown-mode . writegood-mode))
- :ensure t
- :demand t)
+  markdown-mode
+  :custom
+  (markdown-command
+   "pandoc --section-divs --from=markdown_github --highlight-style=haddock --self-contained -f markdown+smart --to=html5 --css=$HOME/.config/css/style.css")
+  :config
+  (unless (executable-find "pandoc")
+    (message "install pandoc"))
+  :mode
+  ("\\.markdown$" . markdown-mode)
+  ("\\.md$" . markdown-mode)
+  :hook ((markdown-mode . writegood-mode))
+  :ensure t
+  :demand t)
 
 (use-package
  forge
  :custom
+ (add-to-list 'forge-alist '("gh"
+ "api.github.com"
+ "github.com"
+ forge-github-repository))
  (forge-topic-list-limit '(3 . -1))
  (forge-pull-notifications nil)
  :ensure t
@@ -1971,7 +1965,6 @@ but agnostic to language, mode, and server."
  :demand t
  :ensure t
  :config
- (delete 'yaml treesit-auto-langs)
  (global-treesit-auto-mode))
 
 (use-package
@@ -2372,6 +2365,8 @@ but agnostic to language, mode, and server."
 
 (use-package ctrlf :ensure t :demand t
   :custom
+  (ctrlf-default-search-style 'regexp)
+  (ctrlf-alternate-search-style 'fuzzy)
   (ctrlf-go-to-end-of-match nil) :config (ctrlf-mode 1))
 
 (use-package
