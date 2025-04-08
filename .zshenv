@@ -2,7 +2,6 @@ export PATH
 export MANPATH
 export INFOPATH
 
-
 if [ -d "/usr/man" ]; then MANPATH="$MANPATH:/usr/man"; fi
 if [ -d "/usr/share/man" ]; then MANPATH="$MANPATH:/usr/share/man"; fi
 if [ -d "/usr/local/man" ]; then MANPATH="$MANPATH:/usr/local/man"; fi
@@ -65,6 +64,8 @@ alias pbcopy='wl-copy'
 alias pbpaste='xsel --clipboard --output'
 
 export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 source ~/work.sh
 
