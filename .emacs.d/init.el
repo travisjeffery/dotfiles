@@ -89,12 +89,7 @@
  (scroll-preserve-screen-position 1)
  (native-comp-async-report-warnings-errors nil)
  ;; more useful frame title, that show either a file or a
- ;; buffer name (if the buffer isn't visiting a file
- (frame-title-format
-  ('((:eval)
-     ((if (buffer-file-name))
-      ((abbreviate-file-name (buffer-file-name)))
-      ("%b")))))
+ ;; buffer name (if the buffer isn't visiting a file 
  ;; Emacs modes typically provide a standard means to change the
  ;; indentation width -- eg. c-basic-offset: use that to adjust your
  ;; personal indentation width, while maintaining the style (and
@@ -107,18 +102,24 @@
  (same-window-regexps nil)
  ;; Newline at end of file
  (require-final-newline t)
+ (frame-title-format
+  '(:eval
+    (if (buffer-file-name)
+        (abbreviate-file-name (buffer-file-name))
+      (buffer-name))
+    "%b"))
  ;; hippie expand is dabbrev expand on steroids)
  (hippie-expand-try-functions-list
-  ('(try-expand-dabbrev)
-   (try-expand-dabbrev-all-buffers)
-   (try-expand-dabbrev-from-kill)
-   (try-complete-file-name-partially)
-   (try-complete-file-name)
-   (try-expand-all-abbrevs)
-   (try-expand-list)
-   (try-expand-line)
-   (try-complete-lisp-symbol-partially)
-   (try-complete-lisp-symbol)))
+  '(try-expand-dabbrev
+    try-expand-dabbrev-all-buffers
+    try-expand-dabbrev-from-kill
+    try-complete-file-name-partially
+    try-complete-file-name
+    try-expand-all-abbrevs
+    (try-expand-list)
+    try-expand-line
+    try-complete-lisp-symbol-partially
+    try-complete-lisp-symbol))
  ;; store all backup and autosave files in the tmp dir)
  (backup-directory-alist `((".*" . ,temporary-file-directory)))
  (auto-save-file-name-transforms
@@ -135,7 +136,6 @@
  (version-control t)
  :diminish auto-revert-mode
  :config
-
  (global-completion-preview-mode 1)
  ;; handle long lines
  (global-so-long-mode t)
@@ -929,7 +929,8 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
-(use-package vterm :ensure t :demand t)
+(use-package vterm :ensure t :demand t
+  :bind (("C-c $" . vterm)))
 
 (use-package
  with-editor
