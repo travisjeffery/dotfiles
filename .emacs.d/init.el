@@ -1354,10 +1354,10 @@ but agnostic to language, mode, and server."
    (which-function-mode -1)
    (flycheck-mode 1)
    (highlight-symbol-mode 1)
-   (paredit-mode 1)
+   (electric-pair-mode 1)
+   (show-paren-mode 1)
    (selected-minor-mode 1)
-   (whitespace-mode 1)
-   (electric-pair-mode 1))
+   (whitespace-mode 1))
 
  (if (not (string-match "go" compile-command))
      (set
@@ -2879,3 +2879,4 @@ but agnostic to language, mode, and server."
  :demand t)
 
 (put 'narrow-to-region 'disabled nil)
+(put 'upcase-region 'disabled nil)

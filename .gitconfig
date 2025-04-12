@@ -85,8 +85,8 @@
 	name = Travis Jeffery
 [rerere]
 	enabled = 1
-[ghi]
-	token = !security find-internet-password -a travisjeffery -s github.com -l 'ghi token' -w
+# [ghi]
+# 	token = !security find-internet-password -a travisjeffery -s github.com -l 'ghi token' -w
 [filter "lfs"]
 	required = true
 	clean = git-lfs clean -- %f
@@ -126,5 +126,5 @@
 	keepBackup = false
 [pull]
 	ff = only
-[credential "https://github.com"]
-	helper = !gh auth git-credential
+[credential]
+	helper = store
