@@ -42,7 +42,7 @@ if [ -d "/opt/goland" ]; then PATH="/opt/goland/bin:$PATH"; fi
 if [ -d "/opt/visualvm" ]; then PATH="/opt/visualvm/bin:$PATH"; fi
 if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
-if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin"; fi
+if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin:$PATH"; fi
 
 export PATH="${PATH}:${HOME}/.krew/bin"
 
@@ -82,7 +82,9 @@ fi
 
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+if type pyenv &> /dev/null; then
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+fi
 
 eval $(ssh-agent) &>/dev/null

@@ -59,7 +59,7 @@
 	statusHints = false
 [core]
 	excludesfile = ~/.gitignore-common
-	editor = "emacsclient -c"
+	editor = "nvim"
 	whitespace = warn
 	legacyheaders = false
 	pager = less
