@@ -59,7 +59,6 @@
 	statusHints = false
 [core]
 	excludesfile = ~/.gitignore-common
-	editor = "nvim"
 	whitespace = warn
 	legacyheaders = false
 	pager = less
