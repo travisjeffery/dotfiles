@@ -2025,6 +2025,7 @@ but agnostic to language, mode, and server."
   :bind-keymap ("C-;" . tj-mc-keymap)
   :bind
   (:map
+   ;; C-;
    tj-mc-keymap
    ("C-;" . mc/edit-lines)
    ("C-e" . mc/edit-ends-of-lines)
@@ -2032,8 +2033,8 @@ but agnostic to language, mode, and server."
    ("a" . mc/mark-all-dwim)
    ("C-x" . reactivate-mark)
    ("C-SPC" . mc/mark-pop)
-   ("f" . mc/mark-next-like-this-symbol)
-   ("b" . mc/mark-previous-like-this-symbol)
+   ("f" . mc/mark-next-like-this)
+   ("b" . mc/mark-previous-like-this)
    ;; Extra multiple cursors stuff
    ("%" . mc/insert-numbers))
   :ensure t
