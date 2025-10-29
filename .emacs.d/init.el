@@ -45,7 +45,6 @@
   (elpaca-use-package-mode))
 
 ;; Don't remove anything above.
-
 (use-package
   emacs
   :ensure nil
@@ -53,11 +52,16 @@
   (enable-recursive-minibuffers nil)
   (completions-max-height 20)
   (completions-format 'one-column)
+  (completion-eager-display 'auto)
   (completion-auto-help 'always)
   (completion-auto-select 'second-tab)
   (tab-always-indent 'complete)
   (initial-major-mode 'fundamental-mode)
   (tramp-default-method "sshx")
+  (mode-line-collapse-minor-modes t)
+  (kill-region-dwim t)
+  (delete-pair-push-mark t)
+  (treesit-auto-install-grammar t)
   ;; show all buffers, otherwise, some can be hidden under C-x b)
   (buffers-menu-max-size nil)
   (debugger-stack-frame-as-list t)
@@ -95,7 +99,7 @@
   ;; personal indentation width, while maintaining the style (and
   ;; meaning) of any files you load.
   (indent-tabs-mode nil) ;; don't use tabs to indent
-  (tab-width 8) ;; but maintain correct appearance
+  (tab-width 8)          ;; but maintain correct appearance
   ;; smart tab behavior - indent or complete
   (grep-command "rg --no-heading")
   (fill-column 100)
@@ -168,6 +172,16 @@
   (defun tj-base64-encode-region-no-break ()
     (interactive)
     (base64-encode-region (mark) (point) t))
+
+  (defun tj-repeat-last-command ()
+    "Execute first command in `extended-command-history'."
+    (interactive)
+    (funcall-interactively
+     (read
+      (car
+       (remove-if
+        (lambda (x) (string= "tj-repeat-last-command" x))
+        extended-command-history)))))
 
   (defun tj-copy-line-as-kill (&optional arg)
     "Save the current line as if killed, but don't kill it. If ARG set, then save ARG lines."
@@ -422,17 +436,6 @@ Current position is preserved."
                     (downcase curchar))))
             (delete-char 1)
             (insert-char newchar))))))
-
-  (defun tj-thesaurus ()
-    "Browse thesaurus."
-    (interactive)
-    (tj--browse-word
-     "https://www.merriam-webster.com/thesaurus/%s"))
-
-  (defun tj-dictionary ()
-    "Browse dictionary."
-    (interactive)
-    (tj--browse-word "https://merriam-webster.com/dictionary/%s"))
 
   (defun tj--browse-word (url)
     (let ((word
@@ -721,7 +724,7 @@ Otherwise split the current paragraph into one sentence per line."
                        (<= (point) (marker-position end)))
                 (just-one-space) ;; leaves only one space, point is after it
                 (delete-char -1) ;; delete the space
-                (newline) ;; and insert a newline
+                (newline)        ;; and insert a newline
                 ))))
       ;; otherwise do ordinary fill paragraph
       (fill-paragraph P)))
@@ -775,6 +778,8 @@ Otherwise split the current paragraph into one sentence per line."
   :hook ((focus-out . garbage-collect))
   :bind
   (("C-g" . tj-keyboard-quit-dwim)
+   ("M-<left>" . (lambda (beg end) (interactive "r") (indent-rigidly beg end  -2)))
+   ("C-x z" . tj-repeat-last-command)
    ("M-;" . tj-comment-line)
    ("M-g M-c" . switch-to-completions)
    ("M-/" . hippie-expand)
@@ -785,6 +790,7 @@ Otherwise split the current paragraph into one sentence per line."
    ;; misc useful keybindings
    ("C-c q" . tj-kill-other-buffer)
    ("M-*" . dictionary-lookup-definition)
+   ("M-T" . transpose-paragraphs)
    ("C-c <" . tj-insert-open-and-close-tag)
    ("C-c f" . find-file-at-point)))
 
@@ -798,7 +804,11 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package xclip :config (xclip-mode 1) :ensure t :demand t)
 
-(use-package verb :ensure t :demand t)
+(use-package verb :ensure t :demand t
+  :config
+  (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
+
+
 
 (use-package
   no-littering
@@ -915,9 +925,13 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   avy
-  :bind (("<C-return>" . avy-goto-char-timer))
+  :bind (("C-x <C-return>" . avy-goto-char-timer))
   :config (avy-setup-default)
   :custom (avy-background t)
+  :ensure t
+  :demand t)
+
+(use-package synosaurus
   :ensure t
   :demand t)
 
@@ -930,8 +944,7 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
-(use-package vterm :ensure t :demand t
-  :bind (("C-c $" . vterm)))
+(use-package vterm :ensure t :demand t)
 
 (use-package
   with-editor
@@ -1248,7 +1261,8 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
   eldoc
   :diminish eldoc-mode
-  :custom (eldoc-echo-area-use-multiline-p nil)
+  :custom
+  (eldoc-echo-area-use-multiline-p nil)
   :bind (("C-c C-c" . eldoc))
   :ensure nil
   :demand t)
@@ -1504,7 +1518,7 @@ but agnostic to language, mode, and server."
 (use-package
   dired
   :ensure nil
-  :bind (("C-x d" . dired-jump))
+  :bind (("C-x d" . dired))
   :bind
   (:map
    dired-mode-map
@@ -2035,6 +2049,7 @@ but agnostic to language, mode, and server."
    ("C-SPC" . mc/mark-pop)
    ("f" . mc/mark-next-like-this)
    ("b" . mc/mark-previous-like-this)
+   ("n" . mc/mark-next-like-this-word)
    ;; Extra multiple cursors stuff
    ("%" . mc/insert-numbers))
   :ensure t
@@ -2071,6 +2086,8 @@ but agnostic to language, mode, and server."
 
 (use-package
   browse-url
+  :custom
+  (browse-url-browser-function 'browse-url-xdg-open)
   :bind (("C-x x" . browse-url-at-point))
   :ensure nil
   :demand t)
@@ -2115,12 +2132,6 @@ but agnostic to language, mode, and server."
   (:map eshell-hist-mode-map ("M-r" . consult-history)))
 
 (use-package
-  spacious-padding
-  :demand t
-  :ensure t
-  :config (spacious-padding-mode 1))
-
-(use-package
   modus-themes
   :demand t
   :ensure t
@@ -2163,7 +2174,7 @@ but agnostic to language, mode, and server."
    ("C-c r" . crux-rename-buffer-and-file)
    ("C-c k" . crux-kill-other-buffers)
    ("C-c TAB" . crux-indent-rigidly-and-copy-to-clipboard)
-   ("C-c I" . crux-find-user-init-file)
+   ("C-c I" . (lambda () (interactive) (find-file user-init-file)))
    ("C-c S" . crux-find-shell-init-file)
    ("C-S-j" . crux-top-join-line)
    ("C-^" . crux-top-join-line)
@@ -2211,6 +2222,8 @@ but agnostic to language, mode, and server."
   ace-window
   :diminish
   :bind* ("<C-M-return>" . ace-window)
+  :config
+  (ace-window-display-mode 1)
   :ensure t
   :demand t)
 
@@ -2703,8 +2716,7 @@ but agnostic to language, mode, and server."
    ("C-k" . kill-whole-line)
    ("C-o" . vertico-next-group)
    ("<tab>" . minibuffer-complete)
-   ("M-S-<return>" . vertico-exit-input)
-   ("M-<return>" . minibuffer-force-complete-and-exit))
+   ("M-<return>" . vertico-exit-input))
   :ensure t
   :demand t)
 
@@ -2858,6 +2870,33 @@ but agnostic to language, mode, and server."
   :ensure nil ; no need to install it as it is built-in
   :hook (after-init . delete-selection-mode))
 
+(use-package eat
+  :demand t
+  :ensure t
+  :bind (("C-c $" . eat)))
+
+(use-package claude-code-ide
+  :demand t
+  :ensure (:repo "https://github.com/manzaltu/claude-code-ide.el.git")
+  :bind (("C-c C-'" . claude-code-ide-menu)
+         ("C-c C-t" . tj-claude-code-ide-toggle-read-only))
+  :config
+  (setq claude-code-ide-terminal-backend 'eat)
+  (defun tj-claude-code-ide-toggle-read-only ()
+    "Toggle read-only/copy mode in the Claude buffer."
+    (interactive)
+    (if eat--semi-char-mode
+        (progn
+          (eat-emacs-mode))
+      (eat-semi-char-mode)))
+  (claude-code-ide-emacs-tools-setup))
+
+(use-package
+  string-inflection
+  :demand t
+  :ensure t)
+
+
 (use-package
   elmacro
   :ensure t
@@ -2866,6 +2905,15 @@ but agnostic to language, mode, and server."
   :config (elmacro-mode 1))
 
 (use-package typit :ensure t :demand t)
+
+(use-package spacious-padding
+  :ensure t
+  :demand t
+  :config
+  (setq spacious-padding-widths
+        '(:internal-border-width 15
+          :right-fringe-width 15))
+  (spacious-padding-mode 1))
 
 (defun tj-raise-frame-and-give-focus ()
   (when window-system
