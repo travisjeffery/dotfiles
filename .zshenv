@@ -20,15 +20,16 @@ if [ -d "/usr/bin" ]; then PATH="$PATH:/usr/bin"; fi
 if [ -d "/usr/local/bin" ]; then PATH="$PATH:/usr/local/bin"; fi
 if [ -d "/usr/local/sbin" ]; then PATH="$PATH:/usr/local/sbin"; fi
 if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
-if [ -d "$HOME/.pulumi//bin" ]; then PATH="$HOME/.pulumi/bin:$PATH"; fi
-if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin/:$PATH"; fi
+if [ -d "$HOME/.pulumi/bin" ]; then PATH="$HOME/.pulumi/bin:$PATH"; fi
+if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin:$PATH"; fi
+if [ -d "$HOME/.npm/bin" ]; then PATH="$HOME/.npm/bin:$PATH"; fi
 if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
 
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
 if [ -d "$HOME/.local/share/JetBrains/Toolbox/scripts" ]; then PATH="$HOME/.local/share/JetBrains/Toolbox/scripts:$PATH"; fi
 if [ -d "$HOME/.local/google-cloud-sdk/bin" ]; then PATH="$HOME/.local/google-cloud-sdk/bin:$PATH"; fi
 if [ -d "$HOME/.cargo/bin" ]; then PATH="$HOME/.cargo/bin:$PATH"; fi
-if [ -d "$HOME/.pulumi/bin" ]; then PATH="$HOME/.pulumi//bin:$PATH"; fi
+if [ -d "$HOME/.pulumi/bin" ]; then PATH="$HOME/.pulumi/bin:$PATH"; fi
 if [ -d "/usr/local/protobuf/bin" ]; then PATH="/usr/local/protobuf/bin:$PATH"; fi
 if [ -d "$HOME/.tfenv/bin" ]; then PATH="$HOME/.tfenv/bin:$PATH"; fi
 if [ -d "$HOME/.linkerd2/bin" ]; then PATH="$HOME/.linkerd2/bin:$PATH"; fi
@@ -60,7 +61,8 @@ export JAVA_HOME=/usr
 export JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none"
 export HELM_EXPERIMENTAL_OCI=1
 export KALEIDOSCOPE_DIR="$HOME/code/Kaleidoscope"
-
+export PULUMI_EXPERIMENTAL="true"
+export PULUMI_SKIP_CHECKPOINTS="true"
 alias pbcopy='wl-copy'
 alias pbpaste='xsel --clipboard --output'
 
