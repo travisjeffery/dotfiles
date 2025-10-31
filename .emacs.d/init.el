@@ -1779,17 +1779,6 @@ but agnostic to language, mode, and server."
 
 (use-package
   exec-path-from-shell
-  :custom
-  (exec-path-from-shell-variables
-   '("PATH"
-     "MANPATH"
-     "GOROOT"
-     "GOPATH"
-     "JAVA_HOME"
-     "JAVA_OPTS"
-     "RUST_SRC_PATH"
-     "VAULT_ADDR"
-     "GOPRIVATE"))
   :config (exec-path-from-shell-initialize)
   :ensure t
   :demand t)
