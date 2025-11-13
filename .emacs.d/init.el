@@ -2885,13 +2885,18 @@ but agnostic to language, mode, and server."
 
 (use-package typit :ensure t :demand t)
 
+(use-package visual-fill-column
+  :ensure t
+  :demand t
+  :hook ((org-mode . visual-fill-column-mode)))
+
 (use-package spacious-padding
   :ensure t
   :demand t
   :config
   (setq spacious-padding-widths
         '(:internal-border-width 15
-          :right-fringe-width 15))
+                                 :right-fringe-width 15))
   (spacious-padding-mode 1))
 
 (defun tj-raise-frame-and-give-focus ()
