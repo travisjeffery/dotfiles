@@ -2132,8 +2132,8 @@ but agnostic to language, mode, and server."
      (large :default-height 140)
      (presentation :default-height 160)
      (t
-      :default-family "IBM Plex Mono"
-      :variable-pitch-family "IBM Plex Sans"
+      :default-family "Fira Code"
+      :variable-pitch-family "Fira Sans"
       :default-height 120)))
   :config
   (fontaine-set-preset
