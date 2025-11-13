@@ -1791,16 +1791,6 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t)
 
-(use-package
-  whitespace
-  :custom
-  (whitespace-line-column 76) ;; limit line length
-  (whitespace-style '(face empty lines trailing))
-  :config (global-whitespace-mode 1)
-  :diminish
-  :ensure nil
-  :demand t)
-
 (use-package htmlize
   :ensure t
   :demand t)
