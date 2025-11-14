@@ -2131,7 +2131,7 @@ but agnostic to language, mode, and server."
      (large :default-height 140)
      (presentation :default-height 160)
      (t
-      :default-family "Fira Code"
+      :default-family "Fira Code Retina"
       :variable-pitch-family "Fira Sans"
       :default-height 120)))
   :config
