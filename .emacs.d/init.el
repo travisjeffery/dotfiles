@@ -1835,7 +1835,6 @@ but agnostic to language, mode, and server."
 (use-package
   org
   :ensure nil
-  :hook ((org-mode . visual-line-mode) (org-mode . auto-fill-mode))
   :custom
   (org-todo-keywords
    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
