@@ -1078,6 +1078,11 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t)
 
 (use-package
+dired-hacks
+:ensure t
+:demand t)
+
+(use-package
   dired-toggle
   :preface
   (defun tj-dired-toggle-hook ()
@@ -2326,7 +2331,6 @@ but agnostic to language, mode, and server."
    'eshell-expand-input-functions
    'eshell-expand-history-references)
 
-  :hook (eshell-mode . tj-eshell-hook)
   :hook (eshell-hist-load . tj-hist-load)
   :hook (eshell-exit-hook . tj-eshell-exit)
   :ensure nil
