@@ -962,6 +962,7 @@ Otherwise split the current paragraph into one sentence per line."
   (vc-follow-symlinks t)
   (magit-commit-ask-to-stage 'stage)
   (magit-refresh-status-buffer t)
+  (magit-log-margin '(t "%FT%T%z" magit-log-margin-width t 18))
   :config
   (magit-wip-mode 1)
   (add-hook 'after-save-hook 'magit-after-save-refresh-status)
