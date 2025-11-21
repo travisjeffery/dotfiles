@@ -49,6 +49,7 @@
   emacs
   :ensure nil
   :custom
+  (dictionary-server "dict.org")
   (enable-recursive-minibuffers nil)
   (completions-max-height 20)
   (completions-format 'one-column)
@@ -1929,10 +1930,15 @@ but agnostic to language, mode, and server."
       (function org-journal-find-location)
       "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))))
   :bind
+  (:map org-mode-map
+  ("M-{" . backward-paragraph)
+  ("M-}" . forward-paragraph))
+  :bind
   (("C-x C-g c" . org-capture)
    ("C-x C-g t" . org-todo-list)
    ("C-x C-g m" . orgs-tagsview))
   :config
+  (org-indent-mode -1)
   (org-clock-persistence-insinuate)
   (defun org-journal-find-location ()
     ;; Open today's journal, but specify a non-nil prefix argument in order to
@@ -2134,6 +2140,7 @@ but agnostic to language, mode, and server."
   :custom
   (fontaine-presets
    '((regular)
+     (plex :default-family "IBM Plex Mono")
      (large :default-height 140)
      (presentation :default-height 160)
      (t
@@ -2879,7 +2886,6 @@ but agnostic to language, mode, and server."
   :demand t
   :ensure t)
 
-
 (use-package
   elmacro
   :ensure t
@@ -2892,7 +2898,8 @@ but agnostic to language, mode, and server."
 (use-package visual-fill-column
   :ensure t
   :demand t
-  :hook ((org-mode . visual-fill-column-mode)))
+  :hook ((org-mode . visual-line-mode)
+         (org-mode . visual-fill-column-mode)))
 
 (use-package spacious-padding
   :ensure t
