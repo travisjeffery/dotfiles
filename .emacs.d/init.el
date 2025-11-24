@@ -142,6 +142,17 @@
   :diminish auto-revert-mode
   :diminish completion-preview-mode
   :config
+
+  (defun tj-show-available-keys (prefix)
+  "Show available keys under PREFIX."
+  (interactive "sPrefix (e.g., 'C-c '): ")
+  (let ((available '()))
+    (dolist (char (number-sequence ?a ?z))
+      (let ((key (kbd (concat prefix (char-to-string char)))))
+        (unless (key-binding key)
+          (push (char-to-string char) available))))
+    (message "Available: %s" (string-join (reverse available) ", "))))
+  
   (global-completion-preview-mode 1)
   ;; handle long lines
   (global-so-long-mode t)
@@ -1080,11 +1091,6 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t)
 
 (use-package
-dired-hacks
-:ensure t
-:demand t)
-
-(use-package
   dired-toggle
   :preface
   (defun tj-dired-toggle-hook ()
@@ -1108,7 +1114,7 @@ dired-hacks
 
 (use-package
   expand-region
-  :bind ("C-=" . er/expand-region)
+  :bind ("M-=" . er/expand-region)
   :ensure t
   :demand t)
 
@@ -1843,6 +1849,7 @@ but agnostic to language, mode, and server."
   org
   :ensure nil
   :custom
+  (org-indent-mode-turns-on-hiding-stars nil)
   (org-todo-keywords
    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
      (sequence
@@ -2385,9 +2392,7 @@ but agnostic to language, mode, and server."
 (use-package
   avy-zap
   :bind
-  (("C-c e" . zap-up-to-char)
-   ("C-c E" . avy-zap-up-to-char-dwim)
-   ("M-Z" . avy-zap-up-to-char-dwim))
+  (("M-Z" . avy-zap-up-to-char-dwim))
   :ensure t
   :demand t)
 
@@ -2868,7 +2873,7 @@ but agnostic to language, mode, and server."
 (use-package claude-code-ide
   :demand t
   :ensure (:repo "https://github.com/manzaltu/claude-code-ide.el.git")
-  :bind (("C-c C-'" . claude-code-ide-menu)
+  :bind (("C-c c" . claude-code-ide-menu)
          ("C-c C-t" . tj-claude-code-ide-toggle-read-only))
   :config
   (setq claude-code-ide-terminal-backend 'eat)
