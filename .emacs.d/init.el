@@ -45,11 +45,6 @@
   (elpaca-use-package-mode))
 
 ;; Don't remove anything above.
-
-;;; ============================================================================
-;;; CORE EMACS CONFIGURATION
-;;; ============================================================================
-
 (use-package
   emacs
   :ensure nil
@@ -68,30 +63,49 @@
   (kill-region-dwim t)
   (delete-pair-push-mark t)
   (treesit-auto-install-grammar t)
+  ;; show all buffers, otherwise, some can be hidden under C-x b)
   (buffers-menu-max-size nil)
   (debugger-stack-frame-as-list t)
   (user-full-name "Travis Jeffery")
   (user-mail-address "tj@travisjeffery.com")
+  ;; rescan the buffer contents to update jump targets
   (imenu-auto-rescan t)
-  (custom-file (expand-file-name "custom.el" user-emacs-directory))
+  ;; config changes made through the customize UI will be stored here
+  (custom-file
+   (expand-file-name "custom.el" user-emacs-directory))
+  ;; 'comment-indent-new-line continues comments
   (comment-multi-line t)
+  ;; Save whatever's in the system clipboard before replcaing it with the Emacs' txt.
   (save-interprogram-paste-before-kill t)
   (read-process-output-max (* 1024 1024))
+  ;; Always load newest byte code
   (load-prefer-newer t)
+  ;; warn when opening files bigger than 100MB
   (large-file-warning-threshold 100000000)
   (sentence-end-double-space nil)
+  ;; disable the annoying bell ring
   (ring-bell-function 'ignore)
+  ;; disable startup screen
   (inhibit-startup-screen t)
   (eldoc-idle-delay 0)
+  ;; nice scrolling
   (scroll-margin 0)
   (scroll-conservatively 100000)
   (scroll-preserve-screen-position 1)
   (native-comp-async-report-warnings-errors nil)
-  (indent-tabs-mode nil)
-  (tab-width 8)
+  ;; more useful frame title, that show either a file or a
+  ;; buffer name (if the buffer isn't visiting a file 
+  ;; Emacs modes typically provide a standard means to change the
+  ;; indentation width -- eg. c-basic-offset: use that to adjust your
+  ;; personal indentation width, while maintaining the style (and
+  ;; meaning) of any files you load.
+  (indent-tabs-mode nil) ;; don't use tabs to indent
+  (tab-width 8)          ;; but maintain correct appearance
+  ;; smart tab behavior - indent or complete
   (grep-command "rg --no-heading")
   (fill-column 100)
   (same-window-regexps nil)
+  ;; Newline at end of file
   (require-final-newline t)
   (frame-title-format
    '(:eval
@@ -99,6 +113,7 @@
          (abbreviate-file-name (buffer-file-name))
        (buffer-name))
      "%b"))
+  ;; hippie expand is dabbrev expand on steroids)
   (hippie-expand-try-functions-list
    '(try-expand-dabbrev
      try-expand-dabbrev-all-buffers
@@ -110,12 +125,14 @@
      try-expand-line
      try-complete-lisp-symbol-partially
      try-complete-lisp-symbol))
+  ;; store all backup and autosave files in the tmp dir)
   (backup-directory-alist `((".*" . ,temporary-file-directory)))
   (auto-save-file-name-transforms
    `((".*" ,temporary-file-directory t)))
   (gc-cons-threshold 300000000)
   (major-mode-remap-alist '((python-mode . python-ts-mode)))
   (async-shell-command-buffer 'new-buffer)
+  (ring-bell-function #'ignore)
   (backup-by-copying t)
   (delete-old-versions t)
   (kept-new-versions 10)
@@ -127,25 +144,36 @@
   :config
 
   (defun tj-show-available-keys (prefix)
-    "Show available keys under PREFIX."
-    (interactive "sPrefix (e.g., 'C-c '): ")
-    (let ((available '()))
-      (dolist (char (number-sequence ?a ?z))
-        (let ((key (kbd (concat prefix (char-to-string char)))))
-          (unless (key-binding key)
-            (push (char-to-string char) available))))
-      (message "Available: %s" (string-join (reverse available) ", "))))
+  "Show available keys under PREFIX."
+  (interactive "sPrefix (e.g., 'C-c '): ")
+  (let ((available '()))
+    (dolist (char (number-sequence ?a ?z))
+      (let ((key (kbd (concat prefix (char-to-string char)))))
+        (unless (key-binding key)
+          (push (char-to-string char) available))))
+    (message "Available: %s" (string-join (reverse available) ", "))))
   
   (global-completion-preview-mode 1)
+  ;; handle long lines
   (global-so-long-mode t)
+  ;; hide ui noise
   (tool-bar-mode -1)
   (menu-bar-mode -1)
+  ;; keep cursor static
   (blink-cursor-mode -1)
+
+  ;; mode line settings
   (line-number-mode t)
   (column-number-mode t)
   (size-indication-mode t)
+
+  ;; enable y/n answers
   (fset 'yes-or-no-p 'y-or-n-p)
+
+  ;; delete the selection with a keypress
   (delete-selection-mode t)
+
+  ;; revert buffers automatically when underlying files are changed externally
   (global-auto-revert-mode t)
 
   (prefer-coding-system 'utf-8)
@@ -346,6 +374,61 @@ Current position is preserved."
                 "^[ \t]+"
                 ""
                 (buffer-substring-no-properties beg end))))
+        ;; (message "str=%s" str)
+        (kill-new str)
+        (goto-char orig-pos))))
+
+  (defun tj-spongebob (start end)
+    "Convert string from START to END to SpOnGeBoB meme."
+    (interactive "r")
+    (save-excursion
+      (goto-char start)
+      (let ((upcase?
+             (not (s-uppercase? (char-to-string (char-after))))))
+        (while (not (eq end (point)))
+          (setq upcase? (not upcase?))
+          (let* ((curchar (char-after))
+                 (newchar
+                  (if upcase?
+                      (upcase curchar)
+                    (downcase curchar))))
+            (delete-char 1)
+            (insert-char newchar))))))
+
+  (defun tj-convert-multi-line-to-one-line (beg end)
+    "Convert the lines between BEG and END into one line and copy \
+it in to the kill ring, when 'transient-mark-mode' is enabled. If
+no region is active then only the current line is acted upon.
+
+If the region begins or ends in the middle of a line, that entire line is
+copied, even if the region is narrowed to the middle of a line.
+
+Current position is preserved."
+    (interactive "r")
+    (let (str
+          (orig-pos (point-marker)))
+      (save-restriction
+        (widen)
+        (when (and transient-mark-mode (not (use-region-p)))
+          (setq
+           beg (line-beginning-position)
+           end (line-beginning-position 2)))
+
+        (goto-char beg)
+        (setq beg (line-beginning-position))
+        (goto-char end)
+        (unless (= (point) (line-beginning-position))
+          (setq end (line-beginning-position 2)))
+
+        (goto-char beg)
+        (setq str
+              (replace-regexp-in-string
+               "[ \t]*\n" ""
+               (replace-regexp-in-string
+                "^[ \t]+"
+                ""
+                (buffer-substring-no-properties beg end))))
+        ;; (message "str=%s" str)
         (kill-new str)
         (goto-char orig-pos))))
 
@@ -382,12 +465,12 @@ Current position is preserved."
       (after ffap-store-line-number activate)
     "Search `ffap-string-at-point' for a line number pattern and save it in `ffap-file-at-point-line-number' variable."
     (let*
-        ((string (ffap-string-at-point))
+        ((string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
          (name
           (or
            (condition-case nil
                (and
-                (not (string-match "//" string))
+                (not (string-match "//" string)) ; foo.com://bar
                 (substitute-in-file-name string))
              (error nil))
            string))
@@ -406,12 +489,12 @@ Current position is preserved."
   (defadvice ffap-guesser (after ffap-store-line-number activate)
     "Search `ffap-string-at-point' for a line number pattern and save it in `ffap-file-at-point-line-number' variable."
     (let*
-        ((string (ffap-string-at-point))
+        ((string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
          (name
           (or
            (condition-case nil
                (and
-                (not (string-match "//" string))
+                (not (string-match "//" string)) ; foo.com://bar
                 (substitute-in-file-name string))
              (error nil))
            string))
@@ -467,6 +550,7 @@ them across multiple lines."
         "</${1:$(and (string-match \"[-A-Za-z0-9:_]+\" yas-text)"
         "(match-string 0 yas-text))}>"))))
 
+
   (defun tj-insert-open-and-close-tag ()
     "Generates an open and close HTML snippet using the current word."
     (interactive)
@@ -508,11 +592,11 @@ them across multiple lines."
     "Fix quotes after copying from ProWritingAid."
     (interactive)
     (let ((replacements
-           '((""" . "\"")
-             (""" . "\"")
-             ("'" . "'")
-             ("'" . "'")
-             (" " . " "))))
+           '(("“" . "\"")
+             ("”" . "\"")
+             ("’" . "'")
+             ("‘" . "'")
+             (" " . " "))))
       (cl-loop
        for (key . value) in replacements do
        (progn
@@ -594,15 +678,19 @@ will be killed."
     (interactive)
     (dolist (buf (buffer-list))
       (let ((filename (buffer-file-name buf)))
+        ;; Revert only buffers containing files, which are not modified;
+        ;; do not try to revert non-file buffers like *Messages*.
         (when (and filename (not (buffer-modified-p buf)))
           (if (file-readable-p filename)
+              ;; If the file exists and is readable, revert the buffer.
               (with-current-buffer buf
                 (revert-buffer
                  :ignore-auto
                  :noconfirm
                  :preserve-modes))
+            ;; Otherwise, kill the buffer.
             (let
-                (kill-buffer-query-functions)
+                (kill-buffer-query-functions) ; No query done when killing buffer
               (kill-buffer buf)
               (message
                "Killed non-existing/unreadable file buffer: %s"
@@ -633,20 +721,24 @@ Otherwise split the current paragraph into one sentence per line."
     (if (not arg)
         (save-excursion
           (let
-              ((fill-column 12345678))
-            (fill-paragraph)
+              ((fill-column 12345678)) ;; relies on dynamic binding
+            (fill-paragraph) ;; this will not work correctly if the paragraph is
+            ;; longer than 12345678 characters (in which case the
+            ;; file must be at least 12MB long. This is unlikely.)
             (let ((end
                    (save-excursion
                      (forward-paragraph 1)
                      (backward-sentence)
-                     (point-marker))))
+                     (point-marker)))) ;; remember where to stop
               (beginning-of-line)
               (while (progn
                        (forward-sentence)
                        (<= (point) (marker-position end)))
-                (just-one-space)
-                (delete-char -1)
-                (newline)))))
+                (just-one-space) ;; leaves only one space, point is after it
+                (delete-char -1) ;; delete the space
+                (newline)        ;; and insert a newline
+                ))))
+      ;; otherwise do ordinary fill paragraph
       (fill-paragraph P)))
 
   (defun tj-apply-function-to-region (fn)
@@ -704,64 +796,79 @@ Otherwise split the current paragraph into one sentence per line."
    ("M-g M-c" . switch-to-completions)
    ("M-/" . hippie-expand)
    ("C-h A" . apropos)
-   ("C-c =" . align-regexp)
    ("C-h C-f" . find-function)
-   ("C-^" . crux-top-join-line)
+
+   ;; High-frequency quick access
+   ("C-c =" . align-regexp)
+   ("C-c c" . tj-comment-line)  ; backup for M-;
+
+   ;; Misc useful keybindings
+   ("C-c q" . tj-kill-other-buffer)
+   ("M-*" . dictionary-lookup-definition)
+   ("M-T" . transpose-paragraphs)
    ("C-c <" . tj-insert-open-and-close-tag)
-   ("C-c C-f" . find-file-at-point)
-   ("C-o" . crux-smart-open-line)
-   ("C-c o" . crux-smart-open-line-above)
-   ("C-M-DEL" . crux-kill-line-backwards)
-   ("M-DEL" . backward-kill-sexp)))
+   ("C-c f" . find-file-at-point)))
 
 ;;; ============================================================================
-;;; TERMINAL COMPATIBILITY UTILITIES
+;;; ORGANIZED KEYMAPS
 ;;; ============================================================================
 
-(defun tj-test-terminal-keys ()
-  "Insert the key sequence for the next key press."
-  (interactive)
-  (insert (key-description (read-key-sequence "Press key: "))))
+;; Text transformations keymap (C-c t)
+(defvar tj-text-keymap (make-sparse-keymap)
+  "Keymap for text transformation operations.")
+(define-key tj-text-keymap (kbd "s") 'tj-spongebob)
+(define-key tj-text-keymap (kbd "m") 'tj-multi-line-to-one-line)
+(define-key tj-text-keymap (kbd "c") 'tj-convert-commas-to-new-lines)
+(define-key tj-text-keymap (kbd "w") 'tj-wrap-with-tags)
+(define-key tj-text-keymap (kbd "f") 'tj-fill-paragraph)
+(define-key tj-text-keymap (kbd "a") 'tj-arrayify)
+(define-key tj-text-keymap (kbd "t") 'tj-toggle-fold)
+(global-set-key (kbd "C-c t") tj-text-keymap)
 
-(defun tj-test-terminal-compatibility ()
-  "Test if problematic key bindings work in current environment."
-  (interactive)
-  (let ((test-keys '("C-o"
-                     "C-c o"
-                     "M-DEL"
-                     "C-c m"
-                     "C-c w w"
-                     "C-."
-                     "M-<left>")))
-    (with-output-to-temp-buffer "*Terminal Key Test*"
-      (princ "Terminal Key Binding Compatibility Test\n")
-      (princ "========================================\n\n")
-      (princ (format "Display type: %s\n" 
-                     (if (display-graphic-p) "GUI" "Terminal")))
-      (princ (format "Terminal: %s\n\n" (getenv "TERM")))
-      (dolist (key test-keys)
-        (condition-case err
-            (let ((binding (key-binding (kbd key))))
-              (princ (format "%-20s → %s\n" 
-                           key 
-                           (or binding "unbound"))))
-          (error 
-           (princ (format "%-20s → ERROR: %s\n" 
-                         key 
-                         (error-message-string err)))))))))
+;; Buffer operations keymap (C-c b)
+(defvar tj-buffer-keymap (make-sparse-keymap)
+  "Keymap for buffer operations.")
+(define-key tj-buffer-keymap (kbd "b") 'bufler)
+(define-key tj-buffer-keymap (kbd "l") 'browse-kill-ring)
+(define-key tj-buffer-keymap (kbd "k") 'crux-kill-other-buffers)
+(define-key tj-buffer-keymap (kbd "r") 'tj-revert-all-buffers)
+(global-set-key (kbd "C-c b") tj-buffer-keymap)
 
-(global-set-key (kbd "C-c h k") 'tj-test-terminal-keys)
-(global-set-key (kbd "C-c h t") 'tj-test-terminal-compatibility)
+;; Diff/Ediff operations keymap (C-c d)
+(defvar tj-diff-keymap (make-sparse-keymap)
+  "Keymap for diff and ediff operations.")
+(define-key tj-diff-keymap (kbd "b") 'ediff-buffers)
+(define-key tj-diff-keymap (kbd "f") 'ediff-files)
+(define-key tj-diff-keymap (kbd "r") 'ediff-revision)
+(define-key tj-diff-keymap (kbd "l") 'ediff-regions-linewise)
+(define-key tj-diff-keymap (kbd "w") 'ediff-regions-wordwise)
+(define-key tj-diff-keymap (kbd "c") 'compare-windows)
+(global-set-key (kbd "C-c d") tj-diff-keymap)
 
-;;; ============================================================================
-;;; ESSENTIAL PACKAGES
-;;; ============================================================================
+;; Org-mode operations keymap (C-c o)
+(defvar tj-org-keymap (make-sparse-keymap)
+  "Keymap for org-mode operations.")
+(define-key tj-org-keymap (kbd "c") 'org-capture)
+(define-key tj-org-keymap (kbd "t") 'org-todo-list)
+(define-key tj-org-keymap (kbd "m") 'org-tags-view)
+(define-key tj-org-keymap (kbd "a") 'org-agenda)
+(global-set-key (kbd "C-c o") tj-org-keymap)
 
 (use-package pyenv-mode :ensure t :demand t)
 
 (use-package direnv :ensure t :demand t :config (direnv-mode 1))
 
+;; needs to be up early because there's some issue around packages depending on it the wrong way.
+
+;; (use-package project :ensure (:wait t) :demand t)
+
 (use-package xclip :config (xclip-mode 1) :ensure t :demand t)
+
+(use-package verb :ensure t :demand t
+  :config
+  (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
+
+
 
 (use-package
   no-littering
@@ -770,6 +877,7 @@ Otherwise split the current paragraph into one sentence per line."
    `((".*" ,(expand-file-name "auto-save/"
                               user-emacs-var-directory)
       t)))
+
   (backup-directory-alist
    `((".*" .
       ,(expand-file-name "backup/" user-emacs-var-directory))))
@@ -792,8 +900,18 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   marginalia
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
   :bind (:map minibuffer-local-map ("M-A" . marginalia-cycle))
-  :init (marginalia-mode)
+
+  ;; The :init section is always executed.
+  :init
+
+  ;; Marginalia must be activated in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode)
   :ensure t
   :demand t)
 
@@ -803,15 +921,7 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t
   :config (goto-last-point-mode 1)
-  :preface
-  (defun tj-navigate-history (arg)
-    "Navigate edit history. With prefix ARG, use goto-last-point instead."
-    (interactive "P")
-    (if arg
-        (goto-last-point)
-      (goto-last-change)))
-  :bind (("C-x ," . tj-navigate-history)
-         ("C-x C-," . goto-last-point)))
+  :bind (("C-c ." . goto-last-point)))  ; High-frequency navigation
 
 (use-package bind-key :ensure nil :demand t)
 
@@ -840,7 +950,8 @@ Otherwise split the current paragraph into one sentence per line."
   :diminish
   :config
   (defun visit-ielm ()
-    "Switch to default `ielm' buffer. Start `ielm' if it's not already running."
+    "Switch to default `ielm' buffer.
+	  Start `ielm' if it's not already running."
     (interactive)
     (crux-start-or-switch-to 'ielm "*ielm*"))
   (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
@@ -874,13 +985,24 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   avy
-  :bind (("C-x C-SPC" . avy-goto-char-timer))
+  :bind (("C-c j" . avy-goto-char-timer))  ; High-frequency jump
   :config (avy-setup-default)
   :custom (avy-background t)
   :ensure t
   :demand t)
 
+(use-package synosaurus
+  :ensure t
+  :demand t)
+
+(use-package ipcalc :ensure t :demand t)
+
 (use-package transient :ensure t :demand t)
+
+(use-package
+  igist
+  :ensure t
+  :demand t)
 
 (use-package vterm :ensure t :demand t)
 
@@ -916,6 +1038,10 @@ Otherwise split the current paragraph into one sentence per line."
   (advice-add
    'magit-key-mode
    :filter-args #'magit-key-mode--add-default-options)
+  :bind
+  (:map
+   magit-diff-mode-map
+   (("C-o" . magit-diff-visit-file-other-window)))
   :bind (("C-x g" . magit-status))
   :ensure t
   :demand t)
@@ -941,6 +1067,19 @@ Otherwise split the current paragraph into one sentence per line."
   :hook (markdown-mode . jinx-mode)
   :hook (org-mode . jinx-mode)
   :bind (("M-$" . jinx-correct) ("C-M-$" . jinx-languages)))
+
+(use-package
+  flymake-languagetool
+  :ensure t
+  :hook
+  ((text-mode . flymake-languagetool-load)
+   (latex-mode . flymake-languagetool-load)
+   (org-mode . flymake-languagetool-load)
+   (markdown-mode . flymake-languagetool-load))
+  :init
+  ;; Local Server Configuration
+  (setq flymake-languagetool-server-jar
+        "/usr/share/java/languagetool/languagetool-server.jar"))
 
 (use-package
   compile
@@ -1000,6 +1139,28 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t)
 
 (use-package
+  dired-toggle
+  :preface
+  (defun tj-dired-toggle-hook ()
+    (interactive)
+    (setq-local
+     visual-line-fringe-indicators '(nil right-curly-arrow)
+     word-wrap nil))
+  :hook (dired-toggle-mode . tj-dired-toggle--hook)
+  :ensure t
+  :demand t)
+
+(use-package
+  dired-quick-sort
+  :ensure t
+  :demand t
+  :config (dired-quick-sort-setup))
+
+(use-package disk-usage :ensure t :demand t)
+
+(use-package dired-filter :ensure t :demand t)
+
+(use-package
   expand-region
   :bind ("M-=" . er/expand-region)
   :ensure t
@@ -1031,6 +1192,7 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
+;; hashicorp config language
 (use-package hcl-mode :ensure t :demand t)
 
 (use-package
@@ -1082,31 +1244,26 @@ Otherwise split the current paragraph into one sentence per line."
    ("c" . compare-windows))
   :demand t)
 
-;;; ============================================================================
-;;; GIT OPERATIONS KEYMAP (C-c g)
-;;; ============================================================================
-
-(defvar tj-git-keymap (make-sparse-keymap)
-  "Keymap for git operations.")
-
 (use-package
   git-link
   :commands (git-link git-link-commit git-link-homepage)
-  :bind-keymap ("C-c g" . tj-git-keymap)
-  :bind (:map tj-git-keymap
-         ("s" . magit-status)
-         ("d" . magit-diff-buffer-file)
-         ("l" . git-link)
-         ("L" . git-link-commit)
-         ("h" . git-link-homepage)
-         ("b" . magit-blame)
-         ("c" . magit-clone)
-         ("i" . magit-init)
-         ("f" . magit-file-dispatch))
+  :bind ("C-x G" . git-link)
   :ensure t
   :demand t)
 
 (use-package git-modes :ensure t :demand t)
+
+(use-package
+  github-pullrequest
+  :commands (github-pullrequest-new github-pullrequest-checkout)
+  :ensure t
+  :demand t)
+
+(use-package
+  gitpatch
+  :commands gitpatch-mail
+  :ensure t
+  :demand t)
 
 (use-package
   flycheck
@@ -1127,54 +1284,37 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package flycheck-clj-kondo :ensure t :demand t)
 
-;;; ============================================================================
-;;; SEARCH OPERATIONS KEYMAP (C-c s)
-;;; ============================================================================
-
-(defvar tj-search-keymap (make-sparse-keymap)
-  "Keymap for search operations.")
+(use-package magit-diff-flycheck :ensure t :demand t)
 
 (use-package
   google-this
-  :bind-keymap ("C-c s" . tj-search-keymap)
-  :bind (:map tj-search-keymap
-         ("w" . google-this-search))
+  :bind ("C-c /" . google-this-search)
   :ensure t
   :demand t)
 
 (use-package
   goto-last-change
-  :bind (("C-x /" . goto-last-change-reverse))
+  :bind (("C-c ," . goto-last-change)  ; High-frequency navigation
+         ("C-x /" . goto-last-change-reverse))
   :ensure t
   :demand t)
 
 (use-package
   ialign
-  :bind (("C-c C-a" . ialign-interactive-align))
+  :bind ("C-x C-a" . ialign-interactive-align)
   :ensure t
   :demand t)
 
-;;; ============================================================================
-;;; NUMBER OPERATIONS KEYMAP (C-c n)
-;;; ============================================================================
-
-(defvar tj-number-keymap (make-sparse-keymap)
-  "Keymap for number operations.")
-
 (use-package
   operate-on-number
-  :bind-keymap ("C-c n" . tj-number-keymap)
-  :bind (:map tj-number-keymap
-         ("o" . operate-on-number-at-point)
-         ("h" . tj-hexadecimal-to-decimal-at-point))
+  :bind ("C-# C-#" . operate-on-number-at-point)
   :ensure t
   :demand t)
 
 (use-package
   shift-number
-  :bind (:map tj-number-keymap
-         ("-" . shift-number-down)
-         ("+" . shift-number-up))
+  :bind
+  (("C-# -" . shift-number-down) ("C-# +" . shift-number-up))
   :ensure t
   :demand t)
 
@@ -1216,8 +1356,9 @@ Otherwise split the current paragraph into one sentence per line."
 
   :config
 
-  (defun eglot-format-and-organize-imports ()
-    "Update the imports and format the file."
+    (defun eglot-format-and-organize-imports ()
+    "Update the imports and format the file, analogous to commands like Go's `goimports`
+but agnostic to language, mode, and server."
     (interactive)
     (let* ((actions (eglot-code-actions (point-min) (point-max) "source.organizeImports")))
       (when actions
@@ -1311,6 +1452,8 @@ Otherwise split the current paragraph into one sentence per line."
   :diminish
   :config (ws-butler-global-mode 1))
 
+;; (use-package winner :ensure t :demand t :diminish :config (winner-mode 1))
+
 (use-package
   eacl
   :config
@@ -1335,6 +1478,8 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
+(use-package web-beautify :ensure t :demand t)
+
 (use-package
   elisp-slime-nav
   :diminish
@@ -1348,6 +1493,7 @@ Otherwise split the current paragraph into one sentence per line."
   paren
   :diminish show-paren-mode
   :config
+  ;; (set-face-attribute 'show-paren-match nil :weight 'bold)
   (setq show-paren-style 'parenthesis)
   (setq show-paren-when-point-inside-paren t)
   (show-paren-mode 1)
@@ -1361,7 +1507,9 @@ Otherwise split the current paragraph into one sentence per line."
   (setq
    uniquify-buffer-name-style 'forward
    uniquify-separator "/"
+   ;; rename after killing uniquified
    uniquify-after-kill-buffer-p t
+   ;; don't muck with special buffers
    uniquify-ignore-buffers-re "^\\*")
   :demand t)
 
@@ -1372,10 +1520,12 @@ Otherwise split the current paragraph into one sentence per line."
   :config
   (defconst savefile-dir
     (expand-file-name "savefile" user-emacs-var-directory))
+  ;; create the savefile dir if it doesn't exist
   (unless (file-exists-p savefile-dir)
     (make-directory savefile-dir))
   (setq save-place-file
         (expand-file-name "saveplace" savefile-dir))
+  ;; activate it for all buffers
   (setq-default save-place t)
   :demand t)
 
@@ -1383,7 +1533,6 @@ Otherwise split the current paragraph into one sentence per line."
   hideshow
   :ensure nil
   :hook (prog-mode . hs-minor-mode)
-  :diminish hs-minor-mode
   :demand t)
 
 (use-package
@@ -1394,6 +1543,8 @@ Otherwise split the current paragraph into one sentence per line."
    recentf-save-file (expand-file-name "recentf" savefile-dir)
    recentf-max-saved-items 500
    recentf-max-menu-items 15
+   ;; disable recentf-cleanup on Emacs start, because it can cause
+   ;; problems with remote files
    recentf-auto-cleanup 'never)
   (recentf-mode 1)
   :bind (("C-x C-r" . recentf-open-files))
@@ -1403,6 +1554,7 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
   windmove
   :config
+  ;; use shift + arrow keys to switch between visible buffers
   (windmove-default-keybindings)
   :ensure nil
   :demand t)
@@ -1425,24 +1577,10 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
-;;; ============================================================================
-;;; FILE OPERATIONS KEYMAP (C-c f)
-;;; ============================================================================
-
-(defvar tj-file-keymap (make-sparse-keymap)
-  "Keymap for file operations.")
-
 (use-package
   dired
   :ensure nil
   :bind (("C-x d" . dired))
-  :bind-keymap ("C-c f" . tj-file-keymap)
-  :bind (:map tj-file-keymap
-         ("f" . find-file-at-point)
-         ("d" . dired)
-         ("j" . dired-jump)
-         ("R" . recentf-open-files)
-         ("c" . tj-copy-file-name-as-kill))
   :bind
   (:map
    dired-mode-map
@@ -1451,7 +1589,8 @@ Otherwise split the current paragraph into one sentence per line."
    ("l" . dired-up-directory)
    ("Y" . ora-dired-rsync)
    ("<tab>" . tj-dired-switch-window)
-   ("M-!" . async-shell-command))
+   ("M-!" . async-shell-command)
+   ("M-G"))
   :preface
   (defvar mark-files-cache (make-hash-table :test #'equal))
   (defun mark-similar-versions (name)
@@ -1480,7 +1619,9 @@ Otherwise split the current paragraph into one sentence per line."
     (dired-other-window second-dir))
   (defun tj-dired-switch-window ()
     (interactive)
-    (call-interactively #'other-window))
+    (if (eq major-mode 'sr-mode)
+        (call-interactively #'sr-change-window)
+      (call-interactively #'other-window)))
   (defun ora-dired-rsync (dest)
     (interactive (list
                   (expand-file-name
@@ -1539,10 +1680,18 @@ Otherwise split the current paragraph into one sentence per line."
    (vector 'remap 'end-of-buffer)
    'dired-jump-to-bottom)
 
+  ;; dired - reuse current buffer by pressing 'a'
   (put 'dired-find-alternate-file 'disabled nil)
+
+  ;; always delete and copy recursively
   (setq dired-recursive-deletes 'always)
   (setq dired-recursive-copies 'always)
+
+  ;; if there is a dired buffer displayed in the next window, use its
+  ;; current subdir, instead of the current subdir of this dired buffer
   (setq dired-dwim-target t)
+
+  ;; enable some really cool extensions like C-x C-j (dired-jump)
   (require 'dired-x)
 
   (defadvice dired-omit-startup
@@ -1568,6 +1717,57 @@ Otherwise split the current paragraph into one sentence per line."
       (setq ad-return-value (dired-move-to-filename)))
     (when (bobp)
       (call-interactively 'dired-next-line)))
+  (defvar dired-omit-regexp-orig
+    (symbol-function 'dired-omit-regexp))
+
+  ;; Omit files that Git would ignore
+  (defun dired-omit-regexp ()
+    (let ((file (expand-file-name ".git"))
+          parent-dir)
+      (while (and (not (file-exists-p file))
+                  (progn
+                    (setq parent-dir
+                          (file-name-directory
+                           (directory-file-name
+                            (file-name-directory file))))
+                    ;; Give up if we are already at the root dir.
+                    (not
+                     (string=
+                      (file-name-directory file) parent-dir))))
+        ;; Move up to the parent dir and try again.
+        (setq file (expand-file-name ".git" parent-dir)))
+      ;; If we found a change log in a parent, use that.
+      (if (file-exists-p file)
+          (let ((regexp (funcall dired-omit-regexp-orig))
+                (omitted-files
+                 (shell-command-to-string "git clean -d -x -n")))
+            (if (= 0 (length omitted-files))
+                regexp
+              (concat
+               regexp
+               (if (> (length regexp) 0)
+                   "\\|"
+                 "")
+               "\\("
+               (mapconcat #'(lambda (str)
+                              (concat
+                               "^"
+                               (regexp-quote
+                                (substring str
+                                           13
+                                           (if (= ?/
+                                                  (aref
+                                                   str
+                                                   (1- (length
+                                                        str))))
+                                               (1- (length str))
+                                             nil)))
+                               "$"))
+                          (split-string omitted-files "\n" t)
+                          "\\|")
+               "\\)")))
+        (funcall dired-omit-regexp-orig))))
+
   :demand t)
 
 (use-package
@@ -1575,6 +1775,8 @@ Otherwise split the current paragraph into one sentence per line."
   :bind (:map dired-mode-map ("/" . dired-narrow))
   :ensure t
   :demand t)
+
+(use-package package-lint :ensure t :demand t)
 
 (use-package
   dired-ranger
@@ -1600,6 +1802,7 @@ Otherwise split the current paragraph into one sentence per line."
   visual-replace
   :ensure t
   :demand t
+  :bind ("C-c x" . visual-replace)  ; High-frequency replace
   :config (visual-replace-global-mode 1))
 
 (use-package
@@ -1617,9 +1820,12 @@ Otherwise split the current paragraph into one sentence per line."
   (global-set-key (kbd "C-M-@") 'easy-mark-sexp)
   (global-set-key [remap zap-to-char] 'easy-mark-to-char)
 
+  ;; Integrate `expand-region' functionality with easy-kill
   (define-key easy-kill-base-map (kbd "o") 'easy-kill-er-expand)
   (define-key easy-kill-base-map (kbd "i") 'easy-kill-er-unexpand)
 
+  ;; Add the following tuples to `easy-kill-alist', preferrably by
+  ;; using `customize-variable'.
   (add-to-list 'easy-kill-alist '(?^ backward-line-edge ""))
   (add-to-list 'easy-kill-alist '(?$ forward-line-edge ""))
   (add-to-list 'easy-kill-alist '(?b buffer ""))
@@ -1640,9 +1846,15 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
+(use-package kubedoc :ensure t :demand t)
+
 (use-package
   move-text
   :bind (("M-P" . move-text-up) ("M-N" . move-text-down))
+  :ensure t
+  :demand t)
+
+(use-package htmlize
   :ensure t
   :demand t)
 
@@ -1683,10 +1895,6 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package yaml-pro :ensure t :demand t)
 
-;;; ============================================================================
-;;; ORG MODE CONFIGURATION
-;;; ============================================================================
-
 (use-package
   org
   :ensure nil
@@ -1718,9 +1926,14 @@ Otherwise split the current paragraph into one sentence per line."
   (org-directory (expand-file-name "~/"))
   (org-default-notes-file (expand-file-name "~/notes.org"))
   (org-agenda-files '("~/"))
+
+  ;; activate single letter commands at beginning of a headline.
   (org-use-speed-commands t)
+
   (org-treat-S-cursor-todo-selection-as-state-change nil)
+  ;; use fast todo selection with C-c C-t
   (org-use-fast-todo-selection t)
+
   (org-refile-targets
    (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
   (org-refile-use-outline-path t)
@@ -1775,16 +1988,18 @@ Otherwise split the current paragraph into one sentence per line."
       "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))))
   :bind
   (:map org-mode-map
-        ("M-{" . backward-paragraph)
-        ("M-}" . forward-paragraph))
+  ("M-{" . backward-paragraph)
+  ("M-}" . forward-paragraph))
   :bind
   (("C-x C-g c" . org-capture)
    ("C-x C-g t" . org-todo-list)
-   ("C-x C-g m" . org-tags-view))
+   ("C-x C-g m" . orgs-tagsview))
   :config
   (org-indent-mode -1)
   (org-clock-persistence-insinuate)
   (defun org-journal-find-location ()
+    ;; Open today's journal, but specify a non-nil prefix argument in order to
+    ;; inhibit inserting the heading; org-capture will insert the heading.
     (org-journal-new-entry t)
     (unless (eq org-journal-file-type 'daily)
       (org-narrow-to-subtree))
@@ -1825,6 +2040,8 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
+(use-package org-web-tools :demand t :ensure t)
+
 (use-package
   alert
   :commands (alert)
@@ -1846,12 +2063,16 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
-;;; ============================================================================
-;;; MULTIPLE CURSORS KEYMAP (C-c m)
-;;; ============================================================================
-
-(defvar tj-mc-keymap (make-sparse-keymap)
-  "Keymap for multiple-cursors operations.")
+(use-package
+  ace-mc
+  :after multiple-cursors
+  :bind
+  (:map
+   tj-mc-keymap
+   ("h" . ace-mc-add-multiple-cursors)
+   ("M-h" . ace-mc-add-single-cursor))
+  :ensure t
+  :demand t)
 
 (use-package
   multiple-cursors
@@ -1861,39 +2082,23 @@ Otherwise split the current paragraph into one sentence per line."
     (interactive)
     (activate-mark))
   :config (add-to-list 'mc/cursor-specific-vars 'iy-go-to-char-start-pos)
-  :bind-keymap ("C-c m" . tj-mc-keymap)
+  :init (defvar tj-mc-keymap (make-sparse-keymap))
+  :bind-keymap ("C-;" . tj-mc-keymap)
   :bind
   (:map
+   ;; C-;
    tj-mc-keymap
-   ("m" . mc/edit-lines)
-   ("l" . mc/edit-lines)
+   ("C-;" . mc/edit-lines)
+   ("C-e" . mc/edit-ends-of-lines)
+   ("C-a" . mc/edit-beginnings-of-lines)
    ("a" . mc/mark-all-dwim)
-   ("A" . mc/mark-all-like-this)
-   ("w" . mc/mark-next-like-this-word)
-   ("W" . mc/mark-previous-like-this-word)
-   ("s" . mc/mark-next-like-this-symbol)
-   ("S" . mc/mark-previous-like-this-symbol)
+   ("C-x" . reactivate-mark)
+   ("C-SPC" . mc/mark-pop)
    ("f" . mc/mark-next-like-this)
    ("b" . mc/mark-previous-like-this)
-   ("n" . mc/mark-next-like-this)
-   ("p" . mc/mark-previous-like-this)
-   ("C-f" . mc/skip-to-next-like-this)
-   ("C-b" . mc/skip-to-previous-like-this)
-   ("%" . mc/insert-numbers)
-   ("e" . mc/edit-ends-of-lines)
-   ("C-SPC" . mc/mark-pop)
-   ("C-x" . reactivate-mark))
-  :ensure t
-  :demand t)
-
-(use-package
-  ace-mc
-  :after multiple-cursors
-  :bind
-  (:map
-   tj-mc-keymap
-   ("h" . ace-mc-add-multiple-cursors)
-   ("M-h" . ace-mc-add-single-cursor))
+   ("n" . mc/mark-next-like-this-word)
+   ;; Extra multiple cursors stuff
+   ("%" . mc/insert-numbers))
   :ensure t
   :demand t)
 
@@ -1915,18 +2120,22 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   phi-search
-  :after multiple-cursors
+  :after multiple-cusors
   :bind
   (:map
    mc/keymap ("C-r" . phi-search-backward) ("C-s" . phi-search))
   :ensure t
   :demand t)
 
+(use-package journalctl-mode :ensure t :demand t)
+
+(use-package ace-jump-mode :demand t :ensure t)
+
 (use-package
   browse-url
   :custom
   (browse-url-browser-function 'browse-url-xdg-open)
-  :bind (("C-c u" . browse-url-at-point))
+  :bind ("C-c u" . browse-url-at-point)  ; High-frequency URL opening
   :ensure nil
   :demand t)
 
@@ -1969,10 +2178,6 @@ Otherwise split the current paragraph into one sentence per line."
   :bind
   (:map eshell-hist-mode-map ("M-r" . consult-history)))
 
-;;; ============================================================================
-;;; THEME AND APPEARANCE
-;;; ============================================================================
-
 (use-package
   modus-themes
   :demand t
@@ -2004,40 +2209,37 @@ Otherwise split the current paragraph into one sentence per line."
    (or (fontaine-restore-latest-preset) 'regular))
   (fontaine-mode 1))
 
-;;; ============================================================================
-;;; WINDOW MANAGEMENT KEYMAP (C-c w)
-;;; ============================================================================
-
-(defvar tj-window-keymap (make-sparse-keymap)
-  "Keymap for window operations.")
-
 (use-package
   crux
   :custom (user-init-file (concat user-emacs-directory "init.el"))
-  :bind-keymap ("C-c w" . tj-window-keymap)
-  :bind (:map tj-window-keymap
-         ("w" . ace-window)
-         ("s" . crux-swap-windows)
-         ("t" . tj-window-split-toggle)
-         ("k" . tj-kill-other-buffer)
-         ("K" . tj-kill-other-buffers)
-         ("=" . balance-windows)
-         ("m" . delete-other-windows)
-         ("d" . delete-window)
-         ("h" . windmove-left)
-         ("j" . windmove-down)
-         ("k" . windmove-up)
-         ("l" . windmove-right)
-         ("o" . other-window))
   :bind
-  (("C-c H" . crux-cleanup-buffer-or-region)
+  (;; Terminal-safe primary bindings (work everywhere)
+   ("C-o" . crux-smart-open-line)
+   ("M-o" . crux-smart-open-line-above)
+   ("M-k" . crux-kill-line-backwards)
+
+   ;; Crux utilities (reorganized to avoid conflicts)
+   ("C-c C-d" . crux-duplicate-current-line-or-region)  ; was C-c d
+   ("C-c H" . crux-cleanup-buffer-or-region)
    ("C-M-z" . crux-indent-defun)
+   ("C-c D" . crux-delete-file-and-buffer)
+   ("C-c R" . crux-rename-buffer-and-file)  ; was C-c r (org-roam uses it)
+   ("C-c TAB" . crux-indent-rigidly-and-copy-to-clipboard)
+   ("C-c I" . (lambda () (interactive) (find-file user-init-file)))
+   ("C-c S" . crux-find-shell-init-file)
+   ("C-c C-s" . crux-ispell-word-then-abbrev)  ; was C-c s
+   ("C-S-j" . crux-top-join-line)
+   ("C-^" . crux-top-join-line)
    ("C-k" . kill-line)
+
+   ;; GUI-only bindings (kept for convenience when available)
+   ("C-<backspace>" . crux-kill-line-backwards)
+   ([(shift return)] . crux-smart-open-line)
+   ([(control shift return)] . crux-smart-open-line-above)
+
+   ;; Remaps
    ([remap move-beginning-of-line] . crux-move-beginning-of-line)
-   ([remap kill-whole-line] . crux-kill-whole-line)
-   ("C-c C-s" . crux-ispell-word-then-abbrev)
-   ("C-c i" . (lambda () (interactive) (find-file user-init-file)))
-   ("C-c C-S" . crux-find-shell-init-file))
+   ([remap kill-whole-line] . crux-kill-whole-line))
   :ensure t
   :demand t)
 
@@ -2053,75 +2255,58 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
   which-key
   :diminish which-key-mode
-  :config 
+  :config
   (which-key-mode 1)
-  
+
+  ;; Add descriptions for custom keymaps
   (which-key-add-key-based-replacements
-    "C-c s" "search"
-    "C-c t" "text-ops"
-    "C-c f" "file-ops"
-    "C-c g" "git"
-    "C-c w" "window"
-    "C-c l" "lsp"
-    "C-c n" "number"
-    "C-c q" "quick"
-    "C-c m" "multi-cursor"
-    "C-c p" "cape"
+    ;; High-frequency single-letter
+    "C-c j" "jump"
+    "C-c ," "goto-last-change"
+    "C-c ." "goto-last-point"
+    "C-c =" "align"
+    "C-c u" "browse-url"
+    "C-c c" "comment"
+    "C-c x" "visual-replace"
+
+    ;; Organized keymaps
+    "C-c b" "buffer"
+    "C-c d" "diff/ediff"
+    "C-c o" "org-mode"
     "C-c r" "org-roam"
-    "C-x p" "projectile"
-    "M-#" "registers"
-    "C-c d" "dict"
-    "C-c C-k" "kubernetes")
-  
-  (which-key-add-key-based-replacements
-    "C-c g l" "link"
-    "C-c w s" "swap"
-    "C-c w t" "toggle-split")
+    "C-c t" "text-transform"
+
+    ;; Other prefixes
+    "C-c f" "find-file-at-point"
+    "C-c q" "kill-other-buffer")
   :ensure t
   :demand t)
 
 (use-package
   goto-chg
   :bind
-  (("C-x ." . goto-last-change))
+  (("C-x ." . goto-last-change)
+   ("C-x /" . goto-last-change-reverse))
+  :ensure t
+  :demand t)
+
+(use-package
+  color-moccur
+  :bind (("C-c o" . occur) ("C-c O" . moccur))
   :ensure t
   :demand t)
 
 (use-package
   ace-window
   :diminish
+  :bind* ("<C-M-return>" . ace-window)
   :config
   (ace-window-display-mode 1)
   :ensure t
   :demand t)
 
-;;; ============================================================================
-;;; TEXT OPERATIONS KEYMAP (C-c t)
-;;; ============================================================================
-
-(defvar tj-text-keymap (make-sparse-keymap)
-  "Keymap for text operations.")
-
 (use-package
   minibuffer
-  :bind-keymap ("C-c t" . tj-text-keymap)
-  :bind (:map tj-text-keymap
-         ("e" . er/expand-region)
-         ("c" . change-inner)
-         ("C" . change-outer)
-         ("q" . toggle-quotes)
-         ("s" . string-inflection-all-cycle)
-         ("u" . unfill-paragraph)
-         ("f" . fill-paragraph)
-         ("w" . tj-wrap-with-tags)
-         ("a" . tj-arrayify)
-         ("m" . tj-multi-line-to-one-line)
-         ("o" . tj-convert-commas-to-new-lines)
-         ("p" . tj-fill-paragraph)
-         ("S" . tj-spongebob)
-         ("l" . tj-copy-line-as-kill)
-         ("r" . vr/query-replace)
-         ("d" . crux-duplicate-current-line-or-region))
   :bind
   (:map
    completion-in-region-mode-map
@@ -2170,6 +2355,7 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
+;; temporarily highlight changes from yanking, etc
 (use-package
   volatile-highlights
   :diminish volatile-highlights-mode
@@ -2208,7 +2394,9 @@ Otherwise split the current paragraph into one sentence per line."
              (while-let ((char (nth i input))
                          (inc-and-char
                           (if (= char #x83)
+                              ;; Skip meta character and unmetafy.
                               `(2 . ,(logxor (nth (1+ i) input) 32))
+                            ;; Advance as usual.
                             `(1 . ,char))))
                (cl-incf i (car inc-and-char))
                (setq output (cons (cdr inc-and-char) output)))
@@ -2273,12 +2461,11 @@ Otherwise split the current paragraph into one sentence per line."
   :custom
   (ctrlf-default-search-style 'regexp)
   (ctrlf-alternate-search-style 'fuzzy)
-  (ctrlf-go-to-end-of-match nil) 
-  :config (ctrlf-mode 1))
+  (ctrlf-go-to-end-of-match nil) :config (ctrlf-mode 1))
 
 (use-package
   visual-regexp
-  :bind (:map tj-text-keymap ("r" . vr/query-replace))
+  :bind ("M-&" . vr/query-replace)
   :ensure t
   :demand t)
 
@@ -2353,8 +2540,14 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t)
 
 (use-package
+  multifiles
+  :bind ("C-!" . mf/mirror-region-in-multifile)
+  :ensure t
+  :demand t)
+
+(use-package
   toggle-quotes
-  :bind (("C-\"" . toggle-quotes))
+  :bind ("C-\"" . toggle-quotes)
   :ensure t
   :demand t)
 
@@ -2382,11 +2575,21 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t)
 
 (use-package
+  resmacro
+  :ensure nil
+  :bind (("C-x (" . resmacro-start-macro))
+  :demand t)
+
+(use-package
   paredit
   :ensure t
   :demand t
   :diminish
   :hook ((emacs-lisp-mode . paredit-mode)))
+
+(use-package wordswitch :ensure nil :demand t)
+
+(use-package titlecase :ensure nil :demand t)
 
 (use-package
   unfill
@@ -2405,15 +2608,19 @@ Otherwise split the current paragraph into one sentence per line."
   :config
   (setq dot-mode-global-mode t)
   (dot-mode 1)
-  :bind (("C-c ." . dot-mode-execute))
+  :bind (("C-." . dot-mode-execute))
   :ensure t
   :demand t)
 
 (use-package
   iedit
-  :bind ("C-c e" . iedit-mode)
+  :init (setq iedit-toggle-key-default (kbd "C-:"))
   :ensure t
   :demand t)
+
+(use-package frog-jump-buffer :ensure t :demand t)
+
+(use-package github-review :ensure t :demand t)
 
 (use-package
   orderless
@@ -2424,69 +2631,92 @@ Otherwise split the current paragraph into one sentence per line."
   (completion-category-defaults nil)
   (completion-category-overrride nil))
 
-;;; ============================================================================
-;;; CONSULT AND COMPLETION (including search keymap integration)
-;;; ============================================================================
-
 (use-package
   consult
   :ensure t
   :demand t
-  :bind (:map tj-search-keymap
-         ("s" . consult-line)
-         ("o" . occur)
-         ("p" . projectile-ripgrep)
-         ("r" . ripgrep-regexp)
-         ("g" . consult-ripgrep)
-         ("i" . consult-imenu)
-         ("I" . consult-imenu-multi)
-         ("l" . consult-line-multi))
+  ;; Replace bindings. Lazily loaded by `use-package'.
   :bind
-  (("C-c k" . consult-kmacro)
-   ("C-c C-i" . consult-info)
+  (
+   ;; C-c bindings in `mode-specific-map'
+   ("C-c k" . consult-kmacro)
+   ("C-c i" . consult-info)
+
    ([remap Info-search] . consult-info)
+
+   ;; C-x bindings in `ctl-x-map'
    ("C-x C-l" . consult-line)
-   ("C-c a" . consult-ripgrep)
-   ("C-x M-:" . consult-complex-command)
-   ("C-x b" . consult-buffer)
-   ("C-x 4 b" . consult-buffer-other-window)
-   ("C-x 5 b" . consult-buffer-other-frame)
-   ("C-x r b" . consult-bookmark)
-   ("C-x p b" . consult-project-buffer)
+   ("C-c a" . ripgrep-regexp)
+   ("C-x M-:" . consult-complex-command) ;; orig. repeat-complex-command
+   ("C-x b" . consult-buffer) ;; orig. switch-to-buffer
+   ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+   ("C-x 5 b" . consult-buffer-other-frame) ;; orig. switch-to-buffer-other-frame
+   ("C-x r b" . consult-bookmark) ;; orig. bookmark-jump
+   ("C-x p b" . consult-project-buffer) ;; orig. project-switch-to-buffer
+   ;; Custom M-# bindings for fast register access
    ("M-#" . consult-register-load)
-   ("M-'" . consult-register-store)
+   ("M-'" . consult-register-store) ;; orig. abbrev-prefix-mark (unrelated)
    ("C-M-#" . consult-register)
-   ("M-y" . consult-yank-pop)
+
+   ;; Other custom bindings
+   ("M-y" . consult-yank-pop) ;; orig. yank-pop
+
+   ;; M-g bindings in `goto-map'
    ("M-g e" . consult-compile-error)
-   ("M-g f" . consult-flymake)
-   ("M-g g" . consult-goto-line)
-   ("M-g M-g" . consult-goto-line)
-   ("M-g o" . consult-outline)
+   ("M-g f" . consult-flymake) ;; Alternative: consult-flycheck
+   ("M-g g" . consult-goto-line) ;; orig. goto-line
+   ("M-g M-g" . consult-goto-line) ;; orig. goto-line
+   ("M-g o" . consult-outline) ;; Alternative: consult-org-heading
    ("M-g m" . consult-mark)
    ("M-g k" . consult-global-mark)
    ("M-g i" . consult-imenu)
    ("M-g I" . consult-imenu-multi)
-   :map isearch-mode-map
-   ("M-e" . consult-isearch-history)
-   :map minibuffer-local-map
-   ("M-r" . consult-history))
 
+   :map
+   isearch-mode-map
+   ("M-e" . consult-isearch-history) ;;  isearch-edit-string
+
+   ;; Minibuffer history
+   :map
+   minibuffer-local-map
+   ("M-r" . consult-history)) ;; orig. previous-matching-history-element
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
   :hook (completion-list-mode . consult-preview-at-point-mode)
 
+  ;; The :init configuration is always executed (Not lazy)
   :init
+
+  ;; Optionally configure the register formatting. This improves the register
+  ;; preview for `consult-register', `consult-register-load',
+  ;; `consult-register-store' and the Emacs built-ins.
   (setq
    register-preview-delay 0.5
    register-preview-function #'consult-register-format)
 
+  ;; Optionally tweak the register preview window.
+  ;; This adds thin lines, sorting and hides the mode line of the window.
   (advice-add
    #'register-preview
    :override #'consult-register-window)
 
+  ;; Use Consult to select xref locations with preview
   (setq
    xref-show-xrefs-function #'consult-xref
    xref-show-definitions-function #'consult-xref)
 
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
   :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key "M-.")
+  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
    consult-theme
    :preview-key
@@ -2501,21 +2731,44 @@ Otherwise split the current paragraph into one sentence per line."
    consult--source-file-register
    consult--source-recent-file
    consult--source-project-recent-file
+   ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
 
-  (setq consult-narrow-key "<"))
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; "C-+"
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+  )
 
 (global-set-key (kbd "M-f") 'forward-to-word)
 
+;; Add extensions
 (use-package
   cape
   :ensure t
   :demand t
-  :bind ("C-c p" . cape-prefix-map)
+  ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
+  ;; Press C-c p ? to for help.
+  :bind ("C-c p" . cape-prefix-map) ;; Alternative keys: M-p, M-+, ...
+  ;; Alternatively bind Cape commands individually.
+  ;; :bind (("C-c p d" . cape-dabbrev)
+  ;;        ("C-c p h" . cape-history)
+  ;;        ("C-c p f" . cape-file)
+  ;;        ...)
   :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block))
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-hook 'completion-at-point-functions #'cape-history)
+  ;; ...
+  )
 
 (use-package
   vertico
@@ -2535,14 +2788,14 @@ Otherwise split the current paragraph into one sentence per line."
   :bind
   (:map
    vertico-map
-   ("C-k" . kill-line)
-   ("M-K" . kill-whole-line)
+   ("C-k" . kill-whole-line)
    ("C-o" . vertico-next-group)
    ("<tab>" . minibuffer-complete)
    ("M-<return>" . vertico-exit-input))
   :ensure t
   :demand t)
 
+;; save search history
 (use-package
   savehist
   :init (savehist-mode 1)
@@ -2553,7 +2806,7 @@ Otherwise split the current paragraph into one sentence per line."
   tiny
   :demand t
   :ensure t
-  :bind (("C-c x" . tiny-expand)))
+  :bind (("C-x t" . tiny-expand)))
 
 (use-package
   rust-mode
@@ -2567,6 +2820,19 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
+(use-package
+  flycheck-vale
+  :config (flycheck-vale-setup)
+  :ensure t
+  :demand t)
+
+(use-package
+  proced-narrow
+  :after proced
+  :bind (:map proced-mode-map ("/" . proced-narrow))
+  :ensure t
+  :demand t)
+
 (use-package go-mod :ensure nil :demand t)
 
 (use-package
@@ -2575,13 +2841,6 @@ Otherwise split the current paragraph into one sentence per line."
   :after projectile
   :config (shim-init-go)
   :demand t)
-
-;;; ============================================================================
-;;; LSP/EGLOT KEYMAP (C-c l)
-;;; ============================================================================
-
-(defvar tj-lsp-keymap (make-sparse-keymap)
-  "Keymap for LSP operations.")
 
 (use-package
   eglot
@@ -2598,24 +2857,10 @@ Otherwise split the current paragraph into one sentence per line."
     (eglot-code-actions nil nil "source.organizeImports" t))
   (add-hook 'before-save-hook 'tj-eglot-organize-imports nil t)
   (add-hook 'before-save-hook 'eglot-format-buffer)
-  :bind-keymap ("C-c l" . tj-lsp-keymap)
-  :bind (:map tj-lsp-keymap
-         ("r" . eglot-rename)
-         ("a" . eglot-code-actions)
-         ("f" . eglot-format)
-         ("F" . eglot-format-buffer)
-         ("o" . tj-eglot-organize-imports)
-         ("d" . xref-find-definitions)
-         ("D" . xref-find-references)
-         ("h" . eldoc)
-         ("i" . eglot-find-implementation)
-         ("t" . eglot-find-typeDefinition)
-         ("s" . eglot-shutdown)
-         ("S" . eglot-shutdown-all)
-         ("=" . eglot-code-action-organize-imports))
-  :bind (("C-c r" . eglot-rename))
+  :bind (("C-c C-r" . eglot-rename))
   :hook
   (go-mode . eglot-ensure)
+  (java-mode . eglot-ensure)
   (rust-mode . eglot-ensure)
   :ensure t
   :demand t)
@@ -2634,6 +2879,12 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t)
 
 (use-package
+  hideshow
+  :ensure nil
+  :diminish hs-minor-mode
+  :demand t)
+
+(use-package
   kubernetes
   :commands (kubernetes-overview)
   :bind
@@ -2645,10 +2896,6 @@ Otherwise split the current paragraph into one sentence per line."
    kubernetes-redraw-frequency 5)
   :ensure t
   :demand t)
-
-;;; ============================================================================
-;;; PROJECTILE CONFIGURATION
-;;; ============================================================================
 
 (use-package
   projectile
@@ -2695,34 +2942,13 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   delsel
-  :ensure nil
+  :ensure nil ; no need to install it as it is built-in
   :hook (after-init . delete-selection-mode))
-
-;;; ============================================================================
-;;; QUICK ACCESS KEYMAP (C-c q)
-;;; ============================================================================
-
-(defvar tj-quick-keymap (make-sparse-keymap)
-  "Keymap for quick access to common operations.")
 
 (use-package eat
   :demand t
   :ensure t
-  :bind-keymap ("C-c q" . tj-quick-keymap)
-  :bind (("C-c $" . eat)
-         :map tj-quick-keymap
-         ("m" . magit-status)
-         ("p" . projectile-switch-project)
-         ("b" . consult-buffer)
-         ("f" . projectile-find-file)
-         ("s" . consult-ripgrep)
-         ("e" . eshell)
-         ("t" . eat)
-         ("v" . vterm)
-         ("k" . kubernetes-overview)
-         ("c" . claude-code-ide-menu)
-         ("g" . google-this-search)
-         ("r" . consult-recent-file)))
+  :bind (("C-c $" . eat)))
 
 (use-package claude-code-ide
   :demand t
@@ -2752,6 +2978,8 @@ Otherwise split the current paragraph into one sentence per line."
   :diminish
   :config (elmacro-mode 1))
 
+(use-package typit :ensure t :demand t)
+
 (use-package visual-fill-column
   :ensure t
   :demand t
@@ -2766,10 +2994,6 @@ Otherwise split the current paragraph into one sentence per line."
         '(:internal-border-width 15
                                  :right-fringe-width 15))
   (spacious-padding-mode 1))
-
-;;; ============================================================================
-;;; FINAL SETUP
-;;; ============================================================================
 
 (defun tj-raise-frame-and-give-focus ()
   (when window-system
@@ -2791,4 +3015,128 @@ Otherwise split the current paragraph into one sentence per line."
 (put 'narrow-to-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-;;; init.el ends here
+;;; ============================================================================
+;;; KEYBINDING REFERENCE (Terminal-Safe Configuration)
+;;; ============================================================================
+
+;; This configuration prioritizes FREQUENCY OF USE over mnemonics.
+;; Most-used operations remain short (1-2 keys), while specialized
+;; operations are organized into discoverable keymaps.
+;;
+;; ALL PRIMARY BINDINGS WORK IN TERMINAL AND GUI
+;;
+;; ============================================================================
+;; TIER 1: HIGH-FREQUENCY (1-2 keystrokes)
+;; ============================================================================
+;;
+;; Core Editing (constant use)
+;; ----------------------------
+;; M-;         comment-line
+;; C-k         kill-line
+;; M-k         kill-line-backwards (TERMINAL-SAFE!)
+;; C-o         smart-open-line (TERMINAL-SAFE!)
+;; M-o         smart-open-line-above (TERMINAL-SAFE!)
+;; M-=         expand-region
+;; M-/         hippie-expand
+;; M-y         browse-kill-ring
+;; M-p/M-n     highlight-symbol prev/next
+;; C-g         keyboard-quit (dwim)
+;;
+;; ============================================================================
+;; TIER 2: QUICK ACCESS (C-c + single letter)
+;; ============================================================================
+;;
+;; Navigation (very common)
+;; ------------------------
+;; C-c j       avy-goto-char-timer (jump anywhere)
+;; C-c ,       goto-last-change
+;; C-c .       goto-last-point
+;;
+;; Quick Operations (common)
+;; --------------------------
+;; C-c =       align-regexp
+;; C-c u       browse-url-at-point
+;; C-c c       comment-line (backup for M-;)
+;; C-c x       visual-replace
+;; C-c f       find-file-at-point
+;; C-c q       kill-other-buffer
+;;
+;; ============================================================================
+;; TIER 3: ORGANIZED KEYMAPS (C-c + letter + letter)
+;; ============================================================================
+;;
+;; Buffer Operations (C-c b X)
+;; ----------------------------
+;; C-c b b     bufler (buffer list)
+;; C-c b l     browse-kill-ring
+;; C-c b k     kill-other-buffers
+;; C-c b r     revert-all-buffers
+;;
+;; Diff/Ediff Operations (C-c d X)
+;; --------------------------------
+;; C-c d b     ediff-buffers
+;; C-c d f     ediff-files
+;; C-c d r     ediff-revision
+;; C-c d l     ediff-regions-linewise
+;; C-c d w     ediff-regions-wordwise
+;; C-c d c     compare-windows
+;;
+;; Org-mode Operations (C-c o X)
+;; ------------------------------
+;; C-c o c     org-capture
+;; C-c o t     org-todo-list
+;; C-c o m     org-tags-view
+;; C-c o a     org-agenda
+;;
+;; Org-roam Operations (C-c r X)
+;; ------------------------------
+;; C-c r g     org-roam-graph
+;; C-c r i     org-roam-node-insert
+;; C-c r f     org-roam-node-find
+;; C-c r c     org-roam-capture
+;;
+;; Text Transformations (C-c t X) - Low frequency
+;; -----------------------------------------------
+;; C-c t s     spongebob
+;; C-c t m     multi-line-to-one-line
+;; C-c t c     convert-commas-to-newlines
+;; C-c t w     wrap-with-tags
+;; C-c t f     fill-paragraph
+;; C-c t a     arrayify
+;; C-c t t     toggle-fold
+;;
+;; Crux Utilities (reorganized to avoid conflicts)
+;; ------------------------------------------------
+;; C-c C-d     crux-duplicate-current-line-or-region
+;; C-c H       crux-cleanup-buffer-or-region
+;; C-M-z       crux-indent-defun
+;; C-c D       crux-delete-file-and-buffer
+;; C-c R       crux-rename-buffer-and-file
+;; C-c C-s     crux-ispell-word-then-abbrev
+;; C-c I       open init.el
+;; C-c S       crux-find-shell-init-file
+;;
+;; ============================================================================
+;; TERMINAL COMPATIBILITY NOTES
+;; ============================================================================
+;;
+;; Primary bindings (C-o, M-o, M-k, C-c X) work in ALL environments.
+;;
+;; GUI-only bindings (kept for convenience):
+;; - C-<backspace>    → crux-kill-line-backwards
+;; - Shift-Return     → crux-smart-open-line
+;; - C-Shift-Return   → crux-smart-open-line-above
+;;
+;; Test terminal compatibility with:
+;; - C-c h t (tj-test-terminal-compatibility)
+;; - C-c h k (tj-test-terminal-keys)
+;;
+;; ============================================================================
+;; DISCOVERABILITY
+;; ============================================================================
+;;
+;; Press C-c and wait → which-key shows all available options
+;; Press C-c b and wait → see all buffer operations
+;; Press C-c d and wait → see all diff/ediff operations
+;; etc.
+;;
