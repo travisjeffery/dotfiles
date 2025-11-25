@@ -2036,7 +2036,7 @@ Otherwise split the current paragraph into one sentence per line."
    ([remap move-beginning-of-line] . crux-move-beginning-of-line)
    ([remap kill-whole-line] . crux-kill-whole-line)
    ("C-c C-s" . crux-ispell-word-then-abbrev)
-   ("C-c C-i" . (lambda () (interactive) (find-file user-init-file)))
+   ("C-c i" . (lambda () (interactive) (find-file user-init-file)))
    ("C-c C-S" . crux-find-shell-init-file))
   :ensure t
   :demand t)
@@ -2411,7 +2411,7 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   iedit
-  :bind ("C-c i" . iedit-mode)
+  :bind ("C-c e" . iedit-mode)
   :ensure t
   :demand t)
 
