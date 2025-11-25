@@ -868,7 +868,74 @@ Otherwise split the current paragraph into one sentence per line."
   :config
   (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
 
+;;; ============================================================================
+;;; GPTEL - LLM Integration (Claude & Gemini)
+;;; ============================================================================
+;;
+;; API KEY SETUP:
+;; Add to ~/.authinfo.gpg or ~/.authinfo:
+;;
+;;   machine api.anthropic.com login apikey password YOUR_ANTHROPIC_API_KEY
+;;   machine generativelanguage.googleapis.com login apikey password YOUR_GOOGLE_API_KEY
+;;
+;; Get API keys from:
+;;   - Claude: https://console.anthropic.com/settings/keys
+;;   - Gemini: https://aistudio.google.com/app/apikey
+;;
+;; Usage:
+;;   C-c a a  Start gptel chat
+;;   C-c a s  Send region/buffer to LLM
+;;   C-c a m  Open transient menu
+;;   C-c a b  Switch between Claude and Gemini
+;;   C-c a M  Switch model within current backend
 
+(use-package gptel
+  :ensure t
+  :demand t
+  :init
+  ;; Create AI/gptel keymap
+  (defvar tj-ai-keymap (make-sparse-keymap)
+    "Keymap for AI/LLM operations with gptel.")
+
+  :config
+  ;; Claude (Anthropic) backend
+  (setq gptel-claude
+        (gptel-make-anthropic "Claude"
+          :stream t
+          :request-params '(:thinking (:type "enabled"))
+          :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))))
+
+  ;; Gemini (Google) backend
+  (setq gptel-gemini
+        (gptel-make-gemini "Gemini"
+          :stream t
+          :key (lambda () (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))))
+
+  ;; Set defaults after backends are defined
+  (setq gptel-model 'claude-sonnet-4.5)
+  (setq gptel-backend gptel-claude)
+
+  ;; Helper function to switch between Claude and Gemini
+  (defun tj-gptel-switch-backend ()
+    "Switch between Claude and Gemini backends."
+    (interactive)
+    (let* ((backends '(("Claude" . gptel-claude)
+                      ("Gemini" . gptel-gemini)))
+           (choice (completing-read "Select backend: "
+                                   (mapcar #'car backends)
+                                   nil t))
+           (backend (cdr (assoc choice backends))))
+      (setq gptel-backend (symbol-value backend))
+      (message "Switched to %s backend" choice)))
+
+  ;; Bind keys to the AI keymap
+  (define-key tj-ai-keymap (kbd "a") 'gptel)
+  (define-key tj-ai-keymap (kbd "s") 'gptel-send)
+  (define-key tj-ai-keymap (kbd "m") 'gptel-menu)
+  (define-key tj-ai-keymap (kbd "b") 'tj-gptel-switch-backend)
+  
+  ;; Bind the keymap to C-c a
+  (global-set-key (kbd "C-c a") tj-ai-keymap))
 
 (use-package
   no-littering
@@ -2270,6 +2337,7 @@ but agnostic to language, mode, and server."
     "C-c x" "visual-replace"
 
     ;; Organized keymaps
+    "C-c a" "ai/gptel"
     "C-c b" "buffer"
     "C-c d" "diff/ediff"
     "C-c o" "org-mode"
@@ -2646,7 +2714,7 @@ but agnostic to language, mode, and server."
 
    ;; C-x bindings in `ctl-x-map'
    ("C-x C-l" . consult-line)
-   ("C-c a" . ripgrep-regexp)
+   ("C-c g" . ripgrep-regexp)
    ("C-x M-:" . consult-complex-command) ;; orig. repeat-complex-command
    ("C-x b" . consult-buffer) ;; orig. switch-to-buffer
    ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
@@ -3064,6 +3132,14 @@ but agnostic to language, mode, and server."
 ;; ============================================================================
 ;; TIER 3: ORGANIZED KEYMAPS (C-c + letter + letter)
 ;; ============================================================================
+;;
+;; AI/LLM Operations (C-c a X)
+;; ----------------------------
+;; C-c a a     gptel (start chat)
+;; C-c a s     gptel-send (send region/buffer)
+;; C-c a m     gptel-menu (transient menu)
+;; C-c a b     switch backend (Claude ↔ Gemini)
+;; C-c a M     switch model
 ;;
 ;; Buffer Operations (C-c b X)
 ;; ----------------------------
