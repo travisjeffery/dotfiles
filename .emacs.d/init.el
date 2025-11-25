@@ -711,7 +711,8 @@ Otherwise split the current paragraph into one sentence per line."
    ("C-c C-f" . find-file-at-point)
    ("C-o" . crux-smart-open-line)
    ("C-c o" . crux-smart-open-line-above)
-   ("M-DEL" . crux-kill-line-backwards)))
+   ("C-M-DEL" . crux-kill-line-backwards)
+   ("M-DEL" . backward-kill-sexp)))
 
 ;;; ============================================================================
 ;;; TERMINAL COMPATIBILITY UTILITIES
@@ -2433,6 +2434,7 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t
   :bind (:map tj-search-keymap
          ("s" . consult-line)
+         ("o" . occur)
          ("p" . projectile-ripgrep)
          ("r" . ripgrep-regexp)
          ("g" . consult-ripgrep)
