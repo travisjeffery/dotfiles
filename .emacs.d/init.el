@@ -902,8 +902,10 @@ Otherwise split the current paragraph into one sentence per line."
   (setq gptel-claude
         (gptel-make-anthropic "Claude"
           :stream t
-          :request-params '(:thinking (:type "enabled"))
-          :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))))
+          :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))
+          :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
+                                      :max_tokens 4096))
+          )
 
   ;; Gemini (Google) backend
   (setq gptel-gemini
@@ -2270,7 +2272,7 @@ but agnostic to language, mode, and server."
      (t
       :default-family "Fira Code Retina"
       :variable-pitch-family "Fira Sans"
-      :default-height 120)))
+      :default-height 110)))
   :config
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular))
