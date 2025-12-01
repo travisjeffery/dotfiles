@@ -797,14 +797,11 @@ Otherwise split the current paragraph into one sentence per line."
    ("M-/" . hippie-expand)
    ("C-h A" . apropos)
    ("C-h C-f" . find-function)
-
-   ;; High-frequency quick access
    ("C-c =" . align-regexp)
-   ("C-c c" . tj-comment-line)  ; backup for M-;
 
    ;; Misc useful keybindings
    ("C-c q" . tj-kill-other-buffer)
-   ("M-*" . dictionary-lookup-definition)
+   
    ("M-T" . transpose-paragraphs)
    ("C-c <" . tj-insert-open-and-close-tag)
    ("C-c f" . find-file-at-point)))
@@ -823,6 +820,7 @@ Otherwise split the current paragraph into one sentence per line."
 (define-key tj-text-keymap (kbd "f") 'tj-fill-paragraph)
 (define-key tj-text-keymap (kbd "a") 'tj-arrayify)
 (define-key tj-text-keymap (kbd "t") 'tj-toggle-fold)
+(define-key tj-text-keymap (kbd "l") 'crux-duplicate-current-line-or-region)
 (global-set-key (kbd "C-c t") tj-text-keymap)
 
 ;; Buffer operations keymap (C-c b)
@@ -832,6 +830,7 @@ Otherwise split the current paragraph into one sentence per line."
 (define-key tj-buffer-keymap (kbd "l") 'browse-kill-ring)
 (define-key tj-buffer-keymap (kbd "k") 'crux-kill-other-buffers)
 (define-key tj-buffer-keymap (kbd "r") 'tj-revert-all-buffers)
+(define-key tj-buffer-keymap (kbd "s") 'crux-create-scratch-buffer)
 (global-set-key (kbd "C-c b") tj-buffer-keymap)
 
 ;; Diff/Ediff operations keymap (C-c d)
@@ -854,13 +853,20 @@ Otherwise split the current paragraph into one sentence per line."
 (define-key tj-org-keymap (kbd "a") 'org-agenda)
 (global-set-key (kbd "C-c o") tj-org-keymap)
 
+;; Search operations (C-c s)
+(defvar tj-search-keymap (make-sparse-keymap)
+  "Keymap for search operations.")
+(define-key tj-search-keymap (kbd "a") 'avy-goto-char-timer)
+(define-key tj-search-keymap (kbd "s") 'synosaurus-lookup)
+(define-key tj-search-keymap (kbd "g") 'ripgrep-regexp)
+(define-key tj-search-keymap (kbd "o") 'occur)
+(define-key tj-search-keymap (kbd "O") 'moccur)
+(define-key tj-search-keymap (kbd "d") 'dictionary-lookup-definition)
+(global-set-key (kbd "C-c s") tj-search-keymap)
+
 (use-package pyenv-mode :ensure t :demand t)
 
 (use-package direnv :ensure t :demand t :config (direnv-mode 1))
-
-;; needs to be up early because there's some issue around packages depending on it the wrong way.
-
-;; (use-package project :ensure (:wait t) :demand t)
 
 (use-package xclip :config (xclip-mode 1) :ensure t :demand t)
 
@@ -963,7 +969,6 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
   bufler
   :after major-mode-hydra
-  :bind (("C-x C-b" . bufler))
   :ensure t
   :demand t)
 
@@ -1054,7 +1059,7 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   avy
-  :bind (("C-c j" . avy-goto-char-timer))  ; High-frequency jump
+  :bind (("C-c j" . avy-goto-char-timer))
   :config (avy-setup-default)
   :custom (avy-background t)
   :ensure t
@@ -2259,6 +2264,11 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t)
 
+(use-package sdcv
+  :ensure t
+  :demand t
+  :bind ("C-c s w" . sdcv-search-pointer))
+
 (use-package
   fontaine
   :ensure t
@@ -2362,7 +2372,6 @@ but agnostic to language, mode, and server."
 
 (use-package
   color-moccur
-  :bind (("C-c o" . occur) ("C-c O" . moccur))
   :ensure t
   :demand t)
 
@@ -2716,13 +2725,12 @@ but agnostic to language, mode, and server."
 
    ;; C-x bindings in `ctl-x-map'
    ("C-x C-l" . consult-line)
-   ("C-c g" . ripgrep-regexp)
    ("C-x M-:" . consult-complex-command) ;; orig. repeat-complex-command
    ("C-x b" . consult-buffer) ;; orig. switch-to-buffer
    ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
    ("C-x 5 b" . consult-buffer-other-frame) ;; orig. switch-to-buffer-other-frame
    ("C-x r b" . consult-bookmark) ;; orig. bookmark-jump
-   ("C-x p b" . consult-project-buffer) ;; orig. project-switch-to-buffer
+   
    ;; Custom M-# bindings for fast register access
    ("M-#" . consult-register-load)
    ("M-'" . consult-register-store) ;; orig. abbrev-prefix-mark (unrelated)
@@ -2741,6 +2749,9 @@ but agnostic to language, mode, and server."
    ("M-g k" . consult-global-mark)
    ("M-g i" . consult-imenu)
    ("M-g I" . consult-imenu-multi)
+
+   :map tj-project-keymap
+   ("b" . consult-project-buffer) ;; orig. project-switch-to-buffer
 
    :map
    isearch-mode-map
@@ -2970,6 +2981,9 @@ but agnostic to language, mode, and server."
 (use-package
   projectile
   :diminish
+  :init
+  (defvar tj-project-keymap (make-sparse-keymap)
+    "Keymap for project operations.")
   :config
   (setq
    projectile-enable-caching t
@@ -2994,11 +3008,12 @@ but agnostic to language, mode, and server."
    (call-interactively #'projectile-ripgrep))
 
   :bind
-  (("C-x p t" . projectile-toggle-between-implementation-and-test)
-   ("C-x p p" . projectile-switch-project)
-   ("C-x p f" . projectile-find-file)
-   ("C-x p c" . projectile-compile-project)
-   ("C-x p i" . projectile-invalidate-cache))
+  ((:map tj-project-keymap
+         ("t" . projectile-toggle-between-implementation-and-test)
+         ("p" . projectile-switch-project)
+         ("f" . projectile-find-file)
+         ("c" . projectile-compile-project)
+         ("i" . projectile-invalidate-cache)))
   :ensure t
   :demand t)
 
