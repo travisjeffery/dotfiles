@@ -144,14 +144,14 @@
   :config
 
   (defun tj-show-available-keys (prefix)
-  "Show available keys under PREFIX."
-  (interactive "sPrefix (e.g., 'C-c '): ")
-  (let ((available '()))
-    (dolist (char (number-sequence ?a ?z))
-      (let ((key (kbd (concat prefix (char-to-string char)))))
-        (unless (key-binding key)
-          (push (char-to-string char) available))))
-    (message "Available: %s" (string-join (reverse available) ", "))))
+    "Show available keys under PREFIX."
+    (interactive "sPrefix (e.g., 'C-c '): ")
+    (let ((available '()))
+      (dolist (char (number-sequence ?a ?z))
+        (let ((key (kbd (concat prefix (char-to-string char)))))
+          (unless (key-binding key)
+            (push (char-to-string char) available))))
+      (message "Available: %s" (string-join (reverse available) ", "))))
   
   (global-completion-preview-mode 1)
   ;; handle long lines
@@ -804,65 +804,79 @@ Otherwise split the current paragraph into one sentence per line."
    
    ("M-T" . transpose-paragraphs)
    ("C-c <" . tj-insert-open-and-close-tag)
-   ("C-c f" . find-file-at-point)))
+   ("C-c f" . find-file-at-point))
+  :init
+  ;; Text transformations keymap (C-c t)
+  (defvar tj-text-keymap (make-sparse-keymap)
+    "Keymap for text transformation operations.")
 
-;;; ============================================================================
-;;; ORGANIZED KEYMAPS
-;;; ============================================================================
+  ;; Buffer operations keymap (C-c b)
+  (defvar tj-buffer-keymap (make-sparse-keymap)
+    "Keymap for buffer operations.")
 
-;; Text transformations keymap (C-c t)
-(defvar tj-text-keymap (make-sparse-keymap)
-  "Keymap for text transformation operations.")
-(define-key tj-text-keymap (kbd "s") 'tj-spongebob)
-(define-key tj-text-keymap (kbd "m") 'tj-multi-line-to-one-line)
-(define-key tj-text-keymap (kbd "c") 'tj-convert-commas-to-new-lines)
-(define-key tj-text-keymap (kbd "w") 'tj-wrap-with-tags)
-(define-key tj-text-keymap (kbd "f") 'tj-fill-paragraph)
-(define-key tj-text-keymap (kbd "a") 'tj-arrayify)
-(define-key tj-text-keymap (kbd "t") 'tj-toggle-fold)
-(define-key tj-text-keymap (kbd "l") 'crux-duplicate-current-line-or-region)
-(global-set-key (kbd "C-c t") tj-text-keymap)
+  ;; Diff/Ediff operations keymap (C-c d)
+  (defvar tj-diff-keymap (make-sparse-keymap)
+    "Keymap for diff and ediff operations.")
 
-;; Buffer operations keymap (C-c b)
-(defvar tj-buffer-keymap (make-sparse-keymap)
-  "Keymap for buffer operations.")
-(define-key tj-buffer-keymap (kbd "b") 'bufler)
-(define-key tj-buffer-keymap (kbd "l") 'browse-kill-ring)
-(define-key tj-buffer-keymap (kbd "k") 'crux-kill-other-buffers)
-(define-key tj-buffer-keymap (kbd "r") 'tj-revert-all-buffers)
-(define-key tj-buffer-keymap (kbd "s") 'crux-create-scratch-buffer)
-(global-set-key (kbd "C-c b") tj-buffer-keymap)
+  ;; Org-mode operations keymap (C-c o)
+  (defvar tj-org-keymap (make-sparse-keymap)
+    "Keymap for org-mode operations.")
 
-;; Diff/Ediff operations keymap (C-c d)
-(defvar tj-diff-keymap (make-sparse-keymap)
-  "Keymap for diff and ediff operations.")
-(define-key tj-diff-keymap (kbd "b") 'ediff-buffers)
-(define-key tj-diff-keymap (kbd "f") 'ediff-files)
-(define-key tj-diff-keymap (kbd "r") 'ediff-revision)
-(define-key tj-diff-keymap (kbd "l") 'ediff-regions-linewise)
-(define-key tj-diff-keymap (kbd "w") 'ediff-regions-wordwise)
-(define-key tj-diff-keymap (kbd "c") 'compare-windows)
-(global-set-key (kbd "C-c d") tj-diff-keymap)
+  ;; Search operations keymap (C-c s)
+  (defvar tj-search-keymap (make-sparse-keymap)
+    "Keymap for search operations.")
 
-;; Org-mode operations keymap (C-c o)
-(defvar tj-org-keymap (make-sparse-keymap)
-  "Keymap for org-mode operations.")
-(define-key tj-org-keymap (kbd "c") 'org-capture)
-(define-key tj-org-keymap (kbd "t") 'org-todo-list)
-(define-key tj-org-keymap (kbd "m") 'org-tags-view)
-(define-key tj-org-keymap (kbd "a") 'org-agenda)
-(global-set-key (kbd "C-c o") tj-org-keymap)
+  :bind-keymap
+  (("C-c t" . tj-text-keymap)
+   ("C-c b" . tj-buffer-keymap)
+   ("C-c d" . tj-diff-keymap)
+   ("C-c o" . tj-org-keymap)
+   ("C-c s" . tj-search-keymap))
 
-;; Search operations (C-c s)
-(defvar tj-search-keymap (make-sparse-keymap)
-  "Keymap for search operations.")
-(define-key tj-search-keymap (kbd "a") 'avy-goto-char-timer)
-(define-key tj-search-keymap (kbd "s") 'synosaurus-lookup)
-(define-key tj-search-keymap (kbd "g") 'ripgrep-regexp)
-(define-key tj-search-keymap (kbd "o") 'occur)
-(define-key tj-search-keymap (kbd "O") 'moccur)
-(define-key tj-search-keymap (kbd "d") 'dictionary-lookup-definition)
-(global-set-key (kbd "C-c s") tj-search-keymap)
+  :bind
+  (;; Text transformation bindings
+   :map tj-text-keymap
+   ("s" . tj-spongebob)
+   ("m" . tj-multi-line-to-one-line)
+   ("c" . tj-convert-commas-to-new-lines)
+   ("w" . tj-wrap-with-tags)
+   ("f" . tj-fill-paragraph)
+   ("a" . tj-arrayify)
+   ("t" . tj-toggle-fold)
+   ("l" . crux-duplicate-current-line-or-region)
+
+   ;; Buffer operations bindings
+   :map tj-buffer-keymap
+   ("b" . bufler)
+   ("l" . browse-kill-ring)
+   ("k" . crux-kill-other-buffers)
+   ("r" . tj-revert-all-buffers)
+   ("s" . crux-create-scratch-buffer)
+
+   ;; Diff/Ediff bindings
+   :map tj-diff-keymap
+   ("b" . ediff-buffers)
+   ("f" . ediff-files)
+   ("r" . ediff-revision)
+   ("l" . ediff-regions-linewise)
+   ("w" . ediff-regions-wordwise)
+   ("c" . compare-windows)
+
+   ;; Org-mode bindings
+   :map tj-org-keymap
+   ("c" . org-capture)
+   ("t" . org-todo-list)
+   ("m" . org-tags-view)
+   ("a" . org-agenda)
+
+   ;; Search operations bindings
+   :map tj-search-keymap
+   ("a" . avy-goto-char-timer)
+   ("s" . synosaurus-lookup)
+   ("g" . ripgrep-regexp)
+   ("o" . occur)
+   ("O" . moccur)
+   ("d" . dictionary-lookup-definition)))
 
 (use-package pyenv-mode :ensure t :demand t)
 
@@ -870,9 +884,11 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package xclip :config (xclip-mode 1) :ensure t :demand t)
 
-(use-package verb :ensure t :demand t
-  :config
-  (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
+(use-package verb
+  :ensure t
+  :demand t
+  :bind (:map org-mode-map
+              ("C-c C-r" . verb-command-map)))
 
 ;;; ============================================================================
 ;;; GPTEL - LLM Integration (Claude & Gemini)
@@ -903,6 +919,13 @@ Otherwise split the current paragraph into one sentence per line."
   (defvar tj-ai-keymap (make-sparse-keymap)
     "Keymap for AI/LLM operations with gptel.")
 
+  :bind-keymap ("C-c a" . tj-ai-keymap)
+  :bind (:map tj-ai-keymap
+              ("a" . gptel)
+              ("s" . gptel-send)
+              ("m" . gptel-menu)
+              ("b" . tj-gptel-switch-backend))
+
   :config
   ;; Claude (Anthropic) backend
   (setq gptel-claude
@@ -911,7 +934,7 @@ Otherwise split the current paragraph into one sentence per line."
           :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))
           :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
                                       :max_tokens 4096))
-          )
+        )
 
   ;; Gemini (Google) backend
   (setq gptel-gemini
@@ -928,22 +951,13 @@ Otherwise split the current paragraph into one sentence per line."
     "Switch between Claude and Gemini backends."
     (interactive)
     (let* ((backends '(("Claude" . gptel-claude)
-                      ("Gemini" . gptel-gemini)))
+                       ("Gemini" . gptel-gemini)))
            (choice (completing-read "Select backend: "
-                                   (mapcar #'car backends)
-                                   nil t))
+                                    (mapcar #'car backends)
+                                    nil t))
            (backend (cdr (assoc choice backends))))
       (setq gptel-backend (symbol-value backend))
-      (message "Switched to %s backend" choice)))
-
-  ;; Bind keys to the AI keymap
-  (define-key tj-ai-keymap (kbd "a") 'gptel)
-  (define-key tj-ai-keymap (kbd "s") 'gptel-send)
-  (define-key tj-ai-keymap (kbd "m") 'gptel-menu)
-  (define-key tj-ai-keymap (kbd "b") 'tj-gptel-switch-backend)
-  
-  ;; Bind the keymap to C-c a
-  (global-set-key (kbd "C-c a") tj-ai-keymap))
+      (message "Switched to %s backend" choice))))
 
 (use-package
   no-littering
@@ -1022,6 +1036,10 @@ Otherwise split the current paragraph into one sentence per line."
   lisp-mode
   :ensure nil
   :diminish
+  :bind (:map emacs-lisp-mode-map
+              ("C-c C-z" . visit-ielm)
+              ("C-c C-c" . eval-defun)
+              ("C-c C-b" . eval-buffer))
   :config
   (defun visit-ielm ()
     "Switch to default `ielm' buffer.
@@ -1029,9 +1047,6 @@ Otherwise split the current paragraph into one sentence per line."
     (interactive)
     (crux-start-or-switch-to 'ielm "*ielm*"))
   (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
-  (define-key emacs-lisp-mode-map (kbd "C-c C-z") #'visit-ielm)
-  (define-key emacs-lisp-mode-map (kbd "C-c C-c") #'eval-defun)
-  (define-key emacs-lisp-mode-map (kbd "C-c C-b") #'eval-buffer)
   (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
   :demand t)
@@ -1286,6 +1301,16 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
   ediff
   :ensure nil
+  :init
+  (defvar tj-ediff-keymap (make-sparse-keymap))
+  :bind-keymap ("C-x C-=" . tj-ediff-keymap)
+  :bind ((:map tj-ediff-keymap
+               ("b" . ediff-buffers)
+               ("f" . ediff-files)
+               ("r" . ediff-revision)
+               ("l" . ediff-regions-linewise)
+               ("w" . ediff-regions-wordwise)
+               ("c" . compare-windows)))
   :config
   (defun ediff-copy-both-to-C ()
     (interactive)
@@ -1296,26 +1321,12 @@ Otherwise split the current paragraph into one sentence per line."
        ediff-current-difference 'A ediff-control-buffer)
       (ediff-get-region-contents
        ediff-current-difference 'B ediff-control-buffer))))
-  (defun add-d-to-ediff-mode-map ()
-    (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
-  (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
-  :init (defvar tj-ediff-keymap (make-sparse-keymap))
   (setq
    ediff-split-window-function 'split-window-vertically
    ediff-merge-split-window-function 'split-window-vertically
    ediff-window-setup-function 'ediff-setup-windows-plain
    ediff-diff-options ""
    ediff-custom-diff-options "-u")
-  :bind-keymap ("C-x C-=" . tj-ediff-keymap)
-  :bind
-  (:map
-   tj-ediff-keymap
-   ("b" . ediff-buffers)
-   ("f" . ediff-files)
-   ("r" . ediff-revision)
-   ("l" . ediff-regions-linewise)
-   ("w" . ediff-regions-wordwise)
-   ("c" . compare-windows))
   :demand t)
 
 (use-package
@@ -1430,7 +1441,7 @@ Otherwise split the current paragraph into one sentence per line."
 
   :config
 
-    (defun eglot-format-and-organize-imports ()
+  (defun eglot-format-and-organize-imports ()
     "Update the imports and format the file, analogous to commands like Go's `goimports`
 but agnostic to language, mode, and server."
     (interactive)
@@ -1654,17 +1665,17 @@ but agnostic to language, mode, and server."
 (use-package
   dired
   :ensure nil
-  :bind (("C-x d" . dired))
-  :bind
-  (:map
-   dired-mode-map
-   ("z" . delete-window)
-   ("e" . ora-ediff-files)
-   ("l" . dired-up-directory)
-   ("Y" . ora-dired-rsync)
-   ("<tab>" . tj-dired-switch-window)
-   ("M-!" . async-shell-command)
-   ("M-G"))
+  :bind (("C-x d" . dired)
+         :map dired-mode-map
+         ("z" . delete-window)
+         ("e" . ora-ediff-files)
+         ("l" . dired-up-directory)
+         ("Y" . ora-dired-rsync)
+         ("<tab>" . tj-dired-switch-window)
+         ("M-!" . async-shell-command)
+         ("M-G" . nil)
+         ([remap beginning-of-buffer] . dired-back-to-top)
+         ([remap end-of-buffer] . dired-jump-to-bottom))
   :preface
   (defvar mark-files-cache (make-hash-table :test #'equal))
   (defun mark-similar-versions (name)
@@ -1741,18 +1752,10 @@ but agnostic to language, mode, and server."
     (interactive)
     (goto-char (point-min))
     (dired-next-line 4))
-  (define-key
-   dired-mode-map
-   (vector 'remap 'beginning-of-buffer)
-   'dired-back-to-top)
   (defun dired-jump-to-bottom ()
     (interactive)
     (goto-char (point-max))
     (dired-next-line -1))
-  (define-key
-   dired-mode-map
-   (vector 'remap 'end-of-buffer)
-   'dired-jump-to-bottom)
 
   ;; dired - reuse current buffer by pressing 'a'
   (put 'dired-find-alternate-file 'disabled nil)
@@ -1881,23 +1884,22 @@ but agnostic to language, mode, and server."
 
 (use-package
   easy-kill
-  :config
-  (global-set-key [remap kill-ring-save] 'easy-kill)
-  (global-set-key [remap mark-sexp] 'easy-mark)
   :ensure t
-  :demand t)
+  :demand t
+  :bind (([remap kill-ring-save] . easy-kill)
+         ([remap mark-sexp] . easy-mark)))
 
 (use-package
   easy-kill-extras
+  :ensure t
+  :demand t
+  :bind (("M-@" . easy-mark-word)
+         ("C-M-@" . easy-mark-sexp)
+         ([remap zap-to-char] . easy-mark-to-char)
+         :map easy-kill-base-map
+         ("o" . easy-kill-er-expand)
+         ("i" . easy-kill-er-unexpand))
   :config
-  (global-set-key (kbd "M-@") 'easy-mark-word)
-  (global-set-key (kbd "C-M-@") 'easy-mark-sexp)
-  (global-set-key [remap zap-to-char] 'easy-mark-to-char)
-
-  ;; Integrate `expand-region' functionality with easy-kill
-  (define-key easy-kill-base-map (kbd "o") 'easy-kill-er-expand)
-  (define-key easy-kill-base-map (kbd "i") 'easy-kill-er-unexpand)
-
   ;; Add the following tuples to `easy-kill-alist', preferrably by
   ;; using `customize-variable'.
   (add-to-list 'easy-kill-alist '(?^ backward-line-edge ""))
@@ -1910,9 +1912,7 @@ but agnostic to language, mode, and server."
    'easy-kill-alist '(?F string-up-to-char-forward ""))
   (add-to-list 'easy-kill-alist '(?t string-to-char-backward ""))
   (add-to-list
-   'easy-kill-alist '(?T string-up-to-char-backward ""))
-  :ensure t
-  :demand t)
+   'easy-kill-alist '(?T string-up-to-char-backward "")))
 
 (use-package
   exec-path-from-shell
@@ -2062,8 +2062,8 @@ but agnostic to language, mode, and server."
       "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))))
   :bind
   (:map org-mode-map
-  ("M-{" . backward-paragraph)
-  ("M-}" . forward-paragraph))
+        ("M-{" . backward-paragraph)
+        ("M-}" . forward-paragraph))
   :bind
   (("C-x C-g c" . org-capture)
    ("C-x C-g t" . org-todo-list)
@@ -2267,7 +2267,8 @@ but agnostic to language, mode, and server."
 (use-package sdcv
   :ensure t
   :demand t
-  :bind ("C-c s w" . sdcv-search-pointer))
+  :bind (:map tj-search-keymap
+              ("w" . sdcv-search-pointer)))
 
 (use-package
   fontaine
@@ -2630,10 +2631,13 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t)
 
-(define-key
- occur-mode-map (kbd "v") 'occur-mode-display-occurrence)
-(define-key occur-mode-map (kbd "n") 'next-line)
-(define-key occur-mode-map (kbd "p") 'previous-line)
+(use-package
+  replace
+  :ensure nil
+  :bind (:map occur-mode-map
+              ("v" . occur-mode-display-occurrence)
+              ("n" . next-line)
+              ("p" . previous-line)))
 
 (use-package
   highlight-indentation
@@ -2750,11 +2754,7 @@ but agnostic to language, mode, and server."
    ("M-g i" . consult-imenu)
    ("M-g I" . consult-imenu-multi)
 
-   :map tj-project-keymap
-   ("b" . consult-project-buffer) ;; orig. project-switch-to-buffer
-
-   :map
-   isearch-mode-map
+   :map isearch-mode-map
    ("M-e" . consult-isearch-history) ;;  isearch-edit-string
 
    ;; Minibuffer history
@@ -2824,7 +2824,11 @@ but agnostic to language, mode, and server."
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
   )
 
-(global-set-key (kbd "M-f") 'forward-to-word)
+;; Global navigation bindings
+(use-package
+  misc
+  :ensure nil
+  :bind (("M-f" . forward-to-word)))
 
 ;; Add extensions
 (use-package
@@ -2832,8 +2836,8 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t
   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
-  ;; Press C-c p ? to for help.
-  :bind ("C-c p" . cape-prefix-map) ;; Alternative keys: M-p, M-+, ...
+  ;; Press C-c P ? for help.
+  :bind ("C-c P" . cape-prefix-map) ;; Alternative keys: M-p, M-+, ...
   ;; Alternatively bind Cape commands individually.
   ;; :bind (("C-c p d" . cape-dabbrev)
   ;;        ("C-c p h" . cape-history)
@@ -2984,6 +2988,14 @@ but agnostic to language, mode, and server."
   :init
   (defvar tj-project-keymap (make-sparse-keymap)
     "Keymap for project operations.")
+  :bind-keymap ("C-c p" . tj-project-keymap)
+  :bind (:map tj-project-keymap
+              ("t" . projectile-toggle-between-implementation-and-test)
+              ("p" . projectile-switch-project)
+              ("f" . projectile-find-file)
+              ("c" . projectile-compile-project)
+              ("i" . projectile-invalidate-cache)
+              ("b" . consult-project-buffer))
   :config
   (setq
    projectile-enable-caching t
@@ -3007,13 +3019,6 @@ but agnostic to language, mode, and server."
    "Run ripgrep on project."
    (call-interactively #'projectile-ripgrep))
 
-  :bind
-  ((:map tj-project-keymap
-         ("t" . projectile-toggle-between-implementation-and-test)
-         ("p" . projectile-switch-project)
-         ("f" . projectile-find-file)
-         ("c" . projectile-compile-project)
-         ("i" . projectile-invalidate-cache)))
   :ensure t
   :demand t)
 
