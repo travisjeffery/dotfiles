@@ -131,6 +131,7 @@
    `((".*" ,temporary-file-directory t)))
   (gc-cons-threshold 300000000)
   (major-mode-remap-alist '((python-mode . python-ts-mode)))
+  (major-mode-remap-alist '(go-mode . go-ts-mode))
   (async-shell-command-buffer 'new-buffer)
   (ring-bell-function #'ignore)
   (backup-by-copying t)
@@ -992,10 +993,10 @@ Otherwise split the current paragraph into one sentence per line."
   ;; available in the *Completions* buffer, add it to the
   ;; `completion-list-mode-map'.
   :bind (:map minibuffer-local-map ("M-A" . marginalia-cycle))
-
+  :config
+  (setq marginalia-annotators '(marginalia-annotators-light))
   ;; The :init section is always executed.
   :init
-
   ;; Marginalia must be activated in the :init section of use-package such that
   ;; the mode gets enabled right away. Note that this forces loading the
   ;; package.
@@ -2097,13 +2098,6 @@ but agnostic to language, mode, and server."
    ("f" . org-roam-node-find)
    ("c" . org-roam-capture))
   :config (org-roam-setup))
-
-(use-package
-  treesit-auto
-  :demand t
-  :ensure t
-  :config
-  (global-treesit-auto-mode))
 
 (use-package
   org-journal
