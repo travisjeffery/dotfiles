@@ -1410,7 +1410,7 @@ Otherwise split the current paragraph into one sentence per line."
   :diminish eldoc-mode
   :custom
   (eldoc-echo-area-use-multiline-p nil)
-  :bind (("C-c C-c" . eldoc))
+  :bind (("C-h ." . eldoc))
   :ensure nil
   :demand t)
 
@@ -1973,6 +1973,7 @@ but agnostic to language, mode, and server."
   org
   :ensure nil
   :custom
+  (org-link-descriptive nil)
   (org-indent-mode-turns-on-hiding-stars nil)
   (org-todo-keywords
    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
