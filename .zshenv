@@ -63,7 +63,9 @@ export HELM_EXPERIMENTAL_OCI=1
 export KALEIDOSCOPE_DIR="$HOME/code/Kaleidoscope"
 export PULUMI_EXPERIMENTAL="true"
 export PULUMI_SKIP_CHECKPOINTS="true"
-alias pbcopy='wl-copy'
+if type wl-copy &> /dev/null; then
+    alias pbcopy='wl-copy'
+fi
 alias pbpaste='xsel --clipboard --output'
 
 export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
