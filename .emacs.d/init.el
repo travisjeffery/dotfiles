@@ -131,7 +131,6 @@
    `((".*" ,temporary-file-directory t)))
   (gc-cons-threshold 300000000)
   (major-mode-remap-alist '((python-mode . python-ts-mode)))
-  (major-mode-remap-alist '(go-mode . go-ts-mode))
   (async-shell-command-buffer 'new-buffer)
   (ring-bell-function #'ignore)
   (backup-by-copying t)
