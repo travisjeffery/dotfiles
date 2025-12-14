@@ -62,6 +62,8 @@
 	whitespace = warn
 	legacyheaders = false
 	pager = less
+	fsmonitor = true
+	untrackedCache = true
 [include]
 	path = ~/.githubconfig
 [help]
