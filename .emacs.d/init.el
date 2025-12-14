@@ -44,6 +44,12 @@
   ;; Enable use-package :ensure support for Elpaca.
   (elpaca-use-package-mode))
 
+(use-package
+  exec-path-from-shell
+  :config (exec-path-from-shell-initialize)
+  :ensure (:wait t)
+  :demand t)
+
 ;; Don't remove anything above.
 (use-package
   emacs
@@ -1103,6 +1109,7 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   magit
+  :after exec-path-from-shell
   :diminish magit-wip-mode
   :custom
   (magit-log-margin-width 18)
@@ -1912,12 +1919,6 @@ but agnostic to language, mode, and server."
   (add-to-list 'easy-kill-alist '(?t string-to-char-backward ""))
   (add-to-list
    'easy-kill-alist '(?T string-up-to-char-backward "")))
-
-(use-package
-  exec-path-from-shell
-  :config (exec-path-from-shell-initialize)
-  :ensure t
-  :demand t)
 
 (use-package kubedoc :ensure t :demand t)
 
@@ -3229,3 +3230,4 @@ but agnostic to language, mode, and server."
 ;; Press C-c d and wait → see all diff/ediff operations
 ;; etc.
 ;;
+
