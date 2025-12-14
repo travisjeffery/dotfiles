@@ -62,7 +62,6 @@
   (mode-line-collapse-minor-modes t)
   (kill-region-dwim t)
   (delete-pair-push-mark t)
-  (treesit-auto-install-grammar t)
   ;; show all buffers, otherwise, some can be hidden under C-x b)
   (buffers-menu-max-size nil)
   (debugger-stack-frame-as-list t)
@@ -2263,7 +2262,6 @@ but agnostic to language, mode, and server."
   :demand t
   :bind (:map tj-search-keymap
               ("w" . sdcv-search-pointer)))
-
 (use-package
   fontaine
   :ensure t
@@ -2271,13 +2269,12 @@ but agnostic to language, mode, and server."
   :custom
   (fontaine-presets
    '((regular)
-     (plex :default-family "IBM Plex Mono")
      (large :default-height 140)
      (presentation :default-height 160)
      (t
       :default-family "Fira Code Retina"
       :variable-pitch-family "Fira Sans"
-      :default-height 110)))
+      :default-height 100)))
   :config
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular))
