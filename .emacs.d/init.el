@@ -2269,7 +2269,8 @@ but agnostic to language, mode, and server."
   :demand t
   :custom
   (fontaine-presets
-   '((regular)
+   '((desktop :default-height 120)
+     (laptop :default-height 100)
      (large :default-height 140)
      (presentation :default-height 160)
      (t
@@ -2278,7 +2279,7 @@ but agnostic to language, mode, and server."
       :default-height 100)))
   :config
   (fontaine-set-preset
-   (or (fontaine-restore-latest-preset) 'regular))
+   (or (fontaine-restore-latest-preset) 'desktop))
   (fontaine-mode 1))
 
 (use-package
