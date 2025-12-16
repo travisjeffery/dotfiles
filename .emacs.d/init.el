@@ -46,7 +46,15 @@
 
 (use-package
   exec-path-from-shell
-  :config (exec-path-from-shell-initialize)
+  :config
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-envs '("HYPRLAND_CMD"
+                                    "XDG_DESKTOP_SESSION"
+                                    "XDG_BACKEND"
+                                    "WAYLAND_DISPLAY"
+                                    "MOZ_ENABLE_WAYLAND"
+                                    "DISPLAY"
+                                    "HYPRLAND_INSTANCE_SIGNATURE"))
   :ensure (:wait t)
   :demand t)
 
@@ -2269,14 +2277,14 @@ but agnostic to language, mode, and server."
   :demand t
   :custom
   (fontaine-presets
-   '((desktop :default-height 120)
+   '((desktop :default-height 140)
      (laptop :default-height 100)
      (large :default-height 140)
      (presentation :default-height 160)
      (t
       :default-family "Fira Code Retina"
       :variable-pitch-family "Fira Sans"
-      :default-height 100)))
+      :default-height 140)))
   :config
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'desktop))
