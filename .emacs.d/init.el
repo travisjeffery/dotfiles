@@ -54,6 +54,7 @@
                                     "WAYLAND_DISPLAY"
                                     "MOZ_ENABLE_WAYLAND"
                                     "DISPLAY"
+                                    "SSH_TTY"
                                     "HYPRLAND_INSTANCE_SIGNATURE"))
   :ensure (:wait t)
   :demand t)
@@ -2277,7 +2278,7 @@ but agnostic to language, mode, and server."
   :demand t
   :custom
   (fontaine-presets
-   '((desktop :default-height 140)
+   '((desktop :default-height 160)
      (laptop :default-height 100)
      (large :default-height 140)
      (presentation :default-height 160)
@@ -3076,6 +3077,11 @@ but agnostic to language, mode, and server."
   :demand t
   :hook ((org-mode . visual-line-mode)
          (org-mode . visual-fill-column-mode)))
+
+(use-package clipetty
+  :ensure t
+  :demand t
+  :hook (after-init . global-clipetty-mode))
 
 (use-package spacious-padding
   :ensure t
