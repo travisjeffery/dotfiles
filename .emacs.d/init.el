@@ -108,7 +108,7 @@
   (scroll-preserve-screen-position 1)
   (native-comp-async-report-warnings-errors nil)
   ;; more useful frame title, that show either a file or a
-  ;; buffer name (if the buffer isn't visiting a file 
+  ;; buffer name (if the buffer isn't visiting a file
   ;; Emacs modes typically provide a standard means to change the
   ;; indentation width -- eg. c-basic-offset: use that to adjust your
   ;; personal indentation width, while maintaining the style (and
@@ -166,7 +166,7 @@
           (unless (key-binding key)
             (push (char-to-string char) available))))
       (message "Available: %s" (string-join (reverse available) ", "))))
-  
+
   (global-completion-preview-mode 1)
   ;; handle long lines
   (global-so-long-mode t)
@@ -815,7 +815,7 @@ Otherwise split the current paragraph into one sentence per line."
 
    ;; Misc useful keybindings
    ("C-c q" . tj-kill-other-buffer)
-   
+
    ("M-T" . transpose-paragraphs)
    ("C-c <" . tj-insert-open-and-close-tag)
    ("C-c f" . find-file-at-point))
@@ -1057,7 +1057,7 @@ Otherwise split the current paragraph into one sentence per line."
   :config
   (defun visit-ielm ()
     "Switch to default `ielm' buffer.
-	  Start `ielm' if it's not already running."
+          Start `ielm' if it's not already running."
     (interactive)
     (crux-start-or-switch-to 'ielm "*ielm*"))
   (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
@@ -2736,7 +2736,7 @@ but agnostic to language, mode, and server."
    ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
    ("C-x 5 b" . consult-buffer-other-frame) ;; orig. switch-to-buffer-other-frame
    ("C-x r b" . consult-bookmark) ;; orig. bookmark-jump
-   
+
    ;; Custom M-# bindings for fast register access
    ("M-#" . consult-register-load)
    ("M-'" . consult-register-store) ;; orig. abbrev-prefix-mark (unrelated)
@@ -3042,21 +3042,11 @@ but agnostic to language, mode, and server."
   :ensure t
   :bind (("C-c $" . eat)))
 
-(use-package claude-code-ide
+(use-package agent-shell
+  :ensure t
   :demand t
-  :ensure (:repo "https://github.com/manzaltu/claude-code-ide.el.git")
-  :bind (("C-c c" . claude-code-ide-menu)
-         ("C-c C-t" . tj-claude-code-ide-toggle-read-only))
   :config
-  (setq claude-code-ide-terminal-backend 'eat)
-  (defun tj-claude-code-ide-toggle-read-only ()
-    "Toggle read-only/copy mode in the Claude buffer."
-    (interactive)
-    (if eat--semi-char-mode
-        (progn
-          (eat-emacs-mode))
-      (eat-semi-char-mode)))
-  (claude-code-ide-emacs-tools-setup))
+  (setq agent-shell-new-shell-config (agent-shell-anthropic-make-claude-code-config)))
 
 (use-package
   string-inflection
@@ -3245,4 +3235,3 @@ but agnostic to language, mode, and server."
 ;; Press C-c d and wait → see all diff/ediff operations
 ;; etc.
 ;;
-
