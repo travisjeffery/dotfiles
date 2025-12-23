@@ -51,6 +51,7 @@
   (exec-path-from-shell-copy-envs '("HYPRLAND_CMD"
                                     "XDG_DESKTOP_SESSION"
                                     "XDG_BACKEND"
+                                    "TERM"
                                     "WAYLAND_DISPLAY"
                                     "MOZ_ENABLE_WAYLAND"
                                     "DISPLAY"
@@ -3028,7 +3029,16 @@ but agnostic to language, mode, and server."
   ledger-mode
   :ensure t
   :demand t
-  :init (setq ledger-clear-whole-transactions 1)
+  :custom
+  (ledger-binary-path "hledger")
+  (ledger-clear-whole-transactions 1)
+  (ledger-reports
+   '(("balance" "hledger -f %(ledger-file) balance")
+     ("register" "hledger -f %(ledger-file) register")
+     ("monthly" "hledger -f %(ledger-file) register --monthly")
+     ("business" "hledger -f %(ledger-file) balance Assets:Business")
+     ("personal" "hledger -f %(ledger-file) balance Assets:Personal")
+     ("joint" "hledger -f %(ledger-file) balance Assets:Joint")))
   :mode
   (("\\.ledger\\'" . ledger-mode) ("\\.dat\\'" . ledger-mode)))
 
@@ -3038,9 +3048,15 @@ but agnostic to language, mode, and server."
   :hook (after-init . delete-selection-mode))
 
 (use-package eat
+  :bind (("C-c $" . eat))
   :demand t
-  :ensure t
-  :bind (("C-c $" . eat)))
+  :ensure (:host codeberg
+                 :repo "akib/emacs-eat"
+                 :files ("*.el" ("term" "term/*.el") "*.texi"
+                         "*.ti" ("terminfo/e" "terminfo/e/*")
+                         ("terminfo/65" "terminfo/65/*")
+                         ("integration" "integration/*")
+                         (:exclude ".dir-locals.el" "*-tests.el"))))
 
 (use-package agent-shell
   :ensure t
