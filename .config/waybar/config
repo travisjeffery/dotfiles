@@ -3,8 +3,8 @@
     "position": "top",
     "height": 30,
     "modules-left": ["hyprland/workspaces"],
-    "modules-center": ["clock"],
-    "modules-right": ["network", "pulseaudio", "battery"],
+    "modules-center": ["network", "memory", "disk", "pulseaudio", "battery", "clock"],
+    "modules-right": [],
     
     "clock": {
         "format": "{:%I:%M %p}",
@@ -12,20 +12,33 @@
     },
     
     "battery": {
-        "format": "{capacity}% {icon}",
+        "format": "{capacity}%, ",
         "format-icons": ["", "", "", "", ""],
         "format-charging": "{capacity}% ",
         "format-plugged": "{capacity}% "
     },
     
     "network": {
-        "format-wifi": "{essid} ",
+        "format-wifi": "{essid}-{signalStrength}% {bandwidthDownBytes} {bandwidthUpBytes}, ",
+        "format-ethernet": " {bandwidthDownBytes}  {bandwidthUpBytes}",
         "format-disconnected": "Disconnected ⚠",
-        "tooltip-format": "{ipaddr}"
+        "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
+        "interval": 5
+    },
+    
+    "memory": {
+        "format": "{}%, ",
+        "tooltip-format": "{used:0.1f}G / {total:0.1f}G used"
+    },
+    
+    "disk": {
+        "format": "{percentage_used}%, ",
+        "path": "/",
+        "tooltip-format": "{used} / {total} used"
     },
     
     "pulseaudio": {
-        "format": "{volume}% {icon}",
+        "format": "{volume}%, ",
         "format-muted": "婢",
         "format-icons": {
             "default": ["", "", ""]

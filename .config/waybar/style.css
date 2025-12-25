@@ -8,6 +8,7 @@ window#waybar {
     color: #ffffff;
 }
 
-#battery, #network, #pulseaudio, #clock {
-    padding: 0 10px;
+#disk, #battery, #network, #pulseaudio, #clock {
+    padding: 0 0;
 }
+
