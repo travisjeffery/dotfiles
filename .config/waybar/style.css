@@ -1,0 +1,13 @@
+* {
+    font-family: Fira Code;
+    font-size: 12px;
+}
+
+window#waybar {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+}
+
+#battery, #network, #pulseaudio, #clock {
+    padding: 0 10px;
+}

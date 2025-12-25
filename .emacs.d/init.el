@@ -2280,7 +2280,7 @@ but agnostic to language, mode, and server."
   :custom
   (fontaine-presets
    '((desktop :default-height 160)
-     (laptop :default-height 100)
+     (laptop :default-height 120)
      (large :default-height 140)
      (presentation :default-height 160)
      (t

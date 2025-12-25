@@ -1,0 +1,10 @@
+[Unit]
+Description=Hyprland lock screen
+Before=sleep.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/hyprlock
+
+[Install]
+WantedBy=sleep.target
