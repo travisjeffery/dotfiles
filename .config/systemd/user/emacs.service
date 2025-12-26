@@ -1,0 +1,14 @@
+[Unit]
+Description=Emacs daemon
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/emacs --daemon
+ExecStop=/usr/local/bin/emacsclient --eval "(kill-emacs)"
+Restart=on-failure
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target

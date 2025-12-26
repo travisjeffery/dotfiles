@@ -2297,8 +2297,7 @@ but agnostic to language, mode, and server."
   :custom (user-init-file (concat user-emacs-directory "init.el"))
   :bind
   (;; Terminal-safe primary bindings (work everywhere)
-   ("C-o" . crux-smart-open-line)
-   ("M-o" . crux-smart-open-line-above)
+   ("C-o" . crux-smart-open-line-above)
    ("M-k" . crux-kill-line-backwards)
 
    ;; Crux utilities (reorganized to avoid conflicts)
