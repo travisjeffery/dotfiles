@@ -6,6 +6,17 @@
     "modules-center": ["network", "memory", "disk", "pulseaudio", "battery", "clock"],
     "modules-right": [],
     
+    "hyprland/workspaces": {
+        "format": "{id}",
+        "on-click": "activate",
+        "all-outputs": true,
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": []
+        }
+    },
+    
     "clock": {
         "format": "{:%I:%M %p - %A %d/%m/%Y}",
         "tooltip-format": "{:%A, %B %d, %Y}"
