@@ -31,7 +31,7 @@
     
     "network": {
         "format-wifi": "{essid}-{signalStrength}% {bandwidthDownBytes} {bandwidthUpBytes}, ",
-        "format-ethernet": " {bandwidthDownBytes}  {bandwidthUpBytes}",
+        "format-ethernet": " {bandwidthDownBytes} {bandwidthUpBytes}, ",
         "format-disconnected": "Disconnected ⚠",
         "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
         "interval": 5
