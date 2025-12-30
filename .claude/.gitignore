@@ -1,0 +1,14 @@
+credentials.json
+*.key
+*.pem
+
+# Session/state data
+statsig/
+statsig_cache/
+todos/
+projects/
+
+# Logs and history
+*.log
+debug
+history.jsonl

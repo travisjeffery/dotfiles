@@ -2,9 +2,9 @@
   "mcpServers": {
     "oscilar-infra": {
       "command": "node",
-      "args": ["/home/tj/.local/share/oscilar-mcp-server/index.js"],
+      "args": ["$HOME/.local/share/oscilar-mcp-server/index.js"],
       "env": {
-        "KUBECONFIG": "/home/tj/.kube/config",
+        "KUBECONFIG": "$HOME/.kube/config",
         "DEFAULT_NAMESPACE": "default",
         "NGINX_NAMESPACE": "ingress-nginx",
         "KARPENTER_NAMESPACE": "kube-system",
