@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "oscilar-infra": {
+      "command": "node",
+      "args": ["/home/tj/.local/share/oscilar-mcp-server/index.js"],
+      "env": {
+        "KUBECONFIG": "/home/tj/.kube/config",
+        "DEFAULT_NAMESPACE": "default",
+        "NGINX_NAMESPACE": "ingress-nginx",
+        "KARPENTER_NAMESPACE": "kube-system",
+        "MONITORING_NAMESPACE": "metrics",
+        "VICTORIAMETRICS_SERVICE": "victoriametrics"
+      }
+    }
+  }
+}

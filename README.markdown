@@ -8,7 +8,8 @@ Installation with [GNU Stow](https://www.gnu.org/software/stow/):
 
 ``` sh
 git clone https://github.com/travisjeffery/dotfiles
-stow dotfiles
+cd dotfiles
+stow -v -t ~ .
 ```
 
 

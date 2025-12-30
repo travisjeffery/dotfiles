@@ -1,0 +1,27 @@
+{
+  "name": "oscilar-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Oscilar infrastructure access",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "oscilar-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "kubernetes",
+    "eks",
+    "infrastructure"
+  ],
+  "author": "",
+  "license": "MIT"
+}

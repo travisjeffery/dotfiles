@@ -1,0 +1,5 @@
+node_modules/
+claude_mcp_config.json
+*.log
+.env
+.DS_Store
