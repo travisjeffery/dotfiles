@@ -2466,7 +2466,50 @@ but agnostic to language, mode, and server."
   (eshell-where-to-jump 'end)
   (eshell-review-quick-commands t)
   (eshell-smart-space-goes-to-end t)
+  (eshell-history-size 10000)
+  (eshell-hist-ignoredups t)
+  (eshell-destroy-buffer-when-process-dies t)
+  (eshell-scroll-to-bottom-on-input 'this)
   :config
+
+  ;; Aliases matching your zsh config
+  (defun tj-eshell-setup-aliases ()
+    (eshell/alias "k" "kubectl $*")
+    (eshell/alias "g" "git $*")
+    (eshell/alias "l" "ls -la $*")
+    (eshell/alias "ll" "ls -l $*")
+    (eshell/alias "d" "docker $*")
+    (eshell/alias "dc" "docker-compose $*")
+    (eshell/alias "e" "find-file $1")
+    (eshell/alias "ff" "find-file $1")
+    (eshell/alias "fo" "find-file-other-window $1")
+    (eshell/alias "magit" "magit-status")
+    (eshell/alias "o" "find-file $1")  ; matches your zsh 'o=open'
+    (eshell/alias "clear" "clear-scrollback"))
+
+  ;; Useful functions
+  (defun eshell/gst () (magit-status))
+  (defun eshell/d () (dired "."))
+
+  (defun eshell/clear-scrollback ()
+    "Clear scrollback."
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (eshell-send-input)))
+
+  ;; Consult history (replaces your zaw)
+  (defun tj-eshell-consult-history ()
+    "Browse eshell history with consult."
+    (interactive)
+    (require 'em-hist)
+    (let ((cmd (consult--read
+                (delete-dups (ring-elements eshell-history-ring))
+                :prompt "History: "
+                :sort nil)))
+      (when cmd
+        (eshell-kill-input)
+        (insert cmd))))
+
   (defun tj-hist-load ()
     (cl-flet
         ((unmetafy
@@ -2501,17 +2544,34 @@ but agnostic to language, mode, and server."
     (eshell-write-history)
     (save-buffers-kill-terminal))
 
-  (defun tj-eshell-prompt ()
-    "$ ")
+  (defun tj-eshell-prompt () "$ ")
 
-  (add-to-list
-   'eshell-expand-input-functions
-   'eshell-expand-history-references)
+  (add-to-list 'eshell-expand-input-functions
+               'eshell-expand-history-references)
 
-  :hook (eshell-hist-load . tj-hist-load)
-  :hook (eshell-exit-hook . tj-eshell-exit)
+  :hook ((eshell-hist-load . tj-hist-load)
+         (eshell-exit-hook . tj-eshell-exit)
+         (eshell-mode . tj-eshell-setup-aliases)
+         (eshell-mode . (lambda ()
+                          (define-key eshell-mode-map (kbd "C-r") #'tj-eshell-consult-history)
+                          (define-key eshell-mode-map (kbd "C-l") #'eshell/clear-scrollback))))
   :ensure nil
   :demand t)
+
+(use-package em-term
+  :ensure nil
+  :after eshell
+  :config
+  (add-to-list 'eshell-visual-commands "htop")
+  (add-to-list 'eshell-visual-commands "top")
+  (add-to-list 'eshell-visual-commands "less")
+  (add-to-list 'eshell-visual-commands "ssh")
+  (add-to-list 'eshell-visual-commands "tail")
+  (add-to-list 'eshell-visual-commands "watch")
+  (add-to-list 'eshell-visual-commands "stern")
+  (add-to-list 'eshell-visual-subcommands '("kubectl" "exec" "logs" "edit" "top" "attach"))
+  (add-to-list 'eshell-visual-subcommands '("docker" "exec" "logs" "attach" "run"))
+  (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show")))
 
 (use-package
   eshell-bookmark
@@ -2825,6 +2885,15 @@ but agnostic to language, mode, and server."
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
   )
+
+(use-package consult-dir
+  :ensure t
+  :demand t
+  :bind (("C-x C-d" . consult-dir)
+         :map eshell-mode-map
+         ("C-x C-d" . consult-dir)
+         :map minibuffer-local-completion-map
+         ("C-x C-d" . consult-dir)))
 
 ;; Global navigation bindings
 (use-package
