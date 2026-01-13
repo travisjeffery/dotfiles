@@ -472,6 +472,11 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   [ -f "/etc/profile.d/vte.sh" ] && source /etc/profile.d/vte.sh
 fi
 
+# Read eshell history too
+if [[ -f ~/.eshell_history ]]; then
+  fc -R ~/.eshell_history
+fi
+
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
   alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
 fi

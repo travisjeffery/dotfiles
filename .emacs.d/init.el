@@ -56,6 +56,8 @@
                                     "MOZ_ENABLE_WAYLAND"
                                     "DISPLAY"
                                     "SSH_TTY"
+                                    "SSH_AUTH_SOCK"
+                                    "SSH_AGENT_PID"
                                     "HYPRLAND_INSTANCE_SIGNATURE"))
   :ensure (:wait t)
   :demand t)
@@ -157,6 +159,9 @@
   :diminish auto-revert-mode
   :diminish completion-preview-mode
   :config
+
+
+  (setq default-process-coding-system '(utf-8 . utf-8))
 
   (defun tj-show-available-keys (prefix)
     "Show available keys under PREFIX."
@@ -2458,10 +2463,9 @@ but agnostic to language, mode, and server."
 
 (use-package em-smart :after eshell :ensure nil :demand t)
 
-(use-package
-  eshell
+(use-package eshell
   :custom
-  (eshell-history-file-name (file-truename "~/.zsh_history"))
+  (eshell-history-file-name (file-truename "~/.eshell_history"))
   (eshell-prompt-function 'tj-eshell-prompt)
   (eshell-where-to-jump 'end)
   (eshell-review-quick-commands t)
@@ -2470,6 +2474,8 @@ but agnostic to language, mode, and server."
   (eshell-hist-ignoredups t)
   (eshell-destroy-buffer-when-process-dies t)
   (eshell-scroll-to-bottom-on-input 'this)
+  (pcomplete-suffix-list '(?/))
+  (eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\)/\\'")
   :config
 
   ;; Aliases matching your zsh config
@@ -2499,64 +2505,40 @@ but agnostic to language, mode, and server."
 
   ;; Consult history (replaces your zaw)
   (defun tj-eshell-consult-history ()
-    "Browse eshell history with consult."
+    "Browse eshell and zsh history with consult."
     (interactive)
     (require 'em-hist)
-    (let ((cmd (consult--read
-                (delete-dups (ring-elements eshell-history-ring))
-                :prompt "History: "
-                :sort nil)))
+    (let* ((eshell-hist (ring-elements eshell-history-ring))
+           (zsh-hist (when (file-exists-p "~/.zsh_history")
+                       (with-temp-buffer
+                         (insert-file-contents "~/.zsh_history")
+                         (mapcar (lambda (line)
+                                   (if (string-match "^: [0-9]+:[0-9]+;" line)
+                                       (substring line (match-end 0))
+                                     line))
+                                 (split-string (buffer-string) "\n" t)))))
+           (all-hist (delete-dups (append eshell-hist zsh-hist)))
+           (cmd (consult--read
+                 all-hist
+                 :prompt "History: "
+                 :sort nil)))
       (when cmd
         (eshell-kill-input)
         (insert cmd))))
-
-  (defun tj-hist-load ()
-    (cl-flet
-        ((unmetafy
-           (input)
-           (let ((i 0)
-                 output)
-             (while-let ((char (nth i input))
-                         (inc-and-char
-                          (if (= char #x83)
-                              ;; Skip meta character and unmetafy.
-                              `(2 . ,(logxor (nth (1+ i) input) 32))
-                            ;; Advance as usual.
-                            `(1 . ,char))))
-               (cl-incf i (car inc-and-char))
-               (setq output (cons (cdr inc-and-char) output)))
-             (decode-coding-string (apply #'unibyte-string
-                                          (nreverse output))
-                                   'utf-8-unix
-                                   t))))
-      (let ((hist-file eshell-history-file-name))
-        (with-temp-buffer
-          (insert
-           (mapconcat (-compose #'unmetafy #'string-to-list)
-                      (s-lines (f-read-bytes hist-file))
-                      "\n"))
-          (write-file hist-file)))))
-
-  (defun tj-eshell-exit (&optional arg)
-    "Exit eshell and kill the current frame."
-    (interactive "P")
-    (slot/unmetafy)
-    (eshell-write-history)
-    (save-buffers-kill-terminal))
 
   (defun tj-eshell-prompt () "$ ")
 
   (add-to-list 'eshell-expand-input-functions
                'eshell-expand-history-references)
 
-  :hook ((eshell-hist-load . tj-hist-load)
-         (eshell-exit-hook . tj-eshell-exit)
-         (eshell-mode . tj-eshell-setup-aliases)
+  :hook ((eshell-mode . tj-eshell-setup-aliases)
          (eshell-mode . (lambda ()
-                          (define-key eshell-mode-map (kbd "C-r") #'tj-eshell-consult-history)
+                          (define-key eshell-mode-map (kbd "M-r") #'tj-eshell-consult-history)
+                          (define-key eshell-mode-map (kbd "C-r") #'ctrlf-backward-default)
                           (define-key eshell-mode-map (kbd "C-l") #'eshell/clear-scrollback))))
   :ensure nil
   :demand t)
+
 
 (use-package em-term
   :ensure nil
@@ -2565,11 +2547,13 @@ but agnostic to language, mode, and server."
   (add-to-list 'eshell-visual-commands "htop")
   (add-to-list 'eshell-visual-commands "top")
   (add-to-list 'eshell-visual-commands "less")
+  (add-to-list 'eshell-visual-commands "claude")
+  (add-to-list 'eshell-visual-commands "gemini")
   (add-to-list 'eshell-visual-commands "ssh")
   (add-to-list 'eshell-visual-commands "tail")
   (add-to-list 'eshell-visual-commands "watch")
   (add-to-list 'eshell-visual-commands "stern")
-  (add-to-list 'eshell-visual-subcommands '("kubectl" "exec" "logs" "edit" "top" "attach"))
+  (add-to-list 'eshell-visual-subcommands '("kubectl" "edit" "top" "attach"))
   (add-to-list 'eshell-visual-subcommands '("docker" "exec" "logs" "attach" "run"))
   (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show")))
 
@@ -3131,6 +3115,9 @@ but agnostic to language, mode, and server."
 (use-package agent-shell
   :ensure t
   :demand t
+  :custom
+  (agent-shell-tool-use-expand-by-default 1)
+  (agent-shell-thought-process-expand-by-default 1)
   :config
   (setq agent-shell-new-shell-config (agent-shell-anthropic-make-claude-code-config)))
 
