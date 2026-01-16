@@ -2465,7 +2465,7 @@ but agnostic to language, mode, and server."
 
 (use-package eshell
   :custom
-  (eshell-history-file-name (file-truename "~/.eshell_history"))
+  (eshell-history-file-name (expand-file-name "~/.eshell_history"))
   (eshell-prompt-function 'tj-eshell-prompt)
   (eshell-where-to-jump 'end)
   (eshell-review-quick-commands t)
@@ -2532,10 +2532,12 @@ but agnostic to language, mode, and server."
                'eshell-expand-history-references)
 
   :hook ((eshell-mode . tj-eshell-setup-aliases)
+         (eshell-pre-command . eshell-write-history)
          (eshell-mode . (lambda ()
                           (define-key eshell-mode-map (kbd "M-r") #'tj-eshell-consult-history)
                           (define-key eshell-mode-map (kbd "C-r") #'ctrlf-backward-default)
                           (define-key eshell-mode-map (kbd "C-l") #'eshell/clear-scrollback))))
+  :bind ("C-c $" . eshell)
   :ensure nil
   :demand t)
 
@@ -3100,7 +3102,6 @@ but agnostic to language, mode, and server."
   :hook (after-init . delete-selection-mode))
 
 (use-package eat
-  :bind (("C-c $" . eat))
   :demand t
   :ensure (:host codeberg
                  :repo "akib/emacs-eat"

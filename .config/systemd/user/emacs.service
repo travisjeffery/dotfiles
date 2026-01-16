@@ -11,4 +11,4 @@ Restart=on-failure
 TimeoutStartSec=0
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
