@@ -52,6 +52,8 @@
                                     "XDG_DESKTOP_SESSION"
                                     "XDG_BACKEND"
                                     "TERM"
+                                    "GOPRIVATE"
+                                    "HELM_CHART_PATH"
                                     "WAYLAND_DISPLAY"
                                     "MOZ_ENABLE_WAYLAND"
                                     "DISPLAY"
@@ -162,6 +164,7 @@
 
 
   (setq default-process-coding-system '(utf-8 . utf-8))
+  (load custom-file 'noerror)
 
   (defun tj-show-available-keys (prefix)
     "Show available keys under PREFIX."
@@ -211,7 +214,7 @@
     (funcall-interactively
      (read
       (car
-       (remove-if
+       (cl-remove-if
         (lambda (x) (string= "tj-repeat-last-command" x))
         extended-command-history)))))
 
@@ -267,10 +270,11 @@
     "For every buffer with the same `default-directory` as the current buffer's, reload dir-locals."
     (interactive)
     (let ((dir (projectile-project-root)))
-      (dolist (buffer (buffer-list))
-        (with-current-buffer buffer
-          (when (equal default-directory dir))
-          (dir-locals-reload-buffer)))))
+      (when dir
+        (dolist (buffer (buffer-list))
+          (with-current-buffer buffer
+            (when (equal default-directory dir)
+              (dir-locals-reload-buffer)))))))
 
   (defun tj-hexadecimal-to-decimal-at-point ()
     "Prints the decimal value of a hexadecimal string under cursor."
@@ -340,7 +344,7 @@
      'kill-buffer
      (delq
       (current-buffer)
-      (remove-if-not 'buffer-file-name (buffer-list)))))
+      (cl-remove-if-not #'buffer-file-name (buffer-list)))))
 
   (defun tj-kill-other-buffer ()
     "Kill the other window's buffer."
@@ -759,7 +763,7 @@ Otherwise split the current paragraph into one sentence per line."
                 (newline)        ;; and insert a newline
                 ))))
       ;; otherwise do ordinary fill paragraph
-      (fill-paragraph P)))
+      (fill-paragraph arg)))
 
   (defun tj-apply-function-to-region (fn)
     "Apply function FN to region."
@@ -1256,7 +1260,7 @@ Otherwise split the current paragraph into one sentence per line."
     (setq-local
      visual-line-fringe-indicators '(nil right-curly-arrow)
      word-wrap nil))
-  :hook (dired-toggle-mode . tj-dired-toggle--hook)
+  :hook (dired-toggle-mode . tj-dired-toggle-hook)
   :ensure t
   :demand t)
 
@@ -1442,7 +1446,7 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
   go-errcheck
   :ensure-system-package ((errcheck . "go install github.com/kisielk/errcheck@latest"))
-  :after go-mode-abbrev-table
+  :after go-mode
   :config
   (defun tj-go-errcheck ()
     (interactive)
@@ -1453,6 +1457,8 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   go-mode
+  :custom
+  (gofmt-command "goimports")
   :bind
   (:map
    go-mode-map
@@ -1471,10 +1477,6 @@ but agnostic to language, mode, and server."
         (eglot-execute (eglot--current-server-or-lose) (car actions)))
       (eglot-format-buffer)))
 
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook #'eglot-format-and-organize-imports nil t)))
-
   (defun tj-find-go-project-root (dir)
     "Find go project root for DIR."
     (if (and dir
@@ -1491,7 +1493,6 @@ but agnostic to language, mode, and server."
         (cons 'transient dir))))
 
   (setq tab-width 8)
-  (setq-local compilation-read-command nil)
 
   (set-face-foreground 'go-test--ok-face "forest green")
   (set-face-foreground 'go-test--standard-face "dark orange")
@@ -1533,6 +1534,10 @@ but agnostic to language, mode, and server."
 
     (setq-local project-find-functions
                 (list #'tj-find-go-project-root #'project-try-vc))
+    (setq-local compilation-read-command nil)
+    (unless (and (stringp compile-command)
+                 (string-match-p "go" compile-command))
+      (setq-local compile-command "go build -v && go test -v && go vet"))
     (setq case-fold-search t)
     (setq go-test-args "-timeout 60s -race -v")
     (which-function-mode -1)
@@ -1541,11 +1546,6 @@ but agnostic to language, mode, and server."
     (electric-pair-mode 1)
     (show-paren-mode 1)
     (selected-minor-mode 1))
-
-  (if (not (string-match "go" compile-command))
-      (set
-       (make-local-variable 'compile-command)
-       "go build -v && go test -v && go vet"))
 
   :hook ((go-mode . tj-go-hook))
   :ensure (:wait t)
@@ -2083,7 +2083,7 @@ but agnostic to language, mode, and server."
   :bind
   (("C-x C-g c" . org-capture)
    ("C-x C-g t" . org-todo-list)
-   ("C-x C-g m" . orgs-tagsview))
+   ("C-x C-g m" . org-tags-view))
   :config
   (org-indent-mode -1)
   (org-clock-persistence-insinuate)
@@ -2203,7 +2203,7 @@ but agnostic to language, mode, and server."
 
 (use-package
   phi-search
-  :after multiple-cusors
+  :after multiple-cursors
   :bind
   (:map
    mc/keymap ("C-r" . phi-search-backward) ("C-s" . phi-search))
@@ -2265,7 +2265,11 @@ but agnostic to language, mode, and server."
   modus-themes
   :demand t
   :ensure t
-  :config (load-theme 'modus-vivendi :no-confirm))
+  :config (load-theme 'modus-vivendi :no-confirm)
+  (add-hook 'modus-themes-after-load-theme-hook
+            (lambda ()
+              (setq-default cursor-type 'box)
+              (set-cursor-color "gold"))))
 
 (use-package
   zop-to-char
@@ -2371,14 +2375,6 @@ but agnostic to language, mode, and server."
   :demand t)
 
 (use-package
-  goto-chg
-  :bind
-  (("C-x ." . goto-last-change)
-   ("C-x /" . goto-last-change-reverse))
-  :ensure t
-  :demand t)
-
-(use-package
   color-moccur
   :ensure t
   :demand t)
@@ -2407,13 +2403,17 @@ but agnostic to language, mode, and server."
    ("<return>" . minibuffer-choose-completion))
   :ensure nil
   :config
+  (defvar tj--minibuffer-gc-cons-threshold nil)
   (defun tj-minibuffer-setup-hook ()
     (electric-pair-mode 0)
     (setq truncate-lines nil)
+    (setq tj--minibuffer-gc-cons-threshold gc-cons-threshold)
     (setq gc-cons-threshold most-positive-fixnum))
   (defun tj-minibuffer-exit-hook ()
     (electric-pair-mode 1)
-    (setq gc-cons-threshold 800000))
+    (when tj--minibuffer-gc-cons-threshold
+      (setq gc-cons-threshold tj--minibuffer-gc-cons-threshold)
+      (setq tj--minibuffer-gc-cons-threshold nil)))
   (add-hook 'minibuffer-setup-hook #'tj-minibuffer-setup-hook)
   (add-hook 'minibuffer-exit-hook #'tj-minibuffer-exit-hook)
   :demand t)
@@ -2555,7 +2555,7 @@ but agnostic to language, mode, and server."
   (add-to-list 'eshell-visual-commands "tail")
   (add-to-list 'eshell-visual-commands "watch")
   (add-to-list 'eshell-visual-commands "stern")
-  (add-to-list 'eshell-visual-subcommands '("kubectl" "edit" "top" "attach"))
+  (add-to-list 'eshell-visual-subcommands '("kubectl" "edit" "attach"))
   (add-to-list 'eshell-visual-subcommands '("docker" "exec" "logs" "attach" "run"))
   (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show")))
 
@@ -2760,7 +2760,7 @@ but agnostic to language, mode, and server."
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
-  (completion-category-overrride nil))
+  (completion-category-overrides nil))
 
 (use-package
   consult
@@ -2997,8 +2997,9 @@ but agnostic to language, mode, and server."
   (defun tj-eglot-organize-imports ()
     (interactive)
     (eglot-code-actions nil nil "source.organizeImports" t))
-  (add-hook 'before-save-hook 'tj-eglot-organize-imports nil t)
-  (add-hook 'before-save-hook 'eglot-format-buffer)
+  (defun tj-eglot-enable-format-on-save ()
+    (add-hook 'before-save-hook #'eglot-format-and-organize-imports nil t))
+  (add-hook 'eglot-managed-mode-hook #'tj-eglot-enable-format-on-save)
   :bind (("C-c C-r" . eglot-rename))
   :hook
   (go-mode . eglot-ensure)
@@ -3116,11 +3117,87 @@ but agnostic to language, mode, and server."
 (use-package agent-shell
   :ensure t
   :demand t
+
+  ;; Avoid ballooning buffers by default
   :custom
-  (agent-shell-tool-use-expand-by-default 1)
-  (agent-shell-thought-process-expand-by-default 1)
+  (agent-shell-tool-use-expand-by-default 0)
+  (agent-shell-thought-process-expand-by-default 0)
+
   :config
-  (setq agent-shell-new-shell-config (agent-shell-anthropic-make-claude-code-config)))
+  ;; ------------------------------------------------------------
+  ;; Performance tuning for long, streaming agent buffers
+  ;; ------------------------------------------------------------
+
+  (defcustom tj-agent-shell-max-lines 4000
+    "Maximum number of lines to keep in agent-shell buffers."
+    :type 'integer)
+
+  (defvar-local tj-agent-shell--trim-timer nil)
+
+  (defun tj-agent-shell--fast-buffer ()
+    "Make agent-shell buffers fast even when very large."
+    (setq-local display-line-numbers nil)
+    (setq-local truncate-lines t)
+    (setq-local word-wrap nil)
+    (setq-local show-trailing-whitespace nil)
+
+    ;; Kill the biggest CPU sinks
+    (font-lock-mode -1)
+    (when (boundp 'jit-lock-mode)
+      (jit-lock-mode -1))
+
+    ;; bidi is *very* expensive in large buffers (safe for LTR chat)
+    (setq-local bidi-display-reordering nil)
+    (setq-local bidi-paragraph-direction 'left-to-right)
+
+    ;; Streaming transcripts + undo = pain
+    (buffer-disable-undo)
+
+    ;; Smoother scrolling with big buffers
+    (setq-local scroll-conservatively 100000)
+    (setq-local fast-but-imprecise-scrolling t))
+
+  (defun tj-agent-shell--trim-buffer ()
+    "Trim agent-shell buffer to last `tj-agent-shell-max-lines` lines."
+    (when (> (count-lines (point-min) (point-max))
+             tj-agent-shell-max-lines)
+      (let ((inhibit-read-only t))
+        (save-excursion
+          (goto-char (point-max))
+          (forward-line (- tj-agent-shell-max-lines))
+          (delete-region (point-min) (point))))))
+
+  (defun tj-agent-shell--schedule-trim (&rest _)
+    "Schedule buffer trimming after Emacs goes idle."
+    (when tj-agent-shell--trim-timer
+      (cancel-timer tj-agent-shell--trim-timer))
+    (setq tj-agent-shell--trim-timer
+          (run-with-idle-timer
+           0.5 nil
+           (lambda (buf)
+             (when (buffer-live-p buf)
+               (with-current-buffer buf
+                 (tj-agent-shell--trim-buffer))))
+           (current-buffer))))
+
+  (defun tj-agent-shell--enable-auto-trim ()
+    (add-hook 'after-change-functions
+              #'tj-agent-shell--schedule-trim
+              nil t))
+
+  ;; ------------------------------------------------------------
+  ;; Hooks
+  ;; ------------------------------------------------------------
+
+  (add-hook 'agent-shell-mode-hook #'tj-agent-shell--fast-buffer)
+  (add-hook 'agent-shell-mode-hook #'tj-agent-shell--enable-auto-trim)
+
+  ;; ------------------------------------------------------------
+  ;; Global streaming-friendly defaults (safe)
+  ;; ------------------------------------------------------------
+
+  (setq redisplay-skip-fontification-on-input t))
+
 
 (use-package
   string-inflection
