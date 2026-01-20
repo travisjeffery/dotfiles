@@ -63,7 +63,7 @@ zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
 source $HOME/.zsh/zaw/zaw.zsh
-bindkey '^R' zaw-history
+bindkey '^[r' zaw-history
 zstyle ':filter-select:highlight' matched fg=yellow,standout
 zstyle ':filter-select' max-lines 10
 zstyle ':filter-select' max-lines -10
