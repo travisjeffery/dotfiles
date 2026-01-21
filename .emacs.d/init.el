@@ -2265,11 +2265,10 @@ but agnostic to language, mode, and server."
   modus-themes
   :demand t
   :ensure t
-  :config (load-theme 'modus-vivendi :no-confirm)
-  (add-hook 'modus-themes-after-load-theme-hook
-            (lambda ()
-              (setq-default cursor-type 'box)
-              (set-cursor-color "gold"))))
+  :config
+  (setq-default cursor-type 'box)
+  (set-cursor-color "gold")
+  (load-theme 'modus-vivendi :no-confirm))
 
 (use-package
   zop-to-char
