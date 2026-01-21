@@ -1580,7 +1580,7 @@ but agnostic to language, mode, and server."
 
 (use-package
   ripgrep
-  :config (setq ripgrep-arguments '("--hidden"))
+  :config (setq ripgrep-arguments '("--no-ignore --hidden"))
   :ensure t
   :demand t)
 
@@ -2463,107 +2463,55 @@ but agnostic to language, mode, and server."
 (use-package em-smart :after eshell :ensure nil :demand t)
 
 (use-package eshell
+  :ensure nil
+  :demand t
   :custom
-  (eshell-history-file-name (expand-file-name "~/.eshell_history"))
-  (eshell-prompt-function 'tj-eshell-prompt)
+  ;; History
+  (eshell-history-size 10000)
+  (eshell-hist-ignoredups t)
+  (eshell-history-file-name
+   (expand-file-name "eshell/history" user-emacs-directory))
+
+  ;; UX
+  (eshell-scroll-to-bottom-on-input t)
+  (eshell-scroll-to-bottom-on-output nil)
   (eshell-where-to-jump 'end)
   (eshell-review-quick-commands t)
   (eshell-smart-space-goes-to-end t)
-  (eshell-history-size 10000)
-  (eshell-hist-ignoredups t)
-  (eshell-destroy-buffer-when-process-dies t)
-  (eshell-scroll-to-bottom-on-input 'this)
-  (pcomplete-suffix-list '(?/))
+
+  ;; Completion
+  (pcomplete-ignore-case t)
   (eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\)/\\'")
+
+  ;; Prompt
+  (eshell-prompt-regexp "^[$] ")
+  (eshell-prompt-function
+   (lambda ()
+     (propertize "$ " 'face 'eshell-prompt)))
+
   :config
+  ;; Make prompt visible everywhere
+  (set-face-attribute 'eshell-prompt nil
+                      :weight 'bold)
 
-  ;; Aliases matching your zsh config
-  (defun tj-eshell-setup-aliases ()
-    (eshell/alias "k" "kubectl $*")
-    (eshell/alias "g" "git $*")
-    (eshell/alias "l" "ls -la $*")
-    (eshell/alias "ll" "ls -l $*")
-    (eshell/alias "d" "docker $*")
-    (eshell/alias "dc" "docker-compose $*")
-    (eshell/alias "e" "find-file $1")
-    (eshell/alias "ff" "find-file $1")
-    (eshell/alias "fo" "find-file-other-window $1")
-    (eshell/alias "magit" "magit-status")
-    (eshell/alias "o" "find-file $1")  ; matches your zsh 'o=open'
-    (eshell/alias "clear" "clear-scrollback"))
+  ;; Simple aliases (safe)
+  (require 'em-alias)
+  (eshell/alias "ll" "ls -lh $*")
+  (eshell/alias "la" "ls -la $*")
+  (eshell/alias "g"  "git $*")
+  (eshell/alias "k"  "kubectl $*")
+  (eshell/alias "d"  "docker $*")
 
-  ;; Useful functions
-  (defun eshell/gst () (magit-status))
-  (defun eshell/d () (dired "."))
-
-  (defun eshell/clear-scrollback ()
-    "Clear scrollback."
-    (let ((inhibit-read-only t))
-      (erase-buffer)
-      (eshell-send-input)))
-
-  ;; Consult history (replaces your zaw)
-  (defun tj-eshell-consult-history ()
-    "Browse eshell and zsh history with consult."
+  ;; Clear buffer properly
+  (defun eshell/clear ()
     (interactive)
-    (require 'em-hist)
-    (let* ((eshell-hist (ring-elements eshell-history-ring))
-           (zsh-hist (when (file-exists-p "~/.zsh_history")
-                       (with-temp-buffer
-                         (insert-file-contents "~/.zsh_history")
-                         (mapcar (lambda (line)
-                                   (if (string-match "^: [0-9]+:[0-9]+;" line)
-                                       (substring line (match-end 0))
-                                     line))
-                                 (split-string (buffer-string) "\n" t)))))
-           (all-hist (delete-dups (append eshell-hist zsh-hist)))
-           (cmd (consult--read
-                 all-hist
-                 :prompt "History: "
-                 :sort nil)))
-      (when cmd
-        (eshell-kill-input)
-        (insert cmd))))
+    (let ((inhibit-read-only t))
+      (erase-buffer))
+    (eshell-emit-prompt))
 
-  (defun tj-eshell-prompt () "$ ")
-
-  (add-to-list 'eshell-expand-input-functions
-               'eshell-expand-history-references)
-
-  :hook ((eshell-mode . tj-eshell-setup-aliases)
-         (eshell-pre-command . eshell-write-history)
-         (eshell-mode . (lambda ()
-                          (define-key eshell-mode-map (kbd "M-r") #'tj-eshell-consult-history)
-                          (define-key eshell-mode-map (kbd "C-r") #'ctrlf-backward-default)
-                          (define-key eshell-mode-map (kbd "C-l") #'eshell/clear-scrollback))))
-  :bind ("C-c $" . eshell)
-  :ensure nil
-  :demand t)
-
-
-(use-package em-term
-  :ensure nil
-  :after eshell
-  :config
-  (add-to-list 'eshell-visual-commands "htop")
-  (add-to-list 'eshell-visual-commands "top")
-  (add-to-list 'eshell-visual-commands "less")
-  (add-to-list 'eshell-visual-commands "claude")
-  (add-to-list 'eshell-visual-commands "gemini")
-  (add-to-list 'eshell-visual-commands "ssh")
-  (add-to-list 'eshell-visual-commands "tail")
-  (add-to-list 'eshell-visual-commands "watch")
-  (add-to-list 'eshell-visual-commands "stern")
-  (add-to-list 'eshell-visual-subcommands '("kubectl" "edit" "attach"))
-  (add-to-list 'eshell-visual-subcommands '("docker" "exec" "logs" "attach" "run"))
-  (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show")))
-
-(use-package
-  eshell-bookmark
-  :after eshell
-  :hook (eshell-mode . eshell-bookmark-setup)
-  :ensure t
-  :demand t)
+  ;; Keybindings (nothing fancy)
+  (define-key eshell-mode-map (kbd "C-l") #'eshell/clear)
+  (define-key eshell-mode-map (kbd "C-r") #'isearch-backward))
 
 (use-package
   eshell-up
@@ -3102,6 +3050,7 @@ but agnostic to language, mode, and server."
   :hook (after-init . delete-selection-mode))
 
 (use-package eat
+  :bind (("C-c e" . eat))
   :demand t
   :ensure (:host codeberg
                  :repo "akib/emacs-eat"
@@ -3116,11 +3065,14 @@ but agnostic to language, mode, and server."
 (use-package agent-shell
   :ensure t
   :demand t
+  :bind (:map agent-shell-mode-map
+              ("C-c C-q" . agent-shell-queue-request))
 
   ;; Avoid ballooning buffers by default
   :custom
   (agent-shell-tool-use-expand-by-default 0)
   (agent-shell-thought-process-expand-by-default 0)
+  (agent-shell-file-completion-enabled t)
 
   :config
   ;; ------------------------------------------------------------

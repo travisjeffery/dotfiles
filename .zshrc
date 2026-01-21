@@ -16,7 +16,7 @@ bindkey "^[[B" history-beginning-search-forward-end
 bindkey '\ew' kill-region                           # [Esc-w] - Kill from the cursor to the mark
 bindkey -s '\el' 'ls\n'                             # [Esc-l] - run command: ls
 bindkey -s '\e.' '..\n'                             # [Esc-.] - run command: .. (up directory)
-bindkey '^r' history-incremental-search-backward    # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
+
 bindkey '^[[5~' up-line-or-history                  # [PageUp] - Up a line of history
 bindkey '^[[6~' down-line-or-history                # [PageDown] - Down a line of history
 bindkey "\e[Z" reverse-menu-complete # Shift+Tab
@@ -62,13 +62,7 @@ zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
-source $HOME/.zsh/zaw/zaw.zsh
-bindkey '^[r' zaw-history
-zstyle ':filter-select:highlight' matched fg=yellow,standout
-zstyle ':filter-select' max-lines 10
-zstyle ':filter-select' max-lines -10
-zstyle ':filter-select' case-insensitive yes
-zstyle ':filter-select' extended-search yes
+
 
 backward-delete-to-slash() {
   integer pos=$CURSOR
@@ -101,7 +95,10 @@ fi
 
 source ~/.zsh/completions/_docker
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# fzf integration
+source <(fzf --zsh)
+bindkey -r '^r'  # unbind Ctrl-R
+bindkey '^[r' fzf-history-widget  # Alt-R for fzf history
 
 
 tj-backward-kill() {
