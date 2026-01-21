@@ -2267,7 +2267,7 @@ but agnostic to language, mode, and server."
   :ensure t
   :config
   (setq-default cursor-type 'box)
-  (set-cursor-color "gold")
+  (set-cursor-color "#FFBF00")
   (load-theme 'modus-vivendi :no-confirm))
 
 (use-package
