@@ -79,7 +79,7 @@ zle -N backward-delete-to-slash
 
 zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 
-export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact"
+export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact --color=hl:yellow,hl+:yellow:bold"
 
 if type kubectl &> /dev/null; then
   source <(kubectl completion zsh)
