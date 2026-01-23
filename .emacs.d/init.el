@@ -2487,12 +2487,9 @@ but agnostic to language, mode, and server."
   (eshell-prompt-regexp "^[$] ")
   (eshell-prompt-function
    (lambda ()
-     (propertize "$ " 'face 'eshell-prompt)))
+     "$ "))
 
   :config
-  ;; Make prompt visible everywhere
-  (set-face-attribute 'eshell-prompt nil
-                      :weight 'bold)
 
   ;; Simple aliases (safe)
   (require 'em-alias)
@@ -2803,10 +2800,6 @@ but agnostic to language, mode, and server."
    consult-bookmark
    consult-recent-file
    consult-xref
-   consult--source-bookmark
-   consult--source-file-register
-   consult--source-recent-file
-   consult--source-project-recent-file
    ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
 
@@ -3059,6 +3052,19 @@ but agnostic to language, mode, and server."
                          ("terminfo/65" "terminfo/65/*")
                          ("integration" "integration/*")
                          (:exclude ".dir-locals.el" "*-tests.el")))
+  :config
+  (with-eval-after-load 'esh-opt
+  ;; Only make specific git subcommands "visual" in eshell.
+    (add-to-list 'eshell-visual-subcommands
+                 '("git" "log")
+                 '("git" "diff")
+                 ))
+  (with-eval-after-load 'esh-opt
+    (add-to-list 'eshell-visual-commands "less")
+    (add-to-list 'eshell-visual-commands "top")
+    (add-to-list 'eshell-visual-commands "htop")
+    (add-to-list 'eshell-visual-commands "watch")
+    (add-to-list 'eshell-visual-commands "tig"))
   :hook ((eshell-load . eat-eshell-mode)
          (eshell-load . eat-eshell-visual-command-mode)))
 
@@ -3066,7 +3072,8 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t
   :bind (:map agent-shell-mode-map
-              ("C-c C-q" . agent-shell-queue-request))
+              ("C-c C-q" . agent-shell-queue-request)
+              ("C-c C-b" . agent-shell-prompt-compose))
 
   ;; Avoid ballooning buffers by default
   :custom
