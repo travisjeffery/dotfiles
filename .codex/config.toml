@@ -1,0 +1,22 @@
+sandbox_mode = "workspace-write"
+model = "gpt-5.2"
+model_reasoning_effort = "high"
+reasoning = "xhigh"
+network_access = "enabled"
+
+
+[defaults]
+network = true
+trust_level = "trusted"
+
+[sandbox_workspace_write]
+network_access = true
+
+[features]
+unified_exec = true
+shell_snapshot = true
+steer = true
+
+[notice.model_migrations]
+"gpt-5.2" = "gpt-5.2-codex"
+
