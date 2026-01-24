@@ -164,6 +164,10 @@
 
 
   (setq default-process-coding-system '(utf-8 . utf-8))
+  (defvar tj--gc-idle-timer
+    (unless noninteractive
+      (run-with-idle-timer 10 t #'garbage-collect))
+    "Idle timer used to run `garbage-collect' opportunistically.")
   (load custom-file 'noerror)
 
   (defun tj-show-available-keys (prefix)
@@ -2466,6 +2470,17 @@ but agnostic to language, mode, and server."
   :ensure nil
   :demand t
   :custom
+
+  (add-to-list 'eshell-visual-commands "less")
+    (add-to-list 'eshell-visual-commands "top")
+    (add-to-list 'eshell-visual-commands "htop")
+    (add-to-list 'eshell-visual-commands "watch")
+    (add-to-list 'eshell-visual-commands "tig")
+
+  (add-to-list 'eshell-visual-subcommands
+               '("git" "log")
+               '("git" "diff"))
+
   ;; History
   (eshell-history-size 10000)
   (eshell-hist-ignoredups t)
@@ -2490,6 +2505,77 @@ but agnostic to language, mode, and server."
      "$ "))
 
   :config
+
+  (require 'esh-mode)
+  (setq eshell-buffer-maximum-lines 5000)
+  (setq eshell-truncate-buffer-on-input t)
+
+  (defcustom tj-eshell-fast-buffer t
+    "If non-nil, disable expensive features in Eshell buffers for performance."
+    :type 'boolean)
+
+  (defvar-local tj-eshell--trim-timer nil)
+
+  (defun tj-eshell--schedule-trim (&rest _)
+    "Schedule trimming the Eshell buffer after Emacs goes idle."
+    (when tj-eshell--trim-timer
+      (cancel-timer tj-eshell--trim-timer))
+    (setq tj-eshell--trim-timer
+          (run-with-idle-timer
+           0.5 nil
+           (lambda (buf)
+             (when (buffer-live-p buf)
+               (with-current-buffer buf
+                 (when (derived-mode-p 'eshell-mode)
+                   (let ((inhibit-read-only t))
+                     (when (fboundp 'eshell-truncate-buffer)
+                       (eshell-truncate-buffer)))))))
+           (current-buffer))))
+
+  (defun tj-eshell--prefer-lisp-functions-maybe ()
+    "Prefer Eshell's Lisp commands only on remote directories.
+
+On local directories, external commands tend to be significantly faster for
+high-IO tasks (e.g. large `ls' output).  On remote directories, external
+commands usually can't handle TRAMP paths."
+    (setq-local eshell-prefer-lisp-functions (file-remote-p default-directory)))
+
+  (defun tj-eshell--performance-setup ()
+    "Apply lightweight settings for Eshell buffers."
+    (setq-local display-line-numbers nil)
+    (setq-local truncate-lines t)
+    (setq-local word-wrap nil)
+    (setq-local show-trailing-whitespace nil)
+
+    (when tj-eshell-fast-buffer
+      ;; Large output + fontification is expensive; keep eshell snappy.
+      (font-lock-mode -1)
+      (when (boundp 'jit-lock-mode)
+        (jit-lock-mode -1))
+
+      ;; bidi is very expensive in large buffers (safe for LTR shell output)
+      (setq-local bidi-display-reordering nil)
+      (setq-local bidi-paragraph-direction 'left-to-right)
+
+      ;; Eshell is primarily an output buffer; undo can get very expensive.
+      (buffer-disable-undo)
+
+      ;; Smoother scrolling when output is huge.
+      (setq-local scroll-conservatively 100000)
+      (setq-local fast-but-imprecise-scrolling t))
+
+    (when (fboundp 'display-line-numbers-mode)
+      (display-line-numbers-mode -1))
+    (when (bound-and-true-p hl-line-mode)
+      (hl-line-mode -1))
+    (tj-eshell--prefer-lisp-functions-maybe)
+    (add-hook 'eshell-directory-change-hook
+              #'tj-eshell--prefer-lisp-functions-maybe
+              nil
+              t)
+    (add-hook 'after-change-functions #'tj-eshell--schedule-trim nil t))
+
+  (add-hook 'eshell-mode-hook #'tj-eshell--performance-setup)
 
   ;; Simple aliases (safe)
   (require 'em-alias)
@@ -3045,6 +3131,8 @@ but agnostic to language, mode, and server."
 (use-package eat
   :bind (("C-c e" . eat))
   :demand t
+  :after eshell
+  :after esh-opt
   :ensure (:host codeberg
                  :repo "akib/emacs-eat"
                  :files ("*.el" ("term" "term/*.el") "*.texi"
@@ -3053,18 +3141,7 @@ but agnostic to language, mode, and server."
                          ("integration" "integration/*")
                          (:exclude ".dir-locals.el" "*-tests.el")))
   :config
-  (with-eval-after-load 'esh-opt
-  ;; Only make specific git subcommands "visual" in eshell.
-    (add-to-list 'eshell-visual-subcommands
-                 '("git" "log")
-                 '("git" "diff")
-                 ))
-  (with-eval-after-load 'esh-opt
-    (add-to-list 'eshell-visual-commands "less")
-    (add-to-list 'eshell-visual-commands "top")
-    (add-to-list 'eshell-visual-commands "htop")
-    (add-to-list 'eshell-visual-commands "watch")
-    (add-to-list 'eshell-visual-commands "tig"))
+
   :hook ((eshell-load . eat-eshell-mode)
          (eshell-load . eat-eshell-visual-command-mode)))
 
