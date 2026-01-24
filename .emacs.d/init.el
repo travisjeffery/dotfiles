@@ -2466,21 +2466,22 @@ but agnostic to language, mode, and server."
 
 (use-package em-smart :after eshell :ensure nil :demand t)
 
+(use-package eat
+  :demand t
+  :ensure (:host codeberg
+                 :repo "akib/emacs-eat"
+                 :files ("*.el" ("term" "term/*.el") "*.texi"
+                         "*.ti" ("terminfo/e" "terminfo/e/*")
+                         ("terminfo/65" "terminfo/65/*")
+                         ("integration" "integration/*")
+                         (:exclude ".dir-locals.el" "*-tests.el"))))
+
+
 (use-package eshell
   :ensure nil
   :demand t
+  :after eat
   :custom
-
-  (add-to-list 'eshell-visual-commands "less")
-    (add-to-list 'eshell-visual-commands "top")
-    (add-to-list 'eshell-visual-commands "htop")
-    (add-to-list 'eshell-visual-commands "watch")
-    (add-to-list 'eshell-visual-commands "tig")
-
-  (add-to-list 'eshell-visual-subcommands
-               '("git" "log")
-               '("git" "diff"))
-
   ;; History
   (eshell-history-size 10000)
   (eshell-hist-ignoredups t)
@@ -2506,7 +2507,6 @@ but agnostic to language, mode, and server."
 
   :config
 
-  (require 'esh-mode)
   (setq eshell-buffer-maximum-lines 5000)
   (setq eshell-truncate-buffer-on-input t)
 
@@ -2594,7 +2594,9 @@ commands usually can't handle TRAMP paths."
 
   ;; Keybindings (nothing fancy)
   (define-key eshell-mode-map (kbd "C-l") #'eshell/clear)
-  (define-key eshell-mode-map (kbd "C-r") #'isearch-backward))
+  (define-key eshell-mode-map (kbd "C-r") #'isearch-backward)
+  :hook ((eshell-first-time-mode . eat-eshell-mode)
+         (eshell-first-time-mode . eat-eshell-visual-command-mode)))
 
 (use-package
   eshell-up
@@ -3127,23 +3129,6 @@ commands usually can't handle TRAMP paths."
   delsel
   :ensure nil ; no need to install it as it is built-in
   :hook (after-init . delete-selection-mode))
-
-(use-package eat
-  :bind (("C-c e" . eat))
-  :demand t
-  :after eshell
-  :after esh-opt
-  :ensure (:host codeberg
-                 :repo "akib/emacs-eat"
-                 :files ("*.el" ("term" "term/*.el") "*.texi"
-                         "*.ti" ("terminfo/e" "terminfo/e/*")
-                         ("terminfo/65" "terminfo/65/*")
-                         ("integration" "integration/*")
-                         (:exclude ".dir-locals.el" "*-tests.el")))
-  :config
-
-  :hook ((eshell-load . eat-eshell-mode)
-         (eshell-load . eat-eshell-visual-command-mode)))
 
 (use-package agent-shell
   :ensure t
