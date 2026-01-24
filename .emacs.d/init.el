@@ -3406,3 +3406,19 @@ commands usually can't handle TRAMP paths."
 ;; Press C-c d and wait → see all diff/ediff operations
 ;; etc.
 ;;
+
+;; ============================================================================
+;; STARTUP BUFFERS
+;; ============================================================================
+
+(defun tj-startup-buffers ()
+  "Open standard buffers on startup."
+  (interactive)
+  (eshell)
+  (rename-buffer "*eshell*" t)
+  (agent-shell-openai-start-codex)
+  (rename-buffer "*codex*" t)
+  (agent-shell-anthropic-start-claude-code)
+  (rename-buffer "*claude*" t))
+
+(add-hook 'emacs-startup-hook #'tj-startup-buffers)
