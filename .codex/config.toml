@@ -3,7 +3,7 @@ model = "gpt-5.2"
 model_reasoning_effort = "high"
 reasoning = "xhigh"
 network_access = "enabled"
-
+collaboration_modes = true
 
 [defaults]
 network = true
@@ -20,3 +20,23 @@ steer = true
 [notice.model_migrations]
 "gpt-5.2" = "gpt-5.2-codex"
 
+[mcp_servers.honeycomb]
+url = "https://mcp.honeycomb.io/mcp"
+
+[mcp_servers.pagerduty]
+url = "https://mcp.pagerduty.com/mcp"
+[mcp_servers.pagerduty.env_http_headers]
+Authorization = "PAGERDUTY_AUTHORIZATION"
+
+[mcp_servers.elasticsearch]
+command = "npx"
+args = ["-y", "@elastic/mcp-server-elasticsearch"]
+
+[mcp_servers.elasticsearch.env]
+OTEL_LOG_LEVEL = "none"
+ES_API_KEY = "OTBGci1Kc0J3M1l3d05kREVST3k6cEtPVDNUdFBCT25weF9abmgxYTk4UQ=="
+ES_URL = "https://monitoring-d07a87.es.us-east-2.aws.elastic-cloud.com:9243"
+
+[mcp_servers.elastic-agent-builder]
+command = "npx"
+args = ["-y", "mcp-remote", "https://monitoring-d07a87.kb.us-east-2.aws.elastic-cloud.com:9243/api/agent_builder/mcp", "--header", "Authorization:ApiKey UVFyTThKc0JsUEFOTFI0V1JjRzk6ejk5Z1ZMelZoZmttQXo3OHgzNDRrUQ==", "--header", "kbn-xsrf:true"]
