@@ -2486,7 +2486,7 @@ but agnostic to language, mode, and server."
   (eshell-history-size 10000)
   (eshell-hist-ignoredups t)
   (eshell-history-file-name
-   (expand-file-name "eshell/history" user-emacs-directory))
+   (expand-file-name "eshell-history" user-emacs-var-directory))
 
   ;; UX
   (eshell-scroll-to-bottom-on-input t)
@@ -2506,6 +2506,8 @@ but agnostic to language, mode, and server."
      "$ "))
 
   :config
+
+  (make-directory (file-name-directory eshell-history-file-name) t)
 
   (setq eshell-buffer-maximum-lines 5000)
   (setq eshell-truncate-buffer-on-input t)
@@ -2596,7 +2598,9 @@ commands usually can't handle TRAMP paths."
   (define-key eshell-mode-map (kbd "C-l") #'eshell/clear)
   (define-key eshell-mode-map (kbd "C-r") #'isearch-backward)
   :hook ((eshell-first-time-mode . eat-eshell-mode)
-         (eshell-first-time-mode . eat-eshell-visual-command-mode)))
+         (eshell-first-time-mode . eat-eshell-visual-command-mode))
+  :bind
+  (("C-c e" . eshell)))
 
 (use-package
   eshell-up
