@@ -1584,7 +1584,7 @@ but agnostic to language, mode, and server."
 
 (use-package
   ripgrep
-  :config (setq ripgrep-arguments '("--no-ignore --hidden"))
+  :config (setq ripgrep-arguments '("--hidden"))
   :ensure t
   :demand t)
 
@@ -2594,13 +2594,42 @@ commands usually can't handle TRAMP paths."
       (erase-buffer))
     (eshell-emit-prompt))
 
+  (require 'ring)
+  (require 'seq)
+
+
+  (defun tj-eshell--sanitize-string (s)
+    "Remove non-Unicode (Emacs-internal) chars from S."
+    (if (stringp s)
+        (apply #'string
+               (seq-filter (lambda (ch) (<= ch #x10FFFF))
+                           (string-to-list s)))
+      s))
+
+  (defun tj-eshell--sanitize-history ()
+    "Sanitize `eshell-history-ring` by rebuilding it without non-Unicode chars."
+    (when (and (boundp 'eshell-history-ring) (ring-p eshell-history-ring))
+      (let* ((old eshell-history-ring)
+             (new (make-ring (ring-size old)))
+             ;; ring-elements returns newest->oldest; reverse to re-insert oldest->newest
+             (elts (reverse (ring-elements old))))
+        (dolist (e elts)
+          (ring-insert new (tj-eshell--sanitize-string e)))
+        (setq eshell-history-ring new))))
+
+
+
+  (setq eshell-pre-command-hook '(tj-eshell--sanitize-history  tramp-flush-file-function))
+
   ;; Keybindings (nothing fancy)
   (define-key eshell-mode-map (kbd "C-l") #'eshell/clear)
   (define-key eshell-mode-map (kbd "C-r") #'isearch-backward)
   :hook ((eshell-first-time-mode . eat-eshell-mode)
-         (eshell-first-time-mode . eat-eshell-visual-command-mode))
+         (eshell-first-time-mode . eat-eshell-visual-command-mode)
+         (eshell-pre-command . tj-eshell--sanitize-history))
   :bind
   (("C-c e" . eshell)))
+
 
 (use-package
   eshell-up
