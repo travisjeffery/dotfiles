@@ -513,3 +513,5 @@ if [[ $TERM == "dumb" ]]; then
   unsetopt zle
   PS1='$ '
 fi
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
