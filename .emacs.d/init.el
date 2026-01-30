@@ -2455,6 +2455,12 @@ but agnostic to language, mode, and server."
 
 (use-package pcmpl-args :ensure t :demand t)
 
+(use-package fish-completion
+  :ensure t
+  :demand t
+  :config
+  (global-fish-completion-mode))
+
 (use-package
   em-unix
   :after eshell
