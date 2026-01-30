@@ -1,6 +1,6 @@
 Hey, these are [@travisjeffery's](http://twitter.com/travisjeffery) dotfiles.
 
-I use Emacs, Arch Linux, Z shell.
+I use Emacs and Arch Linux.
 
 I've published this in the hopes that someone finds them useful.
 
@@ -11,7 +11,3 @@ git clone https://github.com/travisjeffery/dotfiles
 cd dotfiles
 stow -v -t ~ .
 ```
-
-
-
-
