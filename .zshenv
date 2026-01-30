@@ -89,9 +89,11 @@ fi
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 if type pyenv &> /dev/null; then
-  eval "$(pyenv init -)"
+  eval "$(pyenv init - --no-rehash)"
   eval "$(pyenv virtualenv-init -)"
 fi
+
+path=("${path[@]%/}")
 
 # Cross-platform ssh-agent setup (Linux + macOS)
 if [[ "$OSTYPE" == darwin* ]]; then
