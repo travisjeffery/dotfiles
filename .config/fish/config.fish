@@ -58,12 +58,8 @@ end
 # fzf integration + keybindings
 if type -q fzf
     fzf --fish | source
-
-    # match `.zshrc`: don't use Ctrl-R, use Alt-R for history
-    bind --erase \cr
-    bind --erase -M insert \cr
+    bind \cr 'commandline -f repaint'
     bind \er fzf-history-widget
-    bind -M insert \er fzf-history-widget
 end
 
 alias e=emacsclient
