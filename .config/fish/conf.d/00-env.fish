@@ -139,11 +139,11 @@ __tj_prepend_path "$PYENV_ROOT/bin"
 
 function __tj_ssh_agent --description 'Start ssh-agent on a stable per-user socket'
     if test (uname) = Darwin
-        set -gx SSH_AUTH_SOCK "$TMPDIR/ssh-agent.sock"
+        set -gx SSH_AUTH_SOCK "$TMPDIR/ssh-agent.socket"
     else if set -q XDG_RUNTIME_DIR; and test -d "$XDG_RUNTIME_DIR"
-        set -gx SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.sock"
+        set -gx SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.socket"
     else
-        set -gx SSH_AUTH_SOCK "/tmp/ssh-agent-$USER.sock"
+        set -gx SSH_AUTH_SOCK "/tmp/ssh-agent-$USER.socket"
     end
 
     if not status is-interactive
