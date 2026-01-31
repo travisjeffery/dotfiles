@@ -82,7 +82,7 @@
   (mode-line-collapse-minor-modes t)
   (kill-region-dwim t)
   (delete-pair-push-mark t)
-  ;; show all buffers, otherwise, some can be hidden under C-x b)
+  ;; show all buffers, otherwise, some can be hidden under C-x b
   (buffers-menu-max-size nil)
   (debugger-stack-frame-as-list t)
   (user-full-name "Travis Jeffery")
@@ -132,7 +132,7 @@
          (abbreviate-file-name (buffer-file-name))
        (buffer-name))
      "%b"))
-  ;; hippie expand is dabbrev expand on steroids)
+  ;; hippie expand is dabbrev expand on steroids
   (hippie-expand-try-functions-list
    '(try-expand-dabbrev
      try-expand-dabbrev-all-buffers
@@ -144,7 +144,7 @@
      try-expand-line
      try-complete-lisp-symbol-partially
      try-complete-lisp-symbol))
-  ;; store all backup and autosave files in the tmp dir)
+  ;; store all backup and autosave files in the tmp dir
   (backup-directory-alist `((".*" . ,temporary-file-directory)))
   (auto-save-file-name-transforms
    `((".*" ,temporary-file-directory t)))
@@ -752,7 +752,7 @@ Otherwise split the current paragraph into one sentence per line."
               ((fill-column 12345678)) ;; relies on dynamic binding
             (fill-paragraph) ;; this will not work correctly if the paragraph is
             ;; longer than 12345678 characters (in which case the
-            ;; file must be at least 12MB long. This is unlikely.)
+            ;; file must be at least 12MB long. This is unlikely.
             (let ((end
                    (save-excursion
                      (forward-paragraph 1)
@@ -917,75 +917,6 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t
   :bind (:map org-mode-map
               ("C-c C-r" . verb-command-map)))
-
-;;; ============================================================================
-;;; GPTEL - LLM Integration (Claude & Gemini)
-;;; ============================================================================
-;;
-;; API KEY SETUP:
-;; Add to ~/.authinfo.gpg or ~/.authinfo:
-;;
-;;   machine api.anthropic.com login apikey password YOUR_ANTHROPIC_API_KEY
-;;   machine generativelanguage.googleapis.com login apikey password YOUR_GOOGLE_API_KEY
-;;
-;; Get API keys from:
-;;   - Claude: https://console.anthropic.com/settings/keys
-;;   - Gemini: https://aistudio.google.com/app/apikey
-;;
-;; Usage:
-;;   C-c a a  Start gptel chat
-;;   C-c a s  Send region/buffer to LLM
-;;   C-c a m  Open transient menu
-;;   C-c a b  Switch between Claude and Gemini
-;;   C-c a M  Switch model within current backend
-
-(use-package gptel
-  :ensure t
-  :demand t
-  :init
-  ;; Create AI/gptel keymap
-  (defvar tj-ai-keymap (make-sparse-keymap)
-    "Keymap for AI/LLM operations with gptel.")
-
-  :bind-keymap ("C-c a" . tj-ai-keymap)
-  :bind (:map tj-ai-keymap
-              ("a" . gptel)
-              ("s" . gptel-send)
-              ("m" . gptel-menu)
-              ("b" . tj-gptel-switch-backend))
-
-  :config
-  ;; Claude (Anthropic) backend
-  (setq gptel-claude
-        (gptel-make-anthropic "Claude"
-          :stream t
-          :key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))
-          :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
-                                      :max_tokens 4096))
-        )
-
-  ;; Gemini (Google) backend
-  (setq gptel-gemini
-        (gptel-make-gemini "Gemini"
-          :stream t
-          :key (lambda () (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))))
-
-  ;; Set defaults after backends are defined
-  (setq gptel-model 'claude-sonnet-4.5)
-  (setq gptel-backend gptel-claude)
-
-  ;; Helper function to switch between Claude and Gemini
-  (defun tj-gptel-switch-backend ()
-    "Switch between Claude and Gemini backends."
-    (interactive)
-    (let* ((backends '(("Claude" . gptel-claude)
-                       ("Gemini" . gptel-gemini)))
-           (choice (completing-read "Select backend: "
-                                    (mapcar #'car backends)
-                                    nil t))
-           (backend (cdr (assoc choice backends))))
-      (setq gptel-backend (symbol-value backend))
-      (message "Switched to %s backend" choice))))
 
 (use-package
   no-littering
@@ -2364,7 +2295,6 @@ but agnostic to language, mode, and server."
     "C-c x" "visual-replace"
 
     ;; Organized keymaps
-    "C-c a" "ai/gptel"
     "C-c b" "buffer"
     "C-c d" "diff/ediff"
     "C-c o" "org-mode"
@@ -3361,14 +3291,6 @@ commands usually can't handle TRAMP paths."
 ;; ============================================================================
 ;; TIER 3: ORGANIZED KEYMAPS (C-c + letter + letter)
 ;; ============================================================================
-;;
-;; AI/LLM Operations (C-c a X)
-;; ----------------------------
-;; C-c a a     gptel (start chat)
-;; C-c a s     gptel-send (send region/buffer)
-;; C-c a m     gptel-menu (transient menu)
-;; C-c a b     switch backend (Claude ↔ Gemini)
-;; C-c a M     switch model
 ;;
 ;; Buffer Operations (C-c b X)
 ;; ----------------------------
