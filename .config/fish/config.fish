@@ -56,6 +56,7 @@ if type -q helm
 end
 
 # fzf integration + keybindings
+# fzf integration + keybindings
 if type -q fzf
     fzf --fish | source
     bind \cr 'commandline -f repaint'
@@ -366,3 +367,4 @@ functions --erase __tj_append_path
 functions --erase __tj_prepend_manpath
 functions --erase __tj_prepend_infopath
 functions --erase __tj_load_dircolors
+
