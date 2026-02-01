@@ -1,4 +1,14 @@
-shell = /opt/homebrew/bin/fish
+command = /opt/homebrew/bin/fish
+
 font-family = Fira Code
 font-size = 14
+font-feature = liga
+
 macos-option-as-alt = true
+copy-on-select = false
+scrollback-limit = 200000
+
+cursor-style = block
+cursor-blink = false
+
+confirm-close = false
