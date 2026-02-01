@@ -1,0 +1,4 @@
+shell = /opt/homebrew/bin/fish
+font-family = Fira Code
+font-size = 14
+macos-option-as-alt = true
