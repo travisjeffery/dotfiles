@@ -1054,6 +1054,13 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package vterm :ensure t :demand t)
 
+(use-package multi-vterm :ensure t :demand t
+  :bind
+  (("C-c v t" . #'multi-vterm)
+   ("C-c v n" . #'multi-vterm-next)
+   ("C-c v p" . #'multi-vterm-prev)
+   ("C-c v r" . #'multi-vterm-rename-buffer)))
+
 (use-package
   with-editor
   :ensure t
@@ -2058,6 +2065,11 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t)
 
+(use-package org-present
+  :after org
+  :demand t
+  :ensure t)
+
 (use-package org-web-tools :demand t :ensure t)
 
 (use-package
@@ -2225,7 +2237,7 @@ but agnostic to language, mode, and server."
    '((desktop :default-height 160)
      (laptop :default-height 120)
      (large :default-height 140)
-     (presentation :default-height 160)
+     (present :default-height 240)
      (t
       :default-family "Fira Code Retina"
       :variable-pitch-family "Fira Sans"
@@ -3108,6 +3120,7 @@ commands usually can't handle TRAMP paths."
 
   ;; Avoid ballooning buffers by default
   :custom
+  (agent-shell-header-style nil)
   (agent-shell-tool-use-expand-by-default 0)
   (agent-shell-thought-process-expand-by-default 0)
   (agent-shell-file-completion-enabled t)
@@ -3368,18 +3381,3 @@ commands usually can't handle TRAMP paths."
 ;; etc.
 ;;
 
-;; ============================================================================
-;; STARTUP BUFFERS
-;; ============================================================================
-
-(defun tj-startup-buffers ()
-  "Open standard buffers on startup."
-  (interactive)
-  (eshell)
-  (rename-buffer "*eshell*" t)
-  (agent-shell-openai-start-codex)
-  (rename-buffer "*codex*" t)
-  (agent-shell-anthropic-start-claude-code)
-  (rename-buffer "*claude*" t))
-
-(add-hook 'emacs-startup-hook #'tj-startup-buffers)

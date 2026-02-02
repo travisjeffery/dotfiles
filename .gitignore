@@ -51,3 +51,5 @@
 .emacs.d/.cache
 .emacs.d/tutorial
 .emacs.d/projects
+
+work.sh

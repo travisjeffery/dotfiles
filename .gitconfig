@@ -129,3 +129,5 @@
 	ff = only
 [credential]
 	helper = store
+[feature]
+	manyFiles = true
