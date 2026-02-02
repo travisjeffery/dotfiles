@@ -1,0 +1,31 @@
+# Ignore everything by default
+*
+
+# --- Allowlist safe, intentional files ---
+!config.*
+!config/
+!prompts/
+!workflows/
+!keybindings.*
+!aliases.*
+!*.md
+!.gitignore
+
+# --- Explicitly ignore sensitive or generated stuff ---
+.cache/
+.state/
+.sessions/
+.history/
+.logs/
+.telemetry/
+tmp/
+*.log
+*.pid
+
+# Auth / secrets (belt + suspenders)
+*token*
+*secret*
+*auth*
+*.key
+*.pem
+.env
