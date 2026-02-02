@@ -3,6 +3,7 @@ model = "gpt-5.2"
 model_reasoning_effort = "high"
 reasoning = "xhigh"
 network_access = "enabled"
+personality = "pragmatic"
 
 [defaults]
 network = true
