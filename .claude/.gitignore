@@ -1,14 +1,37 @@
-credentials.json
+# Runtime / state
+cache/
+tmp/
+logs/
+sessions/
+debug/
+history/
+debug/
+history.jsonl
+plugins/
+projects/
+settings.json
+shell-snapshots/
+stats-cache.json
+statsig/
+telemetry/
+todos/
+
+# Secrets / auth
+*.token
 *.key
 *.pem
+credentials*
+auth*
 
-# Session/state data
-statsig/
-statsig_cache/
-todos/
-projects/
+# OS/editor junk
+.DS_Store
+*.swp
+*.swo
+*.bak
 
-# Logs and history
-*.log
-debug
-history.jsonl
+# Allow config files if you have any
+!*.json
+!*.yaml
+!*.yml
+!*.toml
+!.gitignore

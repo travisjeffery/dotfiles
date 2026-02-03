@@ -4,6 +4,9 @@ model_reasoning_effort = "high"
 reasoning = "xhigh"
 network_access = "enabled"
 personality = "pragmatic"
+approval_policy = "on-request"
+check_for_update_on_startup = true
+web_search = "live"
 
 [defaults]
 network = true
