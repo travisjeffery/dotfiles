@@ -9,9 +9,7 @@ debug/
 history.jsonl
 plugins/
 projects/
-settings.json
 shell-snapshots/
-stats-cache.json
 statsig/
 telemetry/
 todos/
@@ -35,3 +33,6 @@ auth*
 !*.yml
 !*.toml
 !.gitignore
+
+settings.json
+stats-cache.json
