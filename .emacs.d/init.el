@@ -854,12 +854,17 @@ Otherwise split the current paragraph into one sentence per line."
   (defvar tj-search-keymap (make-sparse-keymap)
     "Keymap for search operations.")
 
+  ;; Number operations keymap (C-c n)
+  (defvar tj-number-keymap (make-sparse-keymap)
+    "Keymap for numeric operations.")
+
   :bind-keymap
   (("C-c t" . tj-text-keymap)
    ("C-c b" . tj-buffer-keymap)
    ("C-c d" . tj-diff-keymap)
    ("C-c o" . tj-org-keymap)
-   ("C-c s" . tj-search-keymap))
+   ("C-c s" . tj-search-keymap)
+   ("C-c n" . tj-number-keymap))
 
   :bind
   (;; Text transformation bindings
@@ -904,7 +909,13 @@ Otherwise split the current paragraph into one sentence per line."
    ("g" . ripgrep-regexp)
    ("o" . occur)
    ("O" . moccur)
-   ("d" . dictionary-lookup-definition)))
+   ("d" . dictionary-lookup-definition)
+
+   ;; Number operations bindings
+   :map tj-number-keymap
+   ("n" . operate-on-number-at-point)
+   ("+" . shift-number-up)
+   ("-" . shift-number-down)))
 
 (use-package pyenv-mode :ensure t :demand t)
 
@@ -1059,6 +1070,7 @@ Otherwise split the current paragraph into one sentence per line."
   (("C-c v t" . #'multi-vterm)
    ("C-c v n" . #'multi-vterm-next)
    ("C-c v p" . #'multi-vterm-prev)
+   ("C-c v d" . #'multi-vterm-dedicated-toggle)
    ("C-c v r" . #'multi-vterm-rename-buffer)))
 
 (use-package
@@ -1122,7 +1134,10 @@ Otherwise split the current paragraph into one sentence per line."
   :demand t
   :hook (markdown-mode . jinx-mode)
   :hook (org-mode . jinx-mode)
-  :bind (("M-$" . jinx-correct) ("C-M-$" . jinx-languages)))
+  :bind (("M-$" . jinx-correct)
+         :map tj-text-keymap
+         ("j" . jinx-correct)
+         ("J" . jinx-languages)))
 
 (use-package
   flymake-languagetool
@@ -1268,16 +1283,6 @@ Otherwise split the current paragraph into one sentence per line."
 (use-package
   ediff
   :ensure nil
-  :init
-  (defvar tj-ediff-keymap (make-sparse-keymap))
-  :bind-keymap ("C-x C-=" . tj-ediff-keymap)
-  :bind ((:map tj-ediff-keymap
-               ("b" . ediff-buffers)
-               ("f" . ediff-files)
-               ("r" . ediff-revision)
-               ("l" . ediff-regions-linewise)
-               ("w" . ediff-regions-wordwise)
-               ("c" . compare-windows)))
   :config
   (defun ediff-copy-both-to-C ()
     (interactive)
@@ -1359,14 +1364,11 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package
   operate-on-number
-  :bind ("C-# C-#" . operate-on-number-at-point)
   :ensure t
   :demand t)
 
 (use-package
   shift-number
-  :bind
-  (("C-# -" . shift-number-down) ("C-# +" . shift-number-up))
   :ensure t
   :demand t)
 
@@ -1857,8 +1859,9 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t
   :bind (("M-@" . easy-mark-word)
-         ("C-M-@" . easy-mark-sexp)
          ([remap zap-to-char] . easy-mark-to-char)
+         :map tj-text-keymap
+         ("e" . easy-mark-sexp)
          :map easy-kill-base-map
          ("o" . easy-kill-er-expand)
          ("i" . easy-kill-er-unexpand))
@@ -2113,15 +2116,16 @@ but agnostic to language, mode, and server."
     (activate-mark))
   :config (add-to-list 'mc/cursor-specific-vars 'iy-go-to-char-start-pos)
   :init (defvar tj-mc-keymap (make-sparse-keymap))
-  :bind-keymap ("C-;" . tj-mc-keymap)
+  :bind-keymap ("C-c m" . tj-mc-keymap)
   :bind
   (:map
-   ;; C-;
+   ;; C-c m
    tj-mc-keymap
-   ("C-;" . mc/edit-lines)
+   ("l" . mc/edit-lines)
    ("C-e" . mc/edit-ends-of-lines)
    ("C-a" . mc/edit-beginnings-of-lines)
    ("a" . mc/mark-all-dwim)
+   ("i" . iedit-mode)
    ("C-x" . reactivate-mark)
    ("C-SPC" . mc/mark-pop)
    ("f" . mc/mark-next-like-this)
@@ -2250,24 +2254,27 @@ but agnostic to language, mode, and server."
 (use-package
   crux
   :custom (user-init-file (concat user-emacs-directory "init.el"))
-  :bind
-  (;; Terminal-safe primary bindings (work everywhere)
-   ("C-o" . crux-smart-open-line-above)
-   ("M-k" . crux-kill-line-backwards)
+	  :bind
+	  (;; Terminal-safe primary bindings (work everywhere)
+	   ("C-o" . crux-smart-open-line-above)
+	   ("M-k" . crux-kill-line-backwards)
 
-   ;; Crux utilities (reorganized to avoid conflicts)
-   ("C-c C-d" . crux-duplicate-current-line-or-region)  ; was C-c d
-   ("C-c H" . crux-cleanup-buffer-or-region)
+	   :map tj-text-keymap
+	   ("o" . crux-smart-open-line)
+	   ("O" . crux-smart-open-line-above)
+
+	   ;; Crux utilities (reorganized to avoid conflicts)
+	   ("C-c C-d" . crux-duplicate-current-line-or-region)  ; was C-c d
+	   ("C-c H" . crux-cleanup-buffer-or-region)
    ("C-M-z" . crux-indent-defun)
    ("C-c D" . crux-delete-file-and-buffer)
    ("C-c R" . crux-rename-buffer-and-file)  ; was C-c r (org-roam uses it)
    ("C-c TAB" . crux-indent-rigidly-and-copy-to-clipboard)
-   ("C-c I" . (lambda () (interactive) (find-file user-init-file)))
-   ("C-c S" . crux-find-shell-init-file)
-   ("C-c C-s" . crux-ispell-word-then-abbrev)  ; was C-c s
-   ("C-S-j" . crux-top-join-line)
-   ("C-^" . crux-top-join-line)
-   ("C-k" . kill-line)
+	   ("C-c I" . (lambda () (interactive) (find-file user-init-file)))
+	   ("C-c S" . crux-find-shell-init-file)
+	   ("C-c C-s" . crux-ispell-word-then-abbrev)  ; was C-c s
+	   ("C-^" . crux-top-join-line)
+	   ("C-k" . kill-line)
 
    ;; GUI-only bindings (kept for convenience when available)
    ("C-<backspace>" . crux-kill-line-backwards)
@@ -2308,14 +2315,16 @@ but agnostic to language, mode, and server."
 
     ;; Organized keymaps
     "C-c b" "buffer"
-    "C-c d" "diff/ediff"
-    "C-c o" "org-mode"
-    "C-c r" "org-roam"
-    "C-c t" "text-transform"
+	    "C-c d" "diff/ediff"
+	    "C-c o" "org-mode"
+	    "C-c r" "org-roam"
+	    "C-c t" "text-transform"
+	    "C-c m" "multi-cursor"
+	    "C-c n" "number"
 
-    ;; Other prefixes
-    "C-c f" "find-file-at-point"
-    "C-c q" "kill-other-buffer")
+	    ;; Other prefixes
+	    "C-c f" "find-file-at-point"
+	    "C-c q" "kill-other-buffer")
   :ensure t
   :demand t)
 
@@ -2327,6 +2336,7 @@ but agnostic to language, mode, and server."
 (use-package
   ace-window
   :diminish
+  :bind (("C-c w" . ace-window))
   :bind* ("<C-M-return>" . ace-window)
   :config
   (ace-window-display-mode 1)
@@ -2682,13 +2692,15 @@ commands usually can't handle TRAMP paths."
 
 (use-package
   multifiles
-  :bind ("C-!" . mf/mirror-region-in-multifile)
+  :bind (:map tj-mc-keymap
+              ("F" . mf/mirror-region-in-multifile))
   :ensure t
   :demand t)
 
 (use-package
   toggle-quotes
-  :bind ("C-\"" . toggle-quotes)
+  :bind (:map tj-text-keymap
+              ("q" . toggle-quotes))
   :ensure t
   :demand t)
 
@@ -2758,7 +2770,7 @@ commands usually can't handle TRAMP paths."
 
 (use-package
   iedit
-  :init (setq iedit-toggle-key-default (kbd "C-:"))
+  :init (setq iedit-toggle-key-default nil)
   :ensure t
   :demand t)
 
@@ -2796,13 +2808,16 @@ commands usually can't handle TRAMP paths."
    ("C-x 5 b" . consult-buffer-other-frame) ;; orig. switch-to-buffer-other-frame
    ("C-x r b" . consult-bookmark) ;; orig. bookmark-jump
 
-   ;; Custom M-# bindings for fast register access
-   ("M-#" . consult-register-load)
-   ("M-'" . consult-register-store) ;; orig. abbrev-prefix-mark (unrelated)
-   ("C-M-#" . consult-register)
+	   ;; Custom M-# bindings for fast register access
+	   ("M-#" . consult-register-load)
+	   ("M-'" . consult-register-store) ;; orig. abbrev-prefix-mark (unrelated)
+	   :map tj-search-keymap
+	   ("r" . consult-register)
+	   ("l" . consult-register-load)
+	   ("R" . consult-register-store)
 
-   ;; Other custom bindings
-   ("M-y" . consult-yank-pop) ;; orig. yank-pop
+	   ;; Other custom bindings
+	   ("M-y" . consult-yank-pop) ;; orig. yank-pop
 
    ;; M-g bindings in `goto-map'
    ("M-g e" . consult-compile-error)
@@ -2940,6 +2955,7 @@ commands usually can't handle TRAMP paths."
   (:map
    vertico-map
    ("C-k" . kill-whole-line)
+   ("C-j" . vertico-exit-input)
    ("C-o" . vertico-next-group)
    ("<tab>" . minibuffer-complete)
    ("M-<return>" . vertico-exit-input))
@@ -3274,8 +3290,8 @@ commands usually can't handle TRAMP paths."
 ;; M-;         comment-line
 ;; C-k         kill-line
 ;; M-k         kill-line-backwards (TERMINAL-SAFE!)
-;; C-o         smart-open-line (TERMINAL-SAFE!)
-;; M-o         smart-open-line-above (TERMINAL-SAFE!)
+;; C-c t o     smart-open-line (TERMINAL-SAFE!)
+;; C-o         smart-open-line-above (TERMINAL-SAFE!)
 ;; M-=         expand-region
 ;; M-/         hippie-expand
 ;; M-y         browse-kill-ring
@@ -3300,6 +3316,7 @@ commands usually can't handle TRAMP paths."
 ;; C-c x       visual-replace
 ;; C-c f       find-file-at-point
 ;; C-c q       kill-other-buffer
+;; C-c w       ace-window
 ;;
 ;; ============================================================================
 ;; TIER 3: ORGANIZED KEYMAPS (C-c + letter + letter)
@@ -3335,6 +3352,34 @@ commands usually can't handle TRAMP paths."
 ;; C-c r f     org-roam-node-find
 ;; C-c r c     org-roam-capture
 ;;
+;; Search Operations (C-c s X)
+;; ----------------------------
+;; C-c s a     avy-goto-char-timer
+;; C-c s s     synosaurus-lookup
+;; C-c s g     ripgrep-regexp
+;; C-c s o     occur
+;; C-c s O     moccur
+;; C-c s d     dictionary-lookup-definition
+;; C-c s r     consult-register
+;; C-c s l     consult-register-load
+;; C-c s R     consult-register-store
+;;
+;; Multi-cursor Operations (C-c m X)
+;; ----------------------------------
+;; C-c m l     mc/edit-lines
+;; C-c m a     mc/mark-all-dwim
+;; C-c m f     mc/mark-next-like-this
+;; C-c m b     mc/mark-previous-like-this
+;; C-c m n     mc/mark-next-like-this-word
+;; C-c m i     iedit-mode
+;; C-c m F     mf/mirror-region-in-multifile
+;;
+;; Number Operations (C-c n X)
+;; ----------------------------
+;; C-c n n     operate-on-number-at-point
+;; C-c n +     shift-number-up
+;; C-c n -     shift-number-down
+;;
 ;; Text Transformations (C-c t X) - Low frequency
 ;; -----------------------------------------------
 ;; C-c t s     spongebob
@@ -3344,6 +3389,10 @@ commands usually can't handle TRAMP paths."
 ;; C-c t f     fill-paragraph
 ;; C-c t a     arrayify
 ;; C-c t t     toggle-fold
+;; C-c t q     toggle-quotes
+;; C-c t j     jinx-correct
+;; C-c t J     jinx-languages
+;; C-c t e     easy-mark-sexp
 ;;
 ;; Crux Utilities (reorganized to avoid conflicts)
 ;; ------------------------------------------------
@@ -3360,16 +3409,21 @@ commands usually can't handle TRAMP paths."
 ;; TERMINAL COMPATIBILITY NOTES
 ;; ============================================================================
 ;;
-;; Primary bindings (C-o, M-o, M-k, C-c X) work in ALL environments.
+;; Primary bindings (C-o, M-k, C-c … prefixes) work in ALL environments.
+;;
+;; Terminal-friendly replacements for keys many terminals can't send:
+;; - C-c m …            multiple-cursors + iedit (C-c m i)
+;; - C-c n …            number ops (n/+/-)
+;; - C-c t q            toggle-quotes
+;; - C-c t j / C-c t J  jinx-correct / jinx-languages
+;; - C-c s r / l / R    consult-register / load / store
+;; - C-c w              ace-window
+;; - C-j                vertico-exit-input
 ;;
 ;; GUI-only bindings (kept for convenience):
 ;; - C-<backspace>    → crux-kill-line-backwards
 ;; - Shift-Return     → crux-smart-open-line
 ;; - C-Shift-Return   → crux-smart-open-line-above
-;;
-;; Test terminal compatibility with:
-;; - C-c h t (tj-test-terminal-compatibility)
-;; - C-c h k (tj-test-terminal-keys)
 ;;
 ;; ============================================================================
 ;; DISCOVERABILITY
@@ -3380,4 +3434,3 @@ commands usually can't handle TRAMP paths."
 ;; Press C-c d and wait → see all diff/ediff operations
 ;; etc.
 ;;
-
