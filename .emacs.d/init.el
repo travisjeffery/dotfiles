@@ -1084,11 +1084,27 @@ Otherwise split the current paragraph into one sentence per line."
   magit
   :after exec-path-from-shell
   :diminish magit-wip-mode
+  :preface
+  (defun tj-magit-display-buffer (buffer)
+    "Display Magit buffers without rearranging the whole frame.
+
+Show diffs below the selected window; keep everything else in the
+selected window."
+    (display-buffer
+     buffer
+     (if (with-current-buffer buffer
+           (derived-mode-p 'magit-diff-mode 'magit-process-mode))
+         '(display-buffer-below-selected
+           (window-height . 0.45)
+           (inhibit-same-window . t))
+       '(display-buffer-same-window))))
   :custom
   (magit-log-margin-width 18)
   (magit-refs-margin '(t age magit-log-margin-width t 18))
   (vc-follow-symlinks t)
   (magit-commit-ask-to-stage 'stage)
+  (magit-commit-diff-inhibit-same-window t)
+  (magit-display-buffer-function #'tj-magit-display-buffer)
   (magit-refresh-status-buffer t)
   (magit-log-margin '(t "%FT%T%z" magit-log-margin-width t 18))
   :config
@@ -1110,7 +1126,9 @@ Otherwise split the current paragraph into one sentence per line."
   (:map
    magit-diff-mode-map
    (("C-o" . magit-diff-visit-file-other-window)))
-  :bind (("C-x g" . magit-status))
+  :bind (("C-x g" . magit-status)
+         ("C-c g s" . magit-status)
+         ("C-c g c" . magit-commit-create))
   :ensure t
   :demand t)
 
@@ -2321,6 +2339,7 @@ but agnostic to language, mode, and server."
 	    "C-c t" "text-transform"
 	    "C-c m" "multi-cursor"
 	    "C-c n" "number"
+	    "C-c g" "git"
 
 	    ;; Other prefixes
 	    "C-c f" "find-file-at-point"
@@ -3317,6 +3336,8 @@ commands usually can't handle TRAMP paths."
 ;; C-c f       find-file-at-point
 ;; C-c q       kill-other-buffer
 ;; C-c w       ace-window
+;; C-c g c     magit-commit-create
+;; C-c g s     magit-status
 ;;
 ;; ============================================================================
 ;; TIER 3: ORGANIZED KEYMAPS (C-c + letter + letter)
