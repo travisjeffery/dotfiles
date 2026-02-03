@@ -506,8 +506,18 @@ vterm_prompt_end() {
 setopt PROMPT_SUBST
 PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
 
-[ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
+if [[ "$INSIDE_EMACS" == "vterm" ]]; then
+  setopt PROMPT_SUBST
+  PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
+fi
+
+if [[ -n "$EAT_SHELL_INTEGRATION_DIR" && -n "$INSIDE_EMACS" ]]; then
   source "$EAT_SHELL_INTEGRATION_DIR/zsh"
+fi
+
+if [[ -n $GHOSTTY_RESOURCES_DIR ]]; then
+  source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
+fi
 
 if [[ $TERM == "dumb" ]]; then
   unsetopt zle
