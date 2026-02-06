@@ -3175,6 +3175,7 @@ commands usually can't handle TRAMP paths."
 
   ;; Avoid ballooning buffers by default
   :custom
+  (agent-shell-session-load-strategy 'prompt)
   (agent-shell-header-style nil)
   (agent-shell-tool-use-expand-by-default 0)
   (agent-shell-thought-process-expand-by-default 0)
