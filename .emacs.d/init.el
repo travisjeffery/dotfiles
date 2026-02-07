@@ -162,6 +162,20 @@
   :diminish completion-preview-mode
   :config
 
+  (defun tj-insert-prompt ()
+    "Insert prompt template and place cursor."
+    (interactive)
+    (let ((start (point)))
+      (insert-file-contents "~/.emacs.d/var/prompt.txt")
+      (goto-char start)))
+
+  (defun tj-copy-prompt ()
+    "Copy ~/.emacs.d/var/prompt.txt to the kill ring."
+    (interactive)
+    (with-temp-buffer
+      (insert-file-contents "~/.emacs.d/var/prompt.txt")
+      (kill-new (buffer-string))
+      (message "Prompt template copied to kill ring")))
 
   (setq default-process-coding-system '(utf-8 . utf-8))
   (defvar tj--gc-idle-timer
@@ -824,6 +838,7 @@ Otherwise split the current paragraph into one sentence per line."
    ("M-g M-c" . switch-to-completions)
    ("M-/" . hippie-expand)
    ("C-h A" . apropos)
+   ("C-c C-p" . tj-insert-prompt)
    ("C-h C-f" . find-function)
    ("C-c =" . align-regexp)
 
@@ -1063,7 +1078,12 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
-(use-package vterm :ensure t :demand t)
+(use-package vterm :ensure t :demand t
+  :config
+  (define-key vterm-mode-map (kbd "C-c C-g")
+  (lambda ()
+    (interactive)
+    (vterm-send-key "g" nil nil t))))
 
 (use-package multi-vterm :ensure t :demand t
   :bind
@@ -3270,6 +3290,7 @@ commands usually can't handle TRAMP paths."
                                  :right-fringe-width 15))
   (spacious-padding-mode 1))
 
+
 (defun tj-raise-frame-and-give-focus ()
   (when window-system
     (let ((mouse-autoselect-window 1))
@@ -3283,7 +3304,10 @@ commands usually can't handle TRAMP paths."
 (use-package
   server
   :no-require
-  :hook ((after-init . server-start))
+  :hook ((after-init . (lambda ()
+                         (require 'server)
+                         (unless (server-running-p)
+                           (server-start)))))
   :ensure nil
   :demand t)
 
