@@ -42,3 +42,4 @@ url = "https://mcp.notion.com/mcp"
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
+http_headers = { "CONTEXT7_API_KEY" = "${CONTEXT7_API_KEY}" }
