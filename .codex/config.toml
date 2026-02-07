@@ -1,0 +1,44 @@
+sandbox_mode = "danger-full-access"
+model = "gpt-5.3-codex"
+model_reasoning_effort = "high"
+reasoning = "xhigh"
+network_access = "enabled"
+personality = "pragmatic"
+approval_policy = "on-request"
+check_for_update_on_startup = true
+web_search = "live"
+
+[defaults]
+network = true
+trust_level = "trusted"
+
+[sandbox_workspace_write]
+network_access = true
+
+[features]
+unified_exec = true
+shell_snapshot = true
+steer = true
+collaboration_modes = true
+
+[mcp_servers.honeycomb]
+url = "https://mcp.honeycomb.io/mcp"
+
+[mcp_servers.pagerduty]
+url = "https://mcp.pagerduty.com/mcp"
+
+[mcp_servers.pagerduty.env_http_headers]
+Authorization = "PAGERDUTY_AUTHORIZATION"
+
+[mcp_servers.elasticsearch]
+command = "npx"
+args = ["-y", "@elastic/mcp-server-elasticsearch"]
+
+[mcp_servers.elasticsearch.env]
+OTEL_LOG_LEVEL = "none"
+
+[mcp_servers.notion]
+url = "https://mcp.notion.com/mcp"
+
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
