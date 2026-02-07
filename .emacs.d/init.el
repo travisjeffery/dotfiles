@@ -65,8 +65,7 @@
   :demand t)
 
 ;; Don't remove anything above.
-(use-package
-  emacs
+(use-package emacs
   :ensure nil
   :custom
   (dictionary-server "dict.org")
@@ -841,6 +840,7 @@ Otherwise split the current paragraph into one sentence per line."
    ("C-c C-p" . tj-insert-prompt)
    ("C-h C-f" . find-function)
    ("C-c =" . align-regexp)
+   ("C-x C-b" . ibuffer)
 
    ;; Misc useful keybindings
    ("C-c q" . tj-kill-other-buffer)
@@ -931,6 +931,40 @@ Otherwise split the current paragraph into one sentence per line."
    ("n" . operate-on-number-at-point)
    ("+" . shift-number-up)
    ("-" . shift-number-down)))
+
+(use-package ibuffer :ensure nil
+  :config
+  (setq ibuffer-expert t)
+  (setq ibuffer-display-summary nil)
+  (setq ibuffer-use-other-window nil)
+  (setq ibuffer-show-empty-filter-groups nil)
+  (setq ibuffer-default-sorting-mode 'filename/process)
+  (setq ibuffer-title-face 'font-lock-doc-face)
+  (setq ibuffer-use-header-line t)
+  (setq ibuffer-default-shrink-to-minimum-size nil)
+  (setq ibuffer-formats
+        '((mark modified read-only locked " "
+                (name 30 30 :left :elide)
+                " "
+                (size 9 -1 :right)
+                " "
+                (mode 16 16 :left :elide)
+                " " filename-and-process)
+          (mark " "
+                (name 16 -1)
+                " " filename)))
+  (setq ibuffer-saved-filter-groups
+      '(("default"
+         ("Agent" (mode . agent-shell-mode))
+         ("Magit" (name . "^magit"))
+         ("Shell" (mode . shell-mode))
+         ("Programming" (or (mode . prog-mode)))
+                  ("Org" (mode . org-mode)))))
+
+  (add-hook 'ibuffer-hook
+            (lambda ()
+              (ibuffer-switch-to-saved-filter-groups "default")))
+
 
 (use-package pyenv-mode :ensure t :demand t)
 
@@ -3167,7 +3201,9 @@ commands usually can't handle TRAMP paths."
   :hook (after-init . delete-selection-mode))
 
 (use-package agent-shell
-  :ensure t
+  :ensure (:host github
+                 :repo "travisjeffery/agent-shell"
+                 :branch "feature/session-picker-new-session-first")
   :demand t
   :bind (:map agent-shell-mode-map
               ("C-c C-q" . agent-shell-queue-request)
