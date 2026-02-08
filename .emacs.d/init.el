@@ -954,16 +954,16 @@ Otherwise split the current paragraph into one sentence per line."
                 (name 16 -1)
                 " " filename)))
   (setq ibuffer-saved-filter-groups
-      '(("default"
-         ("Agent" (mode . agent-shell-mode))
-         ("Magit" (name . "^magit"))
-         ("Shell" (mode . shell-mode))
-         ("Programming" (or (mode . prog-mode)))
-                  ("Org" (mode . org-mode)))))
+        '(("default"
+           ("Agent" (mode . agent-shell-mode))
+           ("Magit" (name . "^magit"))
+           ("Shell" (mode . shell-mode))
+           ("Programming" (mode . prog-mode))
+           ("Org" (mode . org-mode)))))
 
   (add-hook 'ibuffer-hook
             (lambda ()
-              (ibuffer-switch-to-saved-filter-groups "default")))
+              (ibuffer-switch-to-saved-filter-groups "default"))))
 
 
 (use-package pyenv-mode :ensure t :demand t)
@@ -3292,7 +3292,6 @@ commands usually can't handle TRAMP paths."
   ;; ------------------------------------------------------------
 
   (setq redisplay-skip-fontification-on-input t))
-
 
 (use-package
   string-inflection
