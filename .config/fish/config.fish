@@ -175,31 +175,6 @@ if set -q TMUX; and type -q tmux
     end
 end
 
-function dev
-    set -l base "$HOME/dev/travisjeffery"
-
-    if test (count $argv) -eq 0
-        cd "$base"
-        return
-    end
-
-    set -l repo $argv[1]
-    set -l dir "$base/$repo"
-
-    if test -d "$dir"
-        cd "$dir"
-        return
-    end
-
-    cd "$base"
-    command git clone "git@github.com:travisjeffery/$repo.git" >/dev/null ^/dev/null
-    or begin
-        read -P "clone url: " url
-        test -n "$url"; and command git clone "$url"
-    end
-    cd "$repo"
-end
-
 function ec2-ip
     aws ec2 describe-instances --filter "Name=instance-id,Values=$argv[1]" | jq '.Reservations[0].Instances[0].PrivateIpAddress' | tr -d '"'
 end
@@ -356,10 +331,6 @@ if test -d /home/linuxbrew/.linuxbrew
     __tj_prepend_path /home/linuxbrew/.linuxbrew/sbin
     __tj_prepend_manpath /home/linuxbrew/.linuxbrew/share/man
     __tj_prepend_infopath /home/linuxbrew/.linuxbrew/share/info
-end
-
-function gam
-    /home/tj/bin/gam/gam $argv
 end
 
 functions --erase __tj_prepend_path

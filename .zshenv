@@ -63,54 +63,19 @@ export HELM_EXPERIMENTAL_OCI=1
 export KALEIDOSCOPE_DIR="$HOME/code/Kaleidoscope"
 export PULUMI_EXPERIMENTAL="true"
 export PULUMI_SKIP_CHECKPOINTS="true"
-if type wl-copy &> /dev/null; then
-  
-    alias pbcopy='wl-copy'
-    alias pbpaste='wl-paste'
-fi
 
 export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
 
-if [ -d "/opt/homebrew" ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew / Linuxbrew: make brew-installed binaries available even in non-interactive,
+# non-login zsh invocations (e.g. `zsh -c ...`, `#!/usr/bin/env zsh` scripts).
+if [[ -d "/opt/homebrew" ]]; then
+  [[ ":$PATH:" != *":/opt/homebrew/bin:"* ]] && PATH="/opt/homebrew/bin:$PATH"
+  [[ ":$PATH:" != *":/opt/homebrew/sbin:"* ]] && PATH="/opt/homebrew/sbin:$PATH"
 fi
 
-source ~/work.sh
-
-export GOENV_ROOT=$HOME/.goenv
-export PATH="$GOENV_ROOT/bin:$PATH"
-
-if type goenv &> /dev/null; then
-  eval "$(goenv init -)"
-  export PATH="$GOROOT/bin:$PATH"
-  export PATH="$PATH:$GOPATH/bin"
-fi
-
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-if type pyenv &> /dev/null; then
-  eval "$(pyenv init - --no-rehash)"
-  eval "$(pyenv virtualenv-init -)"
+if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
+  [[ ":$PATH:" != *":/home/linuxbrew/.linuxbrew/bin:"* ]] && PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+  [[ ":$PATH:" != *":/home/linuxbrew/.linuxbrew/sbin:"* ]] && PATH="/home/linuxbrew/.linuxbrew/sbin:$PATH"
 fi
 
 path=("${path[@]%/}")
-
-# Cross-platform ssh-agent setup (Linux + macOS)
-if [[ "$OSTYPE" == darwin* ]]; then
-  # macOS: use per-user temp dir for sockets
-  export SSH_AUTH_SOCK="${TMPDIR%/}/ssh-agent.sock"
-else
-  # Linux: use runtime dir if available, else fall back to /tmp
-  if [[ -n "$XDG_RUNTIME_DIR" && -d "$XDG_RUNTIME_DIR" ]]; then
-    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.sock"
-  else
-    export SSH_AUTH_SOCK="/tmp/ssh-agent-$USER.sock"
-  fi
-fi
-
-# Start ssh-agent only if the socket doesn't exist
-if [[ ! -S "$SSH_AUTH_SOCK" ]]; then
-  mkdir -p "${SSH_AUTH_SOCK:h}" 2>/dev/null
-  chmod 700 "${SSH_AUTH_SOCK:h}" 2>/dev/null
-  eval "$(ssh-agent -a "$SSH_AUTH_SOCK" -s)" >/dev/null
-fi

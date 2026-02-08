@@ -2,6 +2,31 @@ skip_global_compinit=true
 
 DEFAULT_USERNAME='tj'
 
+# Personal / machine-local setup (interactive-only).
+[[ -r "$HOME/work.sh" ]] && source "$HOME/work.sh"
+
+if (( $+commands[wl-copy] )); then
+  alias pbcopy='wl-copy'
+  alias pbpaste='wl-paste'
+fi
+
+export GOENV_ROOT="$HOME/.goenv"
+export PATH="$GOENV_ROOT/bin:$PATH"
+if type goenv &> /dev/null; then
+  eval "$(goenv init -)"
+  export PATH="$GOROOT/bin:$PATH"
+  export PATH="$PATH:$GOPATH/bin"
+fi
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d "$PYENV_ROOT/bin" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+if type pyenv &> /dev/null; then
+  eval "$(pyenv init - --no-rehash)"
+  eval "$(pyenv virtualenv-init -)"
+fi
+
+fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
+
 autoload -U compinit && compinit
 
 autoload history-search-end
@@ -47,8 +72,6 @@ insert-last-command-output() {
 zle -N insert-last-command-output
 bindkey "^X^L" insert-last-command-output
 
-fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
-
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion:*'          list-colors ''
 zstyle ':completion:*'          insert-tab pending
@@ -81,24 +104,54 @@ zstyle ':completion:*:*:git:*' user-commands author:'show author info'
 
 export FZF_DEFAULT_OPTS="--tiebreak=length,begin --algo=v2 --exact --color=hl:yellow,hl+:yellow:bold"
 
-if type kubectl &> /dev/null; then
-  source <(kubectl completion zsh)
+_cache_completion_script() {
+  local cmd="$1"
+  local out="$2"
+  local exe="${commands[$cmd]}"
+  [[ -n "$exe" ]] || return 1
+
+  mkdir -p "${out:h}" 2>/dev/null
+
+  # Refresh when missing or when the executable is newer than the cache.
+  if [[ ! -f "$out" || "$exe" -nt "$out" ]]; then
+    local tmp="${out}.$$"
+    case "$cmd" in
+      kubectl) command kubectl completion zsh >| "$tmp" 2>/dev/null ;;
+      helm) command helm completion zsh >| "$tmp" 2>/dev/null ;;
+      *) return 1 ;;
+    esac
+
+    if [[ -s "$tmp" ]]; then
+      mv -f "$tmp" "$out" 2>/dev/null || { rm -f "$tmp"; return 1; }
+    else
+      rm -f "$tmp"
+      return 1
+    fi
+  fi
+  [[ -r "$out" ]] || return 1
+  source "$out"
+}
+
+if (( $+commands[kubectl] )); then
+  _cache_completion_script kubectl "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/kubectl.zsh"
 fi
 
 if type kubebuilder &> /dev/null; then
   source <(kubebuilder completion zsh)
 fi
 
-if type helm &> /dev/null; then
-  source <(helm completion zsh)
+if (( $+commands[helm] )); then
+  _cache_completion_script helm "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/helm.zsh"
 fi
 
 source ~/.zsh/completions/_docker
 
 # fzf integration
-source <(fzf --zsh)
-bindkey -r '^r'  # unbind Ctrl-R
-bindkey '^[r' fzf-history-widget  # Alt-R for fzf history
+if (( $+commands[fzf] )); then
+  source <(fzf --zsh)
+  bindkey -r '^r'  # unbind Ctrl-R
+  bindkey '^[r' fzf-history-widget  # Alt-R for fzf history
+fi
 
 
 tj-backward-kill() {
@@ -348,8 +401,6 @@ alias wodim="wodim driveropts=burnfree"
 alias display="display -geometry +0+0"
 alias rhino="rlwrap java -jar /usr/share/java/js.jar"
 alias curl="noglob curl"
-alias wget="noglob wget
-"
 function g {
   if [[ $# > 0 ]]; then
     git $@
@@ -375,19 +426,6 @@ umask 072
 if [ -f "$HOME/.dir_colors" ] && [ "${OSTYPE%%[^a-z]*}" != 'darwin' ]; then
   eval `dircolors $HOME/.dir_colors`
 fi
-
-dev () {
-  local dev="$HOME/dev/travisjeffery"
-  local dir="$dev/$@"
-
-  if [ -d "$dir" ]; then
-    cd "$dir"
-  else
-    cd "$dev"
-    git clone "git@github.com:travisjeffery/$@.git" &> /dev/null || { read "?clone url: " url && git clone "$url" }
-    cd "$@"
-  fi
-}
 
 function ec2-ip () {
   aws ec2 describe-instances --filter Name=instance-id,Values=$1 | jq '.Reservations[0].Instances[0].PrivateIpAddress' | tr -d '"'
@@ -486,8 +524,6 @@ case $TERM in
     ;;
 esac
 
-gam() { "/home/tj/bin/gam/gam" "$@" ; }
-
 vterm_printf() {
   if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
     # Tell tmux to pass the escape sequences through
@@ -503,9 +539,6 @@ vterm_printf() {
 vterm_prompt_end() {
   vterm_printf "51;A$(whoami)@$(hostname):$(pwd)";
 }
-setopt PROMPT_SUBST
-PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
-
 if [[ "$INSIDE_EMACS" == "vterm" ]]; then
   setopt PROMPT_SUBST
   PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
@@ -522,8 +555,4 @@ fi
 if [[ $TERM == "dumb" ]]; then
   unsetopt zle
   PS1='$ '
-fi
-
-if [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 fi
