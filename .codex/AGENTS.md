@@ -112,3 +112,12 @@ A task is done when:
 - impact is explained (what changed, where, why),
 - follow-ups are listed if anything was intentionally left out.
 - `.agent/STATE.md` is updated if the change materially affects goal/state/decisions.
+
+## Context7 MCP (library docs)
+
+Use Context7 to fetch accurate, version-matched documentation during coding tasks.
+
+- Add `use context7` when you need library/API docs.
+- If known, pin the library with slash syntax (e.g., `use library /supabase/supabase`).
+- Mention the target version.
+- Fetch minimal targeted docs; summarize (no large dumps).
