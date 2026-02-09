@@ -50,6 +50,12 @@ export PATH="${PATH}:${HOME}/.krew/bin"
 
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
+# Import Wayland environment from systemd if not already set (for shells spawned
+# outside the compositor, e.g. exec-path-from-shell in Emacs).
+if [[ -z "$WAYLAND_DISPLAY" && -n "$XDG_RUNTIME_DIR" ]]; then
+  eval "$(systemctl --user show-environment 2>/dev/null | grep -E '^(WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_CURRENT_DESKTOP)=')"
+fi
+
 export EDITOR="emacsclient"
 export PAGER=less
 export SHELL=$(which zsh)
