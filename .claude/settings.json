@@ -1,0 +1,82 @@
+{
+    "model": "opus",
+    "includeCoAuthoredBy": false,
+    "enabledPlugins": {
+        "gopls-lsp@claude-plugins-official": true
+    },
+    "permissions": {
+        "allow": [
+            "Bash(git status*)",
+            "Bash(git diff*)",
+            "Bash(git log*)",
+            "Bash(git show*)",
+            "Bash(git branch*)",
+            "Bash(git remote*)",
+            "Bash(git fetch*)",
+            "Bash(npm run *)",
+            "Bash(npm test*)",
+            "Bash(npm install*)",
+            "Bash(go build*)",
+            "Bash(go test*)",
+            "Bash(go run*)",
+            "Bash(make *)",
+            "Bash(ls *)",
+            "Bash(pwd)",
+            "Bash(which *)",
+            "Bash(gh pr view*)",
+            "Bash(gh issue view*)",
+            "Bash(gh api *)",
+            "Bash(kubectl get *)",
+            "Bash(kubectl describe *)",
+            "Bash(kubectl logs *)",
+            "Read",
+            "Edit",
+            "Write",
+            "Glob",
+            "Grep",
+            "WebFetch",
+            "WebSearch",
+            "Task",
+            "mcp__pagerduty__list_*",
+            "mcp__pagerduty__get_*",
+            "mcp__elasticsearch__list_*",
+            "mcp__elasticsearch__get_*",
+            "mcp__elasticsearch__search"
+        ],
+        "deny": []
+    },
+    "mcpServers": {
+        "pagerduty": {
+            "type": "http",
+            "url": "https://mcp.pagerduty.com/mcp",
+            "headers": {
+                "Authorization": "${PAGERDUTY_AUTHORIZATION}"
+            }
+        },
+        "honeycomb": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "https://mcp.honeycomb.io/mcp"
+            ]
+        },
+        "elasticsearch": {
+            "command": "npx",
+            "args": ["-y", "@elastic/mcp-server-elasticsearch"],
+            "env": {}
+        },
+        "elastic-agent-builder": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "${KIBANA_MONITORING_ENDPOINT}/api/agent_builder/mcp",
+                "--header",
+                "Authorization:ApiKey ${KIBANA_MONITORING_API_KEY}",
+                "--header",
+                "kbn-xsrf:true"
+            ]
+        }
+    }
+}
