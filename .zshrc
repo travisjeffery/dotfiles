@@ -32,8 +32,9 @@ autoload -U compinit && compinit
 # fzf-tab (fzf-powered completion UI)
 if [[ -r "$HOME/.zsh/fzf-tab/fzf-tab.plugin.zsh" ]] && [[ "${TJ_DISABLE_FZF_TAB:-0}" != 1 ]]; then
   source "$HOME/.zsh/fzf-tab/fzf-tab.plugin.zsh"
-  # Show a clear "checked" marker when multi-selecting completion candidates.
-  zstyle ':fzf-tab:*' fzf-flags --pointer='>' --marker='[x]'
+  # Show a clear marker when multi-selecting completion candidates.
+  # (fzf requires marker display width <= 2; e.g. '[x]' fails on fzf 0.67+.)
+  zstyle ':fzf-tab:*' fzf-flags --pointer='>' --marker='*'
   # Make Ctrl-Space toggle selection and move down (overrides the default ctrl-space binding).
   zstyle ':fzf-tab:*' fzf-bindings 'ctrl-space:toggle+down'
 fi
@@ -158,6 +159,16 @@ source ~/.zsh/completions/_docker
 # fzf integration
 if (( $+commands[fzf] )); then
   source <(fzf --zsh)
+
+  # `fzf --zsh` binds TAB (^I) to `fzf-completion` (for the `**<TAB>` trigger),
+  # which breaks normal path completion like `dir/<TAB>`. Restore standard
+  # completion (or fzf-tab's UI if enabled).
+  if (( $+widgets[fzf-tab-complete] )); then
+    bindkey -M emacs '^I' fzf-tab-complete
+  else
+    bindkey -M emacs '^I' expand-or-complete
+  fi
+
   bindkey -r '^r'  # unbind Ctrl-R
   bindkey '^[r' fzf-history-widget  # Alt-R for fzf history
 fi
