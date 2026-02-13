@@ -78,6 +78,14 @@ Maintain a single continuity file for the current workspace or worktree (if ther
 
 - At the start of each assistant turn: read `.agent/STATE.md` before acting.
 
+### OpenMemory policy
+
+- OpenMemory is supplemental memory; `.agent/STATE.md` remains the canonical source of truth for active workspace continuity.
+- Always read `.agent/STATE.md` at the start of each turn. Use OpenMemory as an additional context source when available.
+- If OpenMemory conflicts with `.agent/STATE.md`, `.agent/STATE.md` wins.
+- Persist critical task state (plans, decisions, progress, discoveries, outcomes) in `.agent/STATE.md` even when also stored in OpenMemory.
+- If OpenMemory is unavailable, continue with `.agent/STATE.md` only and note any relevant limitation.
+
 ### File Format
 
 Update `.agent/STATE.md` only when there is a meaningful delta in:

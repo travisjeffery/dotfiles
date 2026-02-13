@@ -1,6 +1,6 @@
 sandbox_mode = "danger-full-access"
 model = "gpt-5.3-codex"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 reasoning = "xhigh"
 network_access = "enabled"
 personality = "pragmatic"
@@ -43,3 +43,10 @@ url = "https://mcp.notion.com/mcp"
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
 http_headers = { "CONTEXT7_API_KEY" = "${CONTEXT7_API_KEY}" }
+
+[mcp_servers.openmemory]
+command = "npx"
+args = ["-y", "supergateway", "--sse", "http://localhost:8765/mcp/openmemory/sse/tj"]
+
+[notice.model_migrations]
+"gpt-5.2" = "gpt-5.3-codex"
