@@ -919,7 +919,7 @@ Otherwise split the current paragraph into one sentence per line."
 
    ;; Search operations bindings
    :map tj-search-keymap
-   ("a" . avy-goto-char-timer)
+   ("a" . flash-jump)
    ("s" . synosaurus-lookup)
    ("g" . ripgrep-regexp)
    ("o" . occur)
@@ -1091,13 +1091,18 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure nil
   :demand t)
 
-(use-package
-  avy
-  :bind (("C-c j" . avy-goto-char-timer))
-  :config (avy-setup-default)
-  :custom (avy-background t)
-  :ensure t
-  :demand t)
+(use-package flash
+  :commands (flash-jump flash-jump-continue
+             flash-treesitter)
+  :bind ("C-c j" . flash-jump)
+  :ensure (:type git :host github :repo "Prgebish/flash")
+  :demand t
+  :custom
+  (flash-multi-window t)
+  :config
+  ;; Search integration (labels during C-s, /, ?)
+  (require 'flash-isearch)
+  (flash-isearch-mode 1))
 
 (use-package synosaurus
   :ensure t
@@ -2681,22 +2686,9 @@ commands usually can't handle TRAMP paths."
 
 (use-package json-snatcher :ensure t :demand t)
 
-(use-package ctrlf :ensure t :demand t
-  :custom
-  (ctrlf-default-search-style 'regexp)
-  (ctrlf-alternate-search-style 'fuzzy)
-  (ctrlf-go-to-end-of-match nil) :config (ctrlf-mode 1))
-
 (use-package
   visual-regexp
   :bind ("M-&" . vr/query-replace)
-  :ensure t
-  :demand t)
-
-(use-package
-  avy-zap
-  :bind
-  (("M-Z" . avy-zap-up-to-char-dwim))
   :ensure t
   :demand t)
 
@@ -3384,7 +3376,7 @@ commands usually can't handle TRAMP paths."
 ;;
 ;; Navigation (very common)
 ;; ------------------------
-;; C-c j       avy-goto-char-timer (jump anywhere)
+;; C-c j       flash-jump (jump anywhere)
 ;; C-c ,       goto-last-change
 ;; C-c .       goto-last-point
 ;;
@@ -3436,7 +3428,7 @@ commands usually can't handle TRAMP paths."
 ;;
 ;; Search Operations (C-c s X)
 ;; ----------------------------
-;; C-c s a     avy-goto-char-timer
+;; C-c s a     flash-jump
 ;; C-c s s     synosaurus-lookup
 ;; C-c s g     ripgrep-regexp
 ;; C-c s o     occur
