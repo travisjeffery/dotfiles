@@ -3201,9 +3201,7 @@ commands usually can't handle TRAMP paths."
   :hook (after-init . delete-selection-mode))
 
 (use-package agent-shell
-  :ensure (:host github
-                 :repo "travisjeffery/agent-shell"
-                 :branch "feature/session-picker-new-session-first")
+  :ensure t
   :demand t
   :bind (:map agent-shell-mode-map
               ("C-c C-q" . agent-shell-queue-request)
@@ -3211,6 +3209,7 @@ commands usually can't handle TRAMP paths."
 
   ;; Avoid ballooning buffers by default
   :custom
+  (agent-shell-deferred-initialization nil)
   (agent-shell-session-load-strategy 'prompt)
   (agent-shell-openai-default-session-mode-id "collab")
   (agent-shell-header-style nil)
@@ -3292,6 +3291,7 @@ commands usually can't handle TRAMP paths."
   ;; ------------------------------------------------------------
 
   (setq redisplay-skip-fontification-on-input t))
+
 
 (use-package
   string-inflection

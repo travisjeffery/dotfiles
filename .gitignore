@@ -59,3 +59,4 @@ work.sh
 
 # Vendored fzf-tab: omit the optional zsh module build tree (large; plugin works without it).
 .zsh/fzf-tab/modules/
+.agent-shell/

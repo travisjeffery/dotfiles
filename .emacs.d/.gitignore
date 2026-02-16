@@ -44,3 +44,6 @@ request
 org-journal.cache
 undo-fu-session
 straight
+.agent
+tree-sitter
+.agent-shell

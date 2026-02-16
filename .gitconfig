@@ -131,3 +131,5 @@
 	helper = store
 [feature]
 	manyFiles = true
+[init]
+	defaultBranch = main
