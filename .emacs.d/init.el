@@ -3284,7 +3284,6 @@ commands usually can't handle TRAMP paths."
 
   (setq redisplay-skip-fontification-on-input t))
 
-
 (use-package
   string-inflection
   :demand t
