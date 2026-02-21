@@ -492,3 +492,7 @@ if [[ $TERM == "dumb" ]]; then
   unsetopt zle
   PS1='$ '
 fi
+
+export EDITOR="$HOME/bin/editor"
+export VISUAL="$EDITOR"
+export SUDO_EDITOR="$EDITOR"

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Decide whether we're in a terminal
+if [ -t 1 ]; then
+  mode=(-t)
+else
+  mode=(-c)
+fi
+
+# If emacsclient exists, try it
+if command -v emacsclient >/dev/null 2>&1; then
+  if emacsclient -e t >/dev/null 2>&1; then
+    exec emacsclient "${mode[@]}" "$@"
+  fi
+fi
+
+# Fallback: clean emacs with no config
+if command -v emacs >/dev/null 2>&1; then
+  exec emacs -Q "$@"
+fi
+
+echo "No emacs or emacsclient found" >&2
+exit 127
