@@ -35,7 +35,8 @@ command = "npx"
 args = ["-y", "@elastic/mcp-server-elasticsearch"]
 
 [mcp_servers.elasticsearch.env]
-OTEL_LOG_LEVEL = "none"
+ES_URL = "${ES_URL}"
+ES_API_KEY = "${ES_API_KEY}"
 
 [mcp_servers.notion]
 url = "https://mcp.notion.com/mcp"

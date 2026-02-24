@@ -1,82 +1,94 @@
 {
-    "model": "opus",
-    "includeCoAuthoredBy": false,
-    "enabledPlugins": {
-        "gopls-lsp@claude-plugins-official": true
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git remote*)",
+      "Bash(git fetch*)",
+      "Bash(npm run *)",
+      "Bash(npm test*)",
+      "Bash(npm install*)",
+      "Bash(go build*)",
+      "Bash(go test*)",
+      "Bash(go run*)",
+      "Bash(make *)",
+      "Bash(ls *)",
+      "Bash(pwd)",
+      "Bash(which *)",
+      "Bash(gh pr view*)",
+      "Bash(gh issue view*)",
+      "Bash(gh api *)",
+      "Bash(kubectl get *)",
+      "Bash(kubectl describe *)",
+      "Bash(kubectl logs *)",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch",
+      "Task",
+      "mcp__pagerduty__list_*",
+      "mcp__pagerduty__get_*",
+      "mcp__elasticsearch__list_*",
+      "mcp__elasticsearch__get_*",
+      "mcp__elasticsearch__search"
+    ],
+    "deny": []
+  },
+  "model": "opus",
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true,
+    "code-review@claude-code-plugins": true,
+    "commit-commands@claude-code-plugins": true,
+    "explanatory-output-style@claude-code-plugins": true,
+    "feature-dev@claude-code-plugins": true,
+    "hookify@claude-code-plugins": true,
+    "learning-output-style@claude-code-plugins": true,
+    "pr-review-toolkit@claude-code-plugins": true,
+    "ralph-wiggum@claude-code-plugins": true,
+    "security-guidance@claude-code-plugins": true
+  },
+  "mcpServers": {
+    "pagerduty": {
+      "type": "http",
+      "url": "https://mcp.pagerduty.com/mcp",
+      "headers": {
+        "Authorization": "${PAGERDUTY_AUTHORIZATION}"
+      }
     },
-    "permissions": {
-        "allow": [
-            "Bash(git status*)",
-            "Bash(git diff*)",
-            "Bash(git log*)",
-            "Bash(git show*)",
-            "Bash(git branch*)",
-            "Bash(git remote*)",
-            "Bash(git fetch*)",
-            "Bash(npm run *)",
-            "Bash(npm test*)",
-            "Bash(npm install*)",
-            "Bash(go build*)",
-            "Bash(go test*)",
-            "Bash(go run*)",
-            "Bash(make *)",
-            "Bash(ls *)",
-            "Bash(pwd)",
-            "Bash(which *)",
-            "Bash(gh pr view*)",
-            "Bash(gh issue view*)",
-            "Bash(gh api *)",
-            "Bash(kubectl get *)",
-            "Bash(kubectl describe *)",
-            "Bash(kubectl logs *)",
-            "Read",
-            "Edit",
-            "Write",
-            "Glob",
-            "Grep",
-            "WebFetch",
-            "WebSearch",
-            "Task",
-            "mcp__pagerduty__list_*",
-            "mcp__pagerduty__get_*",
-            "mcp__elasticsearch__list_*",
-            "mcp__elasticsearch__get_*",
-            "mcp__elasticsearch__search"
-        ],
-        "deny": []
+    "honeycomb": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.honeycomb.io/mcp"
+      ]
     },
-    "mcpServers": {
-        "pagerduty": {
-            "type": "http",
-            "url": "https://mcp.pagerduty.com/mcp",
-            "headers": {
-                "Authorization": "${PAGERDUTY_AUTHORIZATION}"
-            }
-        },
-        "honeycomb": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "mcp-remote",
-                "https://mcp.honeycomb.io/mcp"
-            ]
-        },
-        "elasticsearch": {
-            "command": "npx",
-            "args": ["-y", "@elastic/mcp-server-elasticsearch"],
-            "env": {}
-        },
-        "elastic-agent-builder": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "mcp-remote",
-                "${KIBANA_MONITORING_ENDPOINT}/api/agent_builder/mcp",
-                "--header",
-                "Authorization:ApiKey ${KIBANA_MONITORING_API_KEY}",
-                "--header",
-                "kbn-xsrf:true"
-            ]
-        }
+    "elasticsearch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@elastic/mcp-server-elasticsearch"
+      ],
+      "env": {}
+    },
+    "elastic-agent-builder": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "${KIBANA_MONITORING_ENDPOINT}/api/agent_builder/mcp",
+        "--header",
+        "Authorization:ApiKey ${KIBANA_MONITORING_API_KEY}",
+        "--header",
+        "kbn-xsrf:true"
+      ]
     }
+  }
 }
