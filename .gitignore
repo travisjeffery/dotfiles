@@ -1,3 +1,4 @@
+.env
 .emacs.d/*~
 .emacs.d/*.elc
 .emacs.d/auto-save-list
