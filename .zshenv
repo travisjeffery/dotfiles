@@ -23,6 +23,7 @@ if [ -d "$HOME/.cabal/bin" ]; then PATH="$HOME/.cabal/bin:$PATH"; fi
 if [ -d "$HOME/.pulumi/bin" ]; then PATH="$HOME/.pulumi/bin:$PATH"; fi
 if [ -d "$HOME/.lein/bin" ]; then PATH="$HOME/.lein/bin:$PATH"; fi
 if [ -d "$HOME/.npm/bin" ]; then PATH="$HOME/.npm/bin:$PATH"; fi
+if [ -d "$HOME/.npm-global/bin" ]; then PATH="$HOME/.npm-global/bin:$PATH"; fi
 if [ -d "$HOME/bin" ]; then PATH="$HOME/bin:$PATH"; fi
 
 if [ -d "$HOME/.local/bin" ]; then PATH="$HOME/.local/bin:$PATH"; fi
@@ -56,7 +57,6 @@ if [[ -z "$WAYLAND_DISPLAY" && -n "$XDG_RUNTIME_DIR" ]]; then
   eval "$(systemctl --user show-environment 2>/dev/null | grep -E '^(WAYLAND_DISPLAY|XDG_SESSION_TYPE|XDG_CURRENT_DESKTOP)=')"
 fi
 
-export EDITOR="emacsclient"
 export PAGER=less
 export SHELL=$(which zsh)
 export GITHUB_USERNAME=travisjeffery
