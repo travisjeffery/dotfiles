@@ -1,6 +1,6 @@
-# Oscilar MCP Server
+# Internal MCP Server
 
-A Model Context Protocol (MCP) server that gives Claude Code direct access to your Oscilar infrastructure without needing to explain context every time.
+A Model Context Protocol (MCP) server that gives Claude Code direct access to your infrastructure without needing to explain context every time.
 
 ## Features
 
@@ -19,7 +19,7 @@ This MCP server provides tools for:
 ### 1. Install Dependencies
 
 ```bash
-cd oscilar-mcp-server
+cd internal-mcp-server
 npm install
 ```
 
@@ -29,13 +29,13 @@ Add the server to Claude Code's configuration:
 
 ```bash
 # Option 1: Using Claude Code CLI (easier)
-claude mcp add oscilar-infra \
+claude mcp add internal-infra \
   -e KUBECONFIG=$HOME/.kube/config \
   -e DEFAULT_NAMESPACE=default \
   -e NGINX_NAMESPACE=ingress-nginx \
   -e KARPENTER_NAMESPACE=karpenter \
   -e MONITORING_NAMESPACE=monitoring \
-  -- node /path/to/oscilar-mcp-server/index.js
+  -- node /path/to/internal-mcp-server/index.js
 
 # Option 2: Edit config directly
 vim ~/.config/Claude/claude_desktop_config.json
@@ -46,9 +46,9 @@ If editing the config file directly, add:
 ```json
 {
   "mcpServers": {
-    "oscilar-infra": {
+    "internal-infra": {
       "command": "node",
-      "args": ["/home/you/oscilar-mcp-server/index.js"],
+      "args": ["/home/you/internal-mcp-server/index.js"],
       "env": {
         "KUBECONFIG": "/home/you/.kube/config",
         "DEFAULT_NAMESPACE": "default",
@@ -75,7 +75,7 @@ claude
 > /mcp
 ```
 
-You should see `oscilar-infra: connected` in the list.
+You should see `internal-infra: connected` in the list.
 
 ## Available Tools
 
@@ -364,7 +364,7 @@ Claude just knows how to access everything.
 
 To update the server:
 ```bash
-cd oscilar-mcp-server
+cd internal-mcp-server
 git pull  # if you put it in git
 # or manually update index.js
 ```

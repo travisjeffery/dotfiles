@@ -1,11 +1,11 @@
 {
-  "name": "oscilar-mcp-server",
+  "name": "internal-mcp-server",
   "version": "1.0.0",
-  "description": "MCP server for Oscilar infrastructure access",
+  "description": "MCP server for infrastructure access",
   "type": "module",
   "main": "index.js",
   "bin": {
-    "oscilar-mcp": "./index.js"
+    "internal-mcp": "./index.js"
   },
   "scripts": {
     "start": "node index.js"

@@ -1,9 +1,9 @@
 #!/bin/bash
-# Installation script for Oscilar MCP Server
+# Installation script for Internal MCP Server
 
 set -e
 
-echo "=== Oscilar MCP Server Installation ==="
+echo "=== Internal MCP Server Installation ==="
 echo ""
 
 # Check Node.js version
@@ -87,7 +87,7 @@ MONITORING_NS=${MONITORING_NS:-monitoring}
 cat > claude_mcp_config.json << EOF
 {
   "mcpServers": {
-    "oscilar-infra": {
+    "internal-infra": {
       "command": "node",
       "args": ["$SERVER_PATH"],
       "env": {
@@ -118,7 +118,7 @@ echo "   cp claude_mcp_config.json ~/.config/Claude/claude_desktop_config.json"
 echo ""
 echo "   OR use the Claude Code CLI:"
 echo ""
-echo "   claude mcp add oscilar-infra \\"
+echo "   claude mcp add internal-infra \\"
 echo "     -e KUBECONFIG=$KUBE_PATH \\"
 echo "     -e DEFAULT_NAMESPACE=$DEFAULT_NS \\"
 echo "     -e NGINX_NAMESPACE=$NGINX_NS \\"

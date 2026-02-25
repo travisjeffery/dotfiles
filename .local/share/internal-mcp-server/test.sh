@@ -1,7 +1,7 @@
 #!/bin/bash
 # Test script to verify MCP server setup
 
-echo "=== Oscilar MCP Server Tests ==="
+echo "=== Internal MCP Server Tests ==="
 echo ""
 
 # Check Node.js

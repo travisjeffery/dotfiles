@@ -4,11 +4,11 @@
 
 ```bash
 # 1. Install
-cd oscilar-mcp-server
+cd internal-mcp-server
 ./install.sh
 
 # 2. Add to Claude Code
-claude mcp add oscilar-infra \
+claude mcp add internal-infra \
   -e KUBECONFIG=$HOME/.kube/config \
   -- node $(pwd)/index.js
 
@@ -63,7 +63,7 @@ claude
 > /mcp
 
 # Should show:
-# oscilar-infra: connected
+# internal-infra: connected
 ```
 
 ## Troubleshooting
