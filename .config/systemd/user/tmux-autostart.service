@@ -3,11 +3,10 @@ Description=Start tmux session at login
 After=default.target
 
 [Service]
-Type=forking
-ExecStart=/usr/bin/tmux new-session -d -s main
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/tmux new-session -Ad -s main
 ExecStop=/usr/bin/tmux kill-session -t main
-Restart=on-failure
-RestartSec=5
 
 [Install]
 WantedBy=default.target

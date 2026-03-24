@@ -496,3 +496,5 @@ fi
 export EDITOR="$HOME/bin/editor"
 export VISUAL="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
+
+eval "$(direnv hook zsh)"

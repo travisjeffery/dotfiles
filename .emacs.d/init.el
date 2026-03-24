@@ -39,6 +39,14 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
+(add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
+
+(defvar user-emacs-etc-directory
+  (expand-file-name "etc/" user-emacs-directory))
+
+(defvar user-emacs-var-directory
+  (expand-file-name "var/" user-emacs-directory))
+
 ;; Install use-package support
 (elpaca elpaca-use-package
   ;; Enable use-package :ensure support for Elpaca.
@@ -69,7 +77,6 @@
   :ensure nil
   :custom
   (dictionary-server "dict.org")
-  (enable-recursive-minibuffers nil)
   (completions-max-height 20)
   (completions-format 'one-column)
   (completion-eager-display 'auto)
@@ -107,7 +114,6 @@
   (inhibit-startup-screen t)
   (eldoc-idle-delay 0)
   ;; nice scrolling
-  (scroll-margin 0)
   (scroll-conservatively 100000)
   (scroll-preserve-screen-position 1)
   (native-comp-async-report-warnings-errors nil)
@@ -118,11 +124,9 @@
   ;; personal indentation width, while maintaining the style (and
   ;; meaning) of any files you load.
   (indent-tabs-mode nil) ;; don't use tabs to indent
-  (tab-width 8)          ;; but maintain correct appearance
   ;; smart tab behavior - indent or complete
   (grep-command "rg --no-heading")
   (fill-column 100)
-  (same-window-regexps nil)
   ;; Newline at end of file
   (require-final-newline t)
   (frame-title-format
@@ -143,14 +147,9 @@
      try-expand-line
      try-complete-lisp-symbol-partially
      try-complete-lisp-symbol))
-  ;; store all backup and autosave files in the tmp dir
-  (backup-directory-alist `((".*" . ,temporary-file-directory)))
-  (auto-save-file-name-transforms
-   `((".*" ,temporary-file-directory t)))
   (gc-cons-threshold 300000000)
   (major-mode-remap-alist '((python-mode . python-ts-mode)))
   (async-shell-command-buffer 'new-buffer)
-  (ring-bell-function #'ignore)
   (backup-by-copying t)
   (delete-old-versions t)
   (kept-new-versions 10)
@@ -208,18 +207,12 @@
   (size-indication-mode t)
 
   ;; enable y/n answers
-  (fset 'yes-or-no-p 'y-or-n-p)
-
-  ;; delete the selection with a keypress
-  (delete-selection-mode t)
+  (setq use-short-answers t)
 
   ;; revert buffers automatically when underlying files are changed externally
   (global-auto-revert-mode t)
 
   (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
 
   (defun tj-base64-encode-region-no-break ()
     (interactive)
@@ -383,60 +376,6 @@
            (or col 1))))))
 
   (defun tj-multi-line-to-one-line (beg end)
-    "Convert the lines between BEG and END into one line and copy \
-it in to the kill ring, when 'transient-mark-mode' is enabled. If
-no region is active then only the current line is acted upon.
-
-If the region begins or ends in the middle of a line, that entire line is
-copied, even if the region is narrowed to the middle of a line.
-
-Current position is preserved."
-    (interactive "r")
-    (let (str
-          (orig-pos (point-marker)))
-      (save-restriction
-        (widen)
-        (when (and transient-mark-mode (not (use-region-p)))
-          (setq
-           beg (line-beginning-position)
-           end (line-beginning-position 2)))
-
-        (goto-char beg)
-        (setq beg (line-beginning-position))
-        (goto-char end)
-        (unless (= (point) (line-beginning-position))
-          (setq end (line-beginning-position 2)))
-
-        (goto-char beg)
-        (setq str
-              (replace-regexp-in-string
-               "[ \t]*\n" ""
-               (replace-regexp-in-string
-                "^[ \t]+"
-                ""
-                (buffer-substring-no-properties beg end))))
-        ;; (message "str=%s" str)
-        (kill-new str)
-        (goto-char orig-pos))))
-
-  (defun tj-spongebob (start end)
-    "Convert string from START to END to SpOnGeBoB meme."
-    (interactive "r")
-    (save-excursion
-      (goto-char start)
-      (let ((upcase?
-             (not (s-uppercase? (char-to-string (char-after))))))
-        (while (not (eq end (point)))
-          (setq upcase? (not upcase?))
-          (let* ((curchar (char-after))
-                 (newchar
-                  (if upcase?
-                      (upcase curchar)
-                    (downcase curchar))))
-            (delete-char 1)
-            (insert-char newchar))))))
-
-  (defun tj-convert-multi-line-to-one-line (beg end)
     "Convert the lines between BEG and END into one line and copy \
 it in to the kill ring, when 'transient-mark-mode' is enabled. If
 no region is active then only the current line is acted upon.
@@ -923,7 +862,6 @@ Otherwise split the current paragraph into one sentence per line."
    ("s" . synosaurus-lookup)
    ("g" . ripgrep-regexp)
    ("o" . occur)
-   ("O" . moccur)
    ("d" . dictionary-lookup-definition)
 
    ;; Number operations bindings
@@ -970,8 +908,6 @@ Otherwise split the current paragraph into one sentence per line."
 
 (use-package direnv :ensure t :demand t :config (direnv-mode 1))
 
-(use-package xclip :config (xclip-mode 1) :ensure t :demand t)
-
 (use-package verb
   :ensure t
   :demand t
@@ -992,8 +928,6 @@ Otherwise split the current paragraph into one sentence per line."
   :config (auto-save-mode 1)
   :ensure t
   :demand t)
-
-(use-package compat :ensure nil :demand t)
 
 (use-package hydra :ensure t :demand t)
 
@@ -1081,7 +1015,6 @@ Otherwise split the current paragraph into one sentence per line."
         (setq replace t))
       (list string replace)))
   (advice-add 'kill-new :filter-args #'tj-replace-blank-kill)
-  :bind (("M-y" . browse-kill-ring))
   :ensure t
   :demand t)
 
@@ -1091,24 +1024,11 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure nil
   :demand t)
 
-(use-package flash
-  :commands (flash-jump flash-jump-continue
-             flash-treesitter)
-  :bind ("C-c j" . flash-jump)
-  :ensure (:type git :host github :repo "Prgebish/flash")
-  :demand t
-  :custom
-  (flash-multi-window t)
-  :config
-  ;; Search integration (labels during C-s, /, ?)
-  (require 'flash-isearch)
-  (flash-isearch-mode 1))
-
 (use-package synosaurus
   :ensure t
   :demand t)
 
-(use-package ipcalc :ensure t :demand t)
+(use-package ipcalc :ensure t)
 
 (use-package transient :ensure t :demand t)
 
@@ -1304,15 +1224,14 @@ selected window."
   :demand t
   :config (dired-quick-sort-setup))
 
-(use-package disk-usage :ensure t :demand t)
+(use-package disk-usage :ensure t)
 
 (use-package dired-filter :ensure t :demand t)
 
-(use-package
-  expand-region
-  :bind ("M-=" . er/expand-region)
+(use-package expreg
   :ensure t
-  :demand t)
+  :bind (("C-=" . expreg-expand)
+         ("C--" . expreg-contract)))
 
 (use-package
   re-builder
@@ -1390,14 +1309,12 @@ selected window."
 (use-package
   github-pullrequest
   :commands (github-pullrequest-new github-pullrequest-checkout)
-  :ensure t
-  :demand t)
+  :ensure t)
 
 (use-package
   gitpatch
   :commands gitpatch-mail
-  :ensure t
-  :demand t)
+  :ensure t)
 
 (use-package
   flycheck
@@ -1513,8 +1430,6 @@ but agnostic to language, mode, and server."
       (when dir
         (cons 'transient dir))))
 
-  (setq tab-width 8)
-
   (set-face-foreground 'go-test--ok-face "forest green")
   (set-face-foreground 'go-test--standard-face "dark orange")
 
@@ -1581,15 +1496,6 @@ but agnostic to language, mode, and server."
 
 ;; (use-package winner :ensure t :demand t :diminish :config (winner-mode 1))
 
-(use-package
-  eacl
-  :config
-  (setq eacl-grep-program
-        "grep --exclude-dir=.git --exclude-dir=vendor")
-  :bind (("C-x C-l" . eacl-complete-line))
-  :ensure t
-  :demand t)
-
 (use-package go-gen-test :after go-mode :ensure t :demand t)
 
 (use-package
@@ -1605,7 +1511,7 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t)
 
-(use-package web-beautify :ensure t :demand t)
+(use-package web-beautify :ensure t)
 
 (use-package
   elisp-slime-nav
@@ -1659,6 +1565,7 @@ but agnostic to language, mode, and server."
 (use-package
   hideshow
   :ensure nil
+  :diminish hs-minor-mode
   :hook (prog-mode . hs-minor-mode)
   :demand t)
 
@@ -1895,7 +1802,7 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t)
 
-(use-package package-lint :ensure t :demand t)
+(use-package package-lint :ensure t)
 
 (use-package
   dired-ranger
@@ -1957,7 +1864,7 @@ but agnostic to language, mode, and server."
   (add-to-list
    'easy-kill-alist '(?T string-up-to-char-backward "")))
 
-(use-package kubedoc :ensure t :demand t)
+(use-package kubedoc :ensure t)
 
 (use-package
   move-text
@@ -1966,8 +1873,7 @@ but agnostic to language, mode, and server."
   :demand t)
 
 (use-package htmlize
-  :ensure t
-  :demand t)
+  :ensure t)
 
 (use-package
   markdown-mode
@@ -2147,10 +2053,9 @@ but agnostic to language, mode, and server."
 
 (use-package org-present
   :after org
-  :demand t
   :ensure t)
 
-(use-package org-web-tools :demand t :ensure t)
+(use-package org-web-tools :ensure t)
 
 (use-package
   alert
@@ -2238,9 +2143,7 @@ but agnostic to language, mode, and server."
   :ensure t
   :demand t)
 
-(use-package journalctl-mode :ensure t :demand t)
-
-(use-package ace-jump-mode :demand t :ensure t)
+(use-package journalctl-mode :ensure t)
 
 (use-package
   browse-url
@@ -2249,38 +2152,6 @@ but agnostic to language, mode, and server."
   :bind ("C-c u" . browse-url-at-point)  ; High-frequency URL opening
   :ensure nil
   :demand t)
-
-(defun eshell-execute-current-line ()
-  "Insert current line at the end of the buffer."
-  (interactive)
-  (let ((command
-         (buffer-substring
-          (save-excursion
-            (beginning-of-line)
-            (point))
-          (save-excursion
-            (end-of-line)
-            (point)))))
-    (eshell--execute-command command t)))
-
-(defun eshell-insert-command (text &optional func)
-  "Insert TEXT command at the end of the buffer and call 'eshell-send-input or FUNC if given."
-  (interactive)
-  (goto-char eshell-last-output-end)
-  (insert-and-inherit text)
-  (funcall (or func 'eshell-send-input)))
-
-(defun eshell--execute-command (command save-excursion?)
-  (let ((body (lambda nil (eshell-insert-command command))))
-    (if save-excursion?
-        (save-excursion (funcall body))
-      (funcall body))))
-
-(defun eshell/clear ()
-  "Clear eshell's buffer."
-  (interactive)
-  (let ((inhibit-read-only t))
-    (erase-buffer)))
 
 (use-package
   em-hist
@@ -2403,11 +2274,6 @@ but agnostic to language, mode, and server."
 	    ;; Other prefixes
 	    "C-c f" "find-file-at-point"
 	    "C-c q" "kill-other-buffer")
-  :ensure t
-  :demand t)
-
-(use-package
-  color-moccur
   :ensure t
   :demand t)
 
@@ -2679,12 +2545,11 @@ commands usually can't handle TRAMP paths."
 (use-package
   fancy-narrow
   :commands (fancy-narrow-to-region fancy-widen)
-  :ensure t
-  :demand t)
+  :ensure t)
 
 (use-package wgrep :ensure t :demand t)
 
-(use-package json-snatcher :ensure t :demand t)
+(use-package json-snatcher :ensure t)
 
 (use-package
   visual-regexp
@@ -2695,8 +2560,7 @@ commands usually can't handle TRAMP paths."
 (use-package
   backup-walker
   :commands backup-walker-start
-  :ensure t
-  :demand t)
+  :ensure t)
 
 (use-package
   change-inner
@@ -2839,9 +2703,9 @@ commands usually can't handle TRAMP paths."
   :ensure t
   :demand t)
 
-(use-package frog-jump-buffer :ensure t :demand t)
+(use-package frog-jump-buffer :ensure t)
 
-(use-package github-review :ensure t :demand t)
+(use-package github-review :ensure t)
 
 (use-package
   orderless
@@ -3112,12 +2976,6 @@ commands usually can't handle TRAMP paths."
   :demand t)
 
 (use-package
-  hideshow
-  :ensure nil
-  :diminish hs-minor-mode
-  :demand t)
-
-(use-package
   kubernetes
   :commands (kubernetes-overview)
   :bind
@@ -3296,7 +3154,7 @@ commands usually can't handle TRAMP paths."
   :diminish
   :config (elmacro-mode 1))
 
-(use-package typit :ensure t :demand t)
+(use-package typit :ensure t)
 
 (use-package visual-fill-column
   :ensure t
@@ -3365,7 +3223,7 @@ commands usually can't handle TRAMP paths."
 ;; C-o         smart-open-line-above (TERMINAL-SAFE!)
 ;; M-=         expand-region
 ;; M-/         hippie-expand
-;; M-y         browse-kill-ring
+;; M-y         consult-yank-pop
 ;; M-p/M-n     highlight-symbol prev/next
 ;; C-g         keyboard-quit (dwim)
 ;;
@@ -3431,7 +3289,6 @@ commands usually can't handle TRAMP paths."
 ;; C-c s s     synosaurus-lookup
 ;; C-c s g     ripgrep-regexp
 ;; C-c s o     occur
-;; C-c s O     moccur
 ;; C-c s d     dictionary-lookup-definition
 ;; C-c s r     consult-register
 ;; C-c s l     consult-register-load
