@@ -1,12 +1,13 @@
 sandbox_mode = "danger-full-access"
-model = "gpt-5.3-codex"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
 reasoning = "xhigh"
 network_access = "enabled"
 personality = "pragmatic"
 approval_policy = "on-request"
 check_for_update_on_startup = true
 web_search = "live"
+plan_mode_reasoning_effort = "xhigh"
 
 [defaults]
 network = true
@@ -35,19 +36,27 @@ command = "npx"
 args = ["-y", "@elastic/mcp-server-elasticsearch"]
 
 [mcp_servers.elasticsearch.env]
-ES_URL = "${ES_URL}"
 ES_API_KEY = "${ES_API_KEY}"
+ES_URL = "${ES_URL}"
 
 [mcp_servers.notion]
 url = "https://mcp.notion.com/mcp"
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
-http_headers = { "CONTEXT7_API_KEY" = "${CONTEXT7_API_KEY}" }
+
+[mcp_servers.context7.http_headers]
+CONTEXT7_API_KEY = "${CONTEXT7_API_KEY}"
 
 [mcp_servers.openmemory]
 command = "npx"
 args = ["-y", "supergateway", "--sse", "http://localhost:8765/mcp/openmemory/sse/tj"]
+
+[mcp_servers.linear]
+url = "https://mcp.linear.app/mcp"
+
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
 
 [notice.model_migrations]
 "gpt-5.2" = "gpt-5.3-codex"
