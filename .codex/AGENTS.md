@@ -70,31 +70,34 @@ When a request depends on recency (e.g., "latest", "current", "today", "as of no
   4. Whether the request depends on **recency** (if yes, apply the "Accuracy, recency, and sourcing" rules).
   5. If requirements are ambiguous, ask targeted clarifying questions before making irreversible changes.
 
-## STATE.md (REQUIRED)
+### Beans and OpenMemory policy
 
-Maintain a single continuity file for the current workspace or worktree (if there is one): `.agent/STATE.md` or `<worktree>./agent/STATE.md`.
+- Beans is the canonical source of truth for active workspace continuity. OpenMemory is supplemental memory only.
+- If `.beans/` and `.beans.yml` exist, run `beans prime` before doing anything else in this repo and heed its output.
+- If Beans has not been initialized yet, prefer adopting it with `beans init` when the task includes repo-maintenance or workflow updates; otherwise note that Beans is not configured and continue with repo files plus OpenMemory.
+- Read the relevant active and archived beans before starting substantive work. Use OpenMemory as additional context when available.
+- If OpenMemory conflicts with Beans or repo files, Beans and repo files win.
+- Persist critical task state in Beans rather than `.agent/STATE.md`, including plans, decisions, progress, discoveries, and outcomes.
+- If Beans is unavailable, continue with repo files plus OpenMemory where available, and note the limitation explicitly.
 
-- `.agent/STATE.md` is a living document and canonical briefing designed to survive compaction; do not rely on earlier chat/tool output unless it's reflected there.
+### Beans Workflow
 
-- At the start of each assistant turn: read `.agent/STATE.md` before acting.
+Update Beans whenever there is a meaningful delta in:
 
-### OpenMemory policy
+  - plans: what should happen next and what acceptance criteria or constraints changed.
+  - decisions: choices made, tradeoffs accepted, and what was ruled out.
+  - progress: material implementation status, blockers, and course corrections.
+  - discoveries: notable findings, evidence, incompatibilities, or unexpected behavior that changed the approach.
+  - outcomes: what shipped, what was verified, what remains, and any follow-up work.
 
-- OpenMemory is supplemental memory; `.agent/STATE.md` remains the canonical source of truth for active workspace continuity.
-- Always read `.agent/STATE.md` at the start of each turn. Use OpenMemory as an additional context source when available.
-- If OpenMemory conflicts with `.agent/STATE.md`, `.agent/STATE.md` wins.
-- Persist critical task state (plans, decisions, progress, discoveries, outcomes) in `.agent/STATE.md` even when also stored in OpenMemory.
-- If OpenMemory is unavailable, continue with `.agent/STATE.md` only and note any relevant limitation.
+When recording Beans context:
 
-### File Format
-
-Update `.agent/STATE.md` only when there is a meaningful delta in:
-
-  - `[PLANS]`: "Plans Log" is a guide for the next contributor as much as checklists for you.
-  - `[DECISIONS]`: "Decisions Log" is used to record all decisions made.
-  - `[PROGRESS]`: "Progress Log" is used to record course changes mid-implementation, documenting why and reflecting upon the implications.
-  - `[DISCOVERIES]`: "Discoveries Log" is for when you discover optimizer behavior, performance tradeoffs, unexpected bugs, or inverse/unapply semantics that shaped your approach, capture those observations with short evidence snippets (test output is ideal.
-  - `[OUTCOMES]`: "Outcomes Log" is used at completion of a major task or the full plan, summarizing what was achieved, what remains, and lessons learned.
+  - Prefer the `beans` CLI for creating and updating records. Preserve the schema it generates in `.beans/` and `.beans.yml`.
+  - Keep updates factual, concise, and high-signal. No transcripts or raw logs.
+  - Include ISO timestamps when recording dated facts.
+  - Carry forward provenance in notes where useful: `[USER]`, `[CODE]`, `[TOOL]`, `[ASSUMPTION]`.
+  - If something is unknown, mark it `UNCONFIRMED` instead of guessing.
+  - Treat archived beans as project memory; consult them before repeating past work or revisiting old decisions.
 
 ### Anti-drift / anti-bloat rules
 
@@ -119,7 +122,7 @@ A task is done when:
 - documentation is updated exhaustively for impacted areas,
 - impact is explained (what changed, where, why),
 - follow-ups are listed if anything was intentionally left out.
-- `.agent/STATE.md` is updated if the change materially affects goal/state/decisions.
+- Beans are updated if the change materially affects goals, decisions, progress, or follow-up scope.
 
 ## Context7 MCP (library docs)
 
