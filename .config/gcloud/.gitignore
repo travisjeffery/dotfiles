@@ -1,0 +1,3 @@
+# Keep cloud credentials and machine state local-only.
+*
+!.gitignore

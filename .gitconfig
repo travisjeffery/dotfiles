@@ -66,6 +66,7 @@
 	untrackedCache = true
 [include]
 	path = ~/.githubconfig
+	path = ~/.gitconfig.local
 [help]
 	singlekey = true
 [grep]

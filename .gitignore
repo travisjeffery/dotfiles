@@ -66,3 +66,4 @@ work.sh
 !.ssh/.gitignore
 .gnupg/*
 !.gnupg/.gitignore
+.local/share/oscilar-mcp-server/
