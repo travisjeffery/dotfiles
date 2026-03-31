@@ -13,3 +13,5 @@ term = xterm-256color
 cursor-style = block
 shell-integration = zsh
 shell-integration-features = no-cursor
+
+theme = Modus Vivendi
