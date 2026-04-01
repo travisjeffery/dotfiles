@@ -3,9 +3,12 @@ command = /bin/zsh
 font-family = Fira Code
 font-size = 16
 font-feature = liga
+config-file = ?local-overrides
 
 macos-option-as-alt = true
-copy-on-select = false
+clipboard-read = allow
+clipboard-write = allow
+copy-on-select = clipboard
 scrollback-limit = 200000
 
 term = xterm-256color
