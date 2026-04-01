@@ -1,0 +1,2 @@
+# Keep machine-specific auth material local-only.
+hosts.yml

@@ -8,6 +8,7 @@ approval_policy = "on-request"
 check_for_update_on_startup = true
 web_search = "live"
 plan_mode_reasoning_effort = "xhigh"
+project_doc_fallback_filenames = ["CLAUDE.md"]
 
 [defaults]
 network = true
@@ -51,6 +52,9 @@ CONTEXT7_API_KEY = "${CONTEXT7_API_KEY}"
 [mcp_servers.openmemory]
 command = "npx"
 args = ["-y", "supergateway", "--sse", "http://localhost:8765/mcp/openmemory/sse/tj"]
+
+[mcp_servers.openmemory.tools.search_memory]
+approval_mode = "approve"
 
 [mcp_servers.linear]
 url = "https://mcp.linear.app/mcp"

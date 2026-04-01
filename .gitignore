@@ -60,3 +60,10 @@ work.sh
 # Vendored fzf-tab: omit the optional zsh module build tree (large; plugin works without it).
 .zsh/fzf-tab/modules/
 .agent-shell/
+.aws/*
+!.aws/.gitignore
+.ssh/*
+!.ssh/.gitignore
+.gnupg/*
+!.gnupg/.gitignore
+.local/share/oscilar-mcp-server/

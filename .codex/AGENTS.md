@@ -79,6 +79,7 @@ When a request depends on recency (e.g., "latest", "current", "today", "as of no
 - If OpenMemory conflicts with Beans or repo files, Beans and repo files win.
 - Persist critical task state in Beans rather than `.agent/STATE.md`, including plans, decisions, progress, discoveries, and outcomes.
 - If Beans is unavailable, continue with repo files plus OpenMemory where available, and note the limitation explicitly.
+- Do not commit Beans files.
 
 ### Beans Workflow
 
@@ -108,6 +109,14 @@ When recording Beans context:
   - If unknown, write `UNCONFIRMED` (never guess). If something changes, supersede it explicitly (don't silently rewrite history).
 - Keep the file bounded, short and high-signal (anti-bloat). 
 - If sections begin to become bloated, compress older items into milestone (`[MILESTONE]`) bullets.
+
+### Pull Requests
+
+- Don't comment that Codex created the pull request
+- Don't comment that Codex made the commits
+- Follow the repository's pull request template if it exists
+- Keep the PR's title and description up-to-date with changes.
+- When opening pull requests, look for related Linears, include link in Linear to PR, and link in PR to Linear.
 
 ## Definition of done
 

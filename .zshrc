@@ -128,6 +128,18 @@ _cache_completion_script() {
     case "$cmd" in
       kubectl) command kubectl completion zsh >| "$tmp" 2>/dev/null ;;
       helm) command helm completion zsh >| "$tmp" 2>/dev/null ;;
+      beans)
+        local beans_tmpdir
+        beans_tmpdir=$(mktemp -d "${TMPDIR:-/tmp}/beans-completion.XXXXXX") || return 1
+        if (
+          builtin cd "$beans_tmpdir" &&
+          command beans init >/dev/null 2>&1 &&
+          command beans completion zsh >| "$tmp"
+        ) 2>/dev/null; then
+          :
+        fi
+        command rm -rf "$beans_tmpdir"
+        ;;
       *) return 1 ;;
     esac
 
@@ -152,6 +164,10 @@ fi
 
 if (( $+commands[helm] )); then
   _cache_completion_script helm "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/helm.zsh"
+fi
+
+if (( $+commands[beans] )); then
+  _cache_completion_script beans "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/beans.zsh"
 fi
 
 source ~/.zsh/completions/_docker
@@ -498,3 +514,11 @@ export VISUAL="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
 
 eval "$(direnv hook zsh)"
+
+# bun completions
+[ -s "/home/tj/.bun/_bun" ] && source "/home/tj/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+

@@ -66,6 +66,7 @@
 	untrackedCache = true
 [include]
 	path = ~/.githubconfig
+	path = ~/.gitconfig.local
 [help]
 	singlekey = true
 [grep]
@@ -133,3 +134,9 @@
 	manyFiles = true
 [init]
 	defaultBranch = main
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true
+[tag]
+	gpgSign = true
