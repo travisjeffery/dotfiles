@@ -73,12 +73,13 @@ When a request depends on recency (e.g., "latest", "current", "today", "as of no
 ### Beans and OpenMemory policy
 
 - Beans is the canonical source of truth for active workspace continuity. OpenMemory is supplemental memory only.
-- If `.beans/` and `.beans.yml` exist, run `beans prime` before doing anything else in this repo and heed its output.
-- If Beans has not been initialized yet, prefer adopting it with `beans init` when the task includes repo-maintenance or workflow updates; otherwise note that Beans is not configured and continue with repo files plus OpenMemory.
+- When in a Git worktree, check both the current directory and the repository’s canonical root for `.beans/` and `.beans.yml`. Prefer the canonical repository Beans state when present.
+- If Beans is configured, run `beans prime` before doing anything else in this repo and follow its guidance.
+- If Beans is not configured, initialize it with `beans init` when the task involves repo maintenance, workflow updates, planning, or multi-step implementation work. Then run `beans prime`. Otherwise, note that Beans is not configured and continue with repo files plus OpenMemory.
 - Read the relevant active and archived beans before starting substantive work. Use OpenMemory as additional context when available.
 - If OpenMemory conflicts with Beans or repo files, Beans and repo files win.
-- Persist critical task state in Beans rather than `.agent/STATE.md`, including plans, decisions, progress, discoveries, and outcomes.
-- If Beans is unavailable, continue with repo files plus OpenMemory where available, and note the limitation explicitly.
+- Persist important task state in Beans rather than `.agent/STATE.md`, including plans, decisions, progress, discoveries, and outcomes.
+- If Beans is unavailable, continue with repo files plus OpenMemory where available, and explicitly note that limitation.
 - Do not commit Beans files.
 
 ### Beans Workflow
@@ -114,6 +115,7 @@ When recording Beans context:
 
 - Don't comment that Codex created the pull request
 - Don't comment that Codex made the commits
+- Do not include `Codex` or similar tool-identifying markers anywhere visible in a PR, including the title, description, comments, labels, or the branch name used for the PR
 - Follow the repository's pull request template if it exists
 - Keep the PR's title and description up-to-date with changes.
 - When opening pull requests, look for related Linears, include link in Linear to PR, and link in PR to Linear.

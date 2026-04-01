@@ -2,7 +2,7 @@
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
-      "Bash(git status*)",
+      "Bash(*)",
       "Bash(git diff*)",
       "Bash(git log*)",
       "Bash(git show*)",
@@ -41,7 +41,6 @@
     ],
     "deny": []
   },
-  "model": "opus",
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
     "code-review@claude-code-plugins": true,
