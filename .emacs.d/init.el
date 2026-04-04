@@ -441,8 +441,7 @@ Current position is preserved."
   (defvar ffap-file-at-point-line-number nil
     "Variable to hold line number from the last `ffap-file-at-point' call.")
 
-  (defadvice ffap-file-at-point
-      (after ffap-store-line-number activate)
+  (defun tj-ffap-store-line-number (&rest _)
     "Search `ffap-string-at-point' for a line number pattern and save it in `ffap-file-at-point-line-number' variable."
     (let*
         ((string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
@@ -460,50 +459,24 @@ Current position is preserved."
                           (1+ (match-beginning 0))
                           (match-end 0))))
          (line-number
-          (and line-number-string
+         (and line-number-string
                (string-to-number line-number-string))))
       (if (and line-number (> line-number 0))
           (setq ffap-file-at-point-line-number line-number)
         (setq ffap-file-at-point-line-number nil))))
 
-  (defadvice ffap-guesser (after ffap-store-line-number activate)
-    "Search `ffap-string-at-point' for a line number pattern and save it in `ffap-file-at-point-line-number' variable."
-    (let*
-        ((string (ffap-string-at-point)) ;; string/name definition copied from `ffap-string-at-point'
-         (name
-          (or
-           (condition-case nil
-               (and
-                (not (string-match "//" string)) ; foo.com://bar
-                (substitute-in-file-name string))
-             (error nil))
-           string))
-         (line-number-string
-          (and (string-match ":[0-9]+" name)
-               (substring name
-                          (1+ (match-beginning 0))
-                          (match-end 0))))
-         (line-number
-          (and line-number-string
-               (string-to-number line-number-string))))
-      (if (and line-number (> line-number 0))
-          (setq ffap-file-at-point-line-number line-number)
-        (setq ffap-file-at-point-line-number nil))))
+  (advice-add 'ffap-file-at-point :after #'tj-ffap-store-line-number)
+  (advice-add 'ffap-guesser :after #'tj-ffap-store-line-number)
 
-  (defadvice find-file (after ffap-goto-line-number activate)
+  (defun tj-ffap-goto-line-number (&rest _)
     "If `ffap-file-at-point-line-number' is non-nil goto this line."
     (when ffap-file-at-point-line-number
       (with-no-warnings
         (goto-line ffap-file-at-point-line-number))
       (setq ffap-file-at-point-line-number nil)))
 
-  (defadvice find-file-at-point
-      (after ffap-goto-line-number activate)
-    "If `ffap-file-at-point-line-number' is non-nil goto this line."
-    (when ffap-file-at-point-line-number
-      (with-no-warnings
-        (goto-line ffap-file-at-point-line-number))
-      (setq ffap-file-at-point-line-number nil)))
+  (advice-add 'find-file :after #'tj-ffap-goto-line-number)
+  (advice-add 'find-file-at-point :after #'tj-ffap-goto-line-number)
 
   (defun tj-convert-commas-to-new-lines (start end)
     "Convert commas to commas with new-lines from START to END.
@@ -691,8 +664,9 @@ will be killed."
           (clipboard-kill-region (point-min) (point-max)))
         (message filename))))
 
-  (defadvice backward-kill-word (around fix activate)
-    (cl-flet ((kill-region (b e) (delete-region b e))) ad-do-it))
+  (define-advice backward-kill-word (:around (orig-fun &rest args) tj-delete-instead-of-kill)
+    (cl-letf (((symbol-function 'kill-region) #'delete-region))
+      (apply orig-fun args)))
 
   (defun tj-fill-paragraph (&optional arg)
     "When called with prefix argument ARG call `fill-paragraph'.
@@ -748,22 +722,22 @@ Otherwise split the current paragraph into one sentence per line."
                       (_ (not (string-empty-p line))))
             (puthash line (+ count 1) lines))
           (forward-line))
-        (when-let ((lines
-                    (cl-loop
-                     for
-                     line
-                     being
-                     the
-                     hash-keys
-                     of
-                     lines
-                     using
-                     (hash-values count)
-                     when
-                     (> count 1)
-                     collect
-                     (format "^%s$" (regexp-quote line))))
-                   (empty (length lines)))
+        (when-let* ((lines
+                     (cl-loop
+                      for
+                      line
+                      being
+                      the
+                      hash-keys
+                      of
+                      lines
+                      using
+                      (hash-values count)
+                      when
+                      (> count 1)
+                      collect
+                      (format "^%s$" (regexp-quote line))))
+                    (empty (length lines)))
           (occur
            (format "\\(%s\\)" (string-join lines "\\|")))))))
 
@@ -947,12 +921,7 @@ Otherwise split the current paragraph into one sentence per line."
   :bind (:map minibuffer-local-map ("M-A" . marginalia-cycle))
   :config
   (setq marginalia-annotators '(marginalia-annotators-light))
-  ;; The :init section is always executed.
-  :init
-  ;; Marginalia must be activated in the :init section of use-package such that
-  ;; the mode gets enabled right away. Note that this forces loading the
-  ;; package.
-  (marginalia-mode)
+  (marginalia-mode 1)
   :ensure t
   :demand t)
 
@@ -1037,14 +1006,26 @@ Otherwise split the current paragraph into one sentence per line."
   :ensure t
   :demand t)
 
-(use-package vterm :ensure t :demand t
+(defun tj-vterm-module-available-p ()
+  "Return non-nil when the compiled `vterm-module' is available."
+  (when module-file-suffix
+    (let ((module-name (format "vterm-module%s" module-file-suffix)))
+      (seq-some
+       #'file-exists-p
+       (list
+        (expand-file-name (concat "elpaca/builds/vterm/build/" module-name) user-emacs-directory)
+        (expand-file-name (concat "elpaca/builds/vterm/" module-name) user-emacs-directory)
+        (expand-file-name (concat "elpaca/sources/emacs-libvterm/build/" module-name) user-emacs-directory)
+        (expand-file-name (concat "elpaca/sources/emacs-libvterm/" module-name) user-emacs-directory))))))
+
+(use-package vterm :ensure t :if (tj-vterm-module-available-p) :demand t
   :config
   (define-key vterm-mode-map (kbd "C-c C-g")
   (lambda ()
     (interactive)
     (vterm-send-key "g" nil nil t))))
 
-(use-package multi-vterm :ensure t :demand t
+(use-package multi-vterm :ensure t :if (tj-vterm-module-available-p) :demand t
   :bind
   (("C-c v t" . #'multi-vterm)
    ("C-c v n" . #'multi-vterm-next)
@@ -1231,6 +1212,8 @@ selected window."
 (use-package expreg
   :ensure t
   :bind (("C-=" . expreg-expand)
+         ;; Some layouts/terminals report the same physical key as `C-+`.
+         ("C-+" . expreg-expand)
          ("C--" . expreg-contract)))
 
 (use-package
@@ -1720,29 +1703,29 @@ but agnostic to language, mode, and server."
   ;; enable some really cool extensions like C-x C-j (dired-jump)
   (require 'dired-x)
 
-  (defadvice dired-omit-startup
-      (after diminish-dired-omit activate)
+  (define-advice dired-omit-startup (:after (&rest _) tj-diminish-dired-omit)
     "Make sure to remove \"Omit\" from the modeline."
     (diminish 'dired-omit-mode)
     dired-mode-map)
-  (defadvice dired-next-line (around dired-next-line+ activate)
+  (define-advice dired-next-line (:around (orig-fun &rest args) tj-skip-non-filenames)
     "Replace current buffer if file is a directory."
-    ad-do-it
-    (while (and (not (eobp)) (not ad-return-value))
-      (forward-line)
-      (setq ad-return-value (dired-move-to-filename)))
-    (when (eobp)
-      (forward-line -1)
-      (setq ad-return-value (dired-move-to-filename))))
-  (defadvice dired-previous-line
-      (around dired-previous-line+ activate)
+    (let ((result (apply orig-fun args)))
+      (while (and (not (eobp)) (not result))
+        (forward-line)
+        (setq result (dired-move-to-filename)))
+      (when (eobp)
+        (forward-line -1)
+        (setq result (dired-move-to-filename)))
+      result))
+  (define-advice dired-previous-line (:around (orig-fun &rest args) tj-skip-non-filenames)
     "Replace current buffer if file is a directory."
-    ad-do-it
-    (while (and (not (bobp)) (not ad-return-value))
-      (forward-line -1)
-      (setq ad-return-value (dired-move-to-filename)))
-    (when (bobp)
-      (call-interactively 'dired-next-line)))
+    (let ((result (apply orig-fun args)))
+      (while (and (not (bobp)) (not result))
+        (forward-line -1)
+        (setq result (dired-move-to-filename)))
+      (when (bobp)
+        (call-interactively 'dired-next-line))
+      result))
   (defvar dired-omit-regexp-orig
     (symbol-function 'dired-omit-regexp))
 
@@ -3221,7 +3204,7 @@ commands usually can't handle TRAMP paths."
 ;; M-k         kill-line-backwards (TERMINAL-SAFE!)
 ;; C-c t o     smart-open-line (TERMINAL-SAFE!)
 ;; C-o         smart-open-line-above (TERMINAL-SAFE!)
-;; M-=         expand-region
+;; C-=/C-+     expand-region
 ;; M-/         hippie-expand
 ;; M-y         consult-yank-pop
 ;; M-p/M-n     highlight-symbol prev/next
