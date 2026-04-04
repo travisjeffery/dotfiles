@@ -85,6 +85,7 @@
 [user]
 	email = tj@travisjeffery.com
 	name = Travis Jeffery
+	signingKey = ~/.ssh/id_rsa.pub
 [rerere]
 	enabled = 1
 # [ghi]
