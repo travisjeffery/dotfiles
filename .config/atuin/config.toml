@@ -1,0 +1,19 @@
+sync_address = "http://server.shire-mizar.ts.net:8888"
+sync_frequency = "15m"
+
+search_mode = "fuzzy"
+filter_mode = "global"
+workspaces = false
+
+style = "compact"
+inline_height = 0
+show_preview = false
+show_help = false
+show_tabs = false
+invert = false
+
+enter_accept = false
+keymap_mode = "emacs"
+
+[search]
+filters = ["global"]

@@ -53,6 +53,30 @@
     "ralph-wiggum@claude-code-plugins": true,
     "security-guidance@claude-code-plugins": true
   },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "beans prime 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "beans prime 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  },
   "mcpServers": {
     "pagerduty": {
       "type": "http",
