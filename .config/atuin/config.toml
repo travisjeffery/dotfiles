@@ -1,4 +1,5 @@
 sync_address = "http://server.shire-mizar.ts.net:8888"
+auto_sync = true
 sync_frequency = "15m"
 
 search_mode = "fuzzy"
@@ -17,3 +18,11 @@ keymap_mode = "emacs"
 
 [search]
 filters = ["global"]
+
+[sync]
+records = true
+
+[daemon]
+enabled = true
+autostart = true
+sync_frequency = 300
