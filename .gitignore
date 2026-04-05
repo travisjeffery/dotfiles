@@ -67,3 +67,16 @@ work.sh
 .gnupg/*
 !.gnupg/.gitignore
 .local/share/oscilar-mcp-server/
+
+.beans/
+.beans.yml
+
+.claude/backups/
+.claude/file-history/
+.claude/paste-cache/
+.claude/mcp-needs-auth-cache.json
+
+.local/share/atuin/
+.local/state/
+
+.config/ghostty/local-overrides
