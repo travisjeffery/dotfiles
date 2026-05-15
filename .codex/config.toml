@@ -1,6 +1,6 @@
 sandbox_mode = "danger-full-access"
-model = "gpt-5.4"
-model_reasoning_effort = "medium"
+model = "gpt-5.5"
+model_reasoning_effort = "high"
 reasoning = "xhigh"
 network_access = "enabled"
 personality = "pragmatic"
@@ -9,6 +9,8 @@ check_for_update_on_startup = true
 web_search = "live"
 plan_mode_reasoning_effort = "xhigh"
 project_doc_fallback_filenames = ["CLAUDE.md"]
+service_tier = "fast"
+
 
 [defaults]
 network = true
@@ -22,6 +24,9 @@ unified_exec = true
 shell_snapshot = true
 steer = true
 collaboration_modes = true
+memories = true
+chronicle = true
+goals = true
 
 [mcp_servers.honeycomb]
 url = "https://mcp.honeycomb.io/mcp"
@@ -64,3 +69,10 @@ url = "https://developers.openai.com/mcp"
 
 [notice.model_migrations]
 "gpt-5.2" = "gpt-5.3-codex"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
+[memories]
+generate_memories = true
+use_memories = true

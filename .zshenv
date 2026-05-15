@@ -43,11 +43,15 @@ if [ -d "/opt/tfenv/bin" ]; then PATH="/opt/tfenv/bin:$PATH"; fi
 if [ -d "/opt/firefox" ]; then PATH="/opt/firefox:$PATH"; fi
 if [ -d "/opt/goland" ]; then PATH="/opt/goland/bin:$PATH"; fi
 if [ -d "/opt/visualvm" ]; then PATH="/opt/visualvm/bin:$PATH"; fi
+
+if [ -d "/opt/homebrew/share/google-cloud-sdk/bin" ]; then PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"; fi
 if [ -d "$HOME/code/leiningen" ]; then PATH="$HOME/code/leiningen:$PATH"; fi
 if [ -d "$HOME/dev/bin" ]; then PATH="$HOME/dev/bin:$PATH"; fi
 if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin:$PATH"; fi
 
 export PATH="${PATH}:${HOME}/.krew/bin"
+
+. "$HOME/.local/bin/env"
 
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 

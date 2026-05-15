@@ -31,3 +31,4 @@ if [[ -o interactive ]]; then
   fi
 fi
 
+export PATH="$HOME/.local/bin:$PATH"

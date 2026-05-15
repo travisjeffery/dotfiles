@@ -2153,6 +2153,19 @@ but agnostic to language, mode, and server."
   (load-theme 'modus-vivendi :no-confirm))
 
 (use-package
+  font-lock
+  :ensure nil
+  :demand t
+  :config
+  ;; Keep the theme/UI, but disable syntax coloring in buffers.
+  (setq font-lock-global-modes nil)
+  (global-font-lock-mode -1)
+  (defun tj-disable-font-coloring ()
+    "Disable Font Lock in the current buffer."
+    (font-lock-mode -1))
+  (add-hook 'after-change-major-mode-hook #'tj-disable-font-coloring))
+
+(use-package
   zop-to-char
   :bind (("M-z" . zop-up-to-char) ("M-Z" . zop-to-char))
   :ensure t
@@ -2170,7 +2183,7 @@ but agnostic to language, mode, and server."
   :custom
   (fontaine-presets
    '((desktop :default-height 160)
-     (laptop :default-height 120)
+     (laptop :default-height 140)
      (large :default-height 140)
      (present :default-height 240)
      (t
