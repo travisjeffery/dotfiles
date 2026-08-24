@@ -9,5 +9,7 @@ Installation with [GNU Stow](https://www.gnu.org/software/stow/):
 ``` sh
 git clone https://github.com/travisjeffery/dotfiles
 cd dotfiles
+mise trust .config/mise/config.toml
 stow -v -t ~ .
+mise install
 ```

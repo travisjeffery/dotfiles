@@ -2927,12 +2927,19 @@ commands usually can't handle TRAMP paths."
 
 (use-package go-mod :ensure nil :demand t)
 
-(use-package
-  shim
-  :ensure (:type git :host github :repo "twlz0ne/shim.el")
-  :after projectile
-  :config (shim-init-go)
-  :demand t)
+(let* ((tool-paths
+        (delq nil
+              (mapcar
+               (lambda (dir) (and (file-directory-p dir) dir))
+               (list
+                (expand-file-name "~/.local/share/mise/shims")
+                (expand-file-name "~/go/bin")))))
+       (shell-path (split-string (or (getenv "PATH") "") path-separator t)))
+  (setq exec-path (delete-dups (append tool-paths exec-path)))
+  (setenv
+   "PATH"
+   (mapconcat
+    #'identity (delete-dups (append tool-paths shell-path)) path-separator)))
 
 (use-package
   eglot

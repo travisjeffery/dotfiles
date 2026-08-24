@@ -130,10 +130,7 @@ else if test -f $HOME/work.sh
     end
 end
 
-# goenv/pyenv roots (init happens in `config.fish` for interactive shells)
-set -gx GOENV_ROOT $HOME/.goenv
-__tj_prepend_path "$GOENV_ROOT/bin"
-
+# pyenv root (init happens in `config.fish` for interactive shells)
 set -gx PYENV_ROOT "$HOME/.pyenv"
 __tj_prepend_path "$PYENV_ROOT/bin"
 

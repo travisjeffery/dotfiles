@@ -1,0 +1,30 @@
+[tools]
+"aqua:dolthub/dolt" = "1.86.2"
+aws-cli = { version = "2.36.28", symlink_bins = "true" }
+codex = "latest"
+crane = "0.21.3"
+direnv = "2.37.1"
+gh = "latest"
+"github:Dicklesworthstone/beads_viewer" = "0.15.2"
+"github:gastownhall/gastown" = "1.0.1"
+"github:hmans/beans" = "0.4.2"
+"github:schpet/linear-cli" = "2.0.0"
+"github:steipete/gifgrep" = "0.2.1"
+"github:steipete/gogcli" = "0.12.0"
+"github:steipete/goplaces" = "0.3.0"
+"github:steveyegge/beads" = "1.0.2"
+go = "1.26.7"
+"go:github.com/kisielk/errcheck" = "1.20.0"
+"go:github.com/lucasepe/modgv" = "0.2.4"
+"go:github.com/steipete/wacli/cmd/wacli" = "0.2.0"
+"go:golang.org/x/tools/cmd/goimports" = "0.42.0"
+"go:golang.org/x/tools/gopls" = "0.23.0"
+golangci-lint = "1.62.2"
+helm = "4.2.4"
+kubectl = "1.36.4"
+node = "26.7.0"
+uv = "0.12.5"
+
+[settings]
+idiomatic_version_file_disable_files = ["go:go.mod"]
+idiomatic_version_file_enable_tools = ["go"]

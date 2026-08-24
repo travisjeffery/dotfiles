@@ -307,30 +307,15 @@ if set -q EAT_SHELL_INTEGRATION_DIR
     end
 end
 
-# goenv
-if type -q goenv
-    goenv init - | source
-
-    set -q GOROOT; and __tj_prepend_path "$GOROOT/bin"
-    set -q GOPATH; and __tj_append_path "$GOPATH/bin"
+if type -q mise
+    mise activate fish | source
 end
+__tj_append_path "$HOME/go/bin"
 
 # pyenv
 if type -q pyenv
     pyenv init - --no-rehash | source
     pyenv virtualenv-init - | source
-end
-
-# Homebrew (Linux)
-if test -d /home/linuxbrew/.linuxbrew
-    set -gx HOMEBREW_PREFIX /home/linuxbrew/.linuxbrew
-    set -gx HOMEBREW_CELLAR /home/linuxbrew/.linuxbrew/Cellar
-    set -gx HOMEBREW_REPOSITORY /home/linuxbrew/.linuxbrew/Homebrew
-
-    __tj_prepend_path /home/linuxbrew/.linuxbrew/bin
-    __tj_prepend_path /home/linuxbrew/.linuxbrew/sbin
-    __tj_prepend_manpath /home/linuxbrew/.linuxbrew/share/man
-    __tj_prepend_infopath /home/linuxbrew/.linuxbrew/share/info
 end
 
 functions --erase __tj_prepend_path

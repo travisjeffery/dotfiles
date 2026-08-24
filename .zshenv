@@ -75,16 +75,19 @@ export PULUMI_SKIP_CHECKPOINTS="true"
 
 export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
 
-# Homebrew / Linuxbrew: make brew-installed binaries available even in non-interactive,
+# Homebrew on macOS: make brew-installed binaries available even in non-interactive,
 # non-login zsh invocations (e.g. `zsh -c ...`, `#!/usr/bin/env zsh` scripts).
 if [[ -d "/opt/homebrew" ]]; then
   [[ ":$PATH:" != *":/opt/homebrew/bin:"* ]] && PATH="/opt/homebrew/bin:$PATH"
   [[ ":$PATH:" != *":/opt/homebrew/sbin:"* ]] && PATH="/opt/homebrew/sbin:$PATH"
 fi
 
-if [[ -d "/home/linuxbrew/.linuxbrew" ]]; then
-  [[ ":$PATH:" != *":/home/linuxbrew/.linuxbrew/bin:"* ]] && PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-  [[ ":$PATH:" != *":/home/linuxbrew/.linuxbrew/sbin:"* ]] && PATH="/home/linuxbrew/.linuxbrew/sbin:$PATH"
+path=("${path[@]%/}")
+
+if [[ -d "$HOME/.local/share/mise/shims" ]]; then
+  path=("$HOME/.local/share/mise/shims" "${(@)path:#$HOME/.local/share/mise/shims}")
 fi
 
-path=("${path[@]%/}")
+if [[ -d "$HOME/go/bin" ]]; then
+  path=("${(@)path:#$HOME/go/bin}" "$HOME/go/bin")
+fi
