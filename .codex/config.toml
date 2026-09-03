@@ -1,16 +1,17 @@
 sandbox_mode = "danger-full-access"
-model = "gpt-5.5"
-model_reasoning_effort = "high"
+mcp_oauth_credentials_store = "file"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "max"
 reasoning = "xhigh"
 network_access = "enabled"
 personality = "pragmatic"
 approval_policy = "on-request"
-check_for_update_on_startup = true
+check_for_update_on_startup = false
+suppress_unstable_features_warning = true
 web_search = "live"
 plan_mode_reasoning_effort = "xhigh"
 project_doc_fallback_filenames = ["CLAUDE.md"]
-service_tier = "fast"
-
+service_tier = "priority"
 
 [defaults]
 network = true
@@ -18,8 +19,12 @@ trust_level = "trusted"
 
 [sandbox_workspace_write]
 network_access = true
+exclude_slash_tmp = false
+writable_roots = []
+exclude_tmpdir_env_var = false
 
 [features]
+hooks = true
 unified_exec = true
 shell_snapshot = true
 steer = true
@@ -27,32 +32,15 @@ collaboration_modes = true
 memories = true
 chronicle = true
 goals = true
+js_repl = false
 
-[mcp_servers.honeycomb]
-url = "https://mcp.honeycomb.io/mcp"
+[agents]
+max_threads = 32
+max_depth = 2
 
 [mcp_servers.pagerduty]
 url = "https://mcp.pagerduty.com/mcp"
-
-[mcp_servers.pagerduty.env_http_headers]
-Authorization = "PAGERDUTY_AUTHORIZATION"
-
-[mcp_servers.elasticsearch]
-command = "npx"
-args = ["-y", "@elastic/mcp-server-elasticsearch"]
-
-[mcp_servers.elasticsearch.env]
-ES_API_KEY = "${ES_API_KEY}"
-ES_URL = "${ES_URL}"
-
-[mcp_servers.notion]
-url = "https://mcp.notion.com/mcp"
-
-[mcp_servers.context7]
-url = "https://mcp.context7.com/mcp"
-
-[mcp_servers.context7.http_headers]
-CONTEXT7_API_KEY = "${CONTEXT7_API_KEY}"
+enabled = false
 
 [mcp_servers.openmemory]
 command = "npx"
@@ -64,11 +52,156 @@ approval_mode = "approve"
 [mcp_servers.linear]
 url = "https://mcp.linear.app/mcp"
 
+[mcp_servers.linear.tools.save_issue]
+approval_mode = "approve"
+
+[mcp_servers.linear.tools.save_comment]
+approval_mode = "approve"
+
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 
+[mcp_servers.codegraph]
+command = "/usr/bin/node"
+args = ["/home/tj/.local/lib/node_modules/@colbymchenry/codegraph/dist/bin/codegraph.js", "serve", "--mcp"]
+
+[mcp_servers.codegraph.tools.codegraph_context]
+approval_mode = "approve"
+
+[mcp_servers.codegraph.tools.codegraph_status]
+approval_mode = "approve"
+
+[mcp_servers.codegraph.tools.codegraph_explore]
+approval_mode = "approve"
+
+[mcp_servers.victorialogs]
+url = "https://logs-mcp.oscilar.com/mcp"
+
+[mcp_servers.victoriametrics]
+url = "https://metrics-mcp.oscilar.com/mcp"
+
+[mcp_servers.kubernetes]
+url = "https://kubernetes-mcp.oscilar.com/mcp"
+
+[mcp_servers.notion]
+url = "https://mcp.notion.com/mcp"
+
+[mcp_servers.notion.tools.notion-update-page]
+approval_mode = "approve"
+
+[mcp_servers.victoriatraces]
+url = "https://traces-mcp.oscilar.com/mcp"
+
+[mcp_servers.deployer]
+url = "https://deployer-mcp.oscilar.com/mcp"
+
+[mcp_servers.deployer.tools.provision]
+approval_mode = "approve"
+
+[mcp_servers.aws]
+command = "uvx"
+args = ["mcp-proxy-for-aws==1.6.3", "https://aws-mcp.us-east-1.api.aws/mcp", "--profile", "oscilar-viewer", "--metadata", "AWS_REGION=us-east-2", "--read-only"]
+startup_timeout_sec = 60.0
+
+[mcp_servers.node_repl]
+args = []
+command = "/usr/lib/chatgpt/resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/usr/lib/chatgpt/resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/usr/lib/chatgpt/resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/home/tj/.codex:/usr/lib/chatgpt/resources/cua_node/lib/node_modules"
+CODEX_HOME = "/home/tj/.codex"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.814.41957"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/home/tj/.codex/plugins/cache/openai-bundled/browser/26.814.41957/scripts/browser-service.mjs"}'
+CODEX_CLI_PATH = "/usr/lib/chatgpt/resources/codex"
+
 [notice.model_migrations]
 "gpt-5.2" = "gpt-5.3-codex"
+
+[plugins."gmail@openai-curated"]
+enabled = true
+
+[plugins."google-calendar@openai-curated"]
+enabled = true
+
+[plugins."cloudflare@openai-curated"]
+enabled = true
+
+[plugins."linear@openai-curated"]
+enabled = true
+
+[plugins."slack@openai-curated"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."notion@openai-curated"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."google-drive@openai-curated"]
+enabled = true
+
+[plugins."alpaca@openai-curated"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."computer-use@openai-bundled".mcp_servers.computer-use.tools.press_key]
+approval_mode = "approve"
+
+[plugins."computer-use@openai-bundled".mcp_servers.computer-use.tools.click]
+approval_mode = "approve"
+
+[plugins."computer-use@openai-bundled".mcp_servers.computer-use.tools.screenshot]
+approval_mode = "approve"
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."sites@openai-bundled"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."gopls-lsp@claude-plugins-official"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."record-and-replay@openai-bundled"]
+enabled = true
+
+[plugins."codex-app-tools@openai-bundled"]
+enabled = true
+
+[plugins."computer-history@openai-bundled"]
+enabled = true
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -76,3 +209,122 @@ url = "https://developers.openai.com/mcp"
 [memories]
 generate_memories = true
 use_memories = true
+
+[desktop]
+followUpQueueMode = "queue"
+enabled-reasoning-efforts = ["low", "medium", "high", "xhigh", "ultra", "max"]
+git-branch-prefix = "tj/"
+git-pull-request-merge-method = "squash"
+git-create-pull-request-as-draft = false
+conversationDetailMode = "STEPS_COMMANDS"
+show-context-window-usage = true
+
+[otel]
+environment = "dev"
+log_user_prompt = false
+trace_exporter = "none"
+metrics_exporter = "none"
+
+[shell_environment_policy]
+inherit = "core"
+exclude = ["HELM_CHART_PATH"]
+
+[projects."/home/tj"]
+trust_level = "trusted"
+
+[projects."/home/tj/Work"]
+trust_level = "trusted"
+
+[projects."/home/tj/src/oscilar/backend"]
+trust_level = "trusted"
+
+[projects."/home/tj/Projects/package-firewall"]
+trust_level = "trusted"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-08-21T03:34:37Z"
+source_type = "local"
+source = "/home/tj/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[marketplaces.openai-bundled]
+source_type = "local"
+source = "/home/tj/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[hooks.state]
+
+[hooks.state."/home/tj/.codex/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:c78a7cb49d05904fd1720577d02d592f059dede23502de715a7a22fef4dca126"
+
+[hooks.state."/home/tj/.codex/hooks.json:session_start:1:0"]
+trusted_hash = "sha256:990a2e3ac450218c3ec5c131ddcbb9f262db5d855eeb13bb5d51ca702ae756ff"
+
+[hooks.state."/home/tj/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:fc87dbee1cb8a9be4f78ba094c4fa8d5e2fd38cb800854e3717f9b6a52fe2a47"
+
+[hooks.state."/home/tj/.codex/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:ac371f260e4b23ba1d1b7a4ad68a44a323a8470b61f38471a47aceac1b7a5a7c"
+
+[hooks.state."/home/tj/.codex/hooks.json:permission_request:0:0"]
+trusted_hash = "sha256:adc5247f1227c56eb09650d234d3a618cdd5d4e814e05fa992f0237f197e83c2"
+
+[hooks.state."/home/tj/.codex/hooks.json:session_start:2:0"]
+trusted_hash = "sha256:6f384f704e6417b0df2279b9bbcaf3b0faf9b4233f69218e6044fbe38713a1c3"
+
+[hooks.state."/home/tj/.codex/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:fe20b1c8bfbb1285918fe5bc12ed09d756537a2cd66576900382cbf5c97a810c"
+
+[hooks.state."/home/tj/.codex/hooks.json:stop:0:0"]
+trusted_hash = "sha256:e76441aa19ca179447826c4ba4cc407e7b29836149177497b33db559f47afda7"
+
+[apps.asdk_app_69a089a326dc8191b32a3f2553f5be2c.tools."linear.save_comment"]
+approval_mode = "approve"
+
+[apps.asdk_app_69a089a326dc8191b32a3f2553f5be2c.tools."linear.save_issue"]
+approval_mode = "approve"
+
+[apps.asdk_app_69a1d78e929881919bba0dbda1f6436d.tools."slack.slack_send_message"]
+approval_mode = "approve"
+
+[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.create_pull_request"]
+approval_mode = "approve"
+
+[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.add_issue_assignees"]
+approval_mode = "approve"
+
+[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.update_pull_request"]
+approval_mode = "approve"
+
+[apps.connector_76869538009648d5b282a4bb21c3d157.tools."github.rerun_failed_workflow_run_jobs"]
+approval_mode = "approve"
+
+[projects."/home/tj/src/oscilar"]
+trust_level = "trusted"
+
+[projects."/home/tj/.local/state/codex-routines/resolve-linear"]
+trust_level = "trusted"
+
+[projects."/home/tj/.local/state/codex-routines/pr-review-triage"]
+trust_level = "trusted"
+
+[projects."/home/tj/.local/state/codex-routines/standup-summary-2"]
+trust_level = "trusted"
+
+[projects."/home/tj/.local/state/codex-routines/daily-infra-report"]
+trust_level = "trusted"
+
+[projects."/home/tj/.local/state/codex-routines/weekly-work-summary"]
+trust_level = "trusted"
+
+[shell_environment_policy.set]
+BEANS_PATH = "/home/tj/src/oscilar/backend/.beans"
+CLAUDE_CODE_ENABLE_TELEMETRY = "1"
+CODEX_HOME = "/home/tj/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "9230e2bd8b24b7ac7a0ba6774c64bf0d78ecdabbdd91d0ed627b02a587bae2df"
+OTEL_EXPORTER_OTLP_ENDPOINT = "https://claude-code-otel.internal.oscilar.com"
+OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE = "cumulative"
+OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
+OTEL_LOGS_EXPORTER = "otlp"
+OTEL_LOG_USER_PROMPTS = "1"
+OTEL_METRICS_EXPORTER = "otlp"
+OTEL_RESOURCE_ATTRIBUTES = "department=engineering,team.id=platform,cost_center=engineering"
+OTEL_TRACES_EXPORTER = "none"
