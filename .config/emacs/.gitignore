@@ -47,3 +47,5 @@ straight
 .agent
 tree-sitter
 .agent-shell
+etc
+agent

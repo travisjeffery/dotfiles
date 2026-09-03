@@ -1,5 +1,8 @@
 ;; -*- fill-column: 65; lexical-binding: t; -*-
 
+;; Personal configuration migrated from the legacy ~/.emacs.d.  Omarchy's
+;; integration is loaded by init.el before this file.
+
 (defvar elpaca-installer-version 0.11)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
@@ -164,14 +167,16 @@
     "Insert prompt template and place cursor."
     (interactive)
     (let ((start (point)))
-      (insert-file-contents "~/.emacs.d/var/prompt.txt")
+      (insert-file-contents
+       (expand-file-name "var/prompt.txt" user-emacs-directory))
       (goto-char start)))
 
   (defun tj-copy-prompt ()
-    "Copy ~/.emacs.d/var/prompt.txt to the kill ring."
+    "Copy the prompt template to the kill ring."
     (interactive)
     (with-temp-buffer
-      (insert-file-contents "~/.emacs.d/var/prompt.txt")
+      (insert-file-contents
+       (expand-file-name "var/prompt.txt" user-emacs-directory))
       (kill-new (buffer-string))
       (message "Prompt template copied to kill ring")))
 
@@ -948,7 +953,7 @@ Otherwise split the current paragraph into one sentence per line."
   :config
   (add-to-list
    'undo-tree-history-directory-alist
-   '("." . "~/.emacs.d/var/undo-tree"))
+   `("." . ,(expand-file-name "var/undo-tree" user-emacs-directory)))
   (global-undo-tree-mode 1)
   :diminish
   :ensure t
@@ -2145,25 +2150,13 @@ but agnostic to language, mode, and server."
 
 (use-package
   modus-themes
+  :if (not (fboundp 'omarchy-apply-theme))
   :demand t
   :ensure t
   :config
   (setq-default cursor-type 'box)
   (set-cursor-color "#FFBF00")
   (load-theme 'modus-vivendi :no-confirm))
-
-(use-package
-  font-lock
-  :ensure nil
-  :demand t
-  :config
-  ;; Keep the theme/UI, but disable syntax coloring in buffers.
-  (setq font-lock-global-modes nil)
-  (global-font-lock-mode -1)
-  (defun tj-disable-font-coloring ()
-    "Disable Font Lock in the current buffer."
-    (font-lock-mode -1))
-  (add-hook 'after-change-major-mode-hook #'tj-disable-font-coloring))
 
 (use-package
   zop-to-char
@@ -2178,18 +2171,19 @@ but agnostic to language, mode, and server."
               ("w" . sdcv-search-pointer)))
 (use-package
   fontaine
+  :if (not (fboundp 'omarchy-apply-font))
   :ensure t
   :demand t
   :custom
   (fontaine-presets
-   '((desktop :default-height 160)
-     (laptop :default-height 140)
+   '((desktop :default-height 110)
+     (laptop :default-height 120)
      (large :default-height 140)
      (present :default-height 240)
      (t
-      :default-family "Fira Code Retina"
-      :variable-pitch-family "Fira Sans"
-      :default-height 140)))
+      :default-family "IBM Plex Mono"
+      :variable-pitch-family "IBM Plex"
+      :default-height 120)))
   :config
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'desktop))
