@@ -2169,6 +2169,19 @@ but agnostic to language, mode, and server."
   :demand t
   :bind (:map tj-search-keymap
               ("w" . sdcv-search-pointer)))
+(defun tj-gtk-text-scale ()
+  "GTK text-scaling-factor, or 1.0 when unavailable.
+Ghostty renders its point size times this factor, while the
+Omarchy shim mirrors the point size alone, leaving Emacs smaller
+than the terminal."
+  (let ((s (string-to-number
+            (shell-command-to-string
+             "gsettings get org.gnome.desktop.interface text-scaling-factor"))))
+    (if (> s 0) s 1.0)))
+
+(advice-add 'omarchy-current-font-size :filter-return
+            (lambda (h) (round (* h (tj-gtk-text-scale)))))
+
 (use-package
   fontaine
   :if (not (fboundp 'omarchy-apply-font))
