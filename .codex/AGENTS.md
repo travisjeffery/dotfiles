@@ -2,138 +2,98 @@
 
 Global working agreements for Codex CLI.
 
-## Accuracy, recency, and sourcing (REQUIRED)
+## Accuracy, recency, and sourcing
 
-When a request depends on recency (e.g., "latest", "current", "today", "as of now"):
+- For requests that depend on recency, establish the current date and time and state it in ISO format.
+- Prefer official, primary, and version-matched sources, especially upstream vendor documentation.
+- Use the newest authoritative documentation, release notes, or changelogs relevant to the installed or requested version.
+- Cross-check at least two reputable sources when safety or compatibility depends on the answer.
+- Use web search only when it materially improves correctness. Record publication or release dates when relevant.
 
-1. **Establish the current date/time** and state it explicitly in ISO format.
-   - Preferred: `date -Is` (timestamp).
+## Autonomy and safety
 
-2. **Prefer official / primary sources** when researching:
-   - Upstream vendor docs for any dependency (language runtime, framework, cloud provider, etc.)
+- For reviews, diagnosis, and status questions, default to read-only inspection and report evidence-backed findings.
+- For requested changes, take the scoped actions needed to complete and verify the work.
+- Keep writes inside the workspace unless the user explicitly authorizes a broader scope.
+- Remote writes require explicit user instruction. Use a preview or dry-run first when the API supports one.
+- Never make destructive calls against remote APIs or production data sources.
+- Ask before an irreversible action when the user's intent is ambiguous.
 
-3. **Prefer the most recent authoritative information**:
-   - Use the newest versioned docs, release notes, or changelogs.
-   - Cross-check at least two reputable sources when details are safety/compatibility sensitive.
+## Autonomous continuation
 
-### Web search policy
+Complete the requested task without asking whether to continue.
+An active goal authorizes routine steps necessary to achieve it.
 
-- Enable and use web search only when it materially improves correctness (e.g., up-to-date APIs, recent advisories, release notes).
-- Prefer official docs and primary sources.
-- Record source dates (publish/release dates) when relevant.
+Resolve routine implementation choices using repository conventions
+and your best judgment. State reasonable assumptions briefly and proceed.
+Do not ask me to approve plans, obvious next steps, routine checks,
+or actions I already authorized.
 
-## Default autonomy and safety
+Ask only when missing information materially changes the outcome,
+instructions conflict, or an action requires authorization I have
+not provided. Before asking, complete all independent authorized work.
 
-- Default to read-only exploration and analysis.
-- When edits are needed, prefer **workspace-scoped** write access and keep changes inside the repo.
-- When interacting with remote APIs, you must use READ-only calls, unless explicitily instructed otherwise by the user. If the user requests an API WRITE-based command, perform it as a dry-run first. You must never make destructive calls to remote APIs or production data sources.
+If blocked, explain the exact blocker and ask the smallest necessary
+question. Never end with an offer to do work already requested.
 
-### Editing files
+## Editing and verification
 
-- Make the smallest safe change that solves the issue.
-- Preserve existing style and conventions.
-- Prefer patch-style edits (small, reviewable diffs) over full-file rewrites.
-- After making changes, run the project’s standard checks when feasible (format/lint, unit tests, build/typecheck).
+- Make the smallest safe change that solves the issue and preserve existing style and conventions.
+- Prefer small, reviewable patches over full-file rewrites.
+- Inspect repository guidance and use the project's established workflows.
+- Verify changes in proportion to their risk. For source changes, attempt the applicable format, lint, build, typecheck, and focused tests when feasible.
+- Address failures caused by the change; clearly report unrelated failures, skipped checks, and remaining follow-ups.
+- Update documentation where behavior, operation, or public contracts changed.
 
-### Reading project documents (PDFs, uploads, long text, CSVs, etc)
+### Testing and assertions
 
-- Read the full document first.
-- Draft the output.
-- **Before finalizing**, re-read the original source to verify:
-  - factual accuracy,
-  - no invented details,
-  - wording/style is preserved unless the user explicitly asked to rewrite.
-- If paraphrasing is required, label it explicitly as a paraphrase.
+- Prefer structural assertions over string or regex matching.
+- Parse machine-readable output such as JSON, YAML, XML, HTML, CSV, or structured logs, then assert on semantic fields or elements.
+- Use regex assertions only for genuinely unstructured text or when testing regex behavior itself.
 
-### Container-first policy (REQUIRED)
+## Tooling, containers, and secrets
 
-- Codex must **never** install system packages on the host unless explicitly instructed.
-- Prefer container images to supply all tooling used by the project.
-- For code projects and dependencies: **use containers by default**.
-- If the repo has an existing container workflow (Dockerfile/compose/Makefile targets), follow it.
-- If the repo has no container workflow, create a minimal one.
-- Keep repo-specific container details in the repo’s `AGENTS.md`.
+- Never install system packages on the host unless the user explicitly instructs it.
+- When a repository provides a container workflow, use it for project tooling and dependencies where practical.
+- Do not create a new container workflow unless the task calls for one.
+- Never print secrets, request that users paste them, or run commands likely to expose them.
+- Prefer existing authenticated CLIs and redact sensitive values from displayed output.
 
-### Secrets and sensitive data
+## Delegation
 
-- Never print secrets (tokens, private keys, credentials) to terminal output.
-- Do not request users paste secrets.
-- Avoid commands that might expose secrets (e.g., dumping env vars broadly, `cat ~/.ssh/*`).
-- Prefer existing authenticated CLIs; redact sensitive strings in any displayed output.
+- Delegate only substantial, independent workstreams when parallel execution meaningfully saves time.
+- Avoid delegation for trivial or tightly sequential tasks.
+- The primary agent remains responsible for scope, synthesis, conflict resolution, verification, and the final response.
 
-## Baseline workflow
+## Beads and OpenMemory
 
-- Start every task by determining:
-  1. Goal + acceptance criteria.
-  2. Constraints (time, safety, scope).
-  3. What must be inspected (files, commands, tests, docs).
-  4. Whether the request depends on **recency** (if yes, apply the "Accuracy, recency, and sourcing" rules).
-  5. If requirements are ambiguous, ask targeted clarifying questions before making irreversible changes.
+- Beads (`bd`) is the canonical source for active workspace continuity; OpenMemory is supplemental. Repository files override both.
+- `BEADS_DIR` selects the database; `bd prime` runs from the session hooks. Consult relevant open and closed beads before substantive multi-step work.
+- Do not create beads for simple questions or reviews. If `bd` is unavailable, continue with repository files and OpenMemory and note the limitation.
+- Record only material plans, decisions, progress, discoveries, and outcomes as notes. Keep entries concise, factual, dated in ISO format, and tagged with `[USER]`, `[CODE]`, `[TOOL]`, or `[ASSUMPTION]`; mark unknowns `UNCONFIRMED`.
+- Persist task continuity in Beads rather than `.agent/STATE.md`. Beads files stay out of git (stealth mode).
+## Beads and Herdr working conventions
 
-### Beans and OpenMemory policy
+Beads (`bd`) is the canonical task state, shared by every agent running concurrently. Herdr is the execution environment. There is no separate board: `herdr-beads` renders `bd` inside Herdr. `BEADS_DIR` points at the backend database, so `bd` works from any directory, including worktrees.
 
-- Beans is the canonical source of truth for active workspace continuity. OpenMemory is supplemental memory only.
-- When in a Git worktree, check both the current directory and the repository’s canonical root for `.beans/` and `.beans.yml`. Prefer the canonical repository Beans state when present.
-- If Beans is configured, run `beans prime` before doing anything else in this repo and follow its guidance.
-- If Beans is not configured, initialize it with `beans init` when the task involves repo maintenance, workflow updates, planning, or multi-step implementation work. Then run `beans prime`. Otherwise, note that Beans is not configured and continue with repo files plus OpenMemory.
-- Read the relevant active and archived beans before starting substantive work. Use OpenMemory as additional context when available.
-- If OpenMemory conflicts with Beans or repo files, Beans and repo files win.
-- Persist important task state in Beans rather than `.agent/STATE.md`, including plans, decisions, progress, discoveries, and outcomes.
-- If Beans is unavailable, continue with repo files plus OpenMemory where available, and explicitly note that limitation.
-- Do not commit Beans files.
+- A task is a bead. When a prompt names one (`backend-xxxx`), run `bd show <id>` before changing anything, then `bd update <id> --claim`. For substantive work without a bead, `bd search "<keywords>"` (add `--status all` for closed ones) or `bd create "<title>" -t task -p 2` first. Never keep a markdown TODO list instead.
+- Keep the bead current: `bd note <id> "<finding, decision, or blocker>"` for durable context; `bd create ... --parent <id>` or `bd dep add <blocked> <blocker>` for discovered work; `bd close <id> --reason "<what shipped and how it was verified>"` when done. `bd prime` prints the full workflow.
+- Statuses are the board. `open` is the backlog and the label `next` marks what is selected; `in_progress` with your assignee is working; `blocked` is externally blocked, with the blocker and how to check it in a note; `needs_me` means a human decision is required, so put the exact question and options in a note, `bd update <id> --status needs_me`, and stop; `closed` is done.
+- Running, blocked, and done agent states come from Herdr. When `HERDR_ENV=1`, run `herdr agent rename "$HERDR_PANE_ID" <bead-id>` as soon as you know the bead so the agent panel shows it.
+- Beads files are excluded from git by stealth mode. Never `bd dolt push`, commit, or push unless asked.
+## Pull requests
 
-### Beans Workflow
+- Do not mention Codex or similar tooling in PR-visible titles, descriptions, comments, labels, branch names, or commit-attribution notes.
+- Follow the repository's PR template and keep the title and description current with the final changes.
+- Assign new GitHub pull requests to `travisjeffery`.
+- Look for a related Linear issue. When one exists, link it to the PR and link the PR back from Linear.
+- Prefix the PR title with an existing related Linear key using `KEY-123: Imperative description`. Do not invent a key when no related issue exists.
 
-Update Beans whenever there is a meaningful delta in:
+## Completion
 
-  - plans: what should happen next and what acceptance criteria or constraints changed.
-  - decisions: choices made, tradeoffs accepted, and what was ruled out.
-  - progress: material implementation status, blockers, and course corrections.
-  - discoveries: notable findings, evidence, incompatibilities, or unexpected behavior that changed the approach.
-  - outcomes: what shipped, what was verified, what remains, and any follow-up work.
-
-When recording Beans context:
-
-  - Prefer the `beans` CLI for creating and updating records. Preserve the schema it generates in `.beans/` and `.beans.yml`.
-  - Keep updates factual, concise, and high-signal. No transcripts or raw logs.
-  - Include ISO timestamps when recording dated facts.
-  - Carry forward provenance in notes where useful: `[USER]`, `[CODE]`, `[TOOL]`, `[ASSUMPTION]`.
-  - If something is unknown, mark it `UNCONFIRMED` instead of guessing.
-  - Treat archived beans as project memory; consult them before repeating past work or revisiting old decisions.
-
-### Anti-drift / anti-bloat rules
-
-- Facts only, no transcripts, no raw logs.
-- Every entry must include:
-  - a date in ISO timestamp (e.g., `2026-01-13T09:42Z`)
-  - a provenance tag: `[USER]`, `[CODE]`, `[TOOL]`, `[ASSUMPTION]`
-  - If unknown, write `UNCONFIRMED` (never guess). If something changes, supersede it explicitly (don't silently rewrite history).
-- Keep the file bounded, short and high-signal (anti-bloat). 
-- If sections begin to become bloated, compress older items into milestone (`[MILESTONE]`) bullets.
-
-### Pull Requests
-
-- Don't comment that Codex created the pull request
-- Don't comment that Codex made the commits
-- Do not include `Codex` or similar tool-identifying markers anywhere visible in a PR, including the title, description, comments, labels, or the branch name used for the PR
-- Follow the repository's pull request template if it exists
-- Keep the PR's title and description up-to-date with changes.
-- When opening pull requests, look for related Linears, include link in Linear to PR, and link in PR to Linear.
-
-## Definition of done
-
-A task is done when:
-
-- the requested change is implemented or the question is answered,
-  - verification is provided:
-  - build attempted (when source code changed),
-  - linting run (when source code changed),
-  - errors/warnings addressed (or explicitly listed and agreed as out-of-scope),
-  - plus tests/typecheck as applicable,
-- documentation is updated exhaustively for impacted areas,
-- impact is explained (what changed, where, why),
-- follow-ups are listed if anything was intentionally left out.
-- Beans are updated if the change materially affects goals, decisions, progress, or follow-up scope.
+- A task is complete when the requested change is implemented or the question is answered, proportionate verification is reported, and the impact is explained.
+- List anything intentionally left out, any unresolved warnings or failures, and concrete follow-up work.
+- Update Beads when the work materially changes goals, decisions, progress, discoveries, outcomes, or follow-up scope.
 
 ## Context7 MCP (library docs)
 
