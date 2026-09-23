@@ -51,8 +51,6 @@ if [ -d "/var/lib/snapd/snap/bin" ]; then PATH="/var/lib/snapd/snap/bin:$PATH"; 
 
 export PATH="${PATH}:${HOME}/.krew/bin"
 
-. "$HOME/.local/bin/env"
-
 if [ -f /etc/os-release ]; then source /etc/os-release; fi
 
 if [[ -z "$WAYLAND_DISPLAY" && -n "$XDG_RUNTIME_DIR" ]]; then

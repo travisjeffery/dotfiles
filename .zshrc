@@ -1,5 +1,16 @@
-skip_global_compinit=true
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
+# Preserve the existing completion preference and custom completion paths.
+skip_global_compinit=true
+fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
+
+# Load Omarchy's maintained Zsh options, keybindings, completions, aliases,
+# functions, environment, and tool initialization.
+[[ -f /usr/share/omarchy-zsh/shell/zoptions ]] && source /usr/share/omarchy-zsh/shell/zoptions
+[[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
+
+# Personal configuration preserved from the pre-Omarchy Zsh setup.
 DEFAULT_USERNAME='tj'
 
 # Personal / machine-local setup (interactive-only).
@@ -16,10 +27,6 @@ if type pyenv &> /dev/null; then
   eval "$(pyenv init - --no-rehash)"
   eval "$(pyenv virtualenv-init -)"
 fi
-
-fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/functions" "/usr/local/share/zsh/site-functions" "$HOME/.zsh/zsh-completions" $fpath)
-
-autoload -U compinit && compinit
 
 autoload history-search-end
 autoload -U url-quote-magic
@@ -76,8 +83,6 @@ zstyle ':completion:*:warnings' format "zsh: no matches found."
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
-
-
 
 backward-delete-to-slash() {
   integer pos=$CURSOR
@@ -152,7 +157,7 @@ if (( $+commands[beans] )); then
   _cache_completion_script beans "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/beans.zsh"
 fi
 
-source ~/.zsh/completions/_docker
+[[ -r "$HOME/.zsh/completions/_docker" ]] && source "$HOME/.zsh/completions/_docker"
 
 tj-backward-kill() {
   local WORDCHARS='*?_~=&;!#$%^(){}'
@@ -315,6 +320,7 @@ alias wodim="wodim driveropts=burnfree"
 alias display="display -geometry +0+0"
 alias rhino="rlwrap java -jar /usr/share/java/js.jar"
 alias curl="noglob curl"
+unalias g 2>/dev/null
 function g {
   if [[ $# > 0 ]]; then
     git $@
@@ -348,7 +354,6 @@ function ec2-ip () {
 function ec2-ssh () {
   ssh $(ec2-ip $1)
 }
-
 
 alias npm='npm --no-progress'
 
@@ -430,9 +435,7 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
   alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
 fi
 
-if (( $+commands[zoxide] )) && [[ "${TJ_DISABLE_ZOXIDE:-0}" != 1 ]]; then
-  eval "$(zoxide init zsh)"
-fi
+# zoxide is initialized by the Omarchy shell layer above.
 
 case $TERM in
   xterm*)
@@ -477,7 +480,9 @@ export EDITOR="$HOME/bin/editor"
 export VISUAL="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
 
-eval "$(direnv hook zsh)"
+if (( $+commands[direnv] )); then
+  eval "$(direnv hook zsh)"
+fi
 
 # bun completions
 [ -s "/home/tj/.bun/_bun" ] && source "/home/tj/.bun/_bun"
@@ -486,5 +491,13 @@ eval "$(direnv hook zsh)"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-eval "$(atuin init zsh --disable-up-arrow)"
-bindkey -M emacs '^[r' atuin-search
+if (( $+commands[atuin] )); then
+  eval "$(atuin init zsh --disable-up-arrow)"
+  bindkey -M emacs '^[r' atuin-search
+fi
+
+. "$HOME/.atuin/bin/env"
+
+for _f in ${HOME}/.config/herdr/plugins/github/herdr-automatic-rename-*/shell/hook.zsh(#qN); do
+  source "$_f"; break
+done

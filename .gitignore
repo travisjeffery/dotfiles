@@ -80,3 +80,8 @@ work.sh
 .local/state/
 
 .config/ghostty/local-overrides
+
+# herdr: track config.toml only -- everything else in ~/.config/herdr is
+# runtime state (sockets, logs, live session/plugin state, rotating backups).
+.config/herdr/*
+!.config/herdr/config.toml

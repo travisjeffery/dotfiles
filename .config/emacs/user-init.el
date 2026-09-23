@@ -2150,10 +2150,10 @@ but agnostic to language, mode, and server."
 
 (use-package
   modus-themes
-  :if (not (fboundp 'omarchy-apply-theme))
   :demand t
   :ensure t
   :config
+  (mapc #'disable-theme (copy-sequence custom-enabled-themes))
   (setq-default cursor-type 'box)
   (set-cursor-color "#FFBF00")
   (load-theme 'modus-vivendi :no-confirm))

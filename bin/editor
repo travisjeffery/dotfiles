@@ -3,8 +3,10 @@
 # Decide whether we're in a terminal
 if [ -t 1 ]; then
   mode=(-t)
+  fallback_mode=(-nw)
 else
   mode=(-c)
+  fallback_mode=()
 fi
 
 # If emacsclient exists, try it
@@ -14,9 +16,9 @@ if command -v emacsclient >/dev/null 2>&1; then
   fi
 fi
 
-# Fallback: clean emacs with no config
+# Fallback: the daemon is down, so start a normal emacs
 if command -v emacs >/dev/null 2>&1; then
-  exec emacs -Q "$@"
+  exec emacs "${fallback_mode[@]}" "$@"
 fi
 
 echo "No emacs or emacsclient found" >&2
