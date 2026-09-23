@@ -81,13 +81,28 @@ Beads (`bd`) is the canonical task state, shared by every agent running concurre
 - Statuses are the board. `open` is the backlog and the label `next` marks what is selected; `in_progress` with your assignee is working; `blocked` is externally blocked, with the blocker and how to check it in a note; `needs_me` means a human decision is required, so put the exact question and options in a note, `bd update <id> --status needs_me`, and stop; `closed` is done.
 - Running, blocked, and done agent states come from Herdr. When `HERDR_ENV=1`, run `herdr agent rename "$HERDR_PANE_ID" <bead-id>` as soon as you know the bead so the agent panel shows it.
 - Beads files are excluded from git by stealth mode. Never `bd dolt push`, commit, or push unless asked.
+
+## Linear work tracking
+
+Linear is the team-visible record of work; Beads is agent-local continuity. Track substantive work in both: the bead holds working notes, the Linear issue holds status and progress others read. This section authorizes the Linear writes it describes.
+
+- Team is **Infra** (`INF-123` keys). Assign issues to me. Skip Linear for questions, reviews, and one-off lookups.
+- Before creating, search Infra for an existing issue (`list_issues` with a `query`) and reuse it. Put the Linear key in the bead title or a note; keep bead ids out of Linear, since teammates cannot see them.
+- Size the structure to the work:
+  - One PR or a small change: a single issue.
+  - Large work with separable parts: a parent issue with a sub-issue per independently shippable piece (usually one PR each).
+  - Epics are Linear **projects** under Infra (`P-INF-…`), holding the parent issues. Create one only when I say to; otherwise attach issues to an existing project when one clearly fits, and ask if unsure.
+- Keep status current: `In Progress` when work starts, `In Review` when the PR is up, `Done` when it merges and is verified, `Canceled` when dropped. Don't fight the GitHub integration when it moves status itself. Close a parent only when its sub-issues are done or canceled.
+- Comment on the issue at meaningful milestones: a decision, a blocker (and what unblocks it), a scope change, or the verified outcome. No play-by-play; one concise comment per milestone.
+- Newly discovered work becomes a sub-issue or a linked issue, not a line buried in a comment.
+- Pull requests: link the PR from the issue and the issue from the PR, and prefix the title with the key: `INF-123: Imperative description`. Never invent a key.
+
 ## Pull requests
 
+- Link PRs to Linear per the Linear work tracking section.
 - Do not mention Codex or similar tooling in PR-visible titles, descriptions, comments, labels, branch names, or commit-attribution notes.
 - Follow the repository's PR template and keep the title and description current with the final changes.
 - Assign new GitHub pull requests to `travisjeffery`.
-- Look for a related Linear issue. When one exists, link it to the PR and link the PR back from Linear.
-- Prefix the PR title with an existing related Linear key using `KEY-123: Imperative description`. Do not invent a key when no related issue exists.
 
 ## Completion
 
