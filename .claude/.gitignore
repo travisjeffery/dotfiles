@@ -35,3 +35,7 @@ auth*
 !.gitignore
 
 stats-cache.json
+
+# Live copy holds org-internal auto-mode context; keep it out of this public repo.
+settings.json
+settings.local.json

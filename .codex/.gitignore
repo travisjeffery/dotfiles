@@ -33,3 +33,7 @@ tmp/
 *.key
 *.pem
 .env
+
+# Live copies hold org-internal config and auto-saved approval rules; keep them out of this public repo.
+config.toml
+rules/
