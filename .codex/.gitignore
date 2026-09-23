@@ -10,6 +10,10 @@
 !aliases.*
 !*.md
 !.gitignore
+!hooks.json
+!herdr-agent-state.sh
+!hooks/
+!hooks/*
 
 # --- Explicitly ignore sensitive or generated stuff ---
 .cache/

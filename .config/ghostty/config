@@ -1,20 +1,48 @@
-command = /bin/zsh
+# Dynamic theme colors
+config-file = ?"~/.local/state/omarchy/current/theme/ghostty.conf"
 
-font-family = Fira Code
-font-size = 16
-font-feature = liga
-config-file = ?local-overrides
+# Font
+font-family = "BlexMono Nerd Font"
+font-style = Regular
+font-size = 11
 
-macos-option-as-alt = true
-clipboard-read = allow
-clipboard-write = allow
-copy-on-select = clipboard
-scrollback-limit = 200000
+# Window
+window-theme = ghostty
+window-padding-x = 14
+window-padding-y = 14
+confirm-close-surface=false
+resize-overlay = never
+gtk-toolbar-style = flat
 
-term = xterm-256color
+# Cursor styling
+cursor-style = "block"
+cursor-style-blink = false
 
-cursor-style = block
-shell-integration = zsh
-shell-integration-features = no-cursor
+# Cursor styling + SSH session terminfo
+# (all shell integration options must be passed together)
+shell-integration-features = no-cursor,ssh-env
 
-theme = Modus Vivendi
+# Keyboard bindings
+keybind = shift+insert=paste_from_clipboard
+keybind = control+insert=copy_to_clipboard
+# Send Shift+Enter as CSI-u so TUIs can distinguish it from Enter.
+keybind = shift+enter=csi:13;2u
+# Legacy encoding sends Alt+Shift+Enter the same as Alt+Enter; send CSI-u so tmux can match M-S-Enter.
+keybind = alt+shift+enter=csi:13;4u
+# Fullscreen is Hyprland's Super+F; let Ctrl+Enter reach TUIs instead.
+keybind = ctrl+enter=unbind
+keybind = super+control+shift+alt+arrow_down=resize_split:down,100
+keybind = super+control+shift+alt+arrow_up=resize_split:up,100
+keybind = super+control+shift+alt+arrow_left=resize_split:left,100
+keybind = super+control+shift+alt+arrow_right=resize_split:right,100
+
+# Slowdown mouse scrolling
+mouse-scroll-multiplier = 0.95
+
+# Fix general slowness on hyprland (https://github.com/ghostty-org/ghostty/discussions/3224)
+async-backend = epoll
+
+# >>> herdr-radar font block
+font-codepoint-map = U+E1A0-U+E1B7=Herdr Agent Icons Max
+font-codepoint-map = U+E1C0-U+E1C5=Herdr Agent Icons Max
+# <<< herdr-radar font block

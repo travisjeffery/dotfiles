@@ -1,0 +1,12 @@
+[Unit]
+Description=Mirror Codex user skills into Claude Code
+ConditionPathIsDirectory=%h/.codex/skills
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/claude-sync-codex-skills
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+NoNewPrivileges=true
+PrivateTmp=true

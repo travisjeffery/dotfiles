@@ -2,13 +2,13 @@
 # installed by herdr
 # managed by herdr; reinstalling or updating the integration overwrites this file.
 # add custom hooks beside this file instead of editing it.
-# HERDR_INTEGRATION_ID=claude
-# HERDR_INTEGRATION_VERSION=9
+# HERDR_INTEGRATION_ID=codex
+# HERDR_INTEGRATION_VERSION=8
 
 set -eu
 
 action="${1:-}"
-hook_input_file="$(mktemp "${TMPDIR:-/tmp}/herdr-claude-hook.XXXXXX")" || exit 0
+hook_input_file="$(mktemp "${TMPDIR:-/tmp}/herdr-codex-hook.XXXXXX")" || exit 0
 trap 'rm -f "$hook_input_file"' EXIT HUP INT TERM
 cat >"$hook_input_file" 2>/dev/null || true
 
@@ -29,7 +29,7 @@ import random
 import socket
 import time
 
-source = "herdr:claude"
+source = "herdr:codex"
 action = os.environ.get("HERDR_ACTION", "")
 pane_id = os.environ.get("HERDR_PANE_ID")
 socket_path = os.environ.get("HERDR_SOCKET_PATH")
@@ -48,20 +48,20 @@ if hook_input_file:
     except Exception:
         hook_input = {}
 
-if "CURSOR_VERSION" in os.environ or "cursor_version" in hook_input:
-    raise SystemExit(0)
 hook_event_name = str(hook_input.get("hook_event_name") or "")
-if hook_event_name != "SessionStart":
+if hook_event_name and hook_event_name != "SessionStart":
     raise SystemExit(0)
-is_subagent = bool(hook_input.get("agent_id"))
-if is_subagent:
-    raise SystemExit(0)
+
 request_id = f"{source}:{int(time.time() * 1000)}:{random.randrange(1_000_000):06d}"
 report_seq = time.time_ns()
 session_id = hook_input.get("session_id")
 agent_session_id = session_id if isinstance(session_id, str) and session_id else None
 transcript_path = hook_input.get("transcript_path")
-agent_session_path = transcript_path if isinstance(transcript_path, str) and transcript_path else None
+if not isinstance(transcript_path, str) or not transcript_path.strip():
+    raise SystemExit(0)
+inherited_session_id = os.environ.get("CODEX_THREAD_ID")
+if inherited_session_id and inherited_session_id != agent_session_id:
+    raise SystemExit(0)
 session_start_source = hook_input.get("source") if hook_event_name == "SessionStart" else None
 if not isinstance(session_start_source, str) or not session_start_source:
     session_start_source = None
@@ -69,12 +69,10 @@ if agent_session_id:
     params = {
         "pane_id": pane_id,
         "source": source,
-        "agent": "claude",
+        "agent": "codex",
         "seq": report_seq,
         "agent_session_id": agent_session_id,
     }
-    if agent_session_path:
-        params["agent_session_path"] = agent_session_path
     if session_start_source:
         params["session_start_source"] = session_start_source
     request = {
