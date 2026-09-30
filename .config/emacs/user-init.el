@@ -1115,7 +1115,6 @@ selected window."
   jinx
   :ensure t
   :demand t
-  :hook (markdown-mode . jinx-mode)
   :hook (org-mode . jinx-mode)
   :bind (("M-$" . jinx-correct)
          :map tj-text-keymap
@@ -3166,10 +3165,38 @@ commands usually can't handle TRAMP paths."
   :hook ((org-mode . visual-line-mode)
          (org-mode . visual-fill-column-mode)))
 
-(use-package clipetty
-  :ensure t
-  :demand t
-  :hook (after-init . global-clipetty-mode))
+;; Terminal emacsclient frames (the daemon runs under Wayland) can't use the
+;; GUI selection, and OSC 52 via clipetty doesn't reliably pass through
+;; herdr. Talk to the Wayland clipboard directly with wl-copy/wl-paste.
+(defvar tj/wl-last-copied nil "Text most recently sent to wl-copy.")
+
+(defun tj/wl-available-p ()
+  (and (getenv "WAYLAND_DISPLAY") (executable-find "wl-copy")))
+
+(defun tj/interprogram-cut (text)
+  (if (display-graphic-p)
+      (gui-select-text text)
+    (when (tj/wl-available-p)
+      (setq tj/wl-last-copied text)
+      (let ((proc (make-process :name "wl-copy" :buffer nil
+                                :command '("wl-copy")
+                                :connection-type 'pipe :noquery t)))
+        (process-send-string proc text)
+        (process-send-eof proc)))))
+
+(defun tj/interprogram-paste ()
+  (if (display-graphic-p)
+      (gui-selection-value)
+    (when (tj/wl-available-p)
+      (let ((text (with-temp-buffer
+                    (when (eq 0 (call-process "wl-paste" nil t nil "-n"))
+                      (buffer-string)))))
+        (unless (or (null text) (string-empty-p text)
+                    (equal text tj/wl-last-copied))
+          text)))))
+
+(setq interprogram-cut-function #'tj/interprogram-cut
+      interprogram-paste-function #'tj/interprogram-paste)
 
 (use-package spacious-padding
   :ensure t
