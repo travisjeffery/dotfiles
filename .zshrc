@@ -10,6 +10,12 @@ fpath=("$HOME/.zsh/functions" "$HOME/.zsh/completions" "/usr/local/share/zsh/fun
 [[ -f /usr/share/omarchy-zsh/shell/zoptions ]] && source /usr/share/omarchy-zsh/shell/zoptions
 [[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
 
+# Initialize completions when Omarchy hasn't already done so.
+if (( ! $+functions[compdef] )); then
+  autoload -Uz compinit
+  compinit
+fi
+
 # Personal configuration preserved from the pre-Omarchy Zsh setup.
 DEFAULT_USERNAME='tj'
 
@@ -159,8 +165,6 @@ fi
 if (( $+commands[beans] )); then
   _cache_completion_script beans "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/beans.zsh"
 fi
-
-[[ -r "$HOME/.zsh/completions/_docker" ]] && source "$HOME/.zsh/completions/_docker"
 
 tj-backward-kill() {
   local WORDCHARS='*?_~=&;!#$%^(){}'
@@ -499,12 +503,11 @@ fi
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+[[ -r "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
 if (( $+commands[atuin] )); then
   eval "$(atuin init zsh --disable-up-arrow)"
   bindkey -M emacs '^[r' atuin-search
 fi
-
-. "$HOME/.atuin/bin/env"
 
 for _f in ${HOME}/.config/herdr/plugins/github/herdr-automatic-rename-*/shell/hook.zsh(#qN); do
   source "$_f"; break
