@@ -1,5 +1,7 @@
 # Dynamic theme colors
 config-file = ?"~/.local/state/omarchy/current/theme/ghostty.conf"
+# Per-machine settings (e.g. the macOS quick terminal) live outside the repo.
+config-file = ?"~/.config/ghostty/local.conf"
 
 # Font
 font-family = "BlexMono Nerd Font"

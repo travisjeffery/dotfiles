@@ -16,6 +16,9 @@ DEFAULT_USERNAME='tj'
 # Personal / machine-local setup (interactive-only).
 [[ -r "$HOME/work.sh" ]] && source "$HOME/work.sh"
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
+
 if (( $+commands[wl-copy] )); then
   alias pbcopy='wl-copy'
   alias pbpaste='wl-paste'
@@ -471,6 +474,10 @@ if [[ -n $GHOSTTY_RESOURCES_DIR ]]; then
   source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
 fi
 
+if [[ -n ${GHOSTTY_QUICK_TERMINAL:-} && -z ${HERDR_ENV:-} ]]; then
+  exec herdr
+fi
+
 if [[ $TERM == "dumb" ]]; then
   unsetopt zle
   PS1='$ '
@@ -479,6 +486,7 @@ fi
 export EDITOR="$HOME/bin/editor"
 export VISUAL="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
+export CODEX_HOME=~/.codex
 
 if (( $+commands[direnv] )); then
   eval "$(direnv hook zsh)"
