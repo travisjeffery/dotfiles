@@ -30,3 +30,6 @@
 
 -- Replace SUPER+SHIFT+S (was: Google Maps webapp) with the same screenshot flow as PRINT.
 o.rebind("SUPER + SHIFT + S", "Screenshot", "omarchy-capture-screenshot")
+
+-- Jump to any open window (filterable picker; switches workspace).
+o.bind("SUPER + G", "Jump to window", "/home/tj/.local/bin/hypr-window-jump")

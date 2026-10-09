@@ -86,10 +86,6 @@
 	email = tj@oscilar.com
 	name = Travis Jeffery
 	signingKey = ~/.ssh/id_rsa.pub
-[includeIf "hasconfig:remote.*.url:git@github.com:Oscilar/**"]
-	path = ~/.gitconfig-oscilar
-[includeIf "hasconfig:remote.*.url:https://github.com/Oscilar/**"]
-	path = ~/.gitconfig-oscilar
 [rerere]
 	enabled = 1
 # [ghi]
@@ -151,3 +147,26 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+
+# Identity by repository owner. Kept last so it overrides the defaults above;
+# Oscilar comes after personal so a repository with both remotes is Oscilar.
+[includeIf "hasconfig:remote.*.url:git@github.com:travisjeffery/**"]
+	path = ~/.gitconfig-personal
+[includeIf "hasconfig:remote.*.url:https://github.com/travisjeffery/**"]
+	path = ~/.gitconfig-personal
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/travisjeffery/**"]
+	path = ~/.gitconfig-personal
+[includeIf "hasconfig:remote.*.url:git@github.com:Oscilar/**"]
+	path = ~/.gitconfig-oscilar
+[includeIf "hasconfig:remote.*.url:https://github.com/Oscilar/**"]
+	path = ~/.gitconfig-oscilar
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/Oscilar/**"]
+	path = ~/.gitconfig-oscilar
+[includeIf "hasconfig:remote.*.url:git@github.com:oscilar/**"]
+	path = ~/.gitconfig-oscilar
+[includeIf "hasconfig:remote.*.url:https://github.com/oscilar/**"]
+	path = ~/.gitconfig-oscilar
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/oscilar/**"]
+	path = ~/.gitconfig-oscilar
+[includeIf "gitdir:~/src/oscilar/"]
+	path = ~/.gitconfig-oscilar

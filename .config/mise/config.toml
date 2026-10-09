@@ -1,5 +1,5 @@
 [tools]
-"aqua:dolthub/dolt" = "2.3.2"
+"aqua:dolthub/dolt" = "latest"
 aws-cli = { version = "2.36.28", symlink_bins = "true" }
 claude-code = "2.1.280"
 codex = "0.153.2"
@@ -12,7 +12,7 @@ gh = "latest"
 "github:steipete/gifgrep" = "0.2.1"
 "github:steipete/gogcli" = "0.12.0"
 "github:steipete/goplaces" = "0.3.0"
-"github:steveyegge/beads" = "1.2.2"
+"github:steveyegge/beads" = "latest"
 go = "1.26.7"
 "go:github.com/kisielk/errcheck" = "1.20.0"
 "go:github.com/lucasepe/modgv" = "0.2.4"
@@ -22,8 +22,10 @@ go = "1.26.7"
 golangci-lint = "1.62.2"
 helm = "4.2.4"
 "http:muse" = { version = "latest", url = "https://api.meta.ai/muse-launcher.sh", bin = "muse", version_list_url = "https://api.meta.ai/muse-code/channels/muse-stable", version_json_path = ".version" }
+hugo-extended = "0.152.2"
 kubectl = "1.36.4"
 node = "26.7.0"
+"npm:cf" = "latest"
 uv = "0.12.5"
 
 [settings]

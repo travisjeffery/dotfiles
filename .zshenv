@@ -59,6 +59,11 @@ if [[ -z "$WAYLAND_DISPLAY" && -n "$XDG_RUNTIME_DIR" ]]; then
 fi
 
 export PAGER=less
+if [[ "$OSTYPE" == linux* ]]; then
+  # /tmp is a RAM-backed tmpfs with a per-user quota; stage large temp files on disk.
+  export TMPDIR="${XDG_CACHE_HOME:-$HOME/.cache}/tmp"
+  [[ -d "$TMPDIR" ]] || mkdir -p -m 700 "$TMPDIR"
+fi
 export SHELL=$(which zsh)
 export GITHUB_USERNAME=travisjeffery
 export GEM_PATH=$HOME/.gem
