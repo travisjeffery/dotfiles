@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "name": "worker-hooks",
+  "displayName": "Worker hooks",
+  "version": "0.1.0",
+  "description": "bd prime and the CodeGraph worktree bootstrap at session start, and the Claude Code shell guards before each bash call.",
+  "compat": {
+    "source": "native",
+    "manifestDir": ".muse-plugin"
+  },
+  "capabilities": {
+    "skills": [],
+    "commands": [],
+    "hooks": [
+      {
+        "id": "bd-prime",
+        "event": "SessionStart",
+        "command": ["python3", "hooks/bd_prime.py"],
+        "timeoutMs": 30000,
+        "statusMessage": "Loading beads context"
+      },
+      {
+        "id": "codegraph-bootstrap",
+        "event": "SessionStart",
+        "command": ["sh", "hooks/codegraph_bootstrap.sh"],
+        "timeoutMs": 30000,
+        "statusMessage": "Preparing CodeGraph"
+      },
+      {
+        "id": "shell-guard",
+        "event": "PreToolUse",
+        "command": ["python3", "hooks/shell_guard.py"],
+        "timeoutMs": 15000
+      }
+    ],
+    "mcpServers": [],
+    "reminders": []
+  }
+}
