@@ -20,7 +20,10 @@ while read -r tool want got installed; do
 done
 [ -e /tmp/smoke-fail ] && fail=1
 
-for c in claude codex codegraph gh go node gopls golangci-lint git ssh; do
+# bd is the Beads proxy shim, not a local bd with a database of its own.
+grep -q 'qm-beads' "$(command -v bd)" && echo "ok   bd is the Beads proxy shim" || { echo "FAIL bd is not the Beads proxy shim"; fail=1; }
+
+for c in claude codex codegraph gh go node gopls golangci-lint git ssh bash; do
 	command -v "$c" >/dev/null && echo "ok   $c on PATH" || { echo "FAIL $c not on PATH"; fail=1; }
 done
 

@@ -11,15 +11,20 @@ Docker and SSH. The design is in quartermaster's
 | | Pinned in |
 |---|---|
 | Herdr (headless server, `herdr server` is the default command) | `Dockerfile` (`HERDR_VERSION` + SHA-256 per arch) |
-| quartermaster (built from a pinned commit) | `Dockerfile` (`QUARTERMASTER_REF`) |
+| quartermaster (built from a pinned commit), and its `bd` shim | `Dockerfile` (`QUARTERMASTER_REF`) |
 | mise | `Dockerfile` (`MISE_VERSION` + SHA-256 per arch) |
 | Go, Node, uv, gh, golangci-lint, gopls, goimports, Helm, Claude Code, Codex, codegraph | `mise.toml` |
 | Global `CLAUDE.md` / `AGENTS.md`, Claude commands and hooks, Codex hooks, Muse plugins, `.gitconfig` | this repository, linked from `/opt/dotfiles` on every start |
 | Worker Claude settings, Codex config and hooks | `config/` (generic: this repository is public) |
 
-Not yet in it: `bd` (workers reach the desktop's Beads database through a
-forced-command SSH proxy, added in a later phase as `/usr/local/bin/bd`), and
-Muse (its launcher can't be pinned to a version yet).
+`/usr/local/bin/bd` is not bd itself but quartermaster's `scripts/bd-shim`
+(same pinned commit): it runs each `bd` call on the desktop over SSH with the
+host's `beads-key`, where `quartermaster bd-proxy` is that key's forced
+command, so every host reads and writes the desktop's one Beads database.
+`QM_BEADS_TARGET` names the desktop (default `desktop.local`); its host key
+must be in `known_hosts`.
+
+Not yet in it: Muse (its launcher can't be pinned to a version yet).
 
 A repository's own `go.mod` still picks its Go: mise installs other versions
 on demand into the cache volume.
@@ -61,7 +66,7 @@ Credentials it understands, all optional:
 |---|---|
 | `gh-token` | `GH_TOKEN` for `gh` and git over HTTPS |
 | `signing-key`, `signing-key.pub` | this host's SSH commit-signing key |
-| `beads-key` | the Beads proxy (later phase) |
+| `beads-key` | the Beads proxy: `bd` runs on the desktop as this key's forced command |
 | `known_hosts` | hosts the worker may SSH to |
 
 Agent logins (Claude, Codex) are done once per host and persist on the

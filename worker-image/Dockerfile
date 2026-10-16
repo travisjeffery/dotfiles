@@ -10,13 +10,16 @@ ARG DEBIAN=debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2
 ARG GOLANG=golang:1.26.7-trixie@sha256:978084e7adea0904b6d76cbc9afcb9baeed6ee170eecdc8866566aaa9f22ad0c
 
 # quartermaster is built from a pinned commit, so the image doesn't wait on a
-# release and matches what the desktop runs from source.
+# release and matches what the desktop runs from source. The same checkout
+# provides bd: a shim that runs bd on the desktop through its forced-command
+# Beads proxy (quartermaster bd-proxy).
 FROM ${GOLANG} AS quartermaster
-ARG QUARTERMASTER_REF=e2620434718903f467ea7239325d2ef2db38d176
+ARG QUARTERMASTER_REF=fae4eff04f76d0b53cdebd3d9a30cdcd0ea07d72
 RUN git clone --filter=blob:none https://github.com/travisjeffery/herdr-quartermaster /src \
  && git -C /src checkout --detach "${QUARTERMASTER_REF}" \
  && cd /src && CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=$(git describe --tags --always)" -o /out/quartermaster . \
- && ln -s quartermaster /out/qm
+ && ln -s quartermaster /out/qm \
+ && install -m 0755 scripts/bd-shim /out/bd
 
 FROM ${DEBIAN}
 ARG TARGETARCH
