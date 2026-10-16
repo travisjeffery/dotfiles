@@ -124,18 +124,6 @@ type = "shell"
 command = "\"$HERDR_BIN_PATH\" pane run \"$HERDR_ACTIVE_PANE_ID\" claude"
 description = "Launch Claude"
 
-[[keys.command]]
-key = "prefix+shift+b"
-type = "plugin_action"
-command = "herdr-beads.open-dock"
-description = "Toggle beads dock (bd issues, docked left)"
-
-[[keys.command]]
-key = "prefix+shift+v"
-type = "plugin_action"
-command = "herdr-beads.open-board"
-description = "Open beads board (floating kanban, q to close)"
-
 # Was prefix+shift+r, which the builtin keys.rename_workspace shadowed -- herdr
 # kept rename_workspace and silently disabled this one.
 [[keys.command]]
@@ -152,15 +140,15 @@ description = "open agent quota settings"
 
 [[keys.command]]
 key = "prefix+g"
-type = "shell"
-command = "/home/tj/.local/bin/herdr-bead-focus"
-description = "Bead on clipboard -> focus its agent, else worktree + Codex (y in the beads board)"
+type = "plugin_action"
+command = "quartermaster.focus-clipboard-codex"
+description = "Bead on clipboard -> focus its agent, else worktree + Codex (quartermaster)"
 
 [[keys.command]]
 key = "prefix+shift+g"
-type = "shell"
-command = "/home/tj/.local/bin/herdr-bead-focus claude"
-description = "Bead on clipboard -> focus its agent, else worktree + Claude"
+type = "plugin_action"
+command = "quartermaster.focus-clipboard"
+description = "Bead on clipboard -> focus its agent, else worktree + Claude (quartermaster)"
 
 # >>> herdr-radar theme block
 [theme.custom]
