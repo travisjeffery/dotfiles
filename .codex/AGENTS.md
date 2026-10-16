@@ -74,7 +74,7 @@ question. Never end with an offer to do work already requested.
 - Persist task continuity in Beads rather than `.agent/STATE.md`. Beads files stay out of git (stealth mode).
 ## Beads and Herdr working conventions
 
-Beads (`bd`) is the canonical task state, shared by every agent running concurrently. Herdr is the execution environment. There is no separate board: `herdr-beads` renders `bd` inside Herdr. `BEADS_DIR` points at the backend database, so `bd` works from any directory, including worktrees.
+Beads (`bd`) is the canonical task state, shared by every agent running concurrently. Herdr is the execution environment. There is no separate board: the quartermaster board renders `bd` inside Herdr. `BEADS_DIR` points at the backend database, so `bd` works from any directory, including worktrees.
 
 - A task is a bead. When a prompt names one (`backend-xxxx`), run `bd show <id>` before changing anything, then `bd update <id> --claim`. For substantive work without a bead, `bd search "<keywords>"` (add `--status all` for closed ones) or `bd create "<title>" -t task -p 2` first. Never keep a markdown TODO list instead.
 - Keep the bead current: `bd note <id> "<finding, decision, or blocker>"` for durable context; `bd create ... --parent <id>` or `bd dep add <blocked> <blocker>` for discovered work; `bd close <id> --reason "<what shipped and how it was verified>"` when done. `bd prime` prints the full workflow.
