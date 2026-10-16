@@ -1,0 +1,93 @@
+name: worker-image
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - worker-image/**
+      - .gitconfig
+      - .claude/CLAUDE.md
+      - .claude/commands/**
+      - .claude/hooks/**
+      - .codex/AGENTS.md
+      - .codex/herdr-agent-state.sh
+      - .codex/hooks/**
+      - .config/muse/plugins/**
+      - .github/workflows/worker-image.yml
+  pull_request:
+    paths:
+      - worker-image/**
+      - .github/workflows/worker-image.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: worker-image-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/qm-worker
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Manifest is pinned
+        run: worker-image/check-manifest.sh
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Tags
+        id: tags
+        run: |
+          echo "version=$(date -u +%Y.%m.%d)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: worker-image/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: qm-worker:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.tags.outputs.version }}
+
+      - name: Smoke test
+        run: docker run --rm qm-worker:ci smoke.sh
+
+      - name: No secrets in the image
+        run: |
+          mkdir -p "$RUNNER_TEMP/rootfs"
+          docker export "$(docker create qm-worker:ci)" | tar -x -C "$RUNNER_TEMP/rootfs" \
+            opt/dotfiles home etc/mise usr/local/bin/entrypoint.sh usr/local/bin/smoke.sh
+          docker run --rm -v "$RUNNER_TEMP/rootfs:/scan:ro" \
+            ghcr.io/gitleaks/gitleaks:v8.28.0 dir /scan --no-banner --redact --exit-code 1
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push
+        if: github.event_name != 'pull_request'
+        run: |
+          for t in "${{ steps.tags.outputs.version }}" latest; do
+            docker tag qm-worker:ci "$IMAGE:$t"
+            docker push "$IMAGE:$t"
+          done
+          echo "pushed $IMAGE:${{ steps.tags.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
+          docker inspect --format '{{index .RepoDigests 0}}' "$IMAGE:${{ steps.tags.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"

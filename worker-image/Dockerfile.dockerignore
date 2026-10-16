@@ -1,0 +1,14 @@
+# Only what the worker image copies; everything else in the dotfiles stays out
+# of the build context.
+*
+.*
+!.gitconfig
+!.claude/CLAUDE.md
+!.claude/commands
+!.claude/hooks
+!.codex/AGENTS.md
+!.codex/herdr-agent-state.sh
+!.codex/hooks
+!.config/muse/plugins
+!worker-image
+.codex/hooks/*.test.js
