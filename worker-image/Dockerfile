@@ -63,6 +63,13 @@ RUN mise trust /etc/mise/config.toml && mise install --system \
  && ls /usr/local/share/mise/shims/claude /usr/local/share/mise/shims/go
 
 RUN useradd --create-home --uid "${UID}" --shell /bin/zsh "${USER}"
+# Every directory that holds a volume or bind mount, and its parents, exists
+# owned by the worker. Otherwise the runtime creates missing parents as root,
+# and a container started straight as the worker (Podman --userns=keep-id)
+# can't write under them.
+RUN cd "/home/${USER}" && install -d -o "${USER}" -g "${USER}" \
+      src worktrees .cache .claude .codex .config .config/herdr .config/muse \
+      .config/qm-worker .local .local/share .ssh
 
 # The dotfiles a worker needs, kept read-only under /opt/dotfiles and linked
 # into $HOME by the entrypoint on every start, so a stale volume can't pin
@@ -90,4 +97,6 @@ LABEL org.opencontainers.image.source=https://github.com/travisjeffery/dotfiles 
       org.opencontainers.image.description="Quartermaster worker: headless Herdr server and agent toolchain"
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/entrypoint.sh"]
-CMD ["herdr", "server"]
+# Herdr reports itself ready for saved SSH machines ("detached server daemon")
+# only when it leads its own session; -w keeps setsid in the foreground.
+CMD ["setsid", "-w", "herdr", "server"]

@@ -1,0 +1,5 @@
+# Worker Herdr config (worker-hosts design §3/§8): worktrees on the
+# worktrees volume, not Herdr's default ~/.herdr/worktrees, which a
+# container recreate would lose.
+[worktrees]
+directory = "~/worktrees"
