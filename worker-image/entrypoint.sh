@@ -48,6 +48,8 @@ done
 cp "$src/worker/claude-settings.json" "$home/.claude/settings.json"
 cp "$src/worker/codex-config.toml" "$home/.codex/config.toml"
 cp "$src/worker/codex-hooks.json" "$home/.codex/hooks.json"
+mkdir -p "$home/.config/herdr"
+cp "$src/worker/herdr-config.toml" "$home/.config/herdr/config.toml"
 
 # Credentials: copied out of the read-only mount into a private directory
 # the worker owns. Nothing here is ever written back to the image.

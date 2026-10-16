@@ -97,4 +97,6 @@ LABEL org.opencontainers.image.source=https://github.com/travisjeffery/dotfiles 
       org.opencontainers.image.description="Quartermaster worker: headless Herdr server and agent toolchain"
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/entrypoint.sh"]
-CMD ["herdr", "server"]
+# Herdr reports itself ready for saved SSH machines ("detached server daemon")
+# only when it leads its own session; -w keeps setsid in the foreground.
+CMD ["setsid", "-w", "herdr", "server"]
