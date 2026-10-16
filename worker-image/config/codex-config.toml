@@ -1,0 +1,10 @@
+# Worker Codex config: generic on purpose (this repository is public). MCP
+# servers and anything account-specific are added per host at runtime, not
+# baked into the image.
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+check_for_update_on_startup = false
+project_doc_fallback_filenames = ["CLAUDE.md"]
+
+[features]
+hooks = true

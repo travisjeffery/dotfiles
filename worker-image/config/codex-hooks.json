@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          { "type": "command", "command": "node \"$HOME/.codex/hooks/codegraph-worktree-bootstrap.js\"" },
+          { "type": "command", "command": "bd codex-hook SessionStart", "statusMessage": "Loading Beads context" }
+        ]
+      },
+      {
+        "hooks": [
+          { "type": "command", "command": "bash \"$HOME/.codex/herdr-agent-state.sh\" session" }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          { "type": "command", "command": "bd codex-hook PostCompact", "statusMessage": "Loading Beads context" }
+        ]
+      }
+    ]
+  }
+}

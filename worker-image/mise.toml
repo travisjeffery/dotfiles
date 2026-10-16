@@ -1,0 +1,28 @@
+# The worker image's version manifest: every tool a quartermaster worker
+# uses, pinned. Bumping a version here is how the image changes; CI refuses
+# "latest" and unpinned entries (check-manifest.sh). Kept separate from
+# .config/mise/config.toml, which tracks the desktop and may float.
+#
+# Herdr, quartermaster and mise itself are pinned in the Dockerfile (ARGs),
+# because they aren't installed through mise.
+
+[tools]
+go = "1.26.7"
+node = "26.7.0"
+uv = "0.12.5"
+gh = "2.101.0"
+golangci-lint = "2.12.2"
+helm = "4.2.4"
+"go:golang.org/x/tools/gopls" = "0.23.0"
+"go:golang.org/x/tools/cmd/goimports" = "0.42.0"
+claude-code = "2.1.295"
+codex = "0.153.2"
+"npm:@colbymchenry/codegraph" = "0.8.0"
+
+[settings]
+# A repo's go.mod still selects its own Go; mise installs it on demand into
+# the cache volume (MISE_DATA_DIR) the first time a worker needs it.
+idiomatic_version_file_enable_tools = ["go"]
+
+[env]
+DISABLE_AUTOUPDATER = "1"
