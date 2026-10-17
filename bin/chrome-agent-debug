@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Opt-in remote debugging of your everyday Chrome profile, for agents using
+# chrome-devtools-mcp --autoConnect. Chrome 136+ ignores --remote-debugging-port
+# on the default profile, so this drives Chrome's own chrome://inspect toggle,
+# which binds to localhost and asks you to Allow each new connection.
+set -euo pipefail
+
+profile="${CHROME_AGENT_PROFILE:-$HOME/.config/google-chrome}"
+chrome="${CHROME_AGENT_BIN:-google-chrome-stable}"
+toggle_url="chrome://inspect/#remote-debugging"
+port_file="$profile/DevToolsActivePort"
+
+running() { pgrep -f -- '/opt/google/chrome/chrome( |$)' >/dev/null; }
+
+open_toggle() {
+  if running; then
+    "$chrome" "$toggle_url" >/dev/null 2>&1 &
+  else
+    setsid -f "$chrome" "$toggle_url" >/dev/null 2>&1
+  fi
+  echo "Opened $toggle_url in Chrome (paste it into the address bar if it did not appear)."
+}
+
+status() {
+  if ! running; then
+    echo "off: Chrome is not running."
+    return 0
+  fi
+  if [[ ! -s "$port_file" ]]; then
+    echo "off: Chrome is running without remote debugging."
+    return 0
+  fi
+  local port
+  port="$(head -n1 "$port_file")"
+  local listeners
+  listeners="$(ss -Hltn "sport = :$port" | awk '{print $4}')"
+  if [[ -z "$listeners" ]]; then
+    echo "off: stale $port_file (nothing listening on $port)."
+    return 0
+  fi
+  echo "ON: Chrome remote debugging is listening on: $listeners"
+  if grep -qvE '^(127\.0\.0\.1|\[::1\]):' <<<"$listeners"; then
+    echo "WARNING: the debugging port is reachable beyond localhost. Turn it off now." >&2
+    return 1
+  fi
+  echo "Any local process can drive this browser and every site you are signed in to. Run '$(basename "$0") off' when done."
+}
+
+case "${1:-status}" in
+  on)
+    open_toggle
+    echo "Enable remote debugging on that page. Chrome asks you to Allow each agent connection; deny anything you did not start."
+    ;;
+  off)
+    open_toggle
+    echo "Disable remote debugging on that page, or quit Chrome completely. Check with: $(basename "$0") status"
+    ;;
+  status) status ;;
+  *)
+    echo "usage: $(basename "$0") on|off|status" >&2
+    exit 2
+    ;;
+esac
