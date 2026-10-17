@@ -10,8 +10,17 @@ that are missing or crash fail open, as they do under Claude.
 
 import json
 import os
+import re
 import subprocess
 import sys
+
+# claude-slack is read-only by construction (see its script), so a bare call
+# with one quoted request skips the approval prompt. Double-quoted requests may
+# not contain $ or backticks, which bash would still expand.
+CLAUDE_SLACK = re.compile(
+    r"""\s*claude-slack(?:\s+--json)?(?:\s+--model\s+[A-Za-z0-9._-]+)?(?:\s+--json)?"""
+    r"""\s+(?:'[^']*'|"(?:[^"\\$`]|\\["\\])*")\s*"""
+)
 
 GUARDS = [
     ["python3", "~/.claude/hooks/block-dangerous-bash.py"],
@@ -62,6 +71,8 @@ def main():
             ask = hso.get("permissionDecisionReason")
     if ask is not None:
         decide("ask", ask)
+    if CLAUDE_SLACK.fullmatch(tool_input.get("command") or ""):
+        decide("allow", "read-only claude-slack lookup")
 
 
 if __name__ == "__main__":
