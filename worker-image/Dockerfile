@@ -79,7 +79,6 @@ COPY .claude/CLAUDE.md /opt/dotfiles/.claude/CLAUDE.md
 COPY .claude/commands /opt/dotfiles/.claude/commands
 COPY .claude/hooks /opt/dotfiles/.claude/hooks
 COPY .codex/AGENTS.md .codex/herdr-agent-state.sh /opt/dotfiles/.codex/
-COPY .codex/hooks /opt/dotfiles/.codex/hooks
 COPY .config/muse/plugins /opt/dotfiles/.config/muse/plugins
 COPY worker-image/config /opt/dotfiles/worker
 COPY worker-image/entrypoint.sh worker-image/smoke.sh /usr/local/bin/

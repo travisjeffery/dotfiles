@@ -40,7 +40,7 @@ src=/opt/dotfiles
 
 # Dotfiles: links, so an image update takes effect on restart.
 for f in .gitconfig .claude/CLAUDE.md .claude/commands .claude/hooks \
-	.codex/AGENTS.md .codex/herdr-agent-state.sh .codex/hooks .config/muse/plugins; do
+	.codex/AGENTS.md .codex/herdr-agent-state.sh .config/muse/plugins; do
 	mkdir -p "$home/$(dirname "$f")"
 	ln -sfn "$src/$f" "$home/$f"
 done

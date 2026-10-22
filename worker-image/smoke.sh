@@ -20,7 +20,7 @@ while read -r tool want got installed; do
 done
 [ -e /tmp/smoke-fail ] && fail=1
 
-for c in claude codex codegraph gh go node gopls golangci-lint git ssh; do
+for c in claude codex gh go node gopls golangci-lint git ssh; do
 	command -v "$c" >/dev/null && echo "ok   $c on PATH" || { echo "FAIL $c not on PATH"; fail=1; }
 done
 

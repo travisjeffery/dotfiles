@@ -4,7 +4,6 @@
       {
         "matcher": "startup|resume|clear",
         "hooks": [
-          { "type": "command", "command": "node \"$HOME/.codex/hooks/codegraph-worktree-bootstrap.js\"" },
           { "type": "command", "command": "bd codex-hook SessionStart", "statusMessage": "Loading Beads context" }
         ]
       },

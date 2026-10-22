@@ -110,13 +110,6 @@ Linear is the team-visible record of work; Beads is agent-local continuity. Trac
 - List anything intentionally left out, any unresolved warnings or failures, and concrete follow-up work.
 - Update Beads when the work materially changes goals, decisions, progress, discoveries, outcomes, or follow-up scope.
 
-## CodeGraph
-
-The `codegraph` MCP server holds a symbol and call-graph index of the repo, kept current by a SessionStart hook. Use it for code navigation before grep fan-outs or subagent searches.
-
-- Start "where is", "who calls", "how does X flow", and architecture questions with `codegraph_context`, then `codegraph_explore` for the source that matters. Read files only for what the graph does not show.
-- If `codegraph_status` reports no index or a stale one, fall back to grep and file reads. Never run a full index during a task; that is a maintenance operation.
-
 ## Context7 MCP (library docs)
 
 Use Context7 to fetch accurate, version-matched documentation during coding tasks.
