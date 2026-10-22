@@ -13,8 +13,8 @@ Docker and SSH. The design is in quartermaster's
 | Herdr (headless server, `herdr server` is the default command) | `Dockerfile` (`HERDR_VERSION` + SHA-256 per arch) |
 | quartermaster (built from a pinned commit) | `Dockerfile` (`QUARTERMASTER_REF`) |
 | mise | `Dockerfile` (`MISE_VERSION` + SHA-256 per arch) |
-| Go, Node, uv, gh, golangci-lint, gopls, goimports, Helm, Claude Code, Codex, codegraph | `mise.toml` |
-| Global `CLAUDE.md` / `AGENTS.md`, Claude commands and hooks, Codex hooks, Muse plugins, `.gitconfig` | this repository, linked from `/opt/dotfiles` on every start |
+| Go, Node, uv, gh, golangci-lint, gopls, goimports, Helm, Claude Code, Codex | `mise.toml` |
+| Global `CLAUDE.md` / `AGENTS.md`, Claude commands and hooks, Muse plugins, `.gitconfig` | this repository, linked from `/opt/dotfiles` on every start |
 | Worker Claude settings, Codex config and hooks | `config/` (generic: this repository is public) |
 
 Not yet in it: `bd` (workers reach the desktop's Beads database through a

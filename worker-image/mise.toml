@@ -17,7 +17,6 @@ helm = "4.2.4"
 "go:golang.org/x/tools/cmd/goimports" = "0.42.0"
 claude-code = "2.1.295"
 codex = "0.153.2"
-"npm:@colbymchenry/codegraph" = "0.8.0"
 
 [settings]
 # A repo's go.mod still selects its own Go; mise installs it on demand into

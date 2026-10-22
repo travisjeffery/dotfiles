@@ -8,7 +8,5 @@
 !.claude/hooks
 !.codex/AGENTS.md
 !.codex/herdr-agent-state.sh
-!.codex/hooks
 !.config/muse/plugins
 !worker-image
-.codex/hooks/*.test.js

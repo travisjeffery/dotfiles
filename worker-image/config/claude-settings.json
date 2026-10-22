@@ -9,12 +9,6 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|resume|clear",
-        "hooks": [
-          { "type": "command", "command": "node \"$HOME/.codex/hooks/codegraph-worktree-bootstrap.js\"", "timeout": 120 }
-        ]
-      },
-      {
         "matcher": "",
         "hooks": [
           { "type": "command", "command": "bd prime 2>/dev/null || true" }
