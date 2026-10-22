@@ -94,3 +94,7 @@ fi
 if [[ -d "$HOME/go/bin" ]]; then
   path=("${(@)path:#$HOME/go/bin}" "$HOME/go/bin")
 fi
+
+if [[ -d /data/cache && -r "$HOME/.config/environment.d/data-caches.conf" ]]; then
+  set -a; source "$HOME/.config/environment.d/data-caches.conf"; set +a
+fi
