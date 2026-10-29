@@ -17,6 +17,10 @@ not provided. Before asking, complete all independent authorized work.
 If blocked, explain the exact blocker and ask the smallest necessary
 question. Never end with an offer to do work already requested.
 
+For scratch work, make a fresh directory with `mktemp -d` instead of
+reusing one and clearing it with `rm -rf`. The rm-guard hook prompts on
+recursive deletes it can't resolve, and an unattended worker stalls there.
+
 ## Beads and Herdr working conventions
 
 Beads (`bd`) is the canonical task state, shared by every agent running concurrently. Herdr is the execution environment. There is no separate board: the quartermaster board renders `bd` inside Herdr. `BEADS_DIR` points at the backend database, so `bd` works from any directory, including worktrees.
