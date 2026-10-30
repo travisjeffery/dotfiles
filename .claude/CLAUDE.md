@@ -21,6 +21,18 @@ For scratch work, make a fresh directory with `mktemp -d` instead of
 reusing one and clearing it with `rm -rf`. The rm-guard hook prompts on
 recursive deletes it can't resolve, and an unattended worker stalls there.
 
+Claude Code's built-in deletion check reads the whole command line,
+including heredoc bodies and quoted strings, and prompts when `rm` appears
+with a target it can't resolve. Keep that text out of the command: write
+commit messages, PR bodies and notes to a scratch file and pass them with
+`git commit -F`, `gh pr create --body-file` or similar, and write multi-line
+scripts to a file and run `bash <file>` instead of `bash -c '...'`.
+
+For read-only lookups and searches, delegate to the `Explore` agent, not
+`general-purpose`; for reviews, use an agent type whose definition grants
+only read tools. Those start without a confirmation prompt; broader types
+stop and wait for me.
+
 ## Beads and Herdr working conventions
 
 Beads (`bd`) is the canonical task state, shared by every agent running concurrently. Herdr is the execution environment. There is no separate board: the quartermaster board renders `bd` inside Herdr. `BEADS_DIR` points at the backend database, so `bd` works from any directory, including worktrees.
