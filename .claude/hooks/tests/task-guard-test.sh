@@ -100,6 +100,15 @@ expect ask   "plugin agent missing" revtool:nope "$elsewhere"
 expect ask   "path traversal in type" "../../etc/x" "$proj"
 
 expect allow "write-capable agent inside a ~/worktrees worker" general-purpose "$fake/worktrees/backend/branch"
+expect allow "write-capable agent inside a /data/worktrees worker" general-purpose /data/worktrees/backend/tj-branch
+expect allow "nested dir of a /data/worktrees worker" general-purpose /data/worktrees/backend/tj-branch/deployer
+expect allow "unknown custom agent inside a /data/worktrees worker" no-such-agent /data/worktrees/backend/tj-branch
+expect ask   "/data/worktrees repo root is not a worker" general-purpose /data/worktrees/backend
+expect ask   "/data/worktrees itself is not a worker" general-purpose /data/worktrees
+expect ask   "~/worktrees repo root is not a worker" general-purpose "$fake/worktrees/backend"
+expect ask   "other /data path" general-purpose /data/src/backend/x
+expect ask   "lookalike /data/worktrees-old" general-purpose /data/worktrees-old/backend/branch
+expect ask   "main checkout under ~/src" general-purpose "$fake/src/backend"
 
 # The definitions on this machine, so plugin updates that widen a reviewer show up here.
 if [[ -f $REAL_HOME/.claude/plugins/installed_plugins.json ]]; then

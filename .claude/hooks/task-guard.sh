@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # task-guard.sh — auto-allow subagent types that are read-only/narrowly
 # scoped by design; ask for anything with broader tool access, except inside
-# kelpie worker worktrees, where workers run unattended and a prompt stalls
+# worker worktrees, where workers run unattended and a prompt stalls
 # the thread until someone answers it.
 
 input=$(cat)
@@ -78,11 +78,12 @@ if [[ $subagent_type =~ ^[A-Za-z0-9._~-]+(:[A-Za-z0-9._~-]+)?$ ]]; then
   fi
 fi
 
-# kelpie workers live in ~/worktrees/<repo>/<branch>. A subagent inherits the
-# worker's permission mode and the auto-mode classifier, so its tool calls are
-# still checked one by one; this only skips the "may I delegate?" prompt.
+# Workers live in /data/worktrees/<repo>/<branch> (~/worktrees before the move
+# to the /data NVMe). A subagent inherits the worker's permission mode and the
+# auto-mode classifier, so its tool calls are still checked one by one; this
+# only skips the "may I delegate?" prompt.
 case "$cwd" in
-  "$HOME"/worktrees/*/*)
+  /data/worktrees/*/*|"$HOME"/worktrees/*/*)
     exit 0 ;;
 esac
 
