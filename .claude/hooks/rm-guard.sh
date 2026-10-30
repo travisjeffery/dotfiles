@@ -19,6 +19,13 @@
 # `for NAME in WORDS` binds NAME to every word, and a delete through it must be
 # safe for each one. `mktemp` values point into the directory mktemp would use.
 #
+# A command made only of deletes inside scratch space (see SCRATCH_ROOTS) plus
+# plumbing such as assignments, cd and mkdir is approved outright, so an
+# unattended session doesn't stall on a prompt for cleaning up its own temp
+# dirs. The approval covers the whole command, which is why anything else in it
+# (another program, a redirect, a command substitution other than mktemp)
+# leaves the decision to the normal permission flow.
+#
 # Internal errors fail OPEN (exit 0), matching block-dangerous-bash.py: this
 # guards against accidents, not an adversary, and a crashing hook that blocked
 # every command would wedge the session.
@@ -31,6 +38,19 @@ ALLOWED_ROOTS=('$CWD' '$PROJECT' /tmp /var/tmp "$HOME/.cache")
 # Never deletable, even inside an allowed root.
 PROTECTED=("$HOME/.ssh" "$HOME/.aws" "$HOME/.gnupg" "$HOME/.config" "$HOME/.claude")
 
+# Deletes strictly inside these are approved without a prompt; the roots
+# themselves are not. A '*' matches one path component. Directories mktemp
+# creates in the same command count too. Taken from the hook's environment, so
+# a command can't widen them by assigning TMPDIR.
+SCRATCH_ROOTS=("${TMPDIR:-}" '/tmp/claude-*' "${TMPDIR:-/tmp}/claude-$(id -u)" "$HOME/.cache/gotmp")
+
+# Claude Code keeps each session's files at CLAUDE_TMP/PROJECT/SESSION; those
+# two levels are shared with other sessions, so only what's below them is scratch.
+CLAUDE_TMP=${TMPDIR:-/tmp}/claude-$(id -u)
+
+# Never approved as scratch, nor is anything that contains them.
+KEEP=("$HOME" /data/worktrees /data/gyb)
+
 # Environment variables trusted to expand when the command doesn't set them.
 ENV_VARS=(HOME TMPDIR USER XDG_RUNTIME_DIR XDG_CACHE_HOME XDG_STATE_HOME XDG_CONFIG_HOME XDG_DATA_HOME CLAUDE_PROJECT_DIR)
 
@@ -41,6 +61,14 @@ die_open() { exit 0; }
 block() {
   printf 'Blocked by rm-guard: %s\n' "$1" >&2
   exit 2
+}
+
+allow() {
+  jq -nc --arg r "$1" '{hookSpecificOutput:{
+    hookEventName:"PreToolUse",
+    permissionDecision:"allow",
+    permissionDecisionReason:$r}}'
+  exit 0
 }
 
 ask() {
@@ -79,6 +107,18 @@ for r in "${ALLOWED_ROOTS[@]}"; do
   esac
   [[ -n $r ]] && roots+=("$(realpath -m -- "$r" 2>/dev/null || printf '%s' "$r")")
 done
+
+# A root at or above $HOME (TMPDIR=$HOME, TMPDIR=/) would make everything scratch.
+scratch_roots=()
+for r in "${SCRATCH_ROOTS[@]}"; do
+  [[ -n $r && $r == /* ]] || continue
+  [[ $r == *'*'* ]] || r=$(realpath -m -- "$r" 2>/dev/null) || continue
+  [[ $HOME == "$r" || $HOME == "${r%/}"/* ]] && continue
+  scratch_roots+=("$r")
+done
+
+# Marks paths mktemp creates in this command; see mktemp_path.
+mktemp_mark=rm-guard-mktemp.$RANDOM$RANDOM
 
 # Variables assigned earlier in this command, name -> value.
 declare -A vars=()
@@ -138,6 +178,10 @@ split_segments() {
     if [[ $c == '"' || $c == "'" ]]; then quote=$c; buf+=$c; continue; fi
     if [[ $two == "&&" || $two == "||" ]]; then
       printf '%s\n' "$buf"; buf=""; (( i++ )); continue
+    fi
+    # 2>&1, >&2 and &>file are redirections, not background jobs.
+    if [[ $c == '&' && ( ${s:i-1:1} == [\<\>] || ${s:i+1:1} == '>' ) ]] && (( i )); then
+      buf+=$c; continue
     fi
     if [[ $c == ';' || $c == '|' || $c == '&' ]]; then
       printf '%s\n' "$buf"; buf=""; continue
@@ -269,7 +313,7 @@ mktemp_path() {
     dir=.
   fi
   [[ $dir == /* ]] || dir=$base/$dir
-  printf '%s/rm-guard-mktemp' "$dir"
+  printf '%s/%s' "$dir" "$mktemp_mark"
 }
 
 # The value an assignment gives its variable, or empty when it can't be known.
@@ -448,8 +492,56 @@ classify_target() {
   printf 'outside'
 }
 
+# Whether bash will delete exactly the path rm-guard resolved, and that path
+# is scratch. Quoting, escapes, brace expansion, word splitting and a glob
+# before the last component can each make the real target differ.
+is_scratch() {
+  local raw=$1 t=$2 path r mark_re
+  [[ $raw == *\\* ]] && return 1
+  local dq=${raw//[^\"]/} sq=${raw//[^\']/}
+  (( ${#dq} % 2 == 0 && ${#sq} % 2 == 0 )) || return 1
+  t=$(unquote "$t")
+  [[ $t == '~'[!/]* ]] && return 1
+  t=$(expand "$t")
+  [[ $t == *[[:space:]{}]* ]] && return 1
+  path=$(resolve "$2") || return 1
+  [[ ${path%/*} == *[*?[]* ]] && return 1
+
+  for r in "${KEEP[@]}"; do
+    r=$(realpath -m -- "$r" 2>/dev/null) || return 1
+    inside "$r" "$path" && return 1
+  done
+  r=$(realpath -m -- "$CLAUDE_TMP" 2>/dev/null) || return 1
+  if inside "$path" "$r"; then
+    [[ ${path#"$r"} == /*/*/* ]] || return 1
+  fi
+  # A git worktree (its .git is a file) holds a branch registered elsewhere.
+  if [[ -e $path ]]; then
+    [[ -f $path/.git ]] && return 1
+    [[ -d $path && -n $(find "$path" -maxdepth 4 -name .git -type f -print -quit 2>/dev/null) ]] && return 1
+  fi
+
+  mark_re="/$mktemp_mark(/|\$)"
+  [[ $path =~ $mark_re ]] && return 0
+  for r in "${scratch_roots[@]}"; do
+    # Unquoted so a '*' in the root matches; the path is strictly below it.
+    # shellcheck disable=SC2053
+    [[ $path == $r/?* ]] && return 0
+  done
+  return 1
+}
+
 resolve_display() {
   resolve "$1" || unquote "$1"
+}
+
+# Whether the command so far is only scratch deletes and plumbing, and how
+# many delete targets it has.
+plain=1 deletes=0
+
+note_scratch() {
+  (( deletes++ ))
+  [[ $1 == allowed ]] && is_scratch "$2" "$3" || plain=0
 }
 
 check_targets() {
@@ -458,6 +550,7 @@ check_targets() {
   for raw in "$@"; do
    while IFS= read -r t; do
     verdict=$(classify_target "$t")
+    note_scratch "$verdict" "$raw" "$t"
     case $verdict in
       protected)
         block "$label targets $(resolve_display "$t"), which is a protected path. Delete it yourself if you truly mean to."
@@ -482,8 +575,19 @@ check_targets() {
   done
 }
 
+# Whether a segment can only do what its words say: no command substitution
+# other than a plain $(mktemp ...), no process substitution, and no redirect
+# except to /dev/null or between fds.
+plain_segment() {
+  local s=$1 re='\$\(mktemp([[:space:]][-[:alnum:]_./~=:${}[:space:]]*)?\)'
+  while [[ $s =~ $re ]]; do s=${s/"${BASH_REMATCH[0]}"/}; done
+  s=$(sed -E 's#(^|[[:space:]])([0-9]*|&)>>?[[:space:]]*/dev/null([[:space:]]|$)#\1\3#g; s#[0-9]*>&[0-9-]##g' <<< "$s")
+  [[ $s != *'$('* && $s != *'`'* && $s != *'<'* && $s != *'>'* ]]
+}
+
 while IFS= read -r seg; do
   [[ -n ${seg//[[:space:]]/} ]] || continue
+  plain_segment "$seg" || plain=0
 
   # Shell keywords that can start a segment (`for d in *; do rm -r "$d"`).
   while [[ $seg =~ ^[[:space:]]*(do|then|else|elif|if|while|until|!)[[:space:]]+(.*)$ ]]; do
@@ -508,6 +612,7 @@ while IFS= read -r seg; do
 
   # Skip env/command wrappers.
   while (( ${#tok[@]} )) && [[ ${tok[0]} == env || ${tok[0]} == sudo || ${tok[0]} == command ]]; do
+    [[ ${tok[0]} == sudo ]] && plain=0
     tok=("${tok[@]:1}")
     while (( ${#tok[@]} )) && [[ ${tok[0]} =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do
       record_assignments "${tok[0]}"; tok=("${tok[@]:1}")
@@ -534,8 +639,10 @@ while IFS= read -r seg; do
       if (( ! subshell )) && [[ $dest != -* ]] && d=$(resolve "$dest"); then base=$d; fi
       ;;
     rm)
-      recursive=0 targets=()
+      recursive=0 targets=() redir=0
       for t in "${tok[@]:1}"; do
+        if (( redir )); then redir=0; continue; fi
+        [[ $t =~ ^[0-9]*[\&]?[\<\>] ]] && { [[ $t =~ [\<\>]$ ]] && redir=1; continue; }
         case $t in
           --recursive|--dir) recursive=1 ;;
           --*) ;;
@@ -545,7 +652,17 @@ while IFS= read -r seg; do
       done
       (( ${#targets[@]} )) && check_targets "$recursive" "rm" "${targets[@]}"
       ;;
+    rmdir)
+      # Only removes empty directories, so nothing to guard; just judge scratch.
+      for t in "${tok[@]:1}"; do
+        [[ $t == -* ]] && continue
+        while IFS= read -r x; do note_scratch "$(classify_target "$x")" "$t" "$x"; done < <(loop_expand "$t")
+      done
+      ;;
+    mkdir|popd|true|:|echo|done|fi|'}'|test|'[')
+      ;;
     find)
+      plain=0
       [[ $seg == *-delete* || $seg == *-exec*rm* || $seg == *-execdir*rm* ]] || continue
       targets=()
       for t in "${tok[@]:1}"; do
@@ -555,11 +672,23 @@ while IFS= read -r seg; do
       (( ${#targets[@]} )) && check_targets 1 "find -delete" "${targets[@]}"
       ;;
     shred)
+      plain=0
       targets=()
       for t in "${tok[@]:1}"; do [[ $t == -* ]] || targets+=("$t"); done
       (( ${#targets[@]} )) && check_targets 1 "shred" "${targets[@]}"
       ;;
+    *)
+      plain=0
+      ;;
   esac
 done < <(printf '%s' "$cmd" | strip_heredocs | while IFS= read -r l; do split_segments "$l"; done)
+
+# A heredoc body was skipped above, so its command can't be judged plain.
+[[ $cmd == *'<<'* ]] && plain=0
+
+if (( plain && deletes )); then
+  note_allowed "auto-approved scratch delete"
+  allow "rm-guard: every delete target is inside scratch space"
+fi
 
 exit 0
