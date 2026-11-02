@@ -6,21 +6,19 @@ block by exiting 2 or by printing a permissionDecision. Muse names the tool
 "bash", runs the command in tool_input.workdir and blocks only through
 hookSpecificOutput.permissionDecision, so this translates both ways. Guards
 that are missing or crash fail open, as they do under Claude.
+
+When no guard objects, shell_policy decides: allow, so the call skips Muse's
+approval prompt, or ask for shared-state, cloud and secret operations. If the
+policy itself crashes, the hook makes no decision and Muse's own approval
+profile applies.
 """
 
 import json
 import os
-import re
 import subprocess
 import sys
 
-# claude-slack is read-only by construction (see its script), so a bare call
-# with one quoted request skips the approval prompt. Double-quoted requests may
-# not contain $ or backticks, which bash would still expand.
-CLAUDE_SLACK = re.compile(
-    r"""\s*claude-slack(?:\s+--json)?(?:\s+--model\s+[A-Za-z0-9._-]+)?(?:\s+--json)?"""
-    r"""\s+(?:'[^']*'|"(?:[^"\\$`]|\\["\\])*")\s*"""
-)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 GUARDS = [
     ["python3", "~/.claude/hooks/block-dangerous-bash.py"],
@@ -71,8 +69,15 @@ def main():
             ask = hso.get("permissionDecisionReason")
     if ask is not None:
         decide("ask", ask)
-    if CLAUDE_SLACK.fullmatch(tool_input.get("command") or ""):
-        decide("allow", "read-only claude-slack lookup")
+    try:
+        import shell_policy
+        reason = shell_policy.classify(tool_input.get("command") or "")
+    except Exception as exc:
+        print(f"shell_guard: policy error, leaving the decision to Muse: {exc}", file=sys.stderr)
+        return
+    if reason:
+        decide("ask", reason)
+    decide("allow", "no shared-state, cloud or secret operation")
 
 
 if __name__ == "__main__":
