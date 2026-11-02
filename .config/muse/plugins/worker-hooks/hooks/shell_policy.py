@@ -657,8 +657,8 @@ def unwrap(tok):
     return None
 
 
-def classify_tokens(tok, depth):
-    tok = strip_noise(tok)
+def classify_tokens(raw, depth):
+    tok = strip_noise(raw)
     if not tok:
         return None
     wrapped = unwrap(tok)
@@ -673,7 +673,7 @@ def classify_tokens(tok, depth):
     if name == "op" and tok[1:2] == ["run"]:
         return "op run injects secrets"
     if name not in PATH_ONLY:
-        for t in tok[1:]:
+        for t in raw[raw.index(tok[0]) + 1:]:
             if SECRET_PATH.search(os.path.expanduser(t)):
                 return f"{name} reads a credential file ({t})"
     if name in ("echo", "printf", "print") and any(SECRET_VAR.search(t) for t in tok[1:]):

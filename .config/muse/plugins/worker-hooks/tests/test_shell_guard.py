@@ -119,6 +119,7 @@ ASK = [
     "op item get abc --reveal",
     "op run -- ./deploy.sh",
     "cat ~/.aws/credentials",
+    "base64 -d < ~/.netrc",
     "grep token ~/.config/gh/hosts.yml",
     "cat .env",
     "env | grep -i proxy",
