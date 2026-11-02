@@ -26,11 +26,12 @@ SECRET_PATH = re.compile(
     r"|\.docker/config\.json|\.pgpass|\.pypirc|\.npmrc|\.ssh/id_[^/]*?(?<!\.pub)$|\.config/op/"
     r"|\.config/muse/auth\.json|\.codex/auth\.json|\.claude/\.credentials\.json"
     r"|\.env(\.(?!example$|sample$|template$)[\w.-]+)?$|[^/.][^/]*\.(key|p12|pfx)$|[^/]*key\.pem$"
+    r"|\.config/gcloud/(application_default_credentials\.json|credentials\.db|access_tokens\.db|legacy_credentials)"
     r"|/var/run/secrets/|/etc/shadow"
     r")"
 )
 SECRET_VAR = re.compile(r"\$\{?[A-Za-z0-9_]*(TOKEN|SECRET|PASSWORD|PASSWD|API_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS?)S?(?![A-Za-z0-9_])", re.I)
-PATH_ONLY = {"ls", "stat", "test", "[", "[[", "file", "chmod", "chown", "touch", "mkdir",
+PATH_ONLY = {"git", "ls", "stat", "test", "[", "[[", "file", "chmod", "chown", "touch", "mkdir",
              "rm", "du", "realpath", "readlink", "dirname", "basename", "wc"}
 
 
@@ -208,7 +209,9 @@ AWS_SECRET = {
     ("rds", "generate-db-auth-token"), ("eks", "get-token"), ("sts", "assume-role"),
     ("sts", "assume-role-with-saml"), ("sts", "assume-role-with-web-identity"),
     ("sts", "get-session-token"), ("sts", "get-federation-token"), ("kms", "decrypt"),
-    ("configure", "export-credentials"),
+    ("configure", "export-credentials"), ("ec2", "get-password-data"), ("sso", "get-role-credentials"),
+    ("redshift", "get-cluster-credentials"), ("redshift", "get-cluster-credentials-with-iam"),
+    ("redshift-serverless", "get-credentials"),
 }
 
 
@@ -249,6 +252,11 @@ def kubectl(args):
     if not pos:
         return None
     sub = pos[0]
+    dry = flag_value(args, "--dry-run")
+    if sub in ("apply", "create", "patch", "replace", "delete") and dry in ("client", "server"):
+        return None
+    if sub == "cp" and len(pos) == 3 and ":" in pos[1] and ":" not in pos[2]:
+        return None
     if sub not in KUBECTL_READ:
         return f"kubectl {sub} changes or reaches into a cluster"
     nxt = pos[1] if len(pos) > 1 else ""
@@ -272,7 +280,7 @@ HELM_READ = {"list", "ls", "status", "get", "history", "hist", "show", "inspect"
 
 def helm(args):
     pos = positionals(args, {"-n", "--namespace", "--kube-context", "--kubeconfig", "-f", "--values", "--version"})
-    if pos and pos[0] not in HELM_READ:
+    if pos and pos[0] not in HELM_READ and not has(args, "--dry-run"):
         return f"helm {pos[0]} changes a cluster or registry"
     return None
 
@@ -404,6 +412,8 @@ def gcloud(args):
         return "gcloud prints a token or secret"
     if not pos or pos[0] in ("config", "auth", "info", "version", "help", "components", "topic"):
         return None
+    if pos[:2] == ["storage", "cp"] or pos[:2] == ["storage", "rsync"]:
+        return None if not pos[-1].startswith("gs://") else "gcloud storage writes to Cloud Storage"
     if any(p in ("list", "describe", "get-iam-policy", "get-value", "read", "tail", "ls", "cat", "get-credentials")
            or p.startswith(("list-", "describe-")) for p in pos):
         return None
@@ -432,9 +442,15 @@ def http_client(args, name):
             method = pos[0]
         elif any(re.match(r"^[^=:]+(:=|=(?!=))", p) for p in pos[1:]) or has(args, "-f", "--form"):
             method = method or "POST"
-    elif any(a in HTTP_WRITE_FLAGS or a.split("=", 1)[0] in HTTP_WRITE_FLAGS
-             or re.match(r"^-[dFT].", a) for a in args):
-        method = method or "POST"
+    else:
+        if name == "curl" and method is None:
+            for i, a in enumerate(args):
+                m = re.match(r"^-[A-Za-z]*X(.*)$", a)
+                if m and not a.startswith("--"):
+                    method = m.group(1) or (args[i + 1] if i + 1 < len(args) else None)
+        bundled = name == "curl" and any(re.match(r"^-[A-Za-z]*[dFT]", a) and not a.startswith("--") for a in args)
+        if bundled or any(a in HTTP_WRITE_FLAGS or a.split("=", 1)[0] in HTTP_WRITE_FLAGS for a in args):
+            method = method or "POST"
     method = (method or "GET").upper()
     if method in ("GET", "HEAD", "OPTIONS"):
         return None
@@ -443,14 +459,15 @@ def http_client(args, name):
     return f"{name} {method} writes to a remote service"
 
 
-SQL_WRITE = re.compile(r"\b(insert|update|delete|drop|truncate|alter|create|grant|revoke|replace|merge|optimize"
-                       r"|rename|attach|detach|kill|system|copy|vacuum|reindex|cluster)\b", re.I)
+SQL_WRITE = re.compile(r"\b(insert|update|delete|drop|truncate|alter|(?<!show\s)create|grant|revoke|replace|merge"
+                       r"|optimize|rename|attach|detach|kill|system(?!\.)|copy|vacuum|reindex|cluster)\b", re.I)
+MONGO_WRITE = re.compile(r"\.(insert|update|delete|remove|replace|drop|create|rename|bulkWrite|findOneAnd)\w*\s*\(")
 SQL_FLAGS = {"psql": ("-c", "--command"), "mysql": ("-e", "--execute"), "mariadb": ("-e", "--execute"),
              "clickhouse-client": ("-q", "--query"), "mongosh": ("--eval",), "mongo": ("--eval",),
              "cqlsh": ("-e", "--execute")}
 REDIS_READ = {"get", "mget", "keys", "scan", "info", "ping", "ttl", "pttl", "type", "exists", "hget", "hgetall",
               "hkeys", "hlen", "hmget", "lrange", "llen", "smembers", "scard", "zrange", "zcard", "zscore", "strlen",
-              "dbsize", "memory", "slowlog", "xrange", "xlen", "xinfo", "client", "config", "sscan", "hscan", "zscan",
+              "dbsize", "memory", "slowlog", "xrange", "xlen", "xinfo", "sscan", "hscan", "zscan",
               "--scan", "--bigkeys", "--memkeys", "--stat", "--latency"}
 
 
@@ -464,11 +481,12 @@ def db_client(args, name):
             return None
         return "redis-cli changes a remote Redis"
     host = flag_value(args, "-h", "--host") or ""
-    uri = next((a for a in args if re.match(r"^[a-z]+(\+\w+)?://", a)), "")
-    if is_local(host_of(host)) and is_local(host_of(uri)):
+    uri = next((m.group(0) for a in args for m in [re.search(r"[a-z]+(\+\w+)?://\S*", a)] if m), "")
+    conninfo = next((m.group(1) for a in args for m in [re.search(r"\bhost=(\S+)", a)] if m), "")
+    if is_local(host_of(host)) and is_local(host_of(uri)) and is_local(conninfo):
         return None
     sql = flag_value(args, *SQL_FLAGS[name])
-    if sql is None or SQL_WRITE.search(sql):
+    if sql is None or SQL_WRITE.search(sql) or (name in ("mongosh", "mongo") and MONGO_WRITE.search(sql)):
         return f"{name} may change a remote database"
     return None
 
@@ -493,7 +511,7 @@ PUBLISH = {
 
 
 def publisher(args, name):
-    pos = positionals(args)
+    pos = positionals(args, {"-x", "--exclude-task"})
     if name in ("gradle", "gradlew"):
         hit = [p for p in pos if p.split(":")[-1].startswith("publish") and "MavenLocal" not in p]
         return f"{name} {hit[0]} publishes artifacts" if hit else None
@@ -549,6 +567,40 @@ def flarectl(args):
     return None
 
 
+def first_word(name, allowed, what):
+    def check(args):
+        pos = positionals(args, {"-n", "--namespace", "-f", "--file", "-e", "--environment", "-g", "--resource-group",
+                                 "--project", "--profile", "--region", "-p", "--context"})
+        if not pos or pos[0] in allowed or any(w in allowed for w in pos[1:2]) or has(args, "--dry-run", "--check",
+                                                                                      "--syntax-check", "--list-tasks",
+                                                                                      "--list-hosts", "--version", "-h", "--help"):
+            return None
+        return f"{name} {' '.join(pos[:2])} {what}"
+    return check
+
+
+def az(args):
+    pos = [a for a in args if not a.startswith("-")]
+    if not pos or pos[0] in ("login", "logout", "account", "config", "version", "help", "upgrade", "extension") \
+            and "get-access-token" not in pos:
+        return None
+    if any(p in ("list", "show", "get", "query", "download") or p.startswith(("list-", "show-")) for p in pos) \
+            and not any(p in ("get-access-token", "keys", "secret") for p in pos):
+        return None
+    return f"az {' '.join(pos[:3])} changes Azure resources or reads secrets"
+
+
+def rclone(args):
+    pos = positionals(args, {"--config", "--include", "--exclude", "--filter", "--transfers", "--checkers"})
+    if not pos or pos[0] in ("ls", "lsd", "lsl", "lsf", "lsjson", "cat", "size", "check", "about", "tree", "version",
+                             "listremotes", "help", "md5sum", "sha1sum", "hashsum", "ncdu"):
+        return None
+    if pos[0] in ("copy", "copyto", "sync", "move", "moveto", "bisync") and len(pos) >= 3 \
+            and not re.match(r"^[^/.][^/]*:", pos[2]):
+        return "rclone moves files out of a remote" if pos[0].startswith("move") else None
+    return f"rclone {pos[0]} changes remote storage"
+
+
 def env_dump(args, name):
     if name in ("env", "printenv") and not [a for a in args if not a.startswith("-")]:
         return f"{name} dumps the environment, which may hold tokens"
@@ -570,11 +622,27 @@ CLASSIFIERS = {
     "op": op, "gcloud": gcloud, "gsutil": gsutil, "ssh": ssh, "deployer": deployer, "wrangler": wrangler,
     "flarectl": flarectl, "bd": bd, "docker": docker, "podman": docker, "nerdctl": docker,
     "terraform": terraform, "tofu": lambda a: terraform(a, "tofu"), "terragrunt": lambda a: terraform(a, "terragrunt"),
+    "helmfile": first_word("helmfile", {"diff", "template", "lint", "list", "status", "build", "deps", "repos",
+                                        "write-values", "show-dag", "fetch", "version", "help"}, "changes a cluster"),
+    "argocd": first_word("argocd", {"get", "list", "diff", "history", "logs", "manifests", "resources", "version",
+                                    "login", "logout", "context", "account", "help", "wait"}, "changes deployments"),
+    "eksctl": first_word("eksctl", {"get", "utils", "info", "version", "help", "completion"}, "changes EKS"),
+    "cdk": first_word("cdk", {"synth", "synthesize", "diff", "ls", "list", "doctor", "docs", "context", "notices",
+                              "acknowledge", "metadata", "version", "init"}, "changes cloud resources"),
+    "ansible-playbook": lambda a: None if has(a, "--check", "-C", "--syntax-check", "--list-tasks", "--list-hosts",
+                                              "--list-tags") else "ansible-playbook changes remote hosts",
+    "bq": first_word("bq", {"ls", "show", "head", "help", "version", "wait", "init"}, "changes BigQuery"),
+    "sops": lambda a: "sops decrypts secrets" if has(a, "-d", "--decrypt", "exec-env", "exec-file") or
+                      positionals(a)[:1] in (["decrypt"], ["exec-env"], ["exec-file"]) else None,
+    "doppler": lambda a: "doppler reads or injects secrets" if positionals(a)[:1] in (["secrets"], ["run"]) else None,
+    "az": az, "rclone": rclone,
     "vault": lambda a: None if positionals(a)[:1] in ([], ["status"], ["version"], ["path-help"]) else "vault reads or writes secrets",
     "mail": lambda a: "sends mail", "sendmail": lambda a: "sends mail", "mutt": lambda a: "sends mail",
 }
 for _n in ("curl", "wget", "http", "https", "xh"):
     CLASSIFIERS[_n] = lambda a, n=_n: http_client(a, n)
+for _n in ("pg_restore",):
+    CLASSIFIERS[_n] = lambda a: None if is_local(flag_value(a, "-h", "--host") or "") else "pg_restore writes to a remote database"
 for _n in ("psql", "mysql", "mariadb", "clickhouse-client", "redis-cli", "mongosh", "mongo", "cqlsh"):
     CLASSIFIERS[_n] = lambda a, n=_n: db_client(a, n)
 for _n in list(PUBLISH) + ["gradle", "gradlew"]:
@@ -657,10 +725,18 @@ def unwrap(tok):
     return None
 
 
+DB_HOST_ENV = {"PGHOST": "psql", "MYSQL_HOST": "mysql", "CLICKHOUSE_HOST": "clickhouse-client"}
+
+
 def classify_tokens(raw, depth):
     tok = strip_noise(raw)
+    env_host = [a.split("=", 1)[1] for a in raw[:raw.index(tok[0])] if a.split("=", 1)[0] in DB_HOST_ENV] if tok else []
+    if env_host and os.path.basename(tok[0]) in DB_HOST_ENV.values():
+        tok = [tok[0], "-h", env_host[0]] + tok[1:]
     if not tok:
         return None
+    if os.path.basename(tok[0]) in ("op", "doppler") and tok[1:2] == ["run"]:
+        return f"{os.path.basename(tok[0])} run injects secrets"
     wrapped = unwrap(tok)
     if wrapped is not None:
         inner, strings = wrapped
@@ -670,8 +746,6 @@ def classify_tokens(raw, depth):
                 return reason
         return classify_tokens(inner, depth + 1) if inner else None
     name = os.path.basename(tok[0])
-    if name == "op" and tok[1:2] == ["run"]:
-        return "op run injects secrets"
     if name not in PATH_ONLY:
         for t in raw[raw.index(tok[0]) + 1:]:
             if SECRET_PATH.search(os.path.expanduser(t)):
