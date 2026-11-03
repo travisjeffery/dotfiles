@@ -429,36 +429,6 @@ def gsutil(args):
     return f"gsutil {pos[0]} changes Cloud Storage"
 
 
-HTTP_WRITE_FLAGS = {"-d", "--data", "--data-raw", "--data-binary", "--data-urlencode", "--json", "-F", "--form",
-                    "--form-string", "-T", "--upload-file", "--post-data", "--post-file", "--body-data", "--body-file"}
-
-
-def http_client(args, name):
-    urls = [a for a in args if re.match(r"^(https?://|[\w.-]+\.\w+(:\d+)?/|localhost|\[?::1|127\.)", a)]
-    method = flag_value(args, "-X", "--request", "--method")
-    if name in ("http", "https", "xh"):
-        pos = positionals(args)
-        if pos and pos[0].upper() in ("POST", "PUT", "PATCH", "DELETE"):
-            method = pos[0]
-        elif any(re.match(r"^[^=:]+(:=|=(?!=))", p) for p in pos[1:]) or has(args, "-f", "--form"):
-            method = method or "POST"
-    else:
-        if name == "curl" and method is None:
-            for i, a in enumerate(args):
-                m = re.match(r"^-[A-Za-z]*X(.*)$", a)
-                if m and not a.startswith("--"):
-                    method = m.group(1) or (args[i + 1] if i + 1 < len(args) else None)
-        bundled = name == "curl" and any(re.match(r"^-[A-Za-z]*[dFT]", a) and not a.startswith("--") for a in args)
-        if bundled or any(a in HTTP_WRITE_FLAGS or a.split("=", 1)[0] in HTTP_WRITE_FLAGS for a in args):
-            method = method or "POST"
-    method = (method or "GET").upper()
-    if method in ("GET", "HEAD", "OPTIONS"):
-        return None
-    if urls and all(is_local(host_of(u)) for u in urls):
-        return None
-    return f"{name} {method} writes to a remote service"
-
-
 SQL_WRITE = re.compile(r"\b(insert|update|delete|drop|truncate|alter|(?<!show\s)create|grant|revoke|replace|merge"
                        r"|optimize|rename|attach|detach|kill|system(?!\.)|copy|vacuum|reindex|cluster)\b", re.I)
 MONGO_WRITE = re.compile(r"\.(insert|update|delete|remove|replace|drop|create|rename|bulkWrite|findOneAnd)\w*\s*\(")
@@ -639,8 +609,6 @@ CLASSIFIERS = {
     "vault": lambda a: None if positionals(a)[:1] in ([], ["status"], ["version"], ["path-help"]) else "vault reads or writes secrets",
     "mail": lambda a: "sends mail", "sendmail": lambda a: "sends mail", "mutt": lambda a: "sends mail",
 }
-for _n in ("curl", "wget", "http", "https", "xh"):
-    CLASSIFIERS[_n] = lambda a, n=_n: http_client(a, n)
 for _n in ("pg_restore",):
     CLASSIFIERS[_n] = lambda a: None if is_local(flag_value(a, "-h", "--host") or "") else "pg_restore writes to a remote database"
 for _n in ("psql", "mysql", "mariadb", "clickhouse-client", "redis-cli", "mongosh", "mongo", "cqlsh"):
