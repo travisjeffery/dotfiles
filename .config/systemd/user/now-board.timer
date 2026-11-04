@@ -1,0 +1,11 @@
+[Unit]
+Description=Regenerate ~/now/board.md every 5 minutes
+
+[Timer]
+OnCalendar=*:0/5
+Persistent=true
+AccuracySec=30s
+Unit=now@board.service
+
+[Install]
+WantedBy=timers.target

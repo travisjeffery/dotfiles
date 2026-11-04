@@ -1,0 +1,79 @@
+#!/usr/bin/env -S python3 -I
+# now-title: Linear: open issues assigned to me
+# now-source: Linear API via ~linear api~
+import datetime
+import json
+import re
+import subprocess
+import sys
+import zoneinfo
+
+QUERY = """query($after: String) { viewer { assignedIssues(first: 100, after: $after,
+  filter: {state: {type: {nin: ["completed", "canceled"]}}}) {
+  nodes { identifier url title dueDate priority priorityLabel team { key } state { name } }
+  pageInfo { hasNextPage endCursor } } } }"""
+
+ACTIVE = ["In Progress", "In Review"]
+
+try:
+    res = subprocess.run(["linear", "api", "--paginate", QUERY], capture_output=True, text=True)
+except FileNotFoundError:
+    sys.exit("linear CLI not on PATH")
+if res.returncode != 0:
+    sys.exit(f"linear api exited {res.returncode}: {res.stderr.strip()}")
+issues = json.loads(res.stdout)
+today = datetime.datetime.now(zoneinfo.ZoneInfo("America/New_York")).date()
+
+
+def key_order(i):
+    team, num = i["identifier"].split("-")
+    # Linear priority 0 is "No priority"; it sorts after Low (4).
+    return (i["priority"] or 5, team, int(num))
+
+
+def line(i, when=""):
+    parts = [i["state"]["name"]]
+    if i["priority"]:
+        parts.append(i["priorityLabel"])
+    parts.append(i["team"]["key"])
+    key = i["identifier"]
+    title = re.sub(r"`([^`~\n]+)`", r"~\1~", i["title"])
+    return f"- [[{i['url']}][{key}]] {title}{when} · {' · '.join(parts)}"
+
+
+overdue, soon, later, undated, hidden = [], [], [], [], []
+for i in issues:
+    if not i["dueDate"]:
+        (undated if i["state"]["name"] in ACTIVE else hidden).append(i)
+        continue
+    days = (datetime.date.fromisoformat(i["dueDate"]) - today).days
+    i["days"] = days
+    (overdue if days < 0 else soon if days <= 7 else later).append(i)
+
+for group in (overdue, soon, later):
+    group.sort(key=lambda i: (i["dueDate"], key_order(i)))
+
+print(f"{len(issues)} open assigned · {len(overdue)} overdue · {len(soon)} due ≤7d"
+      f" · {len(hidden)} undated backlog hidden (not in progress or in review)")
+
+if overdue:
+    print("\n* Overdue\n")
+    for i in overdue:
+        print(line(i, f" — due {i['dueDate']} ({-i['days']}d overdue)"))
+if soon:
+    print("\n* Due within 7 days\n")
+    for i in soon:
+        rel = "today" if i["days"] == 0 else f"in {i['days']}d"
+        print(line(i, f" — due {i['dueDate']} ({rel})"))
+if later:
+    print("\n* Later\n")
+    for i in later:
+        print(line(i, f" — due {i['dueDate']}"))
+if undated:
+    print(f"\n* No due date, in progress or in review ({len(undated)})")
+    for status in ACTIVE:
+        group = sorted((i for i in undated if i["state"]["name"] == status), key=key_order)
+        if group:
+            print(f"\n** {status} ({len(group)})\n")
+            for i in group:
+                print(line(i))

@@ -1,0 +1,78 @@
+#!/usr/bin/env -S python3 -I
+# now-title: Blog drafts
+# now-source: open PRs in travisjeffery/travisjeffery.github.com via ~gh api~; questions from beads
+import json
+import os
+import pathlib
+import re
+import subprocess
+import sys
+
+REPO = "travisjeffery/travisjeffery.github.com"
+out_dir = pathlib.Path(os.environ.get("NOW_DIR", pathlib.Path.home() / "now")) / "blog"
+
+
+def run(*args, raw=False):
+    res = subprocess.run(args, capture_output=True, text=not raw)
+    if res.returncode != 0:
+        err = res.stderr if isinstance(res.stderr, str) else res.stderr.decode()
+        sys.exit(f"{' '.join(args[:3])} exited {res.returncode}: {err.strip()}")
+    return res.stdout
+
+
+def post_name(path):
+    p = pathlib.PurePosixPath(path)
+    # Page bundles keep the post in <slug>/index.org; name the copy after the slug.
+    return p.parent.name + p.suffix if p.stem == "index" else p.name
+
+
+prs = json.loads(run("gh", "pr", "list", "-R", REPO, "--state", "open", "--limit", "100",
+                     "--json", "number,title,isDraft,headRefOid,url,updatedAt"))
+beads = json.loads(run("bd", "list", "--json", "--status", "needs_me"))
+
+out_dir.mkdir(parents=True, exist_ok=True)
+written = set()
+entries = []
+for pr in sorted(prs, key=lambda p: -p["number"]):
+    files = json.loads(run("gh", "api", "--paginate", f"repos/{REPO}/pulls/{pr['number']}/files"))
+    posts = [f["filename"] for f in files
+             if f["status"] != "removed" and f["filename"].startswith("content/posts/")
+             and f["filename"].endswith((".org", ".md"))]
+    copies = []
+    for path in posts:
+        body = run("gh", "api", "-H", "Accept: application/vnd.github.raw",
+                   f"repos/{REPO}/contents/{path}?ref={pr['headRefOid']}", raw=True)
+        name = post_name(path)
+        dest = out_dir / name
+        tmp = out_dir / f".{name}.tmp"
+        tmp.write_bytes(body)
+        tmp.chmod(0o444)
+        tmp.replace(dest)
+        written.add(name)
+        text = body.decode(errors="replace")
+        markers = [" ".join(m.split()) for m in re.findall(r"\[TJ:(.*?)\]", text, re.S)]
+        copies.append((name, path, markers))
+    questions = [b for b in beads if pr["url"] in (b.get("notes") or "")]
+    entries.append((pr, copies, questions))
+
+for stale in out_dir.iterdir():
+    if stale.is_file() and not stale.name.startswith(".") and stale.name not in written:
+        stale.unlink()
+
+print(f"{len(entries)} open PRs in {REPO}")
+print("\nCopies in =~/now/blog/= are read-only; edit in the repo or PR.")
+for pr, copies, questions in entries:
+    draft = "draft" if pr["isDraft"] else "ready for review"
+    print(f"\n* {pr['title']}\n")
+    print(f"- PR: [[{pr['url']}][#{pr['number']}]] · {draft} · updated {pr['updatedAt']} · head {pr['headRefOid'][:8]}")
+    if not copies:
+        print("- No post file under content/posts/ in this PR")
+    for name, path, markers in copies:
+        print(f"- File: [[file:blog/{name}][blog/{name}]] (from ={path}=)")
+        if markers:
+            print(f"- Inline questions ({len(markers)} =[TJ: …]=):")
+            for m in markers:
+                print(f"  - {m}")
+    for b in questions:
+        last = (b.get("notes") or "").strip().rsplit("\n", 1)[-1]
+        print(f"- Waiting on TJ ({b['id']}): {last}")

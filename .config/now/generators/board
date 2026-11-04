@@ -1,0 +1,18 @@
+#!/usr/bin/env -S python3 -I
+# now-title: Beads board
+# now-source: ~quartermaster context~
+import re
+import subprocess
+import sys
+
+res = subprocess.run(["quartermaster", "context"], capture_output=True, text=True)
+if res.returncode != 0:
+    sys.exit(f"quartermaster context exited {res.returncode}: {res.stderr.strip()}")
+
+# quartermaster writes markdown; translate the parts it uses into org.
+for line in res.stdout.splitlines():
+    if m := re.match(r"(#+) (.*)", line):
+        line = "*" * len(m[1]) + " " + m[2]
+    line = re.sub(r"\[([^\]\n]+)\]\((https?://[^)\s]+)\)", r"[[\2][\1]]", line)
+    line = re.sub(r"`([^`~\n]+)`", r"~\1~", line)
+    print(line)
