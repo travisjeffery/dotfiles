@@ -179,6 +179,14 @@ expect allow "TMPDIR reassigned in the command" "TMPDIR=$cwd; rm -rf \$TMPDIR/x"
 T_TMPDIR=$HOME expect allow "TMPDIR=\$HOME is not a scratch root" 'rm -rf ~/.cache/x'
 expect allow "no delete at all" 'D=$(mktemp -d); echo "$D"'
 
+# An allow echoes the input unchanged as updatedInput (Muse rejects a bare allow).
+c="rm -rf $S/a"
+got=$(jq -nc --arg c "$c" --arg d "$cwd" '{tool_name:"Bash",tool_input:{command:$c,description:"x"},cwd:$d}' |
+  CLAUDE_PROJECT_DIR=$cwd bash "$HOOK" 2>/dev/null | jq -c '.hookSpecificOutput.updatedInput')
+want=$(jq -nc --arg c "$c" '{command:$c,description:"x"}')
+if [[ $got == "$want" ]]; then printf 'ok   allow echoes updatedInput\n'; (( pass++ ))
+else printf 'FAIL allow echoes updatedInput: got %s\n' "$got"; (( fail++ )); fi
+
 # Unchanged behavior.
 expect block "protected path" 'rm -rf ~/.ssh'
 expect block "recursive outside roots" 'rm -r /opt/thing'

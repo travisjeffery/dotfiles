@@ -196,12 +196,16 @@ ASK = [
 ]
 
 
-def run_hook(command):
+def hook_output(command):
     payload = {"tool_name": "bash", "tool_input": {"command": command, "workdir": "/tmp"}, "cwd": "/tmp"}
     r = subprocess.run([sys.executable, os.path.join(HOOKS, "shell_guard.py")], input=json.dumps(payload),
                        capture_output=True, text=True, timeout=30)
     out = json.loads(r.stdout) if r.stdout.strip() else {}
-    return (out.get("hookSpecificOutput") or {}).get("permissionDecision")
+    return out.get("hookSpecificOutput") or {}
+
+
+def run_hook(command):
+    return hook_output(command).get("permissionDecision")
 
 
 class Policy(unittest.TestCase):
@@ -234,6 +238,14 @@ class Hook(unittest.TestCase):
         for cmd, want in cases:
             with self.subTest(cmd=cmd):
                 self.assertEqual(run_hook(cmd), want)
+
+    def test_allow_echoes_input(self):
+        out = hook_output("git status")
+        self.assertEqual(out.get("permissionDecision"), "allow")
+        self.assertEqual(out.get("updatedInput"), {"command": "git status", "workdir": "/tmp"})
+
+    def test_ask_has_no_updated_input(self):
+        self.assertNotIn("updatedInput", hook_output("aws ec2 terminate-instances --instance-ids i-1"))
 
     def test_non_bash_untouched(self):
         payload = {"tool_name": "read", "tool_input": {"path": "/etc/passwd"}}

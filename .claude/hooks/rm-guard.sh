@@ -63,11 +63,13 @@ block() {
   exit 2
 }
 
+# updatedInput echoes the input unchanged: Muse rejects an allow without it.
 allow() {
-  jq -nc --arg r "$1" '{hookSpecificOutput:{
+  printf '%s' "$payload" | jq -c --arg r "$1" '{hookSpecificOutput:{
     hookEventName:"PreToolUse",
     permissionDecision:"allow",
-    permissionDecisionReason:$r}}'
+    permissionDecisionReason:$r,
+    updatedInput:.tool_input}}'
   exit 0
 }
 
