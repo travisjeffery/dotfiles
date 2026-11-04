@@ -1,0 +1,18 @@
+[Unit]
+Description=Regenerate ~/now/%i.md
+Documentation=file://%h/.config/now/now-refresh
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h
+ExecStart=%h/.config/now/now-refresh %i
+# Machine-local settings such as BEADS_DIR for the board generator.
+EnvironmentFile=-%h/.config/now.env
+Environment=PATH=%h/.local/bin:%h/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin
+# The linear CLI reads its credential from the keyring over the session bus.
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=%t/bus
+# bd forks a detached `bd send-metrics` child; killing the control group would
+# wait on it and fail the run as a timeout.
+KillMode=process
+TimeoutStartSec=6min
+Nice=10
