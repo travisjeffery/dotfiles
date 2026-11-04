@@ -26,12 +26,16 @@ GUARDS = [
 ]
 
 
-def decide(decision, reason):
-    json.dump({"hookSpecificOutput": {
+def decide(decision, reason, updated_input=None):
+    out = {
         "hookEventName": "PreToolUse",
         "permissionDecision": decision,
         "permissionDecisionReason": reason or "blocked by a shell guard",
-    }}, sys.stdout)
+    }
+    # Muse rejects an allow without updatedInput and falls back to its own review.
+    if decision == "allow":
+        out["updatedInput"] = updated_input
+    json.dump({"hookSpecificOutput": out}, sys.stdout)
     sys.exit(0)
 
 
@@ -77,7 +81,7 @@ def main():
         return
     if reason:
         decide("ask", reason)
-    decide("allow", "no shared-state, cloud or secret operation")
+    decide("allow", "no shared-state, cloud or secret operation", tool_input)
 
 
 if __name__ == "__main__":
