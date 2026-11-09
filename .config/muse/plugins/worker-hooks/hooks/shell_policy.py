@@ -319,28 +319,52 @@ def pulumi(args):
     return f"pulumi {' '.join(pos[:2])} changes infrastructure, config or state"
 
 
+REPO = r"^repos/[^/]+/[^/]+"
+GH_API_SETTINGS = re.compile(r"/(secrets|variables|protection|rulesets|collaborators|teams|keys|hooks)(/|$)")
+GH_API_PROTECTED_REF = re.compile(REPO + r"/git/refs/heads/(main|master)$")
+GH_GRAPHQL_ASK = re.compile(r"\b(mergePullRequest|archiveRepository|\w*BranchProtectionRule|\w*RepositoryRuleset)\b")
+GH_GRAPHQL_REVIEW = re.compile(r"\b(addPullRequestReview|submitPullRequestReview)\b")
+
+
 def gh_api(args):
-    if has(args, "--input"):
-        return "gh api --input sends a request body"
+    """Ask only for approvals, merges, repo deletion/archival and settings, secrets or access writes."""
     fields = [args[i + 1] for i, a in enumerate(args[:-1]) if a in ("-f", "-F", "--field", "--raw-field")]
     fields += [a.split("=", 1)[1] for a in args if a.startswith(("--field=", "--raw-field="))]
     fields += [a[2:] for a in args if re.match(r"^-[fF].", a)]
+    opaque = has(args, "--input")
     pos = positionals(args, {"-X", "--method", "-f", "-F", "--field", "--raw-field", "-H", "--header", "-q",
-                             "--jq", "-t", "--template", "--hostname", "--cache", "-p", "--preview"})
-    if pos and pos[0] == "graphql":
-        for f in fields:
-            key, _, value = f.partition("=")
-            if key == "query" and (value.startswith("@") or re.match(r"^\s*(#[^\n]*\n\s*)*mutation\b", value)):
-                return "gh api graphql mutation changes GitHub state"
+                             "--jq", "-t", "--template", "--hostname", "--cache", "-p", "--preview", "--input"})
+    if not pos:
         return None
-    method = (flag_value(args, "-X", "--method") or ("POST" if fields else "GET")).upper()
-    if method not in ("GET", "HEAD"):
-        return f"gh api {method} changes GitHub state"
+    if pos[0] == "graphql":
+        text = " ".join(fields)
+        if opaque or any(f.startswith("query=@") for f in fields):
+            return "gh api graphql with a file body can't be checked"
+        if GH_GRAPHQL_ASK.search(text):
+            return "gh api graphql mutation merges a pull request or changes repository settings"
+        if GH_GRAPHQL_REVIEW.search(text) and "APPROVE" in text:
+            return "gh api graphql mutation approves a pull request"
+        return None
+    method = (flag_value(args, "-X", "--method") or ("POST" if fields or opaque else "GET")).upper()
+    if method in ("GET", "HEAD"):
+        return None
+    path = pos[0].lstrip("/").split("?", 1)[0]
+    if re.match(REPO + r"/pulls/[^/]+/merge$", path):
+        return f"gh api {method} merges a pull request"
+    approve = opaque or "EVENT=APPROVE" in (f.upper() for f in fields)
+    if re.match(REPO + r"/pulls/[^/]+/reviews(/[^/]+/events)?$", path) and approve:
+        return "gh api review may approve a pull request"
+    if GH_API_SETTINGS.search(path):
+        return f"gh api {method} changes secrets, variables, protection or access"
+    if re.match(REPO + r"(/transfer)?$", path) and (method == "DELETE" or path.endswith("/transfer")
+                                                    or opaque or "archived=true" in (f.lower() for f in fields)):
+        return f"gh api {method} deletes, archives or transfers a repository"
+    if GH_API_PROTECTED_REF.match(path):
+        return f"gh api {method} changes the default branch ref"
     return None
 
 
-GH_ASK_VERBS = {"delete", "archive", "unarchive", "rename", "transfer", "lock", "cancel", "set", "remove",
-                "edit-protection", "sync"}
+GH_ASK_VERBS = {"delete", "archive", "unarchive", "rename", "transfer", "lock", "remove", "edit-protection"}
 
 
 def gh(args):
@@ -358,12 +382,10 @@ def gh(args):
         return f"gh {group} {sub} changes repository settings"
     if sub in GH_ASK_VERBS:
         return f"gh {group} {sub} changes shared GitHub state"
-    if group == "pr" and sub == "merge" and not has(args, "--auto", "--disable-auto"):
+    if group == "pr" and sub == "merge" and not has(args, "--auto", "--disable-auto", "--match-head-commit"):
         return "gh pr merge merges immediately"
     if group == "pr" and sub == "review" and has(args, "--approve", "-a"):
         return "gh pr review --approve approves a pull request"
-    if group == "pr" and sub == "close":
-        return "gh pr close closes a pull request"
     if group == "repo" and sub in ("create", "edit"):
         return f"gh repo {sub} changes a repository"
     if group == "release" and sub in ("create", "upload", "edit"):
