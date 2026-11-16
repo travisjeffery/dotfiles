@@ -79,6 +79,106 @@ def tokens(segment):
         return segment.split()
 
 
+ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+# Value-taking options of the wrappers unwrap() steps over.
+WRAPPER_VALUE = {
+    "sudo": {"-u", "-g", "-U", "-C", "-D", "-h", "-p", "-r", "-t", "-T"},
+    "env": {"-u", "--unset", "-C", "--chdir"},
+    "timeout": {"-s", "--signal", "-k", "--kill-after"},
+    "nice": {"-n"},
+}
+
+
+def skip_options(args, value_flags):
+    i = 0
+    while i < len(args) and args[i].startswith("-"):
+        i += 2 if args[i] in value_flags else 1
+    return args[i:]
+
+
+def unwrap(tok):
+    """Strip env-var prefixes and wrappers, so `AWS_PROFILE=x sudo aws ...` reads as `aws ...`."""
+    while tok:
+        if ASSIGNMENT.match(tok[0]):
+            tok = tok[1:]
+            continue
+        name = os.path.basename(tok[0])
+        if name in ("sudo", "env", "nice", "nohup", "time", "command", "exec"):
+            tok = skip_options(tok[1:], WRAPPER_VALUE.get(name, ()))
+        elif name == "timeout":
+            tok = skip_options(tok[1:], WRAPPER_VALUE["timeout"])[1:]
+        elif name == "aws-vault" and "--" in tok:
+            tok = tok[tok.index("--") + 1:]
+        else:
+            return tok
+    return tok
+
+
+def positionals(args, value_flags):
+    """Non-option words, skipping the value of each option in value_flags."""
+    out, skip = [], False
+    for a in args:
+        if skip:
+            skip = False
+        elif a.startswith("-"):
+            skip = a in value_flags
+        else:
+            out.append(a)
+    return out
+
+
+AWS_GLOBAL_VALUE = {"--profile", "--region", "--output", "--query", "--endpoint-url", "--color",
+                    "--ca-bundle", "--cli-read-timeout", "--cli-connect-timeout", "--cli-binary-format"}
+# Read-only verbs are never blocked, whatever words follow them.
+AWS_READ = re.compile(r"^(describe|list|get|head)-")
+# Destroy-shaped operations whose names carry no delete or terminate word.
+AWS_DESTROY = {
+    ("s3", "rm"), ("s3", "rb"),
+    ("sqs", "purge-queue"),
+    ("ec2", "deregister-image"), ("ec2", "release-address"), ("ec2", "release-hosts"),
+    ("kms", "schedule-key-deletion"),
+    ("account", "disable-region"),
+    ("organizations", "close-account"), ("organizations", "leave-organization"),
+}
+
+
+def aws_destroy(tok):
+    """Return "service operation" when an aws call deletes or destroys, else None."""
+    pos = positionals(tok[1:], AWS_GLOBAL_VALUE)
+    if len(pos) < 2:
+        return None
+    service, op = pos[0], pos[1]
+    if AWS_READ.match(op):
+        return None
+    # ec2 checks permissions without acting under --dry-run; s3 spells it --dryrun.
+    if service == "ec2" and "--dry-run" in tok and "--no-dry-run" not in tok:
+        return None
+    if service == "s3" and "--dryrun" in tok:
+        return None
+    words = op.split("-")
+    if (
+        "delete" in words
+        or "terminate" in words
+        or (service, op) in AWS_DESTROY
+        or (service, op) == ("s3", "sync") and "--delete" in tok
+    ):
+        return f"{service} {op}"
+    return None
+
+
+HELM_GLOBAL_VALUE = {
+    "-n", "--namespace", "--kube-context", "--kubeconfig", "--burst-limit", "--qps", "--kube-apiserver",
+    "--kube-as-group", "--kube-as-user", "--kube-ca-file", "--kube-tls-server-name", "--kube-token",
+    "--registry-config", "--repository-cache", "--repository-config", "--content-cache",
+}
+HELM_UNINSTALL = {"uninstall", "delete", "del", "un"}
+
+
+def is_helm_uninstall(tok):
+    pos = positionals(tok[1:], HELM_GLOBAL_VALUE)
+    return bool(pos) and pos[0] in HELM_UNINSTALL and "--dry-run" not in tok
+
+
 def is_rm_rf(tok):
     if not tok or os.path.basename(tok[0]) != "rm":
         return False
@@ -113,7 +213,7 @@ def check(command, cwd, project):
     roots = [os.path.realpath(r) for r in roots if r]
 
     for seg in segments(strip_heredocs(command)):
-        tok = tokens(seg)
+        tok = unwrap(tokens(seg))
         if not tok:
             continue
         joined = " ".join(tok)
@@ -137,6 +237,14 @@ def check(command, cwd, project):
 
         if re.match(r"^(terraform|pulumi)\b", joined) and "destroy" in tok:
             return f"{tok[0]} destroy tears down real infrastructure. Run it yourself if intended."
+
+        if os.path.basename(tok[0]) == "aws":
+            op = aws_destroy(tok)
+            if op:
+                return f"aws {op} deletes or destroys AWS resources. Run it yourself if intended."
+
+        if os.path.basename(tok[0]) == "helm" and is_helm_uninstall(tok):
+            return "helm uninstall removes a release and every resource it created. Run it yourself if intended."
 
     return None
 

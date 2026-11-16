@@ -260,7 +260,7 @@ GUARDS_PRESENT = os.path.isfile(os.path.expanduser("~/.claude/hooks/block-danger
 
 class Hook(unittest.TestCase):
     def test_decisions(self):
-        cases = [("git status", "allow"), ("aws ec2 terminate-instances --instance-ids i-1", "ask")]
+        cases = [("git status", "allow"), ("aws ec2 start-instances --instance-ids i-1", "ask")]
         if GUARDS_PRESENT:
             cases += [
                 ("kubectl delete pod x", "deny"),
@@ -280,7 +280,7 @@ class Hook(unittest.TestCase):
         self.assertEqual(out.get("updatedInput"), {"command": "git status", "workdir": "/tmp"})
 
     def test_ask_has_no_updated_input(self):
-        self.assertNotIn("updatedInput", hook_output("aws ec2 terminate-instances --instance-ids i-1"))
+        self.assertNotIn("updatedInput", hook_output("aws ec2 start-instances --instance-ids i-1"))
 
     def test_non_bash_untouched(self):
         payload = {"tool_name": "read", "tool_input": {"path": "/etc/passwd"}}
