@@ -231,10 +231,16 @@ ASK = [
 ]
 
 
+# This repo's Claude guards, when the plugin runs from a checkout of it; else the installed ones.
+REPO_GUARDS = os.path.normpath(os.path.join(HOOKS, "..", "..", "..", "..", "..", ".claude", "hooks"))
+GUARDS_DIR = REPO_GUARDS if os.path.isdir(REPO_GUARDS) else os.path.expanduser("~/.claude/hooks")
+GUARD_ENV = dict(os.environ, SHELL_GUARD_HOOKS_DIR=GUARDS_DIR)
+
+
 def hook_output(command):
     payload = {"tool_name": "bash", "tool_input": {"command": command, "workdir": "/tmp"}, "cwd": "/tmp"}
     r = subprocess.run([sys.executable, os.path.join(HOOKS, "shell_guard.py")], input=json.dumps(payload),
-                       capture_output=True, text=True, timeout=30)
+                       capture_output=True, text=True, timeout=30, env=GUARD_ENV)
     out = json.loads(r.stdout) if r.stdout.strip() else {}
     return out.get("hookSpecificOutput") or {}
 
@@ -255,7 +261,7 @@ class Policy(unittest.TestCase):
                 self.assertIsNotNone(shell_policy.classify(cmd))
 
 
-GUARDS_PRESENT = os.path.isfile(os.path.expanduser("~/.claude/hooks/block-dangerous-bash.py"))
+GUARDS_PRESENT = os.path.isfile(os.path.join(GUARDS_DIR, "block-dangerous-bash.py"))
 
 
 class Hook(unittest.TestCase):
@@ -269,6 +275,14 @@ class Hook(unittest.TestCase):
                 ("git push --force origin main", "deny"),
                 ("rm -rf /etc/x", "deny"),
                 ("git status; kubectl delete ns x", "deny"),
+                # block-dangerous-bash asks about these; Muse's judge could answer, so they stay denied.
+                ("helm uninstall my-release", "deny"),
+                ("aws ec2 terminate-instances --instance-ids i-1", "deny"),
+                ("AWS_PROFILE=prod aws s3 rm s3://b/k", "deny"),
+                # Dry runs the guard lets through, so shell_policy decides: it still asks about
+                # an ec2 write and allows a client-side kubectl dry run.
+                ("aws ec2 terminate-instances --instance-ids i-1 --dry-run", "ask"),
+                ("kubectl delete pod x --dry-run=client", "allow"),
             ]
         for cmd, want in cases:
             with self.subTest(cmd=cmd):
@@ -278,6 +292,13 @@ class Hook(unittest.TestCase):
         out = hook_output("git status")
         self.assertEqual(out.get("permissionDecision"), "allow")
         self.assertEqual(out.get("updatedInput"), {"command": "git status", "workdir": "/tmp"})
+
+    @unittest.skipUnless(GUARDS_PRESENT, "Claude guards not installed")
+    def test_guard_ask_denies_with_hand_off(self):
+        out = hook_output("kubectl delete pod x")
+        self.assertEqual(out.get("permissionDecision"), "deny")
+        self.assertIn("kubectl delete", out.get("permissionDecisionReason"))
+        self.assertIn("Hand the step over", out.get("permissionDecisionReason"))
 
     def test_ask_has_no_updated_input(self):
         self.assertNotIn("updatedInput", hook_output("aws ec2 start-instances --instance-ids i-1"))
