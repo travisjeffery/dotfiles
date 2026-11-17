@@ -1,9 +1,24 @@
 #!/usr/bin/env python3
-"""PreToolUse guard for Bash: blocks a small denylist of irreversible commands.
+"""PreToolUse guard for Bash: stops a small denylist of irreversible commands.
 
 Paired with a bare "Bash" allow rule, so everything else runs unprompted.
-A code-2 exit blocks the call before permission rules are evaluated, which is
-why this can veto commands that the allow rule would otherwise let through.
+Both verdicts are evaluated before permission rules, which is why this can
+veto commands that the allow rule would otherwise let through:
+
+- block (exit 2): rm -rf outside the allowed roots and git push --force. Each
+  has a safe alternative, so there is nothing to ask.
+- ask (permissionDecision "ask"): deletes and destroys of real infrastructure
+  (kubectl delete, helm uninstall, terraform/pulumi destroy, AWS deletes).
+  Someone approves them where the agent runs, or from quartermaster for a
+  worker that routes its prompts there.
+
+A block anywhere in a compound command wins over an ask.
+
+An ask is only worth making where a person answers it. In Claude Code's auto
+mode the classifier answers a hook's ask (it approved a kubectl delete in
+testing), so there, and in any mode outside ASK_MODES, an ask is a block.
+With no permission_mode in the payload (quartermaster's pi extension, the
+Muse wrapper) the caller decides what an ask means.
 
 Internal errors deliberately fail OPEN (exit 0): this guards against accidents,
 not an adversary, and a crashing hook that blocked every command would wedge
@@ -19,6 +34,9 @@ import sys
 # rm -rf is permitted only when every target stays inside one of these roots.
 # $CWD and $PROJECT are substituted from the hook payload at runtime.
 ALLOWED_RM_ROOTS = ["$PROJECT", "$CWD", "/tmp", "/var/tmp", os.path.expanduser("~/.cache")]
+
+# Claude Code permission modes in which a hook's ask is shown to a person.
+ASK_MODES = {"default", "acceptEdits", "plan"}
 
 
 def strip_heredocs(command):
@@ -179,6 +197,13 @@ def is_helm_uninstall(tok):
     return bool(pos) and pos[0] in HELM_UNINSTALL and "--dry-run" not in tok
 
 
+def is_kubectl_delete(tok):
+    if "delete" not in tok:
+        return False
+    # --dry-run, --dry-run=client and --dry-run=server delete nothing; =none does.
+    return not any(t == "--dry-run" or (t.startswith("--dry-run=") and t != "--dry-run=none") for t in tok)
+
+
 def is_rm_rf(tok):
     if not tok or os.path.basename(tok[0]) != "rm":
         return False
@@ -205,13 +230,18 @@ def outside_allowed(target, roots):
     )
 
 
+BLOCK, ASK = "block", "ask"
+
+
 def check(command, cwd, project):
+    """Return (BLOCK or ASK, reason), or None to let the command through."""
     roots = [
         project if r == "$PROJECT" else cwd if r == "$CWD" else r
         for r in ALLOWED_RM_ROOTS
     ]
     roots = [os.path.realpath(r) for r in roots if r]
 
+    ask = None
     for seg in segments(strip_heredocs(command)):
         tok = unwrap(tokens(seg))
         if not tok:
@@ -221,7 +251,7 @@ def check(command, cwd, project):
         if is_rm_rf(tok):
             for t in rm_targets(tok):
                 if outside_allowed(t, roots):
-                    return (
+                    return BLOCK, (
                         f"rm -rf targets {t!r}, which resolves outside the allowed roots "
                         f"({', '.join(roots)}). Delete it manually if you meant to."
                     )
@@ -230,23 +260,25 @@ def check(command, cwd, project):
         # moved since the last fetch, so it is deliberately NOT blocked.
         if re.match(r"^git\b", joined) and "push" in tok:
             if any(t == "--force" or (t.startswith("-") and not t.startswith("--") and "f" in t.lstrip("-")) for t in tok):
-                return "git push --force rewrites remote history. Use --force-with-lease instead."
+                return BLOCK, "git push --force rewrites remote history. Use --force-with-lease instead."
 
-        if re.match(r"^kubectl\b", joined) and "delete" in tok:
-            return "kubectl delete is blocked. Run it yourself if you are certain."
+        # Keep scanning after the first ask: a later segment may still block.
+        if ask:
+            continue
 
-        if re.match(r"^(terraform|pulumi)\b", joined) and "destroy" in tok:
-            return f"{tok[0]} destroy tears down real infrastructure. Run it yourself if intended."
+        if re.match(r"^kubectl\b", joined) and is_kubectl_delete(tok):
+            ask = "kubectl delete removes Kubernetes resources. Run it?"
 
-        if os.path.basename(tok[0]) == "aws":
-            op = aws_destroy(tok)
-            if op:
-                return f"aws {op} deletes or destroys AWS resources. Run it yourself if intended."
+        elif re.match(r"^(terraform|pulumi)\b", joined) and "destroy" in tok and "--preview-only" not in tok:
+            ask = f"{tok[0]} destroy tears down real infrastructure. Run it?"
 
-        if os.path.basename(tok[0]) == "helm" and is_helm_uninstall(tok):
-            return "helm uninstall removes a release and every resource it created. Run it yourself if intended."
+        elif os.path.basename(tok[0]) == "aws" and (op := aws_destroy(tok)):
+            ask = f"aws {op} deletes or destroys AWS resources. Run it?"
 
-    return None
+        elif os.path.basename(tok[0]) == "helm" and is_helm_uninstall(tok):
+            ask = "helm uninstall removes a release and every resource it created. Run it?"
+
+    return (ASK, ask) if ask else None
 
 
 def main():
@@ -263,14 +295,26 @@ def main():
     project = os.environ.get("CLAUDE_PROJECT_DIR") or cwd
 
     try:
-        reason = check(command, cwd, project)
+        verdict = check(command, cwd, project)
     except Exception as exc:
         print(f"block-dangerous-bash: internal error, allowing: {exc}", file=sys.stderr)
         sys.exit(0)
 
-    if reason:
+    if not verdict:
+        sys.exit(0)
+    decision, reason = verdict
+    mode = payload.get("permission_mode")
+    if decision == ASK and mode is not None and mode not in ASK_MODES:
+        decision = BLOCK
+        reason = reason.removesuffix(" Run it?") + f" Not run in {mode} mode, where no one is asked. Run it yourself if intended."
+    if decision == BLOCK:
         print(f"Blocked by block-dangerous-bash: {reason}", file=sys.stderr)
         sys.exit(2)
+    json.dump({"hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "ask",
+        "permissionDecisionReason": f"block-dangerous-bash: {reason}",
+    }}, sys.stdout)
     sys.exit(0)
 
 

@@ -7,6 +7,11 @@ block by exiting 2 or by printing a permissionDecision. Muse names the tool
 hookSpecificOutput.permissionDecision, so this translates both ways. Guards
 that are missing or crash fail open, as they do under Claude.
 
+block-dangerous-bash asks before infrastructure deletes and destroys, for a
+human to answer. Under Muse's :auto-review profile an ask goes to Muse's
+approval judge, which can approve it with no human, so that guard's ask is
+a deny here; Muse workers hand those steps over as before.
+
 When no guard objects, shell_policy decides: allow, so the call skips Muse's
 approval prompt, or ask for shared-state, cloud and secret operations. If the
 policy itself crashes, the hook makes no decision and Muse's own approval
@@ -20,9 +25,12 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# SHELL_GUARD_HOOKS_DIR points the tests at a checkout's guards instead of the installed ones.
+HOOKS_DIR = os.environ.get("SHELL_GUARD_HOOKS_DIR") or "~/.claude/hooks"
+# (argv, whether the guard's ask is a deny under Muse)
 GUARDS = [
-    ["python3", "~/.claude/hooks/block-dangerous-bash.py"],
-    ["bash", "~/.claude/hooks/rm-guard.sh"],
+    (["python3", os.path.join(HOOKS_DIR, "block-dangerous-bash.py")], True),
+    (["bash", os.path.join(HOOKS_DIR, "rm-guard.sh")], False),
 ]
 
 
@@ -51,7 +59,7 @@ def main():
     claude = dict(payload, tool_name="Bash", cwd=cwd, hook_event_name="PreToolUse")
     env = dict(os.environ, CLAUDE_PROJECT_DIR=payload.get("cwd") or cwd)
     ask = None
-    for argv in GUARDS:
+    for argv, ask_denies in GUARDS:
         argv = [os.path.expanduser(a) for a in argv]
         if not os.path.isfile(argv[-1]):
             continue
@@ -69,6 +77,9 @@ def main():
         d = hso.get("permissionDecision")
         if d == "deny":
             decide("deny", hso.get("permissionDecisionReason"))
+        if d == "ask" and ask_denies:
+            decide("deny", f"{hso.get('permissionDecisionReason') or ''} Not under Muse: its approval "
+                           "judge could answer for you. Hand the step over instead.".strip())
         if d == "ask" and ask is None:
             ask = hso.get("permissionDecisionReason")
     if ask is not None:
