@@ -1,0 +1,498 @@
+#!/usr/bin/env python3
+"""Idempotent MCP config sync into Antigravity's ~/.gemini/config/mcp_config.json.
+
+Translates a generic `mcp.json` (default: ~/.pi/agent/mcp.json) containing stdio
+and Streamable HTTP MCP servers into Antigravity's `mcp_config.json` schema:
+- Enforces file permissions 0600 on target and backups.
+- Creates a timestamped backup before overwriting when content changes.
+- Preserves unmanaged server entries (e.g. dynamic bridge entries or manual
+  servers) and any extra top-level keys in the target file.
+- Supports server exclusion (`--exclude-server`) and per-server tool filtering
+  (`--disable-tool` -> `disabledTools`, `--enable-tool` -> `enabledTools`, or
+  `--filter-file`).
+- Never prints tokens, header values, env values, or URLs.
+"""
+
+import argparse
+import datetime
+import json
+import os
+import stat
+import sys
+import tempfile
+
+DEFAULT_SOURCE = "~/.pi/agent/mcp.json"
+DEFAULT_TARGET = "~/.gemini/config/mcp_config.json"
+
+
+def _copy_str_map(value, label):
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} must be a JSON object")
+    out = {}
+    for k, v in value.items():
+        if not isinstance(k, str):
+            raise ValueError(f"{label} keys must be strings")
+        out[k] = v if isinstance(v, str) else str(v)
+    return out
+
+
+def _copy_str_list(value, label):
+    if not isinstance(value, list):
+        raise ValueError(f"{label} must be a JSON array")
+    return [item if isinstance(item, str) else str(item) for item in value]
+
+
+def _merge_tool_lists(base, extra):
+    merged = []
+    seen = set()
+    for item in list(base or []) + list(extra or []):
+        name = item.strip() if isinstance(item, str) else str(item).strip()
+        if name and name not in seen:
+            seen.add(name)
+            merged.append(name)
+    return sorted(merged)
+
+
+def read_json_object(path, allow_missing=False, allow_empty=False):
+    """Read a JSON object from path; handles UTF-8 BOM and optional 0-byte files."""
+    if not os.path.exists(path):
+        if allow_missing:
+            return None, None
+        raise FileNotFoundError(f"file not found: {path}")
+    with open(path, "r", encoding="utf-8") as f:
+        raw = f.read()
+    stripped = raw.lstrip("\ufeff").strip()
+    if not stripped:
+        if allow_empty:
+            return {}, raw
+        raise ValueError(f"{path} is empty")
+    try:
+        parsed = json.loads(stripped)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{path} is not valid JSON (line {exc.lineno}, col {exc.colno})") from None
+    if not isinstance(parsed, dict):
+        raise ValueError(f"{path} must contain a JSON object")
+    return parsed, raw
+
+
+def load_filter_file(path):
+    data, _ = read_json_object(os.path.expanduser(path), allow_missing=False, allow_empty=False)
+    exclude_servers = set()
+    disabled_tools = {}
+    enabled_tools = {}
+
+    if "excludeServers" in data:
+        exclude_servers.update(_copy_str_list(data["excludeServers"], "excludeServers"))
+    if "disabledTools" in data:
+        raw_dt = data["disabledTools"]
+        if not isinstance(raw_dt, dict):
+            raise ValueError("disabledTools must be a map of server -> tool list")
+        for srv, tools in raw_dt.items():
+            disabled_tools[srv] = _copy_str_list(tools, f"disabledTools.{srv}")
+    if "enabledTools" in data:
+        raw_et = data["enabledTools"]
+        if not isinstance(raw_et, dict):
+            raise ValueError("enabledTools must be a map of server -> tool list")
+        for srv, tools in raw_et.items():
+            enabled_tools[srv] = _copy_str_list(tools, f"enabledTools.{srv}")
+
+    return exclude_servers, disabled_tools, enabled_tools
+
+
+def parse_server_tool_spec(spec):
+    if ":" not in spec:
+        raise ValueError(f"expected SERVER:TOOL format, got {spec!r}")
+    server, tool = spec.split(":", 1)
+    server, tool = server.strip(), tool.strip()
+    if not server or not tool:
+        raise ValueError(f"expected non-empty SERVER:TOOL, got {spec!r}")
+    return server, tool
+
+
+def translate_server(
+    name,
+    cfg,
+    existing_entry=None,
+    extra_disabled_tools=None,
+    extra_enabled_tools=None,
+    preserve_disabled=True,
+):
+    """Translate one server entry from source mcp.json into agy's mcp_config.json schema.
+
+    Returns (translated_dict, transport_kind, warning_or_None).
+    Returns (None, "skipped", warning) if the entry uses an unsupported transport.
+    """
+    if not isinstance(cfg, dict):
+        return None, "skipped", f"server {name!r}: config must be a JSON object"
+
+    declared_type = str(cfg.get("type") or cfg.get("transport") or "").strip().lower()
+    command = cfg.get("command")
+    url = cfg.get("serverUrl") or cfg.get("url")
+    legacy_http_url = cfg.get("httpUrl")
+
+    if declared_type == "sse":
+        return None, "skipped", f"server {name!r}: legacy SSE transport is unsupported by agy"
+
+    out = {}
+    transport = None
+
+    if isinstance(command, str) and command.strip():
+        transport = "stdio"
+        out["command"] = command
+        if "args" in cfg and cfg["args"] is not None:
+            args_list = _copy_str_list(cfg["args"], f"{name}.args")
+            if args_list:
+                out["args"] = args_list
+        if "env" in cfg and cfg["env"] is not None:
+            env_map = _copy_str_map(cfg["env"], f"{name}.env")
+            if env_map:
+                out["env"] = env_map
+        if isinstance(cfg.get("cwd"), str) and cfg["cwd"].strip():
+            out["cwd"] = cfg["cwd"]
+    elif isinstance(url, str) and url.strip():
+        transport = "http"
+        out["serverUrl"] = url
+        if "headers" in cfg and cfg["headers"] is not None:
+            headers_map = _copy_str_map(cfg["headers"], f"{name}.headers")
+            if headers_map:
+                out["headers"] = headers_map
+        if isinstance(cfg.get("authProviderType"), str) and cfg["authProviderType"].strip():
+            out["authProviderType"] = cfg["authProviderType"]
+        if isinstance(cfg.get("oauth"), dict) and cfg["oauth"]:
+            out["oauth"] = dict(cfg["oauth"])
+    elif isinstance(legacy_http_url, str) and legacy_http_url.strip():
+        return None, "skipped", f"server {name!r}: legacy httpUrl field is unsupported by agy (use url/serverUrl)"
+    else:
+        return None, "skipped", f"server {name!r}: missing command (stdio) or url/serverUrl (http)"
+
+    # Disabled flag: honor explicit source setting; otherwise preserve existing target toggle if requested.
+    if isinstance(cfg.get("disabled"), bool):
+        out["disabled"] = cfg["disabled"]
+    elif preserve_disabled and isinstance(existing_entry, dict) and isinstance(existing_entry.get("disabled"), bool):
+        out["disabled"] = existing_entry["disabled"]
+    else:
+        out["disabled"] = False
+
+    if isinstance(cfg.get("timeoutSeconds"), int) and not isinstance(cfg.get("timeoutSeconds"), bool):
+        out["timeoutSeconds"] = cfg["timeoutSeconds"]
+
+    source_disabled = _copy_str_list(cfg["disabledTools"], f"{name}.disabledTools") if "disabledTools" in cfg else []
+    merged_disabled = _merge_tool_lists(source_disabled, extra_disabled_tools)
+    if merged_disabled:
+        out["disabledTools"] = merged_disabled
+
+    source_enabled = _copy_str_list(cfg["enabledTools"], f"{name}.enabledTools") if "enabledTools" in cfg else []
+    merged_enabled = _merge_tool_lists(source_enabled, extra_enabled_tools)
+    if merged_enabled:
+        out["enabledTools"] = merged_enabled
+
+    if isinstance(cfg.get("tools"), dict) and cfg["tools"]:
+        out["tools"] = dict(cfg["tools"])
+
+    return out, transport, None
+
+
+def write_secure_bytes_atomic(path, content_bytes, mode=0o600):
+    """Atomically write bytes with strict 0600 permissions, preserving symlinks."""
+    resolved = os.path.realpath(path) if os.path.islink(path) else path
+    parent = os.path.dirname(os.path.abspath(resolved))
+    os.makedirs(parent, mode=0o700, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(prefix=".mcp_config.", suffix=".tmp", dir=parent)
+    try:
+        os.fchmod(fd, mode)
+        with os.fdopen(fd, "wb") as f:
+            f.write(content_bytes)
+            f.flush()
+            os.fsync(f.fileno())
+        os.chmod(tmp_path, mode)
+        os.replace(tmp_path, resolved)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
+def create_secure_backup(target_path):
+    """Copy existing target file to a timestamped sibling backup with mode 0600."""
+    resolved = os.path.realpath(target_path) if os.path.islink(target_path) else target_path
+    ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    backup_path = f"{resolved}.bak-{ts}"
+    suffix = 1
+    while os.path.exists(backup_path):
+        backup_path = f"{resolved}.bak-{ts}-{suffix}"
+        suffix += 1
+    with open(resolved, "rb") as src:
+        raw = src.read()
+    fd = os.open(backup_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "wb") as dst:
+            dst.write(raw)
+            dst.flush()
+            os.fsync(dst.fileno())
+    except Exception:
+        try:
+            os.unlink(backup_path)
+        except OSError:
+            pass
+        raise
+    return backup_path
+
+
+def format_server_meta(entry):
+    parts = []
+    if "command" in entry:
+        parts.append("stdio")
+        if entry.get("env"):
+            parts.append(f"env={len(entry['env'])}")
+    elif "serverUrl" in entry:
+        parts.append("http")
+        if entry.get("headers"):
+            parts.append(f"headers={len(entry['headers'])}")
+        else:
+            parts.append("no-headers")
+    if entry.get("disabled"):
+        parts.append("disabled")
+    if entry.get("disabledTools"):
+        parts.append(f"disabledTools={len(entry['disabledTools'])}")
+    if entry.get("enabledTools"):
+        parts.append(f"enabledTools={len(entry['enabledTools'])}")
+    return ", ".join(parts)
+
+
+def sync_mcp(
+    source_path,
+    target_path,
+    exclude_servers=None,
+    disabled_tools=None,
+    enabled_tools=None,
+    preserve_disabled=True,
+    dry_run=False,
+    backup=True,
+):
+    source_path = os.path.expanduser(source_path)
+    target_path = os.path.expanduser(target_path)
+    exclude_servers = set(exclude_servers or ())
+    disabled_tools = dict(disabled_tools or {})
+    enabled_tools = dict(enabled_tools or {})
+
+    source_data, _ = read_json_object(source_path, allow_missing=False, allow_empty=False)
+    source_servers = source_data.get("mcpServers")
+    if not isinstance(source_servers, dict):
+        raise ValueError(f"{source_path} must contain an 'mcpServers' object")
+
+    target_data, target_raw = read_json_object(target_path, allow_missing=True, allow_empty=True)
+    target_existed = target_data is not None
+    if target_data is None:
+        target_data = {"mcpServers": {}}
+
+    existing_servers = target_data.get("mcpServers")
+    if existing_servers is None:
+        existing_servers = {}
+    elif not isinstance(existing_servers, dict):
+        raise ValueError(f"{target_path} 'mcpServers' must be a JSON object")
+
+    merged_servers = dict(existing_servers)
+    actions = []
+    warnings = []
+    synced_names = set()
+
+    for name in sorted(source_servers.keys()):
+        if name in exclude_servers:
+            note = "existing target entry preserved" if name in existing_servers else "skipped by exclude list"
+            actions.append((name, "excluded", note))
+            continue
+        translated, _transport, warning = translate_server(
+            name,
+            source_servers[name],
+            existing_entry=existing_servers.get(name),
+            extra_disabled_tools=disabled_tools.get(name),
+            extra_enabled_tools=enabled_tools.get(name),
+            preserve_disabled=preserve_disabled,
+        )
+        if warning:
+            warnings.append(warning)
+        if translated is None:
+            actions.append((name, "skipped", "unsupported"))
+            continue
+        synced_names.add(name)
+        prev = existing_servers.get(name)
+        if prev is None:
+            status = "added"
+        elif prev == translated:
+            status = "unchanged"
+        else:
+            status = "updated"
+        merged_servers[name] = translated
+        actions.append((name, status, format_server_meta(translated)))
+
+    for name in sorted(existing_servers.keys()):
+        if name not in synced_names and name not in exclude_servers:
+            entry = existing_servers[name]
+            meta = format_server_meta(entry) if isinstance(entry, dict) else "unmanaged"
+            actions.append((name, "preserved", meta))
+
+    output_data = dict(target_data)
+    output_data["mcpServers"] = merged_servers
+    rendered = json.dumps(output_data, indent=2, sort_keys=True) + "\n"
+    rendered_bytes = rendered.encode("utf-8")
+
+    content_changed = (not target_existed) or (target_raw != rendered)
+    resolved_target = os.path.realpath(target_path) if os.path.islink(target_path) else target_path
+    mode_needs_tighten = False
+    if target_existed and os.path.exists(resolved_target):
+        current_mode = stat.S_IMODE(os.stat(resolved_target).st_mode)
+        mode_needs_tighten = current_mode != 0o600
+
+    backup_path = None
+    wrote = False
+    if not dry_run:
+        if content_changed:
+            if backup and target_existed and os.path.exists(resolved_target):
+                backup_path = create_secure_backup(target_path)
+            write_secure_bytes_atomic(target_path, rendered_bytes, mode=0o600)
+            wrote = True
+        elif mode_needs_tighten:
+            os.chmod(resolved_target, 0o600)
+
+    return {
+        "changed": content_changed,
+        "wrote": wrote,
+        "mode_tightened": (not content_changed) and mode_needs_tighten and (not dry_run),
+        "backup": backup_path,
+        "actions": actions,
+        "warnings": warnings,
+        "server_count": len(merged_servers),
+    }
+
+
+def build_arg_parser():
+    parser = argparse.ArgumentParser(
+        description="Sync MCP server definitions into Antigravity's mcp_config.json (mode 0600, redacted output)."
+    )
+    parser.add_argument(
+        "--source",
+        default=DEFAULT_SOURCE,
+        help=f"Source MCP JSON path (default: {DEFAULT_SOURCE})",
+    )
+    parser.add_argument(
+        "--target",
+        default=DEFAULT_TARGET,
+        help=f"Target agy mcp_config.json path (default: {DEFAULT_TARGET})",
+    )
+    parser.add_argument(
+        "--exclude-server",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="Exclude a server name from syncing (repeatable)",
+    )
+    parser.add_argument(
+        "--disable-tool",
+        action="append",
+        default=[],
+        metavar="SERVER:TOOL",
+        help="Add TOOL to SERVER's disabledTools list in agy (repeatable)",
+    )
+    parser.add_argument(
+        "--enable-tool",
+        action="append",
+        default=[],
+        metavar="SERVER:TOOL",
+        help="Add TOOL to SERVER's enabledTools allowlist in agy (repeatable)",
+    )
+    parser.add_argument(
+        "--filter-file",
+        default=None,
+        metavar="PATH",
+        help="Optional JSON file specifying excludeServers, disabledTools, enabledTools",
+    )
+    parser.add_argument(
+        "--no-preserve-disabled",
+        action="store_true",
+        help="Reset disabled=false for servers that omit disabled in source",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show planned changes without modifying target or creating backups",
+    )
+    parser.add_argument(
+        "--no-backup",
+        action="store_true",
+        help="Do not create a timestamped backup before overwriting target",
+    )
+    return parser
+
+
+def main(argv=None):
+    parser = build_arg_parser()
+    args = parser.parse_args(argv)
+
+    exclude_servers = set()
+    disabled_tools = {}
+    enabled_tools = {}
+
+    try:
+        if args.filter_file:
+            f_excl, f_dis, f_en = load_filter_file(args.filter_file)
+            exclude_servers.update(f_excl)
+            for srv, tools in f_dis.items():
+                disabled_tools.setdefault(srv, []).extend(tools)
+            for srv, tools in f_en.items():
+                enabled_tools.setdefault(srv, []).extend(tools)
+
+        for raw in args.exclude_server:
+            for item in raw.split(","):
+                item = item.strip()
+                if item:
+                    exclude_servers.add(item)
+
+        for spec in args.disable_tool:
+            srv, tool = parse_server_tool_spec(spec)
+            disabled_tools.setdefault(srv, []).append(tool)
+
+        for spec in args.enable_tool:
+            srv, tool = parse_server_tool_spec(spec)
+            enabled_tools.setdefault(srv, []).append(tool)
+
+        result = sync_mcp(
+            source_path=args.source,
+            target_path=args.target,
+            exclude_servers=exclude_servers,
+            disabled_tools=disabled_tools,
+            enabled_tools=enabled_tools,
+            preserve_disabled=not args.no_preserve_disabled,
+            dry_run=args.dry_run,
+            backup=not args.no_backup,
+        )
+    except Exception as exc:
+        print(f"agy-mcp-sync: error: {exc}", file=sys.stderr)
+        return 1
+
+    for warning in result["warnings"]:
+        print(f"agy-mcp-sync: warning: {warning}", file=sys.stderr)
+
+    for name, status, meta in result["actions"]:
+        print(f"  {status:10s} {name} ({meta})")
+
+    if args.dry_run:
+        state = "would-update" if result["changed"] else "unchanged"
+    elif result["wrote"]:
+        state = "updated"
+    elif result["mode_tightened"]:
+        state = "unchanged (permissions tightened to 0600)"
+    else:
+        state = "unchanged"
+
+    summary = f"agy-mcp-sync: {state}; total={result['server_count']} server(s)"
+    if result["backup"]:
+        summary += f"; backup={result['backup']}"
+    print(summary)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
