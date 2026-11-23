@@ -1,0 +1,13 @@
+# Ignore everything by default so runtime state, auth tokens, and local
+# mcp_config.json / hooks.json are never committed to this public repo.
+*
+
+# Allowlist tracked dotfiles
+!.gitignore
+!config/
+!config/hooks/
+!config/hooks/run-command-guard.py
+!config/hooks/tests/
+!config/hooks/tests/test_run_command_guard.py
+!tests/
+!tests/test_agy_mcp_sync.py
